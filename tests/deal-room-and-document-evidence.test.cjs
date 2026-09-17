@@ -1,0 +1,131 @@
+const assert = require("assert");
+const fs = require("fs");
+const os = require("os");
+const path = require("path");
+
+(async () => {
+  const registry = await import("../src/collaboration/dealRoomRegistry.mjs");
+  const extraction = await import("../src/collaboration/documentEvidenceExtraction.mjs");
+  const evidenceRegistry = await import("../src/collaboration/documentEvidenceRegistry.mjs");
+  const persistence = await import("../src/persistence/platformPersistenceService.mjs");
+  const { SqlitePlatformRepository } = await import("../src/persistence/sqlitePlatformRepository.mjs");
+  const t0 = "2026-08-15T14:00:00.000Z";
+  const organizationId = "org-a";
+  const propertyId = "wrp:v1:dallas-county-dcad:A1";
+  const writeContext = (revision, occurredAt = t0, grants = ["deal-room:write"]) => ({ organizationId, actorUserId: "user-a", grants, expectedStateRevision: revision, occurredAt });
+  let state = registry.createDealRoomState({ organizationId, updatedAt: t0 });
+  const room = registry.createDealRoom({ id: "room-1", organizationId, dealId: "deal-1", whiteRabbitPropertyId: propertyId, name: "100 Main Due Diligence", createdByUserId: "user-a", createdAt: t0 });
+  state = registry.addDealRoom(state, room, writeContext(1));
+  assert.equal(state.revision, 2);
+  assert.throws(() => registry.addDealRoom(state, { ...room, id: "cross-room", roomSha256: undefined, organizationId: "org-b" }, writeContext(2)), (error) => error.code === "WR_TENANT_ISOLATION_VIOLATION");
+  assert.throws(() => registry.addDealRoom(state, { ...room, id: "forged-room", roomSha256: undefined, createdByUserId: "user-b" }, writeContext(2)), (error) => error.code === "WR_ACTOR_IMPERSONATION_DENIED");
+
+  const bytesV1 = Buffer.from("Lease: annual base rent is $120,000.");
+  const contentShaV1 = registry.dealRoomSha256(bytesV1);
+  const cleanScanV1 = registry.createMalwareScanEvidence({ organizationId, contentSha256: contentShaV1, engineId: "scanner-a", engineVersion: "4.2", definitionsVersion: "2026-08-15.1", result: "clean", scannedAt: t0, evidenceRef: "scan-ref:v1", verificationStatus: "verified", verificationPolicyId: "scan-policy-1", scannerAttestationSha256: registry.dealRoomSha256("attestation-v1"), verifiedAt: t0 });
+  const v1 = registry.createDealRoomDocumentVersion({ organizationId, roomId: room.id, dealId: room.dealId, whiteRabbitPropertyId: propertyId, documentId: "doc-lease", versionNumber: 1, logicalName: "Executed Lease", fileName: "lease-v1.pdf", mediaType: "application/pdf", byteLength: bytesV1.length, contentSha256: contentShaV1, objectRef: "object-ref:lease-v1", classification: "confidential", uploadedByUserId: "user-a", uploadedAt: t0, malwareScan: cleanScanV1 });
+  assert.equal(v1.quarantineStatus, "released");
+  state = registry.addDealRoomDocumentVersion(state, v1, writeContext(2));
+  const unverifiedScan = registry.createMalwareScanEvidence({ organizationId, contentSha256: registry.dealRoomSha256("unsafe"), engineId: "scanner-a", engineVersion: "4.2", definitionsVersion: "2026-08-15.1", result: "clean", scannedAt: t0, evidenceRef: "scan-ref:unverified" });
+  const quarantined = registry.createDealRoomDocumentVersion({ organizationId, roomId: room.id, dealId: room.dealId, whiteRabbitPropertyId: propertyId, documentId: "doc-unverified", versionNumber: 1, logicalName: "Unverified upload", fileName: "upload.pdf", mediaType: "application/pdf", byteLength: 6, contentSha256: unverifiedScan.contentSha256, objectRef: "object-ref:unverified", classification: "internal", uploadedByUserId: "user-a", uploadedAt: t0, malwareScan: unverifiedScan });
+  assert.equal(quarantined.quarantineStatus, "quarantined", "unverified clean claims must not release a document");
+  state = registry.addDealRoomDocumentVersion(state, quarantined, writeContext(3));
+
+  const bytesV2 = Buffer.from("Lease: annual base rent is $125,000.");
+  const contentShaV2 = registry.dealRoomSha256(bytesV2);
+  const cleanScanV2 = registry.createMalwareScanEvidence({ organizationId, contentSha256: contentShaV2, engineId: "scanner-a", engineVersion: "4.2", definitionsVersion: "2026-08-15.1", result: "clean", scannedAt: "2026-08-15T14:01:00.000Z", evidenceRef: "scan-ref:v2", verificationStatus: "verified", verificationPolicyId: "scan-policy-1", scannerAttestationSha256: registry.dealRoomSha256("attestation-v2"), verifiedAt: "2026-08-15T14:01:00.000Z" });
+  const v2 = registry.createDealRoomDocumentVersion({ organizationId, roomId: room.id, dealId: room.dealId, whiteRabbitPropertyId: propertyId, documentId: v1.documentId, versionNumber: 2, logicalName: v1.logicalName, fileName: "lease-v2.pdf", mediaType: "application/pdf", byteLength: bytesV2.length, contentSha256: contentShaV2, objectRef: "object-ref:lease-v2", classification: "confidential", uploadedByUserId: "user-a", uploadedAt: "2026-08-15T14:01:00.000Z", malwareScan: cleanScanV2, supersedesVersionId: v1.id });
+  state = registry.addDealRoomDocumentVersion(state, v2, writeContext(4, "2026-08-15T14:01:00.000Z"));
+  assert.throws(() => registry.addDealRoomDocumentVersion(state, { ...v2, id: "bad-v3", versionSha256: undefined, versionNumber: 4, supersedesVersionId: v2.id }, writeContext(5)), (error) => error.code === "WR_DOCUMENT_VERSION_CHAIN_INVALID");
+  assert.throws(() => registry.createDealRoomState({ ...state, documentVersions: [{ ...v2, contentSha256: registry.dealRoomSha256("tampered") }] }), (error) => ["WR_MALWARE_SCAN_CONTENT_MISMATCH", "WR_DOCUMENT_VERSION_INTEGRITY_FAILURE"].includes(error.code));
+
+  const token = "a-secure-share-token-with-at-least-32-characters";
+  const share = registry.createExpiringDealRoomShare({ organizationId, roomId: room.id, documentVersionIds: [v2.id], recipientId: "buyer@example.com", recipientType: "email", clearance: "confidential", maxDownloads: 1, createdByUserId: "user-a", createdAt: "2026-08-15T14:02:00.000Z", expiresAt: "2026-08-15T15:02:00.000Z" }, { token, maxShareSeconds: 7200 });
+  assert.equal(Object.prototype.hasOwnProperty.call(share, "token"), false, "plaintext share tokens must never enter durable state");
+  state = registry.addDealRoomShare(state, share, writeContext(5, "2026-08-15T14:02:00.000Z", ["deal-room:share"]));
+  let access = registry.evaluateSharedDocumentAccess(state, { organizationId, shareId: share.id, documentVersionId: v2.id, recipientId: "buyer@example.com", token: "wrong-token", occurredAt: "2026-08-15T14:03:00.000Z" });
+  assert.equal(access.allowed, false); assert.equal(access.reasonCode, "token-invalid"); assert.equal(access.objectRef, "");
+  access = registry.evaluateSharedDocumentAccess(access.state, { organizationId, shareId: share.id, documentVersionId: v2.id, recipientId: "buyer@example.com", token, occurredAt: "2026-08-15T14:04:00.000Z" });
+  assert.equal(access.allowed, true); assert.equal(access.objectRef, "object-ref:lease-v2");
+  access = registry.evaluateSharedDocumentAccess(access.state, { organizationId, shareId: share.id, documentVersionId: v2.id, recipientId: "buyer@example.com", token, occurredAt: "2026-08-15T14:05:00.000Z" });
+  assert.equal(access.reasonCode, "download-limit-reached");
+  access = registry.evaluateSharedDocumentAccess(access.state, { organizationId, shareId: share.id, documentVersionId: v2.id, recipientId: "buyer@example.com", token, occurredAt: "2026-08-15T15:02:00.000Z" });
+  assert.equal(access.reasonCode, "share-expired");
+  let revokedState = registry.revokeDealRoomShare(access.state, share.id, { organizationId, actorUserId: "user-a", grants: ["deal-room:share"], expectedStateRevision: access.state.revision, occurredAt: "2026-08-15T15:03:00.000Z", reason: "Diligence ended" });
+  access = registry.evaluateSharedDocumentAccess(revokedState, { organizationId, shareId: share.id, documentVersionId: v2.id, recipientId: "buyer@example.com", token, occurredAt: "2026-08-15T15:04:00.000Z" });
+  assert.equal(access.reasonCode, "share-revoked");
+  assert.equal(access.state.accessLog.length, 5, "allowed and denied access must both be auditable");
+  assert.throws(() => registry.evaluateSharedDocumentAccess(access.state, { organizationId: "org-b", shareId: share.id, documentVersionId: v2.id, recipientId: "buyer@example.com", token, occurredAt: t0 }), (error) => error.code === "WR_TENANT_ISOLATION_VIOLATION");
+
+  state = access.state;
+  const hold = registry.createLegalHold({ organizationId, roomId: room.id, documentId: v2.documentId, matterId: "matter-2026-17", reason: "Pending litigation", issuedByUserId: "user-a", issuedAt: "2026-08-15T15:05:00.000Z" });
+  state = registry.addLegalHold(state, hold, writeContext(state.revision, "2026-08-15T15:05:00.000Z", ["deal-room:legal-hold"]));
+  assert.throws(() => registry.requestDocumentDeletion(state, v2.documentId, { ...writeContext(state.revision, "2026-08-15T15:06:00.000Z"), reason: "Cleanup" }), (error) => error.code === "WR_LEGAL_HOLD_DELETION_BLOCKED");
+  state = registry.releaseLegalHold(state, hold.id, { ...writeContext(state.revision, "2026-08-15T15:07:00.000Z", ["deal-room:legal-hold"]), reason: "Matter closed" });
+  state = registry.requestDocumentDeletion(state, v2.documentId, { ...writeContext(state.revision, "2026-08-15T15:08:00.000Z"), reason: "Retention schedule" });
+  assert.equal(state.deletionRequests[0].status, "pending-purge");
+  assert.throws(() => registry.createDealRoomState({ ...state, deletionRequests: [{ ...state.deletionRequests[0], status: "purged" }] }), (error) => error.code === "WR_DELETION_REQUEST_INTEGRITY_FAILURE");
+
+  const excerpt = "$125,000";
+  const pageText = `${"X".repeat(34)}${excerpt} lease consideration`;
+  const citation = extraction.createDocumentCitation({ organizationId, documentVersionId: v2.id, documentVersionSha256: v2.versionSha256, pageNumber: 7, pageTextSha256: registry.dealRoomSha256(pageText), startOffset: 34, endOffset: 34 + excerpt.length, boundingBox: [0.1, 0.2, 0.3, 0.25], excerpt });
+  const citationVerification = extraction.verifyDocumentCitation(citation, { documentVersion: v2, pageText, verifierId: "page-anchor-verifier", verifiedAt: "2026-08-15T15:09:00.000Z" });
+  assert.equal(citationVerification.valid, true);
+  assert.equal(extraction.verifyDocumentCitation(citation, { documentVersion: v2, pageText: `${pageText}tampered`, verifierId: "page-anchor-verifier", verifiedAt: "2026-08-15T15:09:00.000Z" }).valid, false);
+  const claim = extraction.createDocumentEvidenceClaim({ organizationId, factPath: "underwriting.grossPotentialRentAnnual", value: 125000, valueType: "currency", status: "observed", confidence: 0.94, citations: [citation] });
+  const unknownClaim = extraction.createDocumentEvidenceClaim({ organizationId, factPath: "property.renewalProbability", status: "unknown", unknownReason: "The lease does not state renewal probability" });
+  const run = extraction.createDocumentExtractionRun({ organizationId, roomId: room.id, dealId: room.dealId, whiteRabbitPropertyId: propertyId, documentVersionId: v2.id, documentVersionSha256: v2.versionSha256, contentSha256: v2.contentSha256, extractorType: "model", extractorId: "extractor-service", modelId: "document-intelligence", modelVersion: "2026-08-15", promptSha256: registry.dealRoomSha256("prompt-v1"), claims: [claim, unknownClaim], createdAt: "2026-08-15T14:10:00.000Z" });
+  assert.equal(run.status, "review-required");
+  assert.equal(run.claims.find((item) => item.id === unknownClaim.id).value, null, "missing evidence must remain unknown");
+  assert.throws(() => extraction.createDocumentExtractionReview(run, { organizationId, reviewerUserId: "extractor-service", reviewerRole: "analyst", decision: "approved", claimDecisions: [], reviewedAt: t0 }), (error) => error.code === "WR_EXTRACTION_REVIEW_SEPARATION_REQUIRED");
+  const review = extraction.createDocumentExtractionReview(run, { organizationId, reviewerUserId: "reviewer-a", reviewerRole: "senior-analyst", decision: "approved", claimDecisions: [{ claimId: claim.id, claimSha256: claim.claimSha256, decision: "accepted", rationale: "Citation and calculation verified" }, { claimId: unknownClaim.id, claimSha256: unknownClaim.claimSha256, decision: "rejected", rationale: "Unknown remains excluded" }], reviewedAt: "2026-08-15T14:11:00.000Z" });
+  assert.throws(() => extraction.createReviewedFactPromotion({ organizationId, run, review, documentVersion: v2, latestDocumentVersionId: v2.id, claimId: claim.id, claimSha256: claim.claimSha256, promotedByUserId: "reviewer-a", promotedAt: "2026-08-15T15:12:00.000Z" }), (error) => error.code === "WR_CITATION_VERIFICATION_REQUIRED");
+  const promotion = extraction.createReviewedFactPromotion({ organizationId, run, review, documentVersion: v2, latestDocumentVersionId: v2.id, claimId: claim.id, claimSha256: claim.claimSha256, citationVerifications: [citationVerification], promotedByUserId: "reviewer-a", promotedAt: "2026-08-15T15:12:00.000Z", targetExpectedRevision: 8 });
+  assert.equal(promotion.status, "proposed-not-applied", "document extraction must not silently mutate property or underwriting state");
+  assert.equal(promotion.proposedValue, 125000);
+  assert.deepEqual(promotion.citationSha256s, [citation.citationSha256]);
+  assert.throws(() => extraction.createReviewedFactPromotion({ organizationId, run, review, documentVersion: v1, latestDocumentVersionId: v2.id, claimId: claim.id, claimSha256: claim.claimSha256, promotedByUserId: "reviewer-a", promotedAt: t0 }), (error) => error.code === "WR_DOCUMENT_EXTRACTION_SOURCE_CHANGED");
+  assert.throws(() => extraction.createReviewedFactPromotion({ organizationId, run, review, documentVersion: v2, latestDocumentVersionId: v2.id, claimId: unknownClaim.id, claimSha256: unknownClaim.claimSha256, promotedByUserId: "reviewer-a", promotedAt: t0 }), (error) => error.code === "WR_HUMAN_REVIEW_REQUIRED");
+
+  const conflictClaim = extraction.createDocumentEvidenceClaim({ organizationId, factPath: claim.factPath, value: 130000, valueType: "currency", status: "conflicting", confidence: 0.8, citations: [citation] });
+  const conflictRun = extraction.createDocumentExtractionRun({ ...run, id: "run-conflict", runSha256: undefined, claims: [claim, conflictClaim] });
+  assert.equal(conflictRun.conflicts.length, 1);
+  assert.throws(() => extraction.createDocumentExtractionReview(conflictRun, { organizationId, reviewerUserId: "reviewer-a", reviewerRole: "senior-analyst", decision: "approved", claimDecisions: [{ claimId: claim.id, claimSha256: claim.claimSha256, decision: "accepted", rationale: "First" }, { claimId: conflictClaim.id, claimSha256: conflictClaim.claimSha256, decision: "rejected", rationale: "Second" }], reviewedAt: t0 }), (error) => error.code === "WR_UNRESOLVED_DOCUMENT_CONFLICT");
+
+  let evidenceState = evidenceRegistry.createDocumentEvidenceState({ organizationId, updatedAt: "2026-08-15T15:09:00.000Z" });
+  evidenceState = evidenceRegistry.addDocumentExtractionRun(evidenceState, run, { organizationId, actorUserId: "extractor-service", grants: ["document-evidence:write"], expectedStateRevision: 1, occurredAt: "2026-08-15T15:10:00.000Z" });
+  assert.throws(() => evidenceRegistry.addDocumentCitationVerification(evidenceState, citationVerification, { organizationId, actorUserId: "someone-else", grants: ["document-evidence:verify"], expectedStateRevision: 2, occurredAt: "2026-08-15T15:11:00.000Z" }), (error) => error.code === "WR_ACTOR_IMPERSONATION_DENIED");
+  evidenceState = evidenceRegistry.addDocumentCitationVerification(evidenceState, citationVerification, { organizationId, actorUserId: "page-anchor-verifier", grants: ["document-evidence:verify"], expectedStateRevision: 2, occurredAt: "2026-08-15T15:11:00.000Z" });
+  evidenceState = evidenceRegistry.addDocumentExtractionReview(evidenceState, review, { organizationId, actorUserId: "reviewer-a", grants: ["document-evidence:review"], expectedStateRevision: 3, occurredAt: "2026-08-15T15:12:00.000Z" });
+  evidenceState = evidenceRegistry.addReviewedFactPromotion(evidenceState, promotion, { organizationId, actorUserId: "reviewer-a", grants: ["document-evidence:promote"], expectedStateRevision: 4, occurredAt: "2026-08-15T15:13:00.000Z" });
+  assert.equal(evidenceState.promotions.length, 1);
+  assert.throws(() => evidenceRegistry.createDocumentEvidenceState({ ...evidenceState, promotions: [{ ...promotion, proposedValue: 999999 }] }), (error) => error.code === "WR_FACT_PROMOTION_INTEGRITY_FAILURE");
+
+  const tempDir = fs.mkdtempSync(path.join(os.tmpdir(), "white-rabbit-deal-room-"));
+  const dbPath = path.join(tempDir, "deal-room.sqlite");
+  const persistAt = "2026-08-15T16:00:00.000Z";
+  const authContext = { organizationId, actorUserId: "user-a", subjectUserId: "user-a", sessionId: "session-a", requestId: "persist-deal-room", grants: ["persistence:read", "persistence:write"], issuedAt: "2026-08-15T15:30:00.000Z", expiresAt: "2026-08-15T17:00:00.000Z" };
+  let repository = new SqlitePlatformRepository({ filename: dbPath, clock: () => persistAt });
+  const receipt = persistence.persistDealRoomState(repository, authContext, state, { expectedTenantRevision: 0, expectedRecordRevision: 0, idempotencyKey: "deal-room-state-1", occurredAt: persistAt, validation: { now: persistAt } });
+  assert.equal(receipt.tenantRevision, 1);
+  const evidenceReceipt = persistence.persistDocumentEvidenceState(repository, authContext, evidenceState, { expectedTenantRevision: 1, expectedRecordRevision: 0, idempotencyKey: "document-evidence-state-1", occurredAt: persistAt, validation: { now: persistAt } });
+  assert.equal(evidenceReceipt.tenantRevision, 2);
+  repository.close();
+  repository = new SqlitePlatformRepository({ filename: dbPath, clock: () => persistAt });
+  const restored = persistence.loadDealRoomState(repository, authContext, { validation: { now: persistAt } });
+  assert.equal(restored.documentVersions.length, 3);
+  assert.equal(restored.accessLog.length, 5);
+  const restoredEvidence = persistence.loadDocumentEvidenceState(repository, authContext, { validation: { now: persistAt } });
+  assert.equal(restoredEvidence.extractionRuns.length, 1); assert.equal(restoredEvidence.promotions.length, 1);
+  assert.throws(() => persistence.persistDealRoomState(repository, { ...authContext, organizationId: "org-b" }, state, { expectedTenantRevision: 0, idempotencyKey: "cross", occurredAt: persistAt, validation: { now: persistAt } }), (error) => error.code === "WR_TENANT_ISOLATION_VIOLATION");
+  repository.close();
+  for (const suffix of ["", "-wal", "-shm"]) { const target = `${dbPath}${suffix}`; if (fs.existsSync(target)) fs.rmSync(target); }
+  fs.rmdirSync(tempDir);
+
+  const schema = JSON.parse(fs.readFileSync(path.join(__dirname, "..", "data", "schemas", "deal-room.schema.json"), "utf8"));
+  assert.equal(schema.$defs.documentVersion.properties.schemaVersion.const, "wr-deal-room-document-version-v1");
+  const app = fs.readFileSync(path.join(__dirname, "..", "src", "App.tsx"), "utf8");
+  assert.equal(app.includes("dealRoomRegistry"), false); assert.equal(app.includes("documentEvidenceExtraction"), false);
+  console.log("White Rabbit deal-room governance and citation-bound document evidence tests passed.");
+  require("./committee-workspace-workflow.test.cjs");
+})().catch((error) => { console.error(error); process.exit(1); });

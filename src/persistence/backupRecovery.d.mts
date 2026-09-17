@@ -1,0 +1,14 @@
+export const ENCRYPTED_BACKUP_BUNDLE_VERSION: "wr-encrypted-backup-bundle-v1";
+export const TENANT_SNAPSHOT_VERSION: "wr-tenant-snapshot-v1";
+export const RESTORE_PLAN_VERSION: "wr-restore-plan-v1";
+export const RETENTION_POLICY_VERSION: "wr-retention-policy-v1";
+export const IMMUTABLE_AUDIT_EXPORT_VERSION: "wr-immutable-audit-export-v1";
+export const OPERATIONAL_HEALTH_VERSION: "wr-operational-health-v1";
+export function createEncryptedTenantBackup(input?: Record<string, any>): Readonly<Record<string, any>>;
+export function decryptTenantBackup(bundle: Record<string, any>, options?: Record<string, any>): Record<string, any>;
+export function planTenantRestore(input?: Record<string, any>): Readonly<Record<string, any>>;
+export function restoreEncryptedTenantBackup(input?: Record<string, any>): Record<string, any>;
+export function createRetentionPolicy(input?: Record<string, any>): Readonly<Record<string, any>>;
+export function applyRetentionPolicy(input?: Record<string, any>): Record<string, any>;
+export function createImmutableAuditExport(input?: Record<string, any>): Readonly<Record<string, any>>;
+export function buildOperationalHealthReport(input?: Record<string, any>): Readonly<Record<string, any>>;

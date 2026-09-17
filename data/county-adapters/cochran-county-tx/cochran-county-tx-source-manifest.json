@@ -1,0 +1,37 @@
+{
+  "county_id": "cochran-county-tx",
+  "county_name": "Cochran County",
+  "state": "TX",
+  "fips": "48079",
+  "cad_name": "Cochran County Appraisal District",
+  "source_discovery_status": "private-candidate-found-official-source-not-verified",
+  "retrieved_at": "2026-06-29",
+  "candidate_sources": [
+    {
+      "label": "Cochran CAD TaxNetUSA property search candidate",
+      "url": "https://www.cochrancad.com/",
+      "source_type": "private-property-search-candidate",
+      "official_status": "private-not-official"
+    }
+  ],
+  "verified_counts": {
+    "parcel_geometry_features": 0,
+    "appraisal_property_rows": 0,
+    "count_verified_at": null,
+    "status": "not-verified"
+  },
+  "join_keys": {
+    "primary_parcel_account": "unverified",
+    "secondary_gis_id": "unverified",
+    "owner_appraisal": "unverified"
+  },
+  "remaining_blockers": [
+    "official appraisal district site not verified",
+    "official parcel geometry source not verified",
+    "exact parcel count not verified",
+    "exact geometry-to-appraisal join key not verified",
+    "viewport chunks and search shards not built",
+    "QC report not built"
+  ],
+  "completion_impact": "source-discovery-started"
+}

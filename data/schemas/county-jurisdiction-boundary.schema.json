@@ -1,0 +1,13 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://whiterabbit.local/schemas/county-jurisdiction-boundary.schema.json",
+  "title": "White Rabbit County Jurisdiction Boundary Contracts",
+  "oneOf": [{ "$ref": "#/$defs/probe" }, { "$ref": "#/$defs/reconciliation" }, { "$ref": "#/$defs/policy" }, { "$ref": "#/$defs/assignment" }],
+  "$defs": {
+    "sha256": { "type": "string", "pattern": "^[a-f0-9]{64}$" },
+    "probe": { "type": "object", "required": ["schemaVersion", "countyId", "sourceId", "featureCount", "distinctNames", "capturesGeometry", "captureAuthorized", "probeSha256"], "properties": { "schemaVersion": { "const": "wr-county-boundary-source-probe-v1" }, "capturesGeometry": { "const": false }, "captureAuthorized": { "const": false }, "probeSha256": { "$ref": "#/$defs/sha256" } } },
+    "reconciliation": { "type": "object", "required": ["schemaVersion", "countyId", "guidanceNames", "serviceNames", "consistent", "status", "reconciliationSha256"], "properties": { "schemaVersion": { "const": "wr-county-etj-reconciliation-v1" }, "status": { "enum": ["reviewed", "inconsistent-needs-review"] }, "reconciliationSha256": { "$ref": "#/$defs/sha256" } } },
+    "policy": { "type": "object", "required": ["schemaVersion", "countyId", "effectiveAt", "geometryChecks", "checks", "status", "policySha256"], "properties": { "schemaVersion": { "const": "wr-county-boundary-snapshot-policy-v1" }, "status": { "enum": ["blocked", "capture-authorized"] }, "policySha256": { "$ref": "#/$defs/sha256" } } },
+    "assignment": { "type": "object", "required": ["schemaVersion", "countyId", "countyParcelId", "boundarySnapshotSha256", "effectiveAt", "candidates", "ambiguous", "zoningEligible", "etjReviewRequired", "assignmentSha256"], "properties": { "schemaVersion": { "const": "wr-county-parcel-jurisdiction-assignment-v1" }, "assignmentSha256": { "$ref": "#/$defs/sha256" } } }
+  }
+}

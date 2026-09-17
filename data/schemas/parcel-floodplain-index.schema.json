@@ -1,0 +1,112 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://white-rabbit.local/schemas/parcel-floodplain-index.schema.json",
+  "title": "White Rabbit Parcel Floodplain Index",
+  "description": "County-aware parcel floodplain summaries keyed by White Rabbit countyParcelId/accountNum. These records enrich parcel IDs and do not overwrite base parcel data.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schemaVersion",
+    "sourceCountyId",
+    "countyParcelId",
+    "accountNum",
+    "floodplainSummary",
+    "sourceLayerHits"
+  ],
+  "properties": {
+    "schemaVersion": {
+      "const": "wr-parcel-floodplain-index-v1"
+    },
+    "sourceCountyId": {
+      "type": "string"
+    },
+    "countyParcelId": {
+      "type": "string"
+    },
+    "accountNum": {
+      "type": "string"
+    },
+    "gisParcelId": {
+      "type": "string"
+    },
+    "parcelChunkId": {
+      "type": "string"
+    },
+    "floodplainSummary": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "label": {
+          "type": "string"
+        },
+        "floodZones": {
+          "type": "array",
+          "items": { "type": "string" }
+        },
+        "zoneSubtypes": {
+          "type": "array",
+          "items": { "type": "string" }
+        },
+        "sfha": {
+          "type": "array",
+          "items": { "type": "string" }
+        },
+        "baseFloodElevations": {
+          "type": "array",
+          "items": { "type": "string" }
+        },
+        "verticalDatums": {
+          "type": "array",
+          "items": { "type": "string" }
+        },
+        "depths": {
+          "type": "array",
+          "items": { "type": "string" }
+        },
+        "velocities": {
+          "type": "array",
+          "items": { "type": "string" }
+        },
+        "sourceCitations": {
+          "type": "array",
+          "items": { "type": "string" }
+        }
+      }
+    },
+    "sourceLayerIds": {
+      "type": "array",
+      "items": { "type": "string" }
+    },
+    "sourceLayerHits": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": true,
+        "required": [
+          "sourceLayerId",
+          "sourceLayerTitle",
+          "objectId"
+        ],
+        "properties": {
+          "sourceLayerId": { "type": "string" },
+          "sourceLayerTitle": { "type": "string" },
+          "objectId": { "type": ["string", "number"] },
+          "floodZone": { "type": "string" },
+          "zoneSubtype": { "type": "string" },
+          "sfha": { "type": "string" },
+          "staticBfe": { "type": "string" },
+          "verticalDatum": { "type": "string" },
+          "depth": { "type": "string" },
+          "lengthUnit": { "type": "string" },
+          "velocity": { "type": "string" },
+          "velocityUnit": { "type": "string" },
+          "sourceCitation": { "type": "string" },
+          "gfid": { "type": "string" }
+        }
+      }
+    },
+    "searchText": {
+      "type": "string"
+    }
+  }
+}

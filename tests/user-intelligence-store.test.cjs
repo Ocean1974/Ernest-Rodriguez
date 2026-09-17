@@ -1,0 +1,32 @@
+const assert = require("assert");
+const fs = require("fs");
+const path = require("path");
+
+(async () => {
+  const { createSavedSearch, createWatchlist, createUserIntelligenceState, upsertSavedSearch, upsertWatchlist, removeSavedSearch, removeWatchlist } = await import("../src/platform/userIntelligenceStore.mjs");
+  const fixed = "2026-08-13T12:00:00.000Z";
+  const search = createSavedSearch({ name: "Large sites", createdAt: fixed, countyIds: ["dallas-county-dcad", "dallas-county-dcad"], queryPlan: { rawQuery: "over 5 acres" }, alertPolicy: { enabled: true } });
+  assert.equal(search.schemaVersion, "wr-saved-search-v1");
+  assert.deepEqual(search.countyIds, ["dallas-county-dcad"]);
+  assert.equal(search.alertPolicy.enabled, true);
+  assert.equal(search.revision, 1);
+  const watchlist = createWatchlist({ name: "Acquisitions", createdAt: fixed, propertyIds: ["bad", "wrp:v1:dallas-county-dcad:A1", "wrp:v1:dallas-county-dcad:A1"] });
+  assert.deepEqual(watchlist.propertyIds, ["wrp:v1:dallas-county-dcad:A1"]);
+  let state = createUserIntelligenceState({ updatedAt: fixed });
+  state = upsertSavedSearch(state, search);
+  state = upsertWatchlist(state, watchlist);
+  assert.equal(state.schemaVersion, "wr-user-intelligence-state-v1");
+  assert.equal(state.revision, 3);
+  assert.equal(state.savedSearches.length, 1);
+  assert.equal(state.watchlists.length, 1);
+  assert.throws(() => upsertWatchlist(state, watchlist, { expectedRevision: 1 }), (error) => error.code === "WR_REVISION_CONFLICT");
+  state = removeSavedSearch(state, search.id, { expectedRevision: 3, expectedEntityRevision: 1, updatedAt: fixed });
+  assert.equal(state.savedSearches.length, 0);
+  state = removeWatchlist(state, watchlist.id, { expectedRevision: 4, expectedEntityRevision: 1, updatedAt: fixed });
+  assert.equal(state.watchlists.length, 0);
+  assert.equal(state.revision, 5);
+  const schema = JSON.parse(fs.readFileSync(path.join(__dirname, "..", "data", "schemas", "user-intelligence-state.schema.json"), "utf8"));
+  assert.equal(schema.properties.schemaVersion.const, "wr-user-intelligence-state-v1");
+  console.log("White Rabbit saved-search and watchlist contract tests passed.");
+  require("./user-intelligence-workflow.test.cjs");
+})().catch((error) => { console.error(error); process.exit(1); });

@@ -1,0 +1,39 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://white-rabbit.local/schemas/parcel-query-plan.schema.json",
+  "title": "White Rabbit Explainable Parcel Query Plan",
+  "type": "object",
+  "required": ["schemaVersion", "rawQuery", "filters", "keywords", "unsupported", "confidence", "explanation", "execution"],
+  "properties": {
+    "schemaVersion": { "const": "wr-parcel-query-plan-v1" },
+    "rawQuery": { "type": "string" },
+    "filters": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["field", "operator", "value", "unit", "evidence", "explanation"],
+        "properties": {
+          "field": { "type": "string" },
+          "operator": { "type": "string" },
+          "value": { "type": ["string", "number"] },
+          "unit": { "type": "string" },
+          "evidence": { "type": "string" },
+          "explanation": { "type": "string" }
+        }
+      }
+    },
+    "keywords": { "type": "array", "items": { "type": "string" } },
+    "unsupported": { "type": "array", "items": { "type": "string" } },
+    "confidence": { "type": "number", "minimum": 0, "maximum": 1 },
+    "explanation": { "type": "array", "items": { "type": "string" } },
+    "execution": {
+      "type": "object",
+      "required": ["requiresParcelData", "requiresPermitData", "requiresSpatialContext"],
+      "properties": {
+        "requiresParcelData": { "type": "boolean" },
+        "requiresPermitData": { "type": "boolean" },
+        "requiresSpatialContext": { "type": "boolean" }
+      }
+    }
+  }
+}

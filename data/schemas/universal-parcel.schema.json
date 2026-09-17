@@ -1,0 +1,341 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://white-rabbit.local/schemas/universal-parcel.schema.json",
+  "title": "White Rabbit Universal Parcel",
+  "description": "County-neutral parcel record contract used by viewport chunks, search hydration, parcel cards, permit joins, development signals, and future county adapters.",
+  "type": "object",
+  "additionalProperties": true,
+  "required": [
+    "schemaVersion",
+    "sourceCountyId",
+    "countyParcelId",
+    "accountNum",
+    "accountNumber",
+    "gisParcelId",
+    "address",
+    "centroid",
+    "points",
+    "liveGeometry",
+    "realGeometry",
+    "joins",
+    "sourceReferences"
+  ],
+  "properties": {
+    "schemaVersion": {
+      "type": "string",
+      "const": "wr-universal-parcel-v1"
+    },
+    "sourceCountyId": {
+      "type": "string",
+      "description": "County adapter id that produced this parcel record."
+    },
+    "whiteRabbitPropertyId": {
+      "type": "string",
+      "pattern": "^wrp:v1:[^:]+:.+$",
+      "description": "White Rabbit canonical property identifier derived deterministically from the county adapter id and its primary source parcel identifier."
+    },
+    "countyParcelId": {
+      "type": "string",
+      "description": "County-aware stable parcel id formatted as `<sourceCountyId>:<accountNum or gisParcelId>`."
+    },
+    "sourceParcelId": {
+      "type": "string",
+      "description": "Raw source parcel identifier before normalization, when different from accountNum."
+    },
+    "accountNum": {
+      "type": "string",
+      "description": "Normalized appraisal/account identifier used as the primary parcel join key."
+    },
+    "accountNumber": {
+      "type": "string",
+      "description": "Alias for accountNum retained for app compatibility."
+    },
+    "gisParcelId": {
+      "type": "string",
+      "description": "County GIS parcel identifier or account fallback when unavailable."
+    },
+    "address": {
+      "type": "string",
+      "description": "Primary situs/property address."
+    },
+    "propertyAddress": {
+      "type": "string",
+      "description": "Alias for address retained for app compatibility."
+    },
+    "city": {
+      "type": "string"
+    },
+    "propertyZip": {
+      "type": "string"
+    },
+    "propertyName": {
+      "type": "string"
+    },
+    "ownerName": {
+      "type": "string"
+    },
+    "ownerName2": {
+      "type": "string"
+    },
+    "businessName": {
+      "type": "string"
+    },
+    "ownerMailingAddress": {
+      "type": "string"
+    },
+    "ownerMailingAddress2": {
+      "type": "string"
+    },
+    "ownerCity": {
+      "type": "string"
+    },
+    "ownerState": {
+      "type": "string"
+    },
+    "ownerZip": {
+      "type": "string"
+    },
+    "ownerCountry": {
+      "type": "string"
+    },
+    "ownerPhone": {
+      "type": "string"
+    },
+    "ownerEmail": {
+      "type": "string"
+    },
+    "buildingClass": {
+      "type": "string"
+    },
+    "zoning": {
+      "type": "string"
+    },
+    "landUseCode": {
+      "type": "string"
+    },
+    "landUseDescription": {
+      "type": "string"
+    },
+    "landSection": {
+      "type": "string"
+    },
+    "landAreaSize": {
+      "type": ["string", "number"]
+    },
+    "landAreaUnit": {
+      "type": "string"
+    },
+    "landAreaSqFt": {
+      "type": ["string", "number"]
+    },
+    "landPricingMethod": {
+      "type": "string"
+    },
+    "landCostPerUnit": {
+      "type": ["string", "number"]
+    },
+    "landMarketAdjustmentPct": {
+      "type": ["string", "number"]
+    },
+    "landValuationAmount": {
+      "type": ["string", "number"]
+    },
+    "yearBuilt": {
+      "type": ["string", "number"]
+    },
+    "grossBuildingArea": {
+      "type": ["string", "number"]
+    },
+    "landValue": {
+      "type": ["string", "number"]
+    },
+    "improvementValue": {
+      "type": ["string", "number"]
+    },
+    "totalValue": {
+      "type": ["string", "number"]
+    },
+    "cityJurisdiction": {
+      "type": "string"
+    },
+    "isdJurisdiction": {
+      "type": "string"
+    },
+    "quality": {
+      "type": "string"
+    },
+    "condition": {
+      "type": "string"
+    },
+    "blockId": {
+      "type": "string"
+    },
+    "areaLabel": {
+      "type": "string"
+    },
+    "frontage": {
+      "type": ["string", "number"]
+    },
+    "depth": {
+      "type": ["string", "number"]
+    },
+    "perimeter": {
+      "type": ["string", "number"]
+    },
+    "centroid": {
+      "$ref": "#/$defs/screenPoint"
+    },
+    "points": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/screenPoint"
+      }
+    },
+    "liveGeometry": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["center", "points"],
+      "properties": {
+        "center": {
+          "$ref": "#/$defs/lngLat"
+        },
+        "points": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/lngLat"
+          }
+        }
+      }
+    },
+    "realGeometry": {
+      "$ref": "#/$defs/geojsonFeature"
+    },
+    "dimensions": {
+      "type": "object",
+      "additionalProperties": true,
+      "properties": {
+        "dimensionId": {
+          "type": "string"
+        },
+        "frontageFt": {
+          "type": ["string", "number"]
+        },
+        "depthFt": {
+          "type": ["string", "number"]
+        },
+        "perimeterFt": {
+          "type": ["string", "number"]
+        },
+        "dimensionLabel": {
+          "type": "string"
+        },
+        "bearingLabel": {
+          "type": "string"
+        },
+        "sourceLayer": {
+          "type": "string"
+        }
+      }
+    },
+    "joins": {
+      "type": "object",
+      "additionalProperties": true,
+      "properties": {
+        "accountInfo": {
+          "type": "boolean"
+        },
+        "appraisal": {
+          "type": "boolean"
+        },
+        "land": {
+          "type": "boolean"
+        },
+        "blkid": {
+          "type": "boolean"
+        },
+        "parcelDimension": {
+          "type": "boolean"
+        }
+      }
+    },
+    "sourceReferences": {
+      "type": "object",
+      "additionalProperties": true,
+      "description": "Original dataset/table references used to produce the normalized parcel."
+    },
+    "dataLineage": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["contractVersion", "sourceCountyId", "sourceDataset", "serviceGeneratedAt", "sourceUpdatedAt", "freshnessStatus", "freshnessAgeDays", "freshnessMaxAgeDays", "freshnessReason"],
+      "properties": {
+        "contractVersion": { "const": "wr-lineage-v1" },
+        "sourceCountyId": { "type": "string" },
+        "sourceDataset": { "type": "string" },
+        "serviceGeneratedAt": { "type": "string" },
+        "sourceUpdatedAt": { "type": "string" },
+        "freshnessStatus": { "enum": ["current", "stale", "unknown"] },
+        "freshnessAgeDays": { "type": ["integer", "null"], "minimum": 0 },
+        "freshnessMaxAgeDays": { "type": "integer", "minimum": 1 },
+        "freshnessReason": { "type": "string" }
+      }
+    }
+  },
+  "$defs": {
+    "screenPoint": {
+      "type": "array",
+      "prefixItems": [
+        {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 100
+        },
+        {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 100
+        }
+      ],
+      "minItems": 2,
+      "maxItems": 2
+    },
+    "lngLat": {
+      "type": "array",
+      "prefixItems": [
+        {
+          "type": "number",
+          "minimum": -180,
+          "maximum": 180
+        },
+        {
+          "type": "number",
+          "minimum": -90,
+          "maximum": 90
+        }
+      ],
+      "minItems": 2,
+      "maxItems": 2
+    },
+    "geojsonFeature": {
+      "type": "object",
+      "required": ["type", "properties", "geometry"],
+      "properties": {
+        "type": {
+          "const": "Feature"
+        },
+        "properties": {
+          "type": "object"
+        },
+        "geometry": {
+          "type": "object",
+          "required": ["type", "coordinates"],
+          "properties": {
+            "type": {
+              "type": "string"
+            },
+            "coordinates": {}
+          }
+        }
+      }
+    }
+  }
+}

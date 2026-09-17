@@ -1,0 +1,17 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://white-rabbit.local/schemas/alert-envelope.schema.json",
+  "title": "White Rabbit Alert Envelope",
+  "type": "object",
+  "required": ["schemaVersion", "id", "subscriptionId", "subscriptionType", "createdAt", "materialEventCount", "events", "deliveryStatus"],
+  "properties": {
+    "schemaVersion": { "const": "wr-alert-envelope-v1" },
+    "id": { "type": "string" },
+    "subscriptionId": { "type": "string" },
+    "subscriptionType": { "enum": ["watchlist", "saved-search"] },
+    "createdAt": { "type": "string" },
+    "materialEventCount": { "type": "integer", "minimum": 0 },
+    "events": { "type": "array", "items": { "type": "object" } },
+    "deliveryStatus": { "enum": ["pending", "sent", "failed", "suppressed"] }
+  }
+}

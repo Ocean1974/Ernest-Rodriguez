@@ -1,0 +1,22 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://whiterabbit.local/schemas/county-source-capture.schema.json",
+  "title": "White Rabbit County Source Capture Contracts",
+  "oneOf": [
+    { "$ref": "#/$defs/policy" },
+    { "$ref": "#/$defs/page" },
+    { "$ref": "#/$defs/checkpoint" },
+    { "$ref": "#/$defs/identityAudit" },
+    { "$ref": "#/$defs/manifest" },
+    { "$ref": "#/$defs/outputLineageAudit" }
+  ],
+  "$defs": {
+    "sha256": { "type": "string", "pattern": "^[a-f0-9]{64}$" },
+    "policy": { "type": "object", "required": ["schemaVersion", "organizationId", "countyId", "countyFips", "datasetId", "sourceUrl", "expectedFeatureCount", "pageSize", "primarySourceKey", "query", "querySha256", "license", "policySha256"], "properties": { "schemaVersion": { "const": "wr-county-source-capture-policy-v1" }, "policySha256": { "$ref": "#/$defs/sha256" } } },
+    "page": { "type": "object", "required": ["schemaVersion", "policySha256", "countyId", "datasetId", "sourceRevision", "pageIndex", "offset", "recordCount", "bodySha256", "blobRef", "pageSha256"], "properties": { "schemaVersion": { "const": "wr-county-source-capture-page-v1" }, "bodySha256": { "$ref": "#/$defs/sha256" }, "pageSha256": { "$ref": "#/$defs/sha256" } } },
+    "checkpoint": { "type": "object", "required": ["schemaVersion", "organizationId", "countyId", "datasetId", "policySha256", "revision", "nextPageIndex", "nextOffset", "acceptedRecordCount", "checkpointSha256"], "properties": { "schemaVersion": { "const": "wr-county-source-capture-checkpoint-v1" }, "checkpointSha256": { "$ref": "#/$defs/sha256" } } },
+    "identityAudit": { "type": "object", "required": ["schemaVersion", "organizationId", "countyId", "datasetId", "recordCount", "uniqueSourceIdCount", "duplicateSourceIdCount", "auditSha256"], "properties": { "schemaVersion": { "const": "wr-county-source-identity-audit-v1" }, "auditSha256": { "$ref": "#/$defs/sha256" } } },
+    "manifest": { "type": "object", "required": ["schemaVersion", "organizationId", "countyId", "datasetId", "pageCount", "capturedRecordCount", "sourceContentSha256", "checks", "status", "manifestSha256"], "properties": { "schemaVersion": { "const": "wr-county-source-capture-manifest-v1" }, "status": { "enum": ["certified", "rejected"] }, "manifestSha256": { "$ref": "#/$defs/sha256" } } },
+    "outputLineageAudit": { "type": "object", "required": ["schemaVersion", "organizationId", "countyId", "expectedOutputCount", "observedOutputCount", "outputLineageCertified", "sourceToOutputCertified", "auditSha256"], "properties": { "schemaVersion": { "const": "wr-county-output-lineage-audit-v1" }, "outputLineageCertified": { "type": "boolean" }, "sourceToOutputCertified": { "type": "boolean" }, "auditSha256": { "$ref": "#/$defs/sha256" } } }
+  }
+}

@@ -1,0 +1,439 @@
+{
+  "version": "wr-tx-batch-003-official-portals-v1",
+  "retrievedAt": "2026-07-03",
+  "scope": "Texas verification queue batch 3, initial official portal discovery",
+  "rule": "Official portals are evidence for source discovery only. They do not make a county core-complete until exact counts, join keys, bulk/source provenance, viewport chunks, search shards, and QC are verified.",
+  "counties": [
+    {
+      "countyId": "cottle-county-tx",
+      "countyName": "Cottle County",
+      "state": "TX",
+      "officialPortals": [
+        {
+          "label": "Cottle County Appraisal District property search portal",
+          "url": "https://cottlecad.org/",
+          "sourceType": "property-search-and-appraisal-portal",
+          "verificationStatus": "portal-discovered-source-files-needed",
+          "notes": "Existing adapter shell identifies a Cottle County Appraisal District property search portal and says records/data/reports files are not inspected. Treat as discovery evidence only until official ownership, parcel ID fields, exact counts, source files, and join keys are verified."
+        }
+      ],
+      "completionImpact": "source-discovery-started",
+      "remainingBlockers": ["records/data/reports files not inspected", "parcel ID field names not verified", "exact parcel count not verified", "exact geometry-to-appraisal join key not verified", "viewport/search outputs not built"]
+    },
+    {
+      "countyId": "crane-county-tx",
+      "countyName": "Crane County",
+      "state": "TX",
+      "officialPortals": [
+        {
+          "label": "Crane County Appraisal District property search portal",
+          "url": "https://cranecad.org/",
+          "sourceType": "property-search-and-appraisal-portal",
+          "verificationStatus": "portal-discovered-source-files-needed",
+          "notes": "Existing adapter shell identifies a Crane County Appraisal District property search portal and says records/data/reports files are not inspected. Treat as discovery evidence only until official ownership, parcel ID fields, exact counts, source files, and join keys are verified."
+        }
+      ],
+      "completionImpact": "source-discovery-started",
+      "remainingBlockers": ["records/data/reports files not inspected", "parcel ID field names not verified", "exact parcel count not verified", "exact geometry-to-appraisal join key not verified", "viewport/search outputs not built"]
+    },
+    {
+      "countyId": "crockett-county-tx",
+      "countyName": "Crockett County",
+      "state": "TX",
+      "officialPortals": [
+        {
+          "label": "Crockett County Appraisal District official-site candidate",
+          "url": "https://crockettcad.org/",
+          "sourceType": "appraisal-district-site-candidate",
+          "verificationStatus": "official-site-candidate-needs-verification",
+          "notes": "Adapter shell still marks official county parcel/GIS source not verified. Keep this as a candidate until the appraisal district site, property search, map/GIS source, parcel ID fields, counts, and join keys are inspected."
+        }
+      ],
+      "completionImpact": "source-discovery-started",
+      "remainingBlockers": ["official appraisal district site not verified", "property search not inspected", "parcel ID field names not verified", "exact parcel count not verified", "exact geometry-to-appraisal join key not verified", "viewport/search outputs not built"]
+    },
+    {
+      "countyId": "crosby-county-tx",
+      "countyName": "Crosby County",
+      "state": "TX",
+      "officialPortals": [
+        {
+          "label": "Crosby County Appraisal District official-site candidate",
+          "url": "https://crosbycad.org/",
+          "sourceType": "appraisal-district-site-candidate",
+          "verificationStatus": "official-site-candidate-needs-verification",
+          "notes": "Adapter shell still marks official county parcel/GIS source not verified. Keep this as a candidate until the appraisal district site, property search, map/GIS source, parcel ID fields, counts, and join keys are inspected."
+        }
+      ],
+      "completionImpact": "source-discovery-started",
+      "remainingBlockers": ["official appraisal district site not verified", "property search not inspected", "parcel ID field names not verified", "exact parcel count not verified", "exact geometry-to-appraisal join key not verified", "viewport/search outputs not built"]
+    },
+    {
+      "countyId": "culberson-county-tx",
+      "countyName": "Culberson County",
+      "state": "TX",
+      "officialPortals": [
+        {
+          "label": "Culberson County Appraisal District official-site candidate",
+          "url": "https://culbersoncad.org/",
+          "sourceType": "appraisal-district-site-candidate",
+          "verificationStatus": "official-site-candidate-needs-verification",
+          "notes": "Adapter shell still marks official county parcel/GIS source not verified. Keep this as a candidate until the appraisal district site, property search, map/GIS source, parcel ID fields, counts, and join keys are inspected."
+        }
+      ],
+      "completionImpact": "source-discovery-started",
+      "remainingBlockers": ["official appraisal district site not verified", "property search not inspected", "parcel ID field names not verified", "exact parcel count not verified", "exact geometry-to-appraisal join key not verified", "viewport/search outputs not built"]
+    },
+    {
+      "countyId": "dallam-county-tx",
+      "countyName": "Dallam County",
+      "state": "TX",
+      "officialPortals": [
+        {
+          "label": "Dallam County Appraisal District official-site candidate",
+          "url": "https://dallamcad.org/",
+          "sourceType": "appraisal-district-site-candidate",
+          "verificationStatus": "official-site-candidate-needs-verification",
+          "notes": "Adapter shell still marks official county parcel/GIS source not verified. Keep this as a candidate until the appraisal district site, property search, map/GIS source, parcel ID fields, counts, and join keys are inspected."
+        }
+      ],
+      "completionImpact": "source-discovery-started",
+      "remainingBlockers": ["official appraisal district site not verified", "property search not inspected", "parcel ID field names not verified", "exact parcel count not verified", "exact geometry-to-appraisal join key not verified", "viewport/search outputs not built"]
+    },
+    {
+      "countyId": "dawson-county-tx",
+      "countyName": "Dawson County",
+      "state": "TX",
+      "officialPortals": [
+        {
+          "label": "Dawson County Appraisal District official-site candidate",
+          "url": "https://dawsoncad.org/",
+          "sourceType": "appraisal-district-site-candidate",
+          "verificationStatus": "official-site-candidate-needs-verification",
+          "notes": "Adapter shell still marks official county parcel/GIS source not verified. Keep this as a candidate until the appraisal district site, property search, map/GIS source, parcel ID fields, counts, and join keys are inspected."
+        }
+      ],
+      "completionImpact": "source-discovery-started",
+      "remainingBlockers": ["official appraisal district site not verified", "property search not inspected", "parcel ID field names not verified", "exact parcel count not verified", "exact geometry-to-appraisal join key not verified", "viewport/search outputs not built"]
+    },
+    {
+      "countyId": "deaf-smith-county-tx",
+      "countyName": "Deaf Smith County",
+      "state": "TX",
+      "officialPortals": [
+        {
+          "label": "Deaf Smith County Appraisal District official-site candidate",
+          "url": "https://deafsmithcad.org/",
+          "sourceType": "appraisal-district-site-candidate",
+          "verificationStatus": "official-site-candidate-needs-verification",
+          "notes": "Adapter shell still marks official county parcel/GIS source not verified. Keep this as a candidate until the appraisal district site, property search, map/GIS source, parcel ID fields, counts, and join keys are inspected."
+        }
+      ],
+      "completionImpact": "source-discovery-started",
+      "remainingBlockers": ["official appraisal district site not verified", "property search not inspected", "parcel ID field names not verified", "exact parcel count not verified", "exact geometry-to-appraisal join key not verified", "viewport/search outputs not built"]
+    },
+    {
+      "countyId": "delta-county-tx",
+      "countyName": "Delta County",
+      "state": "TX",
+      "officialPortals": [
+        {
+          "label": "Delta County Appraisal District official-site candidate",
+          "url": "https://deltacad.org/",
+          "sourceType": "appraisal-district-site-candidate",
+          "verificationStatus": "official-site-candidate-needs-verification",
+          "notes": "Adapter shell still marks official county parcel/GIS source not verified. Keep this as a candidate until the appraisal district site, property search, map/GIS source, parcel ID fields, counts, and join keys are inspected."
+        }
+      ],
+      "completionImpact": "source-discovery-started",
+      "remainingBlockers": ["official appraisal district site not verified", "property search not inspected", "parcel ID field names not verified", "exact parcel count not verified", "exact geometry-to-appraisal join key not verified", "viewport/search outputs not built"]
+    },
+    {
+      "countyId": "denton-county-tx",
+      "countyName": "Denton County",
+      "state": "TX",
+      "officialPortals": [
+        {
+          "label": "Denton Central Appraisal District official-site candidate",
+          "url": "https://dentoncad.com/",
+          "sourceType": "appraisal-district-site-candidate",
+          "verificationStatus": "official-site-candidate-needs-verification",
+          "notes": "Adapter shell still marks official county parcel/GIS source not verified. Denton is a high-priority metro county, but it must remain source-needed until official property search, parcel exports/GIS, exact counts, and join keys are documented."
+        }
+      ],
+      "completionImpact": "source-discovery-started",
+      "remainingBlockers": ["official appraisal district site not verified", "property search not inspected", "parcel ID field names not verified", "exact parcel count not verified", "exact geometry-to-appraisal join key not verified", "viewport/search outputs not built"]
+    },
+    {
+      "countyId": "dewitt-county-tx",
+      "countyName": "DeWitt County",
+      "state": "TX",
+      "officialPortals": [
+        {
+          "label": "DeWitt County Appraisal District official-site candidate",
+          "url": "https://dewittcad.org/",
+          "sourceType": "appraisal-district-site-candidate",
+          "verificationStatus": "official-site-candidate-needs-verification",
+          "notes": "Adapter shell still marks official county parcel/GIS source not verified. Keep this as a candidate until the appraisal district site, property search, map/GIS source, parcel ID fields, counts, and join keys are inspected."
+        }
+      ],
+      "completionImpact": "source-discovery-started",
+      "remainingBlockers": ["official appraisal district site not verified", "property search not inspected", "parcel ID field names not verified", "exact parcel count not verified", "exact geometry-to-appraisal join key not verified", "viewport/search outputs not built"]
+    },
+    {
+      "countyId": "dickens-county-tx",
+      "countyName": "Dickens County",
+      "state": "TX",
+      "officialPortals": [
+        {
+          "label": "Dickens County Appraisal District official-site candidate",
+          "url": "https://dickenscad.org/",
+          "sourceType": "appraisal-district-site-candidate",
+          "verificationStatus": "official-site-candidate-needs-verification",
+          "notes": "Adapter shell still marks official county parcel/GIS source not verified. Keep this as a candidate until the appraisal district site, property search, map/GIS source, parcel ID fields, counts, and join keys are inspected."
+        }
+      ],
+      "completionImpact": "source-discovery-started",
+      "remainingBlockers": ["official appraisal district site not verified", "property search not inspected", "parcel ID field names not verified", "exact parcel count not verified", "exact geometry-to-appraisal join key not verified", "viewport/search outputs not built"]
+    },
+    {
+      "countyId": "dimmit-county-tx",
+      "countyName": "Dimmit County",
+      "state": "TX",
+      "officialPortals": [
+        {
+          "label": "Dimmit County Appraisal District official-site candidate",
+          "url": "https://dimmitcad.org/",
+          "sourceType": "appraisal-district-site-candidate",
+          "verificationStatus": "official-site-candidate-needs-verification",
+          "notes": "Adapter shell still marks official county parcel/GIS source not verified. Keep this as a candidate until the appraisal district site, property search, map/GIS source, parcel ID fields, counts, and join keys are inspected."
+        }
+      ],
+      "completionImpact": "source-discovery-started",
+      "remainingBlockers": ["official appraisal district site not verified", "property search not inspected", "parcel ID field names not verified", "exact parcel count not verified", "exact geometry-to-appraisal join key not verified", "viewport/search outputs not built"]
+    },
+    {
+      "countyId": "donley-county-tx",
+      "countyName": "Donley County",
+      "state": "TX",
+      "officialPortals": [
+        {
+          "label": "Donley County Appraisal District official-site candidate",
+          "url": "https://donleycad.org/",
+          "sourceType": "appraisal-district-site-candidate",
+          "verificationStatus": "official-site-candidate-needs-verification",
+          "notes": "Adapter shell still marks official county parcel/GIS source not verified. Keep this as a candidate until the appraisal district site, property search, map/GIS source, parcel ID fields, counts, and join keys are inspected."
+        }
+      ],
+      "completionImpact": "source-discovery-started",
+      "remainingBlockers": ["official appraisal district site not verified", "property search not inspected", "parcel ID field names not verified", "exact parcel count not verified", "exact geometry-to-appraisal join key not verified", "viewport/search outputs not built"]
+    },
+    {
+      "countyId": "duval-county-tx",
+      "countyName": "Duval County",
+      "state": "TX",
+      "officialPortals": [
+        {
+          "label": "Duval County Appraisal District official-site candidate",
+          "url": "https://duvalcad.org/",
+          "sourceType": "appraisal-district-site-candidate",
+          "verificationStatus": "official-site-candidate-needs-verification",
+          "notes": "Adapter shell still marks official county parcel/GIS source not verified. Keep this as a candidate until the appraisal district site, property search, map/GIS source, parcel ID fields, counts, and join keys are inspected."
+        }
+      ],
+      "completionImpact": "source-discovery-started",
+      "remainingBlockers": ["official appraisal district site not verified", "property search not inspected", "parcel ID field names not verified", "exact parcel count not verified", "exact geometry-to-appraisal join key not verified", "viewport/search outputs not built"]
+    },
+    {
+      "countyId": "eastland-county-tx",
+      "countyName": "Eastland County",
+      "state": "TX",
+      "officialPortals": [
+        {
+          "label": "Eastland County Appraisal District official-site candidate",
+          "url": "https://eastlandcad.org/",
+          "sourceType": "appraisal-district-site-candidate",
+          "verificationStatus": "official-site-candidate-needs-verification",
+          "notes": "Adapter shell still marks official county parcel/GIS source not verified. Keep this as a candidate until the appraisal district site, property search, map/GIS source, parcel ID fields, counts, and join keys are inspected."
+        }
+      ],
+      "completionImpact": "source-discovery-started",
+      "remainingBlockers": ["official appraisal district site not verified", "property search not inspected", "parcel ID field names not verified", "exact parcel count not verified", "exact geometry-to-appraisal join key not verified", "viewport/search outputs not built"]
+    },
+    {
+      "countyId": "ector-county-tx",
+      "countyName": "Ector County",
+      "state": "TX",
+      "officialPortals": [
+        {
+          "label": "Ector County Appraisal District official site",
+          "url": "https://ectorcad.org/",
+          "sourceType": "appraisal-district-site",
+          "verificationStatus": "official-site-verified",
+          "notes": "Official Ector CAD site states the appraisal district is responsible for valuing all real and business personal property in Ector County. It exposes Property Records Search, Downloads, annual reports, tax information, and forms."
+        },
+        {
+          "label": "Ector CAD property records search",
+          "url": "https://ectorcad.org/",
+          "sourceType": "property-records-search",
+          "verificationStatus": "linked-from-official-site",
+          "notes": "Official site describes Property Records Search as the route where owners find property and account/tax records. Search payload schema and account/parcel key fields still need inspection."
+        },
+        {
+          "label": "Ector CAD downloads",
+          "url": "https://ectorcad.org/",
+          "sourceType": "downloads-and-reports",
+          "verificationStatus": "linked-from-official-site",
+          "notes": "Official navigation includes Downloads and annual reports. Candidate export files must be inspected for schemas, parcel/account keys, exact counts, and source terms."
+        }
+      ],
+      "completionImpact": "source-discovery-started",
+      "remainingBlockers": ["downloads/report files not inspected", "property records search payload schema not inspected", "parcel/account ID field names not verified", "exact parcel count not verified", "exact geometry-to-appraisal join key not verified", "viewport/search outputs not built"]
+    },
+    {
+      "countyId": "edwards-county-tx",
+      "countyName": "Edwards County",
+      "state": "TX",
+      "officialPortals": [
+        {
+          "label": "Edwards County Appraisal District official-site candidate",
+          "url": "https://edwardscad.org/",
+          "sourceType": "appraisal-district-site-candidate",
+          "verificationStatus": "official-site-candidate-needs-verification",
+          "notes": "Adapter shell still marks official county parcel/GIS source not verified. Keep this as a candidate until the appraisal district site, property search, map/GIS source, parcel ID fields, counts, and join keys are inspected."
+        }
+      ],
+      "completionImpact": "source-discovery-started",
+      "remainingBlockers": ["official appraisal district site not verified", "property search not inspected", "parcel ID field names not verified", "exact parcel count not verified", "exact geometry-to-appraisal join key not verified", "viewport/search outputs not built"]
+    },
+    {
+      "countyId": "ellis-county-tx",
+      "countyName": "Ellis County",
+      "state": "TX",
+      "officialPortals": [
+        {
+          "label": "Ellis Appraisal District official-site candidate",
+          "url": "https://elliscad.com/",
+          "sourceType": "appraisal-district-site-candidate",
+          "verificationStatus": "official-site-candidate-needs-verification",
+          "notes": "Adapter shell still marks official county parcel/GIS source not verified. Ellis is a high-priority metro-adjacent county, but it must remain source-needed until official property search, parcel exports/GIS, exact counts, and join keys are documented."
+        }
+      ],
+      "completionImpact": "source-discovery-started",
+      "remainingBlockers": ["official appraisal district site not verified", "property search not inspected", "parcel ID field names not verified", "exact parcel count not verified", "exact geometry-to-appraisal join key not verified", "viewport/search outputs not built"]
+    },
+    {
+      "countyId": "el-paso-county-tx",
+      "countyName": "El Paso County",
+      "state": "TX",
+      "officialPortals": [
+        {
+          "label": "El Paso Central Appraisal District official site",
+          "url": "https://epcad.org/",
+          "sourceType": "appraisal-district-site",
+          "verificationStatus": "official-site-verified",
+          "notes": "Official EPCAD site states it appraises real and business personal property in El Paso County and links to property search. The site says the appraisal roll can be searched by ownership, property address, or account number."
+        },
+        {
+          "label": "El Paso CAD property search",
+          "url": "https://epcad.org/",
+          "sourceType": "property-search",
+          "verificationStatus": "linked-from-official-site",
+          "notes": "Property search is linked from the official EPCAD site. Account number is a candidate parcel/account join key, but payload schema, exact counts, and geometry joins are not verified."
+        }
+      ],
+      "completionImpact": "source-discovery-started",
+      "remainingBlockers": ["adapter shell not found in local county-adapters listing", "GIS/bulk parcel source not verified", "account number candidate join key not validated against geometry", "property search payload schema not inspected", "exact parcel count not verified", "exact geometry-to-appraisal join key not verified", "viewport/search outputs not built"]
+    },
+    {
+      "countyId": "erath-county-tx",
+      "countyName": "Erath County",
+      "state": "TX",
+      "officialPortals": [
+        {
+          "label": "Erath County Appraisal District official-site candidate",
+          "url": "https://erathcad.org/",
+          "sourceType": "appraisal-district-site-candidate",
+          "verificationStatus": "official-site-candidate-needs-verification",
+          "notes": "Adapter shell still marks official county parcel/GIS source not verified. Keep this as a candidate until the appraisal district site, property search, map/GIS source, parcel ID fields, counts, and join keys are inspected."
+        }
+      ],
+      "completionImpact": "source-discovery-started",
+      "remainingBlockers": ["official appraisal district site not verified", "property search not inspected", "parcel ID field names not verified", "exact parcel count not verified", "exact geometry-to-appraisal join key not verified", "viewport/search outputs not built"]
+    },
+    {
+      "countyId": "falls-county-tx",
+      "countyName": "Falls County",
+      "state": "TX",
+      "officialPortals": [
+        {
+          "label": "Falls County Appraisal District official-site candidate",
+          "url": "https://fallscad.org/",
+          "sourceType": "appraisal-district-site-candidate",
+          "verificationStatus": "official-site-candidate-needs-verification",
+          "notes": "Adapter shell still marks official county parcel/GIS source not verified. Keep this as a candidate until the appraisal district site, property search, map/GIS source, parcel ID fields, counts, and join keys are inspected."
+        }
+      ],
+      "completionImpact": "source-discovery-started",
+      "remainingBlockers": ["official appraisal district site not verified", "property search not inspected", "parcel ID field names not verified", "exact parcel count not verified", "exact geometry-to-appraisal join key not verified", "viewport/search outputs not built"]
+    },
+    {
+      "countyId": "fannin-county-tx",
+      "countyName": "Fannin County",
+      "state": "TX",
+      "officialPortals": [
+        {
+          "label": "Fannin County Appraisal District official-site candidate",
+          "url": "https://fannincad.org/",
+          "sourceType": "appraisal-district-site-candidate",
+          "verificationStatus": "official-site-candidate-needs-verification",
+          "notes": "Adapter shell still marks official county parcel/GIS source not verified. Keep this as a candidate until the appraisal district site, property search, map/GIS source, parcel ID fields, counts, and join keys are inspected."
+        }
+      ],
+      "completionImpact": "source-discovery-started",
+      "remainingBlockers": ["official appraisal district site not verified", "property search not inspected", "parcel ID field names not verified", "exact parcel count not verified", "exact geometry-to-appraisal join key not verified", "viewport/search outputs not built"]
+    },
+    {
+      "countyId": "fayette-county-tx",
+      "countyName": "Fayette County",
+      "state": "TX",
+      "officialPortals": [
+        {
+          "label": "Fayette County Appraisal District official-site candidate",
+          "url": "https://fayettecad.org/",
+          "sourceType": "appraisal-district-site-candidate",
+          "verificationStatus": "official-site-candidate-needs-verification",
+          "notes": "Adapter shell still marks official county parcel/GIS source not verified. Keep this as a candidate until the appraisal district site, property search, map/GIS source, parcel ID fields, counts, and join keys are inspected."
+        }
+      ],
+      "completionImpact": "source-discovery-started",
+      "remainingBlockers": ["official appraisal district site not verified", "property search not inspected", "parcel ID field names not verified", "exact parcel count not verified", "exact geometry-to-appraisal join key not verified", "viewport/search outputs not built"]
+    },
+    {
+      "countyId": "fisher-county-tx",
+      "countyName": "Fisher County",
+      "state": "TX",
+      "officialPortals": [
+        {
+          "label": "Fisher County Appraisal District official-site candidate",
+          "url": "https://fishercad.org/",
+          "sourceType": "appraisal-district-site-candidate",
+          "verificationStatus": "official-site-candidate-needs-verification",
+          "notes": "Adapter shell still marks official county parcel/GIS source not verified. Keep this as a candidate until the appraisal district site, property search, map/GIS source, parcel ID fields, counts, and join keys are inspected."
+        }
+      ],
+      "completionImpact": "source-discovery-started",
+      "remainingBlockers": ["official appraisal district site not verified", "property search not inspected", "parcel ID field names not verified", "exact parcel count not verified", "exact geometry-to-appraisal join key not verified", "viewport/search outputs not built"]
+    }
+  ],
+  "generatedAt": "2026-07-03T00:00:00.000Z",
+  "completionRule": "Official portals are evidence for source discovery only. They do not make a county core-complete until exact counts, join keys, bulk/source provenance, viewport chunks, search shards, and QC are verified.",
+  "summary": {
+    "countyCount": 25,
+    "portalDiscoveredSourceFilesNeeded": 2,
+    "officialSiteCandidateNeedsVerification": 21,
+    "officialSiteVerified": 2,
+    "privateNotOfficial": 0,
+    "promotedToCoreComplete": 0
+  }
+}

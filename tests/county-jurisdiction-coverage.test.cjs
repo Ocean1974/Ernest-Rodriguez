@@ -1,0 +1,33 @@
+const assert = require("assert");
+const fs = require("fs");
+const path = require("path");
+
+(async () => {
+  const coverage = await import("../src/operations/countyJurisdictionCoverage.mjs");
+  const universe = coverage.createCountyJurisdictionUniverse({ countyId: "test-county", countyFips: "48001", sourceUrl: "https://official.example/jurisdictions", sourceObservedAt: "2026-08-23", jurisdictions: [{ id: "city-a", name: "City A", type: "incorporated-area" }, { id: "unincorporated", name: "Unincorporated", type: "unincorporated" }] });
+  const discovery = coverage.createCountyLayerSourceEvidence({ sourceId: "city-a-zoning", publisher: "City A", officialPageUrl: "https://official.example/zoning", machineEndpointUrl: "https://official.example/zoning/0", layer: "zoning", coverageScope: "municipality", jurisdictionIds: ["city-a"], sourceSpatialReference: "EPSG:4326", joinMethods: ["point-in-polygon"], metadataObservedAt: "2026-08-23", rights: [], rightsEvidenceRef: "" });
+  assert.equal(discovery.status, "discovery-only");
+  const blocked = coverage.createCountyLayerCoveragePlan({ universe, layer: "zoning", evidence: [discovery] });
+  assert.equal(blocked.status, "blocked");
+  assert.deepEqual(blocked.coveredJurisdictionIds, []);
+  assert.equal(blocked.uncoveredJurisdictionIds.length, 2);
+  const authorized = coverage.createCountyLayerSourceEvidence({ ...discovery, rights: ["query", "store", "derive"], rightsEvidenceRef: "artifact://license/city-a" });
+  const partial = coverage.createCountyLayerCoveragePlan({ universe, layer: "zoning", evidence: [authorized], boundaryEvidenceRef: "artifact://boundaries", boundaryEvidenceSha256: "a".repeat(64) });
+  assert.equal(partial.status, "blocked");
+  assert.deepEqual(partial.coveredJurisdictionIds, ["city-a"]);
+  assert.deepEqual(partial.uncoveredJurisdictionIds, ["unincorporated"]);
+  const countywide = coverage.createCountyLayerSourceEvidence({ ...authorized, sourceId: "countywide", coverageScope: "countywide", jurisdictionIds: [] });
+  const complete = coverage.createCountyLayerCoveragePlan({ universe, layer: "zoning", evidence: [countywide], boundaryEvidenceRef: "artifact://boundaries", boundaryEvidenceSha256: "b".repeat(64) });
+  assert.equal(complete.status, "certified");
+  const conflicting = coverage.createCountyLayerCoveragePlan({ universe, layer: "zoning", evidence: [countywide, authorized], boundaryEvidenceRef: "artifact://boundaries", boundaryEvidenceSha256: "b".repeat(64) });
+  assert.equal(conflicting.status, "blocked");
+  assert(conflicting.conflicts.some((item) => item.reason === "overlapping-authorized-claim"));
+  assert.throws(() => coverage.createCountyLayerSourceEvidence({ ...authorized, machineEndpointUrl: "http://insecure.example" }), /HTTPS/);
+  const schema = JSON.parse(fs.readFileSync(path.join(__dirname, "../data/schemas/county-jurisdiction-coverage.schema.json"), "utf8"));
+  assert.equal(schema.$defs.plan.properties.schemaVersion.const, coverage.COUNTY_LAYER_COVERAGE_PLAN_VERSION);
+  const gates = fs.readFileSync(path.join(__dirname, "../src/data/platformFeatureGates.ts"), "utf8");
+  for (const gate of ["countyJurisdictionCoverage", "countyMunicipalZoningFederation", "countyPermitFederation", "countyFloodplainIngestion", "countySpatialJoinCertification"]) assert(gates.includes(`${gate}: false`));
+  const app = fs.readFileSync(path.join(__dirname, "../src/App.tsx"), "utf8");
+  assert(!app.includes("countyJurisdictionCoverage"));
+  console.log("White Rabbit jurisdiction-aware county source evidence and coverage gates passed.");
+})().catch((error) => { console.error(error); process.exit(1); });

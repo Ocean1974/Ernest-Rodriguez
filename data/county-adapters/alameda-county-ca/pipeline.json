@@ -1,0 +1,101 @@
+{
+  "id": "alameda-county-ca-ingestion",
+  "countyAdapter": "data/county-adapters/alameda-county-ca/adapter.json",
+  "universalParcelSchema": "data/schemas/universal-parcel.schema.json",
+  "defaultMode": "plan",
+  "steps": [
+    {
+      "id": "verify-official-sources",
+      "label": "Verify official parcel, assessor/appraisal, permit, zoning, floodplain, and demand sources",
+      "command": "echo Verify official sources for alameda-county-ca before ingesting large files.",
+      "requiredOutputs": [
+        "output/alameda-county-ca/schema-report.md",
+        "output/alameda-county-ca/schema-report.json"
+      ]
+    },
+    {
+      "id": "verify-join-keys",
+      "label": "Document exact parcel/account/GIS join keys",
+      "command": "echo Replace source-needed join keys for alameda-county-ca.",
+      "requiredOutputs": [
+        "output/alameda-county-ca/join-key-report.md"
+      ]
+    },
+    {
+      "id": "build-parcel-geojson",
+      "label": "Build county universal parcel GeoJSON",
+      "command": "echo Build alameda-county-ca universal parcel GeoJSON after source verification.",
+      "requiredOutputs": [
+        "output/alameda-county-ca/alameda-county-ca-parcels.geojson",
+        "output/alameda-county-ca/full-parcel-access-report.md"
+      ]
+    },
+    {
+      "id": "build-parcel-service",
+      "label": "Build viewport parcel chunks and search shards",
+      "command": "echo Build alameda-county-ca viewport parcel chunks and search shards after universal GeoJSON exists.",
+      "requiredOutputs": [
+        "public/data/counties/alameda-county-ca/parcels/manifest.json"
+      ]
+    },
+    {
+      "id": "build-owner-matches",
+      "label": "Build owner/appraisal parcel intelligence",
+      "command": "echo Build alameda-county-ca owner/appraisal index after official assessor/appraisal source is verified.",
+      "requiredOutputs": [
+        "output/alameda-county-ca/alameda-county-ca-owner-appraisal-index.json",
+        "output/alameda-county-ca/join-key-report.md"
+      ]
+    },
+    {
+      "id": "build-permit-service",
+      "label": "Normalize and publish permits and certificates of occupancy",
+      "command": "echo Build alameda-county-ca permits/CO after official source verification.",
+      "requiredOutputs": [
+        "public/data/counties/alameda-county-ca/permits/manifest.json"
+      ]
+    },
+    {
+      "id": "build-zoning-index",
+      "label": "Build zoning and overlay parcel index",
+      "command": "echo Build alameda-county-ca zoning after official source verification.",
+      "requiredOutputs": [
+        "public/data/counties/alameda-county-ca/zoning/manifest.json",
+        "output/alameda-county-ca/zoning-source-report.md"
+      ]
+    },
+    {
+      "id": "build-floodplain-index",
+      "label": "Build floodplain parcel index",
+      "command": "echo Build alameda-county-ca floodplain after FEMA/local source verification.",
+      "requiredOutputs": [
+        "public/data/counties/alameda-county-ca/floodplain/manifest.json",
+        "output/alameda-county-ca/floodplain-source-report.md"
+      ]
+    },
+    {
+      "id": "build-migration-demand",
+      "label": "Build aggregate migration and demand parcel index",
+      "command": "echo Build alameda-county-ca aggregate migration/demand after approved geography sources are verified.",
+      "requiredOutputs": [
+        "public/data/counties/alameda-county-ca/demand/manifest.json"
+      ]
+    },
+    {
+      "id": "validate",
+      "label": "Run county QC",
+      "command": "npm.cmd run county:qc",
+      "requiredOutputs": [
+        "output/county-qc/alameda-county-ca.json",
+        "output/county-qc/alameda-county-ca.md"
+      ]
+    }
+  ],
+  "productionTileStep": {
+    "id": "build-pmtiles",
+    "label": "Build PMTiles/vector tiles after the parcel GeoJSON exists",
+    "handoff": "output/alameda-county-ca/vector-tiles/README.md",
+    "expectedOutput": "output/alameda-county-ca/alameda-county-ca-parcels.pmtiles"
+  },
+  "uiConstraint": "Do not redesign or restyle any White Rabbit pages while running this pilot county ingestion pipeline."
+}

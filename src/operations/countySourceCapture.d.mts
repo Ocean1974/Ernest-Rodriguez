@@ -1,0 +1,17 @@
+export const COUNTY_SOURCE_CAPTURE_POLICY_VERSION: "wr-county-source-capture-policy-v1";
+export const COUNTY_SOURCE_CAPTURE_PAGE_VERSION: "wr-county-source-capture-page-v1";
+export const COUNTY_SOURCE_CAPTURE_CHECKPOINT_VERSION: "wr-county-source-capture-checkpoint-v1";
+export const COUNTY_SOURCE_IDENTITY_AUDIT_VERSION: "wr-county-source-identity-audit-v1";
+export const COUNTY_SOURCE_CAPTURE_MANIFEST_VERSION: "wr-county-source-capture-manifest-v1";
+export const COUNTY_OUTPUT_LINEAGE_AUDIT_VERSION: "wr-county-output-lineage-audit-v1";
+export function countySourceCaptureSha256(value: unknown): string;
+export function createCountySourceCapturePolicy(input?: Record<string, any>): Readonly<Record<string, any>>;
+export function createCountySourceCapturePage(input?: Record<string, any>): Readonly<Record<string, any>>;
+export function verifyCountySourceCapturePages(pages?: Array<Record<string, any>>, policyInput?: Record<string, any> | null): Readonly<Record<string, any>>;
+export function createCountySourceCaptureCheckpoint(input?: Record<string, any>): Readonly<Record<string, any>>;
+export function createCountySourceIdentityAudit(input?: Record<string, any>): Readonly<Record<string, any>>;
+export function createCountySourceCaptureManifest(input?: Record<string, any>): Readonly<Record<string, any>>;
+export function verifyCountySourceCaptureManifest(manifest: Record<string, any>, input?: Record<string, any>): Readonly<Record<string, any>>;
+export function createCountyOutputLineageAudit(input?: Record<string, any>): Readonly<Record<string, any>>;
+export function verifyCountyOutputLineageAudit(value: Record<string, any>): Readonly<Record<string, any>>;
+export function createResumableCountySourceCapture(input?: Record<string, any>): Readonly<{ execute(input?: Record<string, any>): Promise<Readonly<Record<string, any>>> }>;

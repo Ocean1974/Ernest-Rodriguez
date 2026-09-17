@@ -1,0 +1,50 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://white-rabbit.local/schemas/collaboration-state.schema.json",
+  "title": "White Rabbit Collaboration State",
+  "type": "object",
+  "required": ["schemaVersion", "revision", "organizations", "memberships", "deals", "notes", "tasks", "activity", "updatedAt"],
+  "properties": {
+    "schemaVersion": { "const": "wr-collaboration-state-v1" },
+    "revision": { "type": "integer", "minimum": 1 },
+    "organizations": { "type": "array", "items": { "$ref": "#/$defs/organization" } },
+    "memberships": { "type": "array", "items": { "$ref": "#/$defs/membership" } },
+    "deals": { "type": "array", "items": { "$ref": "#/$defs/deal" } },
+    "notes": { "type": "array", "items": { "$ref": "#/$defs/note" } },
+    "tasks": { "type": "array", "items": { "$ref": "#/$defs/task" } },
+    "activity": { "type": "array", "items": { "$ref": "#/$defs/activity" } },
+    "updatedAt": { "type": "string", "format": "date-time" }
+  },
+  "$defs": {
+    "organization": {
+      "type": "object",
+      "required": ["schemaVersion", "id", "name", "revision", "createdAt", "updatedAt"],
+      "properties": { "schemaVersion": { "const": "wr-organization-v1" }, "id": { "type": "string" }, "name": { "type": "string", "minLength": 1 }, "revision": { "type": "integer", "minimum": 1 } }
+    },
+    "membership": {
+      "type": "object",
+      "required": ["schemaVersion", "id", "organizationId", "userId", "role", "status", "permissions", "revision", "createdAt", "updatedAt"],
+      "properties": { "schemaVersion": { "const": "wr-organization-membership-v1" }, "role": { "enum": ["owner", "admin", "member", "viewer"] }, "status": { "enum": ["invited", "active", "suspended"] }, "permissions": { "type": "array", "items": { "type": "string" } } }
+    },
+    "deal": {
+      "type": "object",
+      "required": ["schemaVersion", "id", "organizationId", "whiteRabbitPropertyId", "title", "stage", "status", "revision", "createdAt", "updatedAt"],
+      "properties": { "schemaVersion": { "const": "wr-deal-v1" }, "whiteRabbitPropertyId": { "type": "string", "pattern": "^wrp:v1:[^:]+:.+$" }, "stage": { "enum": ["sourced", "screening", "underwriting", "due-diligence", "offer", "contract", "closed", "passed"] }, "status": { "enum": ["active", "closed", "archived"] } }
+    },
+    "note": {
+      "type": "object",
+      "required": ["schemaVersion", "id", "organizationId", "dealId", "whiteRabbitPropertyId", "authorUserId", "body", "visibility", "revision", "createdAt", "updatedAt"],
+      "properties": { "schemaVersion": { "const": "wr-deal-note-v1" }, "visibility": { "enum": ["organization", "private"] } }
+    },
+    "task": {
+      "type": "object",
+      "required": ["schemaVersion", "id", "organizationId", "dealId", "whiteRabbitPropertyId", "title", "status", "priority", "revision", "createdAt", "updatedAt"],
+      "properties": { "schemaVersion": { "const": "wr-deal-task-v1" }, "status": { "enum": ["open", "in-progress", "completed", "cancelled"] }, "priority": { "enum": ["low", "normal", "high", "urgent"] } }
+    },
+    "activity": {
+      "type": "object",
+      "required": ["schemaVersion", "id", "organizationId", "actorUserId", "action", "entityType", "entityId", "occurredAt", "changes", "metadata"],
+      "properties": { "schemaVersion": { "const": "wr-collaboration-activity-v1" }, "changes": { "type": "array" }, "metadata": { "type": "object" } }
+    }
+  }
+}

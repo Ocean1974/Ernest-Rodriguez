@@ -1,0 +1,282 @@
+{
+  "id": "delta-county-tx",
+  "countyId": "delta-county-tx",
+  "countyName": "Delta County",
+  "state": "TX",
+  "fips": "48119",
+  "marketName": "Delta County",
+  "appraisalDistrictName": "Delta County Appraisal District",
+  "appraisalDistrictAcronym": "DCAD",
+  "gisSource": "official county parcel/GIS source not verified yet",
+  "uniqueGisKey": "source-needed",
+  "parcelIdField": "source-needed",
+  "accountIdField": "source-needed",
+  "geometryType": "polygon",
+  "sourceSpatialReference": "source-needed",
+  "status": "pilot",
+  "map": {
+    "locationId": 2059,
+    "locationName": "Delta County TX Pilot",
+    "locationType": "Delta County Appraisal District",
+    "status": "pilot adapter shell - source discovery needed",
+    "coordinates": [
+      -95.67,
+      33.38
+    ],
+    "camera": {
+      "x": 50,
+      "y": 50,
+      "zoom": 1.2,
+      "pitch": 48,
+      "bearing": 0
+    },
+    "geoBounds": {
+      "minLng": -95.95,
+      "minLat": 33.2,
+      "maxLng": -95.35,
+      "maxLat": 33.6
+    },
+    "boundsStatus": "county approximate bounds only; replace with verified parcel extent during source inspection"
+  },
+  "universalParcelSchema": {
+    "version": "wr-universal-parcel-v1",
+    "schemaPath": "data/schemas/universal-parcel.schema.json",
+    "documentationPath": "data/schemas/universal-parcel.md",
+    "parcelServiceBuilder": "scripts/build-app-parcel-service.cjs",
+    "fieldMapPath": "data/county-adapters/delta-county-tx/delta-county-tx-universal-field-map.json",
+    "sourceManifestPath": "data/county-adapters/delta-county-tx/delta-county-tx-source-manifest.json"
+  },
+  "sourceFiles": {
+    "parcelGeometry": "source-needed",
+    "appraisalDistrictExtract": "source-needed",
+    "ownerAppraisal": "source-needed",
+    "permitsRaw": "source-needed",
+    "permitsProcessed": "data/permits/processed/delta-county-tx",
+    "developmentRaw": "source-needed",
+    "zoningRaw": "source-needed",
+    "floodplainRaw": "source-needed",
+    "migrationDemandRaw": "source-needed"
+  },
+  "publicDataRoots": {
+    "parcels": "/data/counties/delta-county-tx/parcels/",
+    "permits": "/data/counties/delta-county-tx/permits/",
+    "developments": "/data/counties/delta-county-tx/developments/",
+    "zoning": "/data/counties/delta-county-tx/zoning/",
+    "floodplain": "/data/counties/delta-county-tx/floodplain/",
+    "demand": "/data/counties/delta-county-tx/demand/"
+  },
+  "productionOutputs": {
+    "parcelGeojson": "output/delta-county-tx/delta-county-tx-parcels.geojson",
+    "parcelPmtiles": "output/delta-county-tx/delta-county-tx-parcels.pmtiles",
+    "vectorTilesDirectory": "output/delta-county-tx/vector-tiles/"
+  },
+  "optionalLayers": [
+    {
+      "id": "county-parcels",
+      "label": "County parcels",
+      "source": "source-needed",
+      "status": "source-needed",
+      "joinBehavior": "source-needed: official parcel/account and GIS keys must be verified before activation",
+      "defaultVisible": false,
+      "renderStrategy": "build-time official source fetch, offline universal mapping, viewport chunks, capped runtime loader",
+      "maxFeaturesPerViewport": 750
+    },
+    {
+      "id": "owner-appraisal",
+      "label": "Owner/appraisal",
+      "source": "source-needed",
+      "status": "source-needed",
+      "joinBehavior": "source-needed: official assessor/appraisal bulk source must provide owner, mailing, situs, value, land/building, and legal fields",
+      "defaultVisible": false,
+      "renderStrategy": "build-time official source fetch, offline owner/appraisal normalization, viewport chunks, capped runtime loader",
+      "maxFeaturesPerViewport": 750
+    },
+    {
+      "id": "parcel-dimensions",
+      "label": "Parcel dimensions",
+      "source": "source-needed",
+      "status": "source-needed",
+      "joinBehavior": "source-needed: direct dimension fields, label layer, or generated measurement fallback",
+      "defaultVisible": false,
+      "renderStrategy": "build-time official source inspection, offline mapping, viewport chunks",
+      "maxFeaturesPerViewport": 750
+    },
+    {
+      "id": "block-grid",
+      "label": "Block, subdivision, and map-grid context",
+      "source": "source-needed",
+      "status": "source-needed",
+      "joinBehavior": "source-needed: direct parcel fields or spatial join to subdivision, block, or grid sources",
+      "defaultVisible": false,
+      "renderStrategy": "build-time official source inspection, offline joins, viewport chunks",
+      "maxFeaturesPerViewport": 750
+    },
+    {
+      "id": "permits",
+      "label": "Permits and certificates of occupancy",
+      "source": "source-needed",
+      "status": "source-needed",
+      "joinBehavior": "source-needed: parcel/account, normalized address, or spatial point-in-parcel join",
+      "defaultVisible": false,
+      "publicDataRoot": "/data/counties/delta-county-tx/permits/",
+      "manifestPath": "public/data/counties/delta-county-tx/permits/manifest.json",
+      "renderStrategy": "build-time official source verification, offline permit normalization, viewport-safe chunks",
+      "maxFeaturesPerViewport": 750
+    },
+    {
+      "id": "zoning-intelligence",
+      "label": "Zoning intelligence",
+      "source": "source-needed",
+      "status": "source-needed",
+      "joinBehavior": "source-needed: parcel/account ID bridge first; spatial join for zoning polygons and case areas",
+      "defaultVisible": false,
+      "publicDataRoot": "/data/counties/delta-county-tx/zoning/",
+      "manifestPath": "public/data/counties/delta-county-tx/zoning/manifest.json",
+      "schemaPath": "data/schemas/dallas-zoning-layer.schema.json",
+      "reportPath": "output/delta-county-tx/zoning-source-report.md",
+      "renderStrategy": "build-time official source verification, offline joins, viewport chunks, capped runtime loader",
+      "maxFeaturesPerViewport": 750
+    },
+    {
+      "id": "development-signals",
+      "label": "Development signals",
+      "source": "source-needed",
+      "status": "source-needed",
+      "joinBehavior": "source-needed: normalized permit, certificate, demolition, plat, and project evidence joined to parcel IDs",
+      "defaultVisible": false,
+      "publicDataRoot": "/data/counties/delta-county-tx/developments/",
+      "manifestPath": "public/data/counties/delta-county-tx/developments/parcel-development-index.json",
+      "renderStrategy": "build-time evidence normalization, parcel/address/spatial joins, viewport-safe parcel index lookup",
+      "maxFeaturesPerViewport": 750
+    },
+    {
+      "id": "floodplain-intelligence",
+      "label": "Floodplain intelligence",
+      "source": "source-needed",
+      "status": "source-needed",
+      "joinBehavior": "source-needed: FEMA/local floodplain spatial join keyed back to parcel/account IDs",
+      "defaultVisible": false,
+      "publicDataRoot": "/data/counties/delta-county-tx/floodplain/",
+      "manifestPath": "public/data/counties/delta-county-tx/floodplain/manifest.json",
+      "parcelIndexPath": "public/data/counties/delta-county-tx/floodplain/parcel-floodplain-index.json",
+      "schemaPath": "data/schemas/parcel-floodplain-index.schema.json",
+      "parcelIndexSchemaPath": "data/schemas/parcel-floodplain-index.schema.json",
+      "reportPath": "output/delta-county-tx/floodplain-source-report.md",
+      "renderStrategy": "build-time official source verification, offline parcel centroid spatial join, viewport-safe sharded parcel ID lookup",
+      "maxFeaturesPerViewport": 750
+    },
+    {
+      "id": "migration-demand",
+      "label": "Migration and demand",
+      "source": "source-needed",
+      "status": "source-needed",
+      "joinBehavior": "source-needed: aggregate Census/ACS/IRS or approved demand geography joined by tract/block group/market, not individual people",
+      "defaultVisible": false,
+      "publicDataRoot": "/data/counties/delta-county-tx/demand/",
+      "manifestPath": "public/data/counties/delta-county-tx/demand/manifest.json",
+      "renderStrategy": "build-time aggregate demand scoring, offline geography-to-parcel join, viewport-safe parcel index lookup",
+      "maxFeaturesPerViewport": 750
+    }
+  ],
+  "publicSourceDiscovery": {
+    "status": "source-discovery-started-official-source-not-verified",
+    "priorityReason": "TX full-state county coverage shell; source verification required before ingest.",
+    "sourceSearchQueries": [
+      "Delta County Appraisal District parcel data official",
+      "Delta County Texas GIS parcel boundaries official",
+      "Delta County Texas permits open data parcel address"
+    ],
+    "sourceRules": [
+      "Use official county, assessor/appraiser, GIS, municipal, state, or federal sources first.",
+      "Do not activate this county until exact parcel counts and join keys are verified.",
+      "Do not infer owner phone/email from permits, contractors, applicants, or scraped pages."
+    ],
+    "problemSolvingLoop": [
+      "Discover official sources and preserve source dataset identifiers.",
+      "Audit schema, exact counts, geometry validity, nulls, and duplicate candidate keys.",
+      "Select a complete duplicate-safe feature identity and document secondary business identifiers.",
+      "Build a bounded-memory sample before attempting the full county snapshot.",
+      "Publish viewport chunks and search shards, then reconcile source, emitted, skipped, and joined counts.",
+      "Run county QC and keep visible activation disabled until every individual gate passes."
+    ]
+  },
+  "ownerEnrichment": {
+    "sourceLabel": "source-needed",
+    "propertyRecordSource": "source-needed: official assessor/appraisal parcel/property source must be verified",
+    "officialJoinKey": "source-needed: official parcel/account join key must be verified",
+    "noOfficialEmailFieldNote": "No official owner phone/email source is verified. Do not infer owner contact fields.",
+    "fields": {
+      "parcelId": "source-needed",
+      "gisParcelId": "source-needed",
+      "ownerName": "source-needed",
+      "ownerName2": "source-needed",
+      "businessName": "source-needed",
+      "ownerMailingAddress": "source-needed",
+      "ownerMailingAddress2": "source-needed",
+      "ownerCity": "source-needed",
+      "ownerState": "source-needed",
+      "ownerZip": "source-needed",
+      "ownerPhone": "No official owner phone field verified",
+      "ownerEmail": "No official owner email field verified"
+    }
+  },
+  "joinKeys": {
+    "primaryParcelAccount": "source-needed: document exact parcel geometry key -> assessor/appraisal account key",
+    "appraisal": "source-needed: document exact appraisal/property key",
+    "land": "source-needed: document exact land/building/value key",
+    "secondaryParcelGisId": "source-needed: document exact GIS feature key",
+    "blockLabels": "source-needed: direct key, spatial join, or unavailable",
+    "dimensions": "source-needed: direct key, spatial join, generated measurement fallback, or unavailable",
+    "permits": "source-needed: parcel/account ID, address match, spatial join, or combination",
+    "zoning": "source-needed: parcel/account ID bridge first; spatial join for zoning polygons and case areas",
+    "floodplain": "source-needed: FEMA/local floodplain parcel centroid spatial join keyed to parcel/account IDs",
+    "developmentSignals": "source-needed: verified permit, plat, demolition, certificate, project, address, or spatial join evidence",
+    "migrationDemand": "source-needed: aggregate geography join, not individual people"
+  },
+  "verifiedCounts": {
+    "parcelGeometryFeatures": 0,
+    "missingGeometry": 0,
+    "appraisalAccountRows": 0,
+    "appraisalRows": 0,
+    "landRows": 0,
+    "appParcelChunks": 0,
+    "parcelSearchShards": 0,
+    "sourcePermitRecords": 0,
+    "permitRowsJoined": 0,
+    "permitRowsUnmatched": 0,
+    "parcelsWithDevelopmentSignals": 0,
+    "migrationDemandGeographies": 0
+  },
+  "requiredOutputs": [
+    "output/delta-county-tx/schema-report.md",
+    "output/delta-county-tx/schema-report.json",
+    "output/delta-county-tx/join-key-report.md",
+    "output/delta-county-tx/full-parcel-access-report.md",
+    "output/delta-county-tx/qa-report.md",
+    "output/delta-county-tx/qa-report.json",
+    "output/delta-county-tx/delta-county-tx-parcels.geojson",
+    "output/delta-county-tx/delta-county-tx-parcels.pmtiles or output/delta-county-tx/vector-tiles/",
+    "public/data/counties/delta-county-tx/parcels/manifest.json",
+    "public/data/counties/delta-county-tx/permits/manifest.json",
+    "public/data/counties/delta-county-tx/developments/parcel-development-index.json",
+    "public/data/counties/delta-county-tx/zoning/manifest.json",
+    "public/data/counties/delta-county-tx/floodplain/manifest.json",
+    "public/data/counties/delta-county-tx/demand/manifest.json"
+  ],
+  "productionGap": "Pilot adapter shell only. Official parcel geometry, assessor/appraisal owner/value source, exact join keys, viewport chunks, search shards, permits/CO, zoning, floodplain, development signals, migration/demand, QA reports, and PMTiles are not built yet.",
+  "pilotNotes": "Do not activate this county in the app. Do not redesign any pages. Fill official sources and exact join keys before any visible behavior changes.",
+  "verifiedDiscovery": {
+    "status": "official-source-not-verified",
+    "officialSite": null,
+    "propertySearch": null,
+    "interactiveMap": null,
+    "candidateBulkOrExportLeads": [],
+    "remainingBlockers": [
+      "official appraisal district site not verified",
+      "official parcel geometry bulk source not verified",
+      "exact parcel count not verified",
+      "exact geometry-to-appraisal join key not verified",
+      "viewport/search outputs not built"
+    ]
+  }
+}

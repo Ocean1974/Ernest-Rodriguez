@@ -1,0 +1,17 @@
+export const RENT_ROLL_SNAPSHOT_VERSION: "wr-rent-roll-snapshot-v1";
+export const OPERATING_METRICS_VERSION: "wr-operating-metrics-v1";
+export const BUDGET_VARIANCE_VERSION: "wr-budget-variance-v1";
+export const DEBT_COVENANT_REPORT_VERSION: "wr-debt-covenant-report-v1";
+export const OPERATING_ANOMALY_REPORT_VERSION: "wr-operating-anomaly-report-v1";
+export const FX_RATE_EVIDENCE_VERSION: "wr-fx-rate-evidence-v1";
+export const PORTFOLIO_SNAPSHOT_VERSION: "wr-portfolio-snapshot-v1";
+export const ASSET_PLAN_PROGRESS_VERSION: "wr-asset-plan-progress-v1";
+export function materializeLeaseAsOf(state: Record<string, any>, leaseId: string, options?: Record<string, any>): Readonly<Record<string, any>>;
+export function buildRentRollSnapshot(state: Record<string, any>, assetId: string, options?: Record<string, any>): Readonly<Record<string, any>>;
+export function deriveOperatingMetrics(statement: Record<string, any>, options?: Record<string, any>): Readonly<Record<string, any>>;
+export function analyzeBudgetVariance(statement: Record<string, any>, budget: Record<string, any>, options?: Record<string, any>): Readonly<Record<string, any>>;
+export function evaluateDebtCovenants(input?: Record<string, any>): Readonly<Record<string, any>>;
+export function detectOperatingAnomalies(input?: Record<string, any>): Readonly<Record<string, any>>;
+export function createFxRateEvidence(input?: Record<string, any>): Readonly<Record<string, any>>;
+export function buildPortfolioSnapshot(state: Record<string, any>, input?: Record<string, any>): Readonly<Record<string, any>>;
+export function evaluateAssetPlanProgress(plan: Record<string, any>, input?: Record<string, any>): Readonly<Record<string, any>>;

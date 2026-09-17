@@ -1,0 +1,13 @@
+export const COUNTY_DEMAND_SOURCE_PROBE_VERSION: string;
+export const COUNTY_DEMAND_COVERAGE_VERSION: string;
+export const COUNTY_DEMAND_OBSERVATION_VERSION: string;
+export const COUNTY_DEMAND_FEATURE_DEFINITION_VERSION: string;
+export const COUNTY_DEMAND_POINT_IN_TIME_VECTOR_VERSION: string;
+export const COUNTY_DEMAND_AUDIT_VERSION: string;
+export function countyDemandSha256(value: unknown): string;
+export function createCountyDemandSourceProbe(input?: Record<string, unknown>): Readonly<Record<string, unknown>>;
+export function reconcileCountyDemandCoverage(input?: Record<string, unknown>): Readonly<Record<string, unknown>>;
+export function createCountyDemandObservation(input?: Record<string, unknown>): Readonly<Record<string, unknown>>;
+export function createCountyDemandFeatureDefinition(input?: Record<string, unknown>): Readonly<Record<string, unknown>>;
+export function createCountyDemandPointInTimeVector(input?: Record<string, unknown>): Readonly<Record<string, unknown>>;
+export function createCountyDemandAudit(input?: Record<string, unknown>): Readonly<Record<string, unknown>>;

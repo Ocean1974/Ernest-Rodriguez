@@ -1,0 +1,90 @@
+{
+  "countyId": "tarrant-county-tad",
+  "countyFips": "48439",
+  "sourceObservedAt": "2026-08-23T00:00:00.000Z",
+  "jurisdictionSourceUrl": "https://www.tarrantcountytx.gov/content/main/en/county/about-tarrant/incorporated-areas.html",
+  "municipalities": [
+    "Arlington", "Azle", "Bedford", "Benbrook", "Blue Mound", "Burleson", "Colleyville", "Crowley", "Dalworthington Gardens", "Edgecliff Village", "Euless", "Everman", "Flower Mound", "Forest Hill", "Fort Worth", "Grand Prairie", "Grapevine", "Haltom City", "Haslet", "Hurst", "Keller", "Kennedale", "Lakeside", "Lake Worth", "Mansfield", "Newark", "North Richland Hills", "Pantego", "Pelican Bay", "Reno", "Richland Hills", "River Oaks", "Saginaw", "Sansom Park", "Southlake", "Trophy Club", "Watauga", "Westlake", "Westover Hills", "Westworth Village", "White Settlement"
+  ],
+  "boundaryEvidenceRef": "",
+  "boundaryEvidenceSha256": "",
+  "boundaryDiscovery": {
+    "cityBoundaryService": "https://mapit.tarrantcounty.com/arcgis/rest/services/Dynamic/CityBoundariesWUnincorp/MapServer/0",
+    "etjService": "https://mapit.tarrantcounty.com/arcgis/rest/services/Transportation/ETJ/MapServer/0",
+    "etjGuidance": "https://www.tarrantcountytx.gov/en/engineering-services/development/extra-territorial-jurisdictions.html",
+    "readinessReport": "output/tarrant/boundary-readiness/tarrant-boundary-readiness.json",
+    "geometryCaptured": false,
+    "captureAuthorized": false
+  },
+  "floodDiscovery": {
+    "regulatoryCandidate": "https://mapit.tarrantcounty.com/arcgis/rest/services/Transportation/FEMA_FloodHazards_2025/MapServer/0",
+    "planningEstimate": "https://mapit.tarrantcounty.com/arcgis/rest/services/Transportation/FEMA_2025/MapServer/4",
+    "historicalService": "https://mapit.tarrantcounty.com/arcgis/rest/services/Dynamic/Floodplains/MapServer",
+    "readinessReport": "output/tarrant/flood-readiness/tarrant-flood-readiness.json",
+    "geometryCaptured": false,
+    "parcelClassificationAuthorized": false
+  },
+  "permitDiscovery": {
+    "tarrantUtilityPermits": "https://mapit.tarrantcounty.com/arcgis/rest/services/Transportation/Utility_Permit/MapServer/0",
+    "fortWorthPermits": "https://mapit.fortworthtexas.gov/ags/rest/services/CIVIC/Permits/FeatureServer/0",
+    "arlingtonIssuedPermits": "https://gis2.arlingtontx.gov/agsext2/rest/services/OpenData/OD_Property/MapServer/1",
+    "readinessReport": "output/tarrant/permit-readiness/tarrant-permit-readiness.json",
+    "recordsCaptured": false,
+    "parcelLinksBuilt": false
+  },
+  "zoningDiscovery": {
+    "fortWorthCurrentZoning": "https://mapit.fortworthtexas.gov/ags/rest/services/CIVIC/CIVIC_ZONING/MapServer/0",
+    "fortWorthOverlayAndCases": "https://mapit.fortworthtexas.gov/ags/rest/services/Planning_Development/Zoning_case_service/MapServer",
+    "arlingtonPropertyLayers": "https://gis2.arlingtontx.gov/agsext2/rest/services/OpenData/OD_Property/MapServer",
+    "readinessReport": "output/tarrant/zoning-readiness/tarrant-zoning-readiness.json",
+    "geometryCaptured": false,
+    "parcelAssignmentsBuilt": false
+  },
+  "sources": [
+    {
+      "sourceId": "fort-worth-current-zoning",
+      "publisher": "City of Fort Worth",
+      "officialPageUrl": "https://mapit.fortworthtexas.gov/ags/rest/services/CIVIC/CIVIC_ZONING/MapServer",
+      "machineEndpointUrl": "https://mapit.fortworthtexas.gov/ags/rest/services/CIVIC/CIVIC_ZONING/MapServer/0",
+      "layer": "zoning",
+      "coverageScope": "municipality",
+      "jurisdictionIds": ["fort-worth"],
+      "sourceSpatialReference": "EPSG:2276",
+      "joinMethods": ["parcel-intersection", "point-in-polygon"],
+      "metadataObservedAt": "2026-08-23T00:00:00.000Z",
+      "metadataFacts": { "serviceType": "MapServer", "layerName": "ZONING", "geometryType": "polygon", "maxRecordCount": 1000, "supportedQueryFormats": ["JSON", "geoJSON", "PBF"] },
+      "rights": [],
+      "rightsEvidenceRef": ""
+    },
+    {
+      "sourceId": "fort-worth-accela-permits",
+      "publisher": "City of Fort Worth",
+      "officialPageUrl": "https://www.fortworthtexas.gov/departments/communications/records",
+      "machineEndpointUrl": "https://mapit.fortworthtexas.gov/ags/rest/services/CIVIC/Permits/FeatureServer/0",
+      "layer": "permits",
+      "coverageScope": "municipality",
+      "jurisdictionIds": ["fort-worth"],
+      "sourceSpatialReference": "EPSG:2276",
+      "joinMethods": ["normalized-address", "point-in-polygon"],
+      "metadataObservedAt": "2026-08-23T00:00:00.000Z",
+      "metadataFacts": { "serviceType": "FeatureServer", "layerName": "Permits", "geometryType": "point", "maxRecordCount": 1000, "capabilities": ["Query"] },
+      "rights": [],
+      "rightsEvidenceRef": ""
+    },
+    {
+      "sourceId": "fema-national-flood-hazard-layer",
+      "publisher": "Federal Emergency Management Agency",
+      "officialPageUrl": "https://www.fema.gov/flood-maps/national-flood-hazard-layer",
+      "machineEndpointUrl": "https://hazards.fema.gov/arcgis/rest/services/public/NFHL/MapServer/28",
+      "layer": "floodplain",
+      "coverageScope": "countywide",
+      "jurisdictionIds": [],
+      "sourceSpatialReference": "source-defined; normalize to EPSG:4326 during preprocessing",
+      "joinMethods": ["county-boundary-clip", "parcel-intersection", "point-in-polygon"],
+      "metadataObservedAt": "2026-08-23T00:00:00.000Z",
+      "metadataFacts": { "dataset": "National Flood Hazard Layer", "targetFeature": "flood hazard areas", "countyExtractVerified": false },
+      "rights": [],
+      "rightsEvidenceRef": ""
+    }
+  ]
+}

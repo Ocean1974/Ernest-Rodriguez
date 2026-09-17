@@ -1,0 +1,82 @@
+{
+  "county_id": "austin-county-tx",
+  "county_name": "Austin County",
+  "state": "TX",
+  "fips": "48015",
+  "cad_name": "Austin County Appraisal District",
+  "source_discovery_status": "official-site-property-search-map-forms-and-reports-discovered",
+  "retrieved_at": "2026-06-28",
+  "ui_constraint": "Do not redesign White Rabbit pages while expanding county parcel intelligence plumbing.",
+  "official_sources": [
+    {
+      "label": "Austin County Appraisal District official site",
+      "url": "https://austincad.org/",
+      "source_type": "appraisal-district-site",
+      "observed_evidence": [
+        "official site links to property search",
+        "official site links to online forms and taxpayer portal",
+        "official site links to interactive map",
+        "public info links include mass appraisal summary report, annual reports, and reappraisal plan"
+      ]
+    },
+    {
+      "label": "Austin CAD Property Search",
+      "url": "https://esearch.austincad.org/",
+      "source_type": "property-search",
+      "observed_evidence": [
+        "search modes include owner, address, ID, ARB, and advanced search",
+        "fields include Property ID, Owner ID, Geographic ID, tax year, subdivision, neighborhood, property type, abstract, and mobile home park",
+        "property types include Real, Personal, Mineral, Auto, and Mobile Home",
+        "available tax years observed: 2026 through 2020"
+      ]
+    }
+  ],
+  "observed_search_fields": [
+    "Owner Name",
+    "Street Number",
+    "Abstract",
+    "MobileHomePark",
+    "Property ID",
+    "Property Type",
+    "Agent Id",
+    "Doing Business As",
+    "Street Name",
+    "Subdivision",
+    "Condo",
+    "Owner ID",
+    "Geographic ID",
+    "Tax Year",
+    "Neighborhood"
+  ],
+  "observed_tax_years": [2026, 2025, 2024, 2023, 2022, 2021, 2020],
+  "candidate_bulk_or_report_leads": [
+    "2026 Mass Appraisal Summary Report",
+    "2025 Annual Report",
+    "2024 Annual Report",
+    "Reappraisal Plan"
+  ],
+  "verified_counts": {
+    "parcel_geometry_features": 0,
+    "appraisal_property_rows": 0,
+    "count_verified_at": null,
+    "status": "not-verified"
+  },
+  "join_keys": {
+    "primary_parcel_account": "unverified: property search exposes Property ID, Owner ID, and Geographic ID fields, but exact geometry-to-appraisal key is not verified",
+    "secondary_gis_id": "unverified",
+    "owner_appraisal": "unverified"
+  },
+  "bulk_source_status": {
+    "parcel_geometry_bulk": "not-verified",
+    "owner_appraisal_bulk": "public report leads discovered but source files not inspected",
+    "download_terms": "not-verified"
+  },
+  "remaining_blockers": [
+    "public report/source files not inspected",
+    "exact parcel count not verified",
+    "exact geometry-to-appraisal join key not verified",
+    "viewport chunks and search shards not built",
+    "QC report not built"
+  ],
+  "completion_impact": "source-discovery-started"
+}

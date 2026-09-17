@@ -1,0 +1,14 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://whiterabbit.local/schemas/county-permit-intelligence.schema.json",
+  "title": "White Rabbit County Permit Intelligence Contracts",
+  "oneOf": [{ "$ref": "#/$defs/probe" }, { "$ref": "#/$defs/coverage" }, { "$ref": "#/$defs/policy" }, { "$ref": "#/$defs/event" }, { "$ref": "#/$defs/audit" }],
+  "$defs": {
+    "sha256": { "type": "string", "pattern": "^[a-f0-9]{64}$" },
+    "probe": { "type": "object", "required": ["schemaVersion", "countyId", "sourceId", "sourceRole", "featureCount", "nonNullCounts", "capturesRecords", "capturesGeometry", "captureAuthorized", "probeSha256"], "properties": { "schemaVersion": { "const": "wr-county-permit-source-probe-v1" }, "capturesRecords": { "const": false }, "captureAuthorized": { "const": false }, "probeSha256": { "$ref": "#/$defs/sha256" } } },
+    "coverage": { "type": "object", "required": ["schemaVersion", "countyId", "discoveredBuildingJurisdictionIds", "certifiedBuildingJurisdictionIds", "uncoveredBuildingJurisdictionIds", "rules", "status", "reconciliationSha256"], "properties": { "schemaVersion": { "const": "wr-county-permit-coverage-reconciliation-v1" }, "status": { "enum": ["blocked", "certified"] }, "reconciliationSha256": { "$ref": "#/$defs/sha256" } } },
+    "policy": { "type": "object", "required": ["schemaVersion", "countyId", "requiredCounts", "checks", "status", "policySha256"], "properties": { "schemaVersion": { "const": "wr-county-permit-normalization-policy-v1" }, "status": { "enum": ["blocked", "normalization-authorized"] }, "policySha256": { "$ref": "#/$defs/sha256" } } },
+    "event": { "type": "object", "required": ["schemaVersion", "countyId", "jurisdictionId", "sourceId", "sourcePermitId", "permitType", "permitCategory", "status", "sourceSnapshotSha256", "sourceRecordSha256", "eventSha256"], "properties": { "schemaVersion": { "const": "wr-normalized-county-permit-event-v1" }, "eventSha256": { "$ref": "#/$defs/sha256" } } },
+    "audit": { "type": "object", "required": ["schemaVersion", "countyId", "sourceId", "counts", "unmatchedRate", "checks", "status", "auditSha256"], "properties": { "schemaVersion": { "const": "wr-county-permit-parcel-link-audit-v1" }, "status": { "enum": ["rejected", "certified"] }, "auditSha256": { "$ref": "#/$defs/sha256" } } }
+  }
+}

@@ -1,0 +1,59 @@
+{
+  "id": "dallas-county-dcad",
+  "countyName": "Dallas County",
+  "appraisalDistrictName": "Dallas County Appraisal District",
+  "appraisalDistrictAcronym": "DCAD",
+  "status": "active",
+  "sourceFiles": {
+    "parcelGeometry": "data/raw/PARCEL_GEOM.zip",
+    "appraisalDistrictExtract": "data/raw/DCAD2026_CURRENT.ZIP",
+    "blockLabels": "data/raw/BLKID.zip",
+    "parcelDimensions": "data/raw/ParcelDimension.zip",
+    "permitsRaw": "data/permits/raw",
+    "permitsProcessed": "data/permits/processed"
+  },
+  "publicDataRoots": {
+    "parcels": "/data/parcels/",
+    "permits": "/data/permits/",
+    "developments": "/data/developments/"
+  },
+  "joinKeys": {
+    "primaryParcelAccount": "PARCEL_GEOM.Acct -> DCAD ACCOUNT_INFO.ACCOUNT_NUM",
+    "appraisal": "PARCEL_GEOM.Acct -> DCAD ACCOUNT_APPRL_YEAR.ACCOUNT_NUM",
+    "land": "PARCEL_GEOM.Acct -> DCAD LAND.ACCOUNT_NUM",
+    "secondaryParcelGisId": "PARCEL_GEOM.Acct -> DCAD GIS_PARCEL_ID",
+    "blockLabels": "spatial/nearest-label join; BLKID exposes TEXT labels, not parcel account IDs",
+    "dimensions": "spatial/nearest-label join; ParcelDimension exposes TEXT measurements, not parcel account IDs",
+    "permits": "normalized City of Dallas permit and CO address matches joined back to DCAD parcel/account identifiers"
+  },
+  "verifiedCounts": {
+    "parcelGeometryFeatures": 696601,
+    "parcelGeomDbfRows": 696601,
+    "dcadAccountRows": 861357,
+    "dcadAppraisalRows": 861348,
+    "dcadLandRows": 749625,
+    "dcadCommercialDetailRows": 92153,
+    "blkidFeatures": 96945,
+    "parcelDimensionFeatures": 4560138,
+    "appParcelChunks": 1614,
+    "parcelSearchShards": 1224,
+    "sourcePermitRecords": 150571,
+    "permitRowsJoined": 97300,
+    "permitRowsUnmatched": 53271,
+    "developmentSignals": 35525,
+    "parcelsWithDevelopmentSignals": 24950,
+    "unmatchedDevelopmentSignals": 27814
+  },
+  "requiredOutputs": [
+    "output/schema-report.md",
+    "output/schema-report.json",
+    "output/join-key-report.md",
+    "output/full-parcel-access-report.md",
+    "output/white-rabbit-dallas-parcels.geojson",
+    "output/white-rabbit-dallas-parcels.pmtiles or output/vector-tiles/",
+    "public/data/parcels/manifest.json",
+    "public/data/permits/manifest.json",
+    "public/data/developments/parcel-development-index.json"
+  ],
+  "productionGap": "PMTiles/vector tiles still require tippecanoe, pmtiles, or Docker on a machine that can process the 1.0 GB joined parcel GeoJSON."
+}

@@ -1,0 +1,70 @@
+{
+  "county_id": "bell-county-tx",
+  "county_name": "Bell County",
+  "state": "TX",
+  "fips": "48027",
+  "cad_name": "Bell County Appraisal District",
+  "source_discovery_status": "official-site-property-search-map-online-protest-and-forms-discovered",
+  "retrieved_at": "2026-06-28",
+  "ui_constraint": "Do not redesign White Rabbit pages while expanding county parcel intelligence plumbing.",
+  "official_sources": [
+    {
+      "label": "Bell County Appraisal District official site",
+      "url": "https://bellcad.org/",
+      "source_type": "appraisal-district-site",
+      "observed_evidence": [
+        "official site exposes 2026 property search",
+        "official site exposes prior-year and tax search",
+        "official site exposes interactive map",
+        "official site exposes online protest and forms"
+      ]
+    },
+    {
+      "label": "Bell CAD 2026 Property Search",
+      "url": "https://esearchgsa.bellcad.org/",
+      "source_type": "property-search",
+      "observed_evidence": [
+        "search modes include owner, address, ID, ARB, and advanced search",
+        "property search exposes common BIS fields including Property ID, Owner ID, Geographic ID, tax year, subdivision, neighborhood, and property type"
+      ]
+    }
+  ],
+  "observed_search_fields": [
+    "Owner Name",
+    "Street Number",
+    "Property ID",
+    "Property Type",
+    "Street Name",
+    "Subdivision",
+    "Owner ID",
+    "Geographic ID",
+    "Tax Year",
+    "Neighborhood"
+  ],
+  "observed_tax_years": [],
+  "candidate_bulk_or_report_leads": [],
+  "verified_counts": {
+    "parcel_geometry_features": 0,
+    "appraisal_property_rows": 0,
+    "count_verified_at": null,
+    "status": "not-verified"
+  },
+  "join_keys": {
+    "primary_parcel_account": "unverified: property search exposes Property ID, Owner ID, and Geographic ID fields, but exact geometry-to-appraisal key is not verified",
+    "secondary_gis_id": "unverified",
+    "owner_appraisal": "unverified"
+  },
+  "bulk_source_status": {
+    "parcel_geometry_bulk": "not-verified",
+    "owner_appraisal_bulk": "not-verified",
+    "download_terms": "not-verified"
+  },
+  "remaining_blockers": [
+    "bulk/export files not inspected",
+    "exact parcel count not verified",
+    "exact geometry-to-appraisal join key not verified",
+    "viewport chunks and search shards not built",
+    "QC report not built"
+  ],
+  "completion_impact": "source-discovery-started"
+}

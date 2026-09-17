@@ -1,0 +1,101 @@
+{
+  "id": "cook-county-il-ingestion",
+  "countyAdapter": "data/county-adapters/cook-county-il/adapter.json",
+  "universalParcelSchema": "data/schemas/universal-parcel.schema.json",
+  "defaultMode": "plan",
+  "steps": [
+    {
+      "id": "verify-official-sources",
+      "label": "Verify official parcel, assessor/appraisal, permit, zoning, floodplain, and demand sources",
+      "command": "echo Verify official sources for cook-county-il before ingesting large files.",
+      "requiredOutputs": [
+        "output/cook-county-il/schema-report.md",
+        "output/cook-county-il/schema-report.json"
+      ]
+    },
+    {
+      "id": "verify-join-keys",
+      "label": "Document exact parcel/account/GIS join keys",
+      "command": "echo Replace source-needed join keys for cook-county-il.",
+      "requiredOutputs": [
+        "output/cook-county-il/join-key-report.md"
+      ]
+    },
+    {
+      "id": "build-parcel-geojson",
+      "label": "Build county universal parcel GeoJSON",
+      "command": "echo Build cook-county-il universal parcel GeoJSON after source verification.",
+      "requiredOutputs": [
+        "output/cook-county-il/cook-county-il-parcels.geojson",
+        "output/cook-county-il/full-parcel-access-report.md"
+      ]
+    },
+    {
+      "id": "build-parcel-service",
+      "label": "Build viewport parcel chunks and search shards",
+      "command": "echo Build cook-county-il viewport parcel chunks and search shards after universal GeoJSON exists.",
+      "requiredOutputs": [
+        "public/data/counties/cook-county-il/parcels/manifest.json"
+      ]
+    },
+    {
+      "id": "build-owner-matches",
+      "label": "Build owner/appraisal parcel intelligence",
+      "command": "echo Build cook-county-il owner/appraisal index after official assessor/appraisal source is verified.",
+      "requiredOutputs": [
+        "output/cook-county-il/cook-county-il-owner-appraisal-index.json",
+        "output/cook-county-il/join-key-report.md"
+      ]
+    },
+    {
+      "id": "build-permit-service",
+      "label": "Normalize and publish permits and certificates of occupancy",
+      "command": "echo Build cook-county-il permits/CO after official source verification.",
+      "requiredOutputs": [
+        "public/data/counties/cook-county-il/permits/manifest.json"
+      ]
+    },
+    {
+      "id": "build-zoning-index",
+      "label": "Build zoning and overlay parcel index",
+      "command": "echo Build cook-county-il zoning after official source verification.",
+      "requiredOutputs": [
+        "public/data/counties/cook-county-il/zoning/manifest.json",
+        "output/cook-county-il/zoning-source-report.md"
+      ]
+    },
+    {
+      "id": "build-floodplain-index",
+      "label": "Build floodplain parcel index",
+      "command": "echo Build cook-county-il floodplain after FEMA/local source verification.",
+      "requiredOutputs": [
+        "public/data/counties/cook-county-il/floodplain/manifest.json",
+        "output/cook-county-il/floodplain-source-report.md"
+      ]
+    },
+    {
+      "id": "build-migration-demand",
+      "label": "Build aggregate migration and demand parcel index",
+      "command": "echo Build cook-county-il aggregate migration/demand after approved geography sources are verified.",
+      "requiredOutputs": [
+        "public/data/counties/cook-county-il/demand/manifest.json"
+      ]
+    },
+    {
+      "id": "validate",
+      "label": "Run county QC",
+      "command": "npm.cmd run county:qc",
+      "requiredOutputs": [
+        "output/county-qc/cook-county-il.json",
+        "output/county-qc/cook-county-il.md"
+      ]
+    }
+  ],
+  "productionTileStep": {
+    "id": "build-pmtiles",
+    "label": "Build PMTiles/vector tiles after the parcel GeoJSON exists",
+    "handoff": "output/cook-county-il/vector-tiles/README.md",
+    "expectedOutput": "output/cook-county-il/cook-county-il-parcels.pmtiles"
+  },
+  "uiConstraint": "Do not redesign or restyle any White Rabbit pages while running this pilot county ingestion pipeline."
+}

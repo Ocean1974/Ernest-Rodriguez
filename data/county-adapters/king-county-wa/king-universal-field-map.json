@@ -1,0 +1,121 @@
+{
+  "county_id": "king-county-wa",
+  "schema_version": "wr-universal-parcel-v1",
+  "source_manifest": "data/county-adapters/king-county-wa/king-county-parcel-source-manifest.json",
+  "primary_join_key": "PIN",
+  "secondary_join_key": "OBJECTID",
+  "field_map": {
+    "sourceParcelId": {
+      "sourceField": "PIN",
+      "notes": "Raw King County parcel identifier."
+    },
+    "accountNum": {
+      "sourceField": "PIN",
+      "notes": "Use PIN as the parcel/account join key. PIN is not unique in raw geometry; use OBJECTID for feature uniqueness."
+    },
+    "accountNumber": {
+      "sourceField": "PIN"
+    },
+    "gisParcelId": {
+      "sourceField": "OBJECTID"
+    },
+    "major": {
+      "sourceField": "MAJOR"
+    },
+    "minor": {
+      "sourceField": "MINOR"
+    },
+    "address": {
+      "sourceField": "ADDR_FULL"
+    },
+    "city": {
+      "sourceField": "CTYNAME"
+    },
+    "propertyZip": {
+      "sourceField": "ZIP5"
+    },
+    "propertyName": {
+      "sourceField": "PROP_NAME"
+    },
+    "platName": {
+      "sourceField": "PLAT_NAME"
+    },
+    "ownerName": {
+      "type": "placeholder",
+      "value": "",
+      "notes": "No current owner name field verified in the official MapServer layers inspected."
+    },
+    "ownerPhone": {
+      "type": "placeholder",
+      "value": "",
+      "notes": "No official owner phone field verified."
+    },
+    "ownerEmail": {
+      "type": "placeholder",
+      "value": "",
+      "notes": "No official owner email field verified."
+    },
+    "zoning": {
+      "sourceField": "KCA_ZONING"
+    },
+    "landUseCode": {
+      "sourceField": "PREUSE_CODE"
+    },
+    "landUseDescription": {
+      "sourceField": "PREUSE_DESC"
+    },
+    "landAreaSqFt": {
+      "sourceField": "LOTSQFT"
+    },
+    "landAreaAcres": {
+      "sourceField": "KCA_ACRES"
+    },
+    "landValue": {
+      "sourceField": "APPRLNDVAL"
+    },
+    "improvementValue": {
+      "sourceField": "APPR_IMPR"
+    },
+    "propertyType": {
+      "sourceField": "PROPTYPE"
+    },
+    "perimeter": {
+      "sourceField": "Shape.STLength()"
+    },
+    "sourceArea": {
+      "sourceField": "Shape.STArea()"
+    }
+  },
+  "search_index_fields": [
+    "PIN",
+    "MAJOR",
+    "MINOR",
+    "ADDR_FULL",
+    "CTYNAME",
+    "POSTALCTYNAME",
+    "PROP_NAME",
+    "PLAT_NAME",
+    "KCA_ZONING",
+    "PREUSE_DESC"
+  ],
+  "parcel_window_groups": {
+    "source_verified": [
+      "identity",
+      "address",
+      "appraisal-values",
+      "land-building",
+      "geometry",
+      "zoning-text",
+      "source-lineage"
+    ],
+    "source_needed": [
+      "current-owner-name",
+      "official-owner-phone-email",
+      "permits-certificates",
+      "floodplain",
+      "development-signals",
+      "migration-demand",
+      "production-viewport-search"
+    ]
+  }
+}

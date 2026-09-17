@@ -1,0 +1,113 @@
+{
+  "schemaVersion": "wr-el-paso-county-source-audit-v1",
+  "county_id": "el-paso-county-tx",
+  "county_name": "El Paso County",
+  "state": "TX",
+  "fips": "48141",
+  "cad_name": "El Paso Central Appraisal District",
+  "official_portal": "https://epcad.org/OpenGovernment",
+  "parcel_service": {
+    "item_id": "47bef768aea0456a9a67d449b0a72b97",
+    "title": "ElPasoCADWebService",
+    "layer_id": 0,
+    "name": "Parcels",
+    "url": "https://services2.arcgis.com/fKvlzLJczghwPYHS/ArcGIS/rest/services/ElPasoCADWebService/FeatureServer/0",
+    "item_url": "https://www.arcgis.com/home/item.html?id=47bef768aea0456a9a67d449b0a72b97",
+    "access": "public",
+    "owner": "asanders_bis",
+    "field_count": 44,
+    "geometry_type": "esriGeometryPolygon",
+    "source_spatial_reference": {
+      "wkid": 102739,
+      "latest_wkid": 2277,
+      "description": "NAD83 / Texas Central (ftUS)"
+    },
+    "object_id_field": "ObjectID_1",
+    "max_record_count": 2000,
+    "supports_pagination": true,
+    "supports_statistics": true,
+    "supported_query_formats": ["JSON", "geoJSON", "PBF"],
+    "data_last_edit_at": "2026-09-06T00:56:14.232Z",
+    "item_created_at": "2023-11-06T19:48:51.000Z",
+    "item_modified_at": "2026-09-06T00:56:40.000Z"
+  },
+  "official_downloads": {
+    "portal_description": "EPCAD publishes current appraisal/property-search flat files, certified exports, current appraisal roll and real-estate files, and annual GIS shapefiles.",
+    "latest_listed_shapefile_year": 2025,
+    "latest_listed_shapefile_size_mb": 85,
+    "gis_last_updated_label": "2024-10-07",
+    "property_search_format": {
+      "row_delimiter": "newline",
+      "column_delimiter": "~",
+      "development_use_label": true
+    }
+  },
+  "rights": {
+    "portal_gis_public_domain_statement": true,
+    "portal_disclaimer": "Distributed without warranty; delivery frequency and availability are not guaranteed.",
+    "arcgis_item_access": "public",
+    "arcgis_item_license": null,
+    "arcgis_item_terms_of_use": null,
+    "status": "official-public-access-observed-production-review-required",
+    "storage": false,
+    "derivation": false,
+    "redistribution": false,
+    "commercial_use": false,
+    "evidence": "EPCAD labels GIS information public domain and publishes development-oriented downloads. The current ArcGIS service item is public but contains no license, terms-of-use, copyright, or machine-verifiable statement tying its reuse terms to the EPCAD download disclaimer. Production reuse remains fail-closed pending a documented legal/provenance review."
+  },
+  "observed_counts": {
+    "parcel_service_features": 400899,
+    "geometry_non_null": 400899,
+    "missing_geometry": 0,
+    "prop_id_text_non_null": 400899,
+    "prop_id_text_null": 0,
+    "prop_id_text_distinct": 399630,
+    "prop_id_text_duplicate_excess": 1269,
+    "prop_id_non_null": 400899,
+    "prop_id_null": 0,
+    "prop_id_distinct": 399630,
+    "prop_id_duplicate_excess": 1269,
+    "geo_id_non_null": 400899,
+    "geo_id_null": 0,
+    "geo_id_distinct": 399630,
+    "geo_id_duplicate_excess": 1269,
+    "prop_id_text_prop_id_distinct": 399630,
+    "prop_id_text_prop_id_duplicate_excess": 1269,
+    "prop_id_text_geo_id_distinct": 399630,
+    "prop_id_text_geo_id_duplicate_excess": 1269,
+    "prop_id_geo_id_distinct": 399630,
+    "prop_id_geo_id_duplicate_excess": 1269,
+    "all_three_id_fields_distinct": 399630,
+    "all_three_id_fields_duplicate_excess": 1269,
+    "duplicate_identifier_groups": 1059,
+    "object_id_distinct": 400899,
+    "count_observed_at": "2026-09-06",
+    "county_completeness_certified": false
+  },
+  "identity_findings": {
+    "business_key_candidates": ["prop_id_text", "prop_id", "geo_id"],
+    "all_candidate_fields_complete": true,
+    "single_field_status": "complete-but-non-unique",
+    "composite_status": "complete-but-non-unique",
+    "candidate_fields_are_one_to_one_correlated": true,
+    "object_id_status": "snapshot-unique-system-maintained-refresh-stability-unproven",
+    "probable_relationship": "one appraisal property to one or more polygon features",
+    "production_feature_identity": "unresolved",
+    "production_appraisal_join": "candidate-only-not-certified"
+  },
+  "schema_fields": [
+    "prop_id_text", "created_date", "last_edited_date", "prop_id", "owner_tax_yr", "file_as_name", "legal_acreage", "hood_cd", "school", "city", "county", "next_appraisal_dt", "legal_desc", "legal_desc2", "legal_desc3", "tract_or_lot", "abs_subdv_cd", "land_val", "imprv_val", "market", "block", "map_id", "geo_id", "situs_num", "situs_street_prefx", "situs_street", "situs_street_sufix", "situs_city", "situs_state", "situs_zip", "addr_line1", "addr_line2", "addr_line3", "addr_city", "addr_state", "zip", "Deed_Seq", "Deed_Date", "Volume", "Page", "Number", "ObjectID_1", "Shape__Area", "Shape__Length"
+  ],
+  "activation": {
+    "authorized": false,
+    "status": "blocked",
+    "blockers": [
+      "Production rights and the provenance relationship between the EPCAD public-domain download statement and this ArcGIS service are not documented.",
+      "prop_id_text, prop_id, geo_id, and every tested composite are non-unique at the feature level.",
+      "ObjectID_1 is snapshot-unique but stability across service refreshes is unproven.",
+      "The 400,899 service features have not been reconciled against the official annual GIS shapefile or appraisal export.",
+      "Bounded immutable capture, geometry validation, normalized artifacts, search shards, viewport delivery, freshness policy, and county QA are incomplete."
+    ]
+  },
+  "render_directly_in_browser": false
+}

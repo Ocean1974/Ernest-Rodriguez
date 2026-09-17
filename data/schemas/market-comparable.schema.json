@@ -1,0 +1,40 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://white-rabbit.local/schemas/market-comparable.schema.json",
+  "title": "White Rabbit Market Comparable Intelligence",
+  "oneOf": [
+    { "$ref": "#/$defs/comparable" },
+    { "$ref": "#/$defs/analysis" },
+    { "$ref": "#/$defs/adjustment" }
+  ],
+  "$defs": {
+    "comparable": {
+      "type": "object",
+      "required": ["schemaVersion", "id", "comparableType", "whiteRabbitPropertyId", "propertyType", "transactionDate", "location", "economics", "yearBuilt", "unitCount", "source"],
+      "properties": {
+        "schemaVersion": { "const": "wr-market-comparable-v1" },
+        "comparableType": { "enum": ["sale", "rent"] },
+        "source": {
+          "type": "object",
+          "required": ["datasetId", "recordId", "sourceUrl", "licenseId", "licenseStatus", "observedAt", "availableAt", "expiresAt", "sourceFields"],
+          "properties": { "licenseStatus": { "enum": ["authorized", "restricted", "expired", "unknown"] } }
+        }
+      }
+    },
+    "adjustment": {
+      "type": "object",
+      "required": ["schemaVersion", "lines", "unclampedAdjustmentPct", "totalAdjustmentPct", "capped", "adjustedUnitValue"],
+      "properties": { "schemaVersion": { "const": "wr-comparable-adjustment-v1" } }
+    },
+    "analysis": {
+      "type": "object",
+      "required": ["schemaVersion", "analysisType", "analysisAsOf", "subject", "selectionPolicy", "adjustmentPolicy", "status", "selected", "excluded", "estimate", "missingAdjustmentEvidence", "futureAdjustmentEvidence", "warnings", "formulas"],
+      "properties": {
+        "schemaVersion": { "const": "wr-comparable-analysis-v1" },
+        "status": { "enum": ["adjusted-estimate", "evidence-selected", "insufficient-evidence"] },
+        "analysisType": { "enum": ["sale", "rent"] },
+        "estimate": { "type": ["object", "null"] }
+      }
+    }
+  }
+}

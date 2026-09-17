@@ -1,0 +1,27 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://white-rabbit.local/schemas/release-evidence-registry.schema.json",
+  "title": "White Rabbit Durable Release Evidence Registry",
+  "oneOf": [
+    { "$ref": "#/$defs/trustKey" },
+    { "$ref": "#/$defs/trustState" },
+    { "$ref": "#/$defs/registryEntry" }
+  ],
+  "$defs": {
+    "trustKey": {
+      "type": "object",
+      "required": ["schemaVersion", "keyId", "publicKeyPem", "allowedRoles", "activeFrom", "expiresAt", "revokedAt", "addedAt", "addedBy", "revokedBy", "revocationReason"],
+      "properties": { "schemaVersion": { "const": "wr-release-trust-key-v1" }, "publicKeyPem": { "type": "string", "minLength": 1 } }
+    },
+    "trustState": {
+      "type": "object",
+      "required": ["schemaVersion", "organizationId", "revision", "updatedAt", "keys"],
+      "properties": { "schemaVersion": { "const": "wr-release-trust-state-v1" }, "revision": { "type": "integer", "minimum": 0 }, "keys": { "type": "array", "items": { "$ref": "#/$defs/trustKey" } } }
+    },
+    "registryEntry": {
+      "type": "object",
+      "required": ["schemaVersion", "organizationId", "entryType", "contentSha256", "capabilityId", "evidenceType", "storedAt", "storedBy", "content"],
+      "properties": { "schemaVersion": { "const": "wr-release-registry-entry-v1" }, "entryType": { "enum": ["attestation", "manifest"] }, "contentSha256": { "type": "string", "pattern": "^[a-f0-9]{64}$" } }
+    }
+  }
+}

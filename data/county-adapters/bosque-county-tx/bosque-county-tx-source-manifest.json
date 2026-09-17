@@ -1,0 +1,56 @@
+{
+  "county_id": "bosque-county-tx",
+  "county_name": "Bosque County",
+  "state": "TX",
+  "fips": "48035",
+  "cad_name": "Bosque County Appraisal District",
+  "source_discovery_status": "official-site-public-info-and-property-tax-resources-discovered",
+  "retrieved_at": "2026-06-29",
+  "ui_constraint": "Do not redesign White Rabbit pages while expanding county parcel intelligence plumbing.",
+  "official_sources": [
+    {
+      "label": "Bosque County Appraisal District official site",
+      "url": "https://bosquecad.com/",
+      "source_type": "appraisal-district-site",
+      "observed_evidence": [
+        "official site exposes appraisal information",
+        "official site exposes exemption and forms resources",
+        "official site exposes public information and property-tax resources",
+        "official site exposes tax office links"
+      ]
+    }
+  ],
+  "observed_search_fields": [
+    "not-verified: property-search fields need direct source inspection"
+  ],
+  "observed_tax_years": [],
+  "candidate_bulk_or_report_leads": [
+    "Public information resources",
+    "Property-tax resources"
+  ],
+  "verified_counts": {
+    "parcel_geometry_features": 0,
+    "appraisal_property_rows": 0,
+    "count_verified_at": null,
+    "status": "not-verified"
+  },
+  "join_keys": {
+    "primary_parcel_account": "unverified: official site is verified, but property/map source fields and exact geometry-to-appraisal key are not verified",
+    "secondary_gis_id": "unverified",
+    "owner_appraisal": "unverified"
+  },
+  "bulk_source_status": {
+    "parcel_geometry_bulk": "not-verified",
+    "owner_appraisal_bulk": "not-verified",
+    "download_terms": "not-verified"
+  },
+  "remaining_blockers": [
+    "property/map source links not verified",
+    "bulk/export files not inspected",
+    "exact parcel count not verified",
+    "exact geometry-to-appraisal join key not verified",
+    "viewport chunks and search shards not built",
+    "QC report not built"
+  ],
+  "completion_impact": "source-discovery-started"
+}

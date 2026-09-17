@@ -1,0 +1,40 @@
+{
+  "sourceCountyId": "travis-county-tx",
+  "sourceLayer": "Boundaries_and_Jurisdictions/TCAD/MapServer/0",
+  "schemaVersion": "wr-universal-parcel-v1",
+  "verifiedAt": "2026-09-08",
+  "identityPolicy": {
+    "runtimeFeatureId": "OBJECTID",
+    "sourceFeatureKey": "OBJECTID",
+    "businessKeyStatus": "snapshot-unique-refresh-stability-unverified",
+    "candidateFields": ["PROP_ID", "geo_id"],
+    "reason": "OBJECTID is complete and unique in the audited snapshot. PROP_ID and geo_id have documented nulls and duplicates, so neither is safe as the sole feature key."
+  },
+  "fields": {
+    "parcelId": "OBJECTID",
+    "accountNumber": "PROP_ID",
+    "gisParcelId": "geo_id",
+    "ownerName": "py_owner_name",
+    "ownerId": "py_owner_id",
+    "situsAddress": "situs_address",
+    "alternateAddress": "py_address",
+    "situsCity": "situs_city",
+    "situsZip": "situs_zip",
+    "legalDescription": "legal_desc",
+    "landUseCode": "land_state_cd",
+    "landUseDescription": "land_type_desc",
+    "landAcres": "tcad_acres",
+    "gisAcres": "GIS_acres",
+    "marketValue": "market_value",
+    "appraisedValue": "appraised_val",
+    "assessedValue": "assessed_val",
+    "improvementHomesiteValue": "imprv_homesite_val",
+    "improvementNonHomesiteValue": "imprv_non_homesite_val",
+    "landHomesiteValue": "land_homesite_val",
+    "landNonHomesiteValue": "land_non_homesite_val",
+    "yearImproved": "F1year_imprv",
+    "lots": "LOTS",
+    "geometryArea": "Shape.STArea()",
+    "geometryPerimeter": "Shape.STLength()"
+  }
+}

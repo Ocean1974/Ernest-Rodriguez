@@ -1,0 +1,68 @@
+const assert = require("assert");
+const fs = require("fs");
+const path = require("path");
+
+(async () => {
+  const worker = await import("../src/alerts/alertDeliveryWorker.mjs");
+  const fixed = "2026-08-14T13:00:00.000Z";
+  const attempt = (id, channelType, endpointRef) => ({ id, status: "queued", alertEnvelopeId: `alert-${id}`, subscriptionId: "sub-1", channelType, endpointRef, scheduledFor: fixed, createdAt: fixed });
+  let state = worker.createAlertWorkerState({ organizationId: "org-a", updatedAt: fixed });
+  state = worker.enqueueDeliveryAttempts(state, [attempt("email-1", "email", "secret-ref:email-1"), attempt("email-2", "email", "secret-ref:email-2"), attempt("webhook-1", "webhook", "secret-ref:webhook-1")], { createdAt: fixed, payloadRefForAttempt: (item) => `payload-ref:${item.alertEnvelopeId}`, maxAttempts: 2 });
+  assert.equal(state.jobs.length, 3);
+  assert.equal(state.revision, 2);
+  const deduped = worker.enqueueDeliveryAttempts(state, [attempt("email-1", "email", "secret-ref:email-1")], { createdAt: fixed, payloadRef: "payload-ref:duplicate" });
+  assert.equal(deduped.jobs.length, 3);
+  assert.equal(deduped.revision, 2);
+  assert.throws(() => worker.createAlertDeliveryJob({ ...attempt("bad", "email", "user@example.com"), organizationId: "org-a", deliveryAttemptId: "bad", payloadRef: "payload-ref:bad" }), /secret-ref/);
+  assert.throws(() => worker.createAlertDeliveryJob({ ...attempt("bad-payload", "webhook", "secret-ref:hook"), organizationId: "org-a", deliveryAttemptId: "bad-payload", payloadRef: "inline secret content" }), /payload-ref/);
+
+  const cycle = worker.leaseDeliveryJobs(state, { now: fixed, workerId: "worker-a", leaseSeconds: 30, limit: 10, rateLimits: { email: { maxDispatches: 1, windowSeconds: 60 }, webhook: { maxDispatches: 2, windowSeconds: 60 } } });
+  assert.equal(cycle.schemaVersion, "wr-alert-worker-cycle-v1");
+  assert.equal(cycle.leasedJobs.length, 2);
+  assert.equal(cycle.rateLimitedJobIds.length, 1);
+  assert.equal(cycle.leasedJobs.filter((job) => job.channelType === "email").length, 1);
+  state = cycle.state;
+  const emailJob = cycle.leasedJobs.find((job) => job.channelType === "email");
+  const webhookJob = cycle.leasedJobs.find((job) => job.channelType === "webhook");
+  const sent = new Map();
+  const provider = { send: async (request) => {
+    if (sent.has(request.idempotencyKey)) return { success: true, providerMessageId: sent.get(request.idempotencyKey), providerIdempotentReplay: true };
+    const messageId = `provider-${sent.size + 1}`; sent.set(request.idempotencyKey, messageId); return { success: true, providerMessageId: messageId };
+  } };
+  const providerResult = await worker.executeProviderDelivery(webhookJob, provider);
+  const replayResult = await worker.executeProviderDelivery(webhookJob, provider);
+  assert.equal(providerResult.success, true);
+  assert.equal(replayResult.providerIdempotentReplay, true);
+  assert.equal(sent.size, 1);
+  state = worker.completeDeliveryJob(state, { jobId: webhookJob.id, result: providerResult }, { workerId: "worker-a", leaseToken: webhookJob.lease.token, completedAt: "2026-08-14T13:00:05.000Z" });
+  assert.equal(state.jobs.find((job) => job.id === webhookJob.id).status, "delivered");
+  assert.throws(() => worker.completeDeliveryJob(state, { jobId: emailJob.id, result: { success: true } }, { workerId: "worker-b", leaseToken: emailJob.lease.token, completedAt: "2026-08-14T13:00:05.000Z" }), (error) => error.code === "WR_ALERT_LEASE_CONFLICT");
+  state = worker.completeDeliveryJob(state, { jobId: emailJob.id, result: { success: false, retryable: true, errorCode: "provider-429" } }, { workerId: "worker-a", leaseToken: emailJob.lease.token, completedAt: "2026-08-14T13:00:05.000Z", baseDelaySeconds: 30, maxDelaySeconds: 300, jitterRatio: 0 });
+  const retryJob = state.jobs.find((job) => job.id === emailJob.id);
+  assert.equal(retryJob.status, "retry-scheduled");
+  assert.equal(retryJob.nextAttemptAt, "2026-08-14T13:00:35.000Z");
+  assert(!worker.leaseDeliveryJobs(state, { now: "2026-08-14T13:00:34.000Z", workerId: "worker-a" }).leasedJobs.some((job) => job.id === retryJob.id));
+  const retryCycle = worker.leaseDeliveryJobs(state, { now: "2026-08-14T13:00:35.000Z", workerId: "worker-a", leaseSeconds: 30, limit: 10 });
+  const leasedRetry = retryCycle.leasedJobs.find((job) => job.id === retryJob.id);
+  assert.equal(leasedRetry.attemptNumber, 2);
+  state = worker.completeDeliveryJob(retryCycle.state, { jobId: retryJob.id, result: { success: false, retryable: true, errorCode: "provider-503", errorMessage: "unavailable" } }, { workerId: "worker-a", leaseToken: leasedRetry.lease.token, completedAt: "2026-08-14T13:00:40.000Z" });
+  assert.equal(state.jobs.find((job) => job.id === retryJob.id).status, "dead-lettered");
+  assert.equal(state.deadLetters.length, 1);
+  assert.equal(state.deadLetters[0].errorCode, "provider-503");
+
+  let recoveryState = worker.createAlertWorkerState({ organizationId: "org-a", updatedAt: fixed });
+  recoveryState = worker.enqueueDeliveryAttempts(recoveryState, [attempt("in-app-1", "in-app", "")], { createdAt: fixed, payloadRef: "payload-ref:in-app-1" });
+  const initialLease = worker.leaseDeliveryJobs(recoveryState, { now: fixed, workerId: "worker-crashed", leaseSeconds: 5 });
+  assert.equal(worker.leaseDeliveryJobs(initialLease.state, { now: "2026-08-14T13:00:04.000Z", workerId: "worker-next" }).leasedJobs.length, 0);
+  const recovered = worker.leaseDeliveryJobs(initialLease.state, { now: "2026-08-14T13:00:06.000Z", workerId: "worker-next", leaseSeconds: 30 });
+  assert.deepEqual(recovered.recoveredLeaseJobIds, [initialLease.leasedJobs[0].id]);
+  assert.equal(recovered.leasedJobs[0].attemptNumber, 2);
+  assert.throws(() => worker.completeDeliveryJob(recovered.state, { jobId: recovered.leasedJobs[0].id, result: { success: true } }, { workerId: "worker-next", leaseToken: recovered.leasedJobs[0].lease.token, completedAt: "2026-08-14T13:00:40.000Z" }), (error) => error.code === "WR_ALERT_LEASE_EXPIRED");
+  const exceptionResult = await worker.executeProviderDelivery(recovered.leasedJobs[0], { send: async () => { const error = new Error("network"); error.code = "ECONNRESET"; throw error; } });
+  assert.equal(exceptionResult.retryable, true);
+  assert.equal(exceptionResult.errorCode, "ECONNRESET");
+  assert.throws(() => worker.createAlertWorkerState({ organizationId: "org-a", jobs: [{ ...recovered.leasedJobs[0], organizationId: "org-b" }], updatedAt: fixed }), /All jobs/);
+  const schema = JSON.parse(fs.readFileSync(path.join(__dirname, "..", "data", "schemas", "alert-worker-state.schema.json"), "utf8"));
+  assert.equal(schema.properties.schemaVersion.const, "wr-alert-worker-state-v1");
+  console.log("White Rabbit alert worker leasing, rate-limit, retry, recovery, provider-idempotency, and dead-letter tests passed.");
+})().catch((error) => { console.error(error); process.exit(1); });

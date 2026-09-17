@@ -1,0 +1,107 @@
+{
+  "id": "lake-county-co-ingestion",
+  "countyAdapter": "data/county-adapters/lake-county-co/adapter.json",
+  "universalParcelSchema": "data/schemas/universal-parcel.schema.json",
+  "defaultMode": "plan",
+  "enabledForProduction": false,
+  "scaffoldOnly": true,
+  "steps": [
+    {
+      "id": "verify-official-sources",
+      "label": "Verify official parcel and assessor/appraiser sources",
+      "command": "echo Verify official sources for lake-county-co.",
+      "requiredOutputs": [
+        "output/lake-county-co/schema-report.md",
+        "output/lake-county-co/schema-report.json"
+      ]
+    },
+    {
+      "id": "verify-join-keys",
+      "label": "Document exact parcel/account/GIS join keys",
+      "command": "echo Document exact join keys for lake-county-co.",
+      "requiredOutputs": [
+        "output/lake-county-co/join-key-report.md"
+      ]
+    },
+    {
+      "id": "build-parcel-geojson",
+      "label": "Build universal county parcel GeoJSON",
+      "command": "echo Build lake-county-co universal parcel GeoJSON after source verification.",
+      "requiredOutputs": [
+        "output/lake-county-co/lake-county-co-parcels.geojson",
+        "output/lake-county-co/full-parcel-access-report.md"
+      ]
+    },
+    {
+      "id": "build-parcel-service",
+      "label": "Build viewport chunks and search shards",
+      "command": "echo Build viewport-safe parcel service for lake-county-co.",
+      "requiredOutputs": [
+        "public/data/counties/lake-county-co/parcels/manifest.json"
+      ]
+    },
+    {
+      "id": "build-owner-matches",
+      "label": "Build owner/appraisal parcel joins",
+      "command": "echo Build owner and appraisal joins for lake-county-co.",
+      "requiredOutputs": [
+        "output/lake-county-co/lake-county-co-owner-appraisal-index.json"
+      ]
+    },
+    {
+      "id": "build-permit-service",
+      "label": "Normalize permits and certificates of occupancy",
+      "command": "echo Build permits and CO pipeline for lake-county-co.",
+      "requiredOutputs": [
+        "public/data/counties/lake-county-co/permits/manifest.json"
+      ]
+    },
+    {
+      "id": "build-zoning-index",
+      "label": "Build zoning parcel index",
+      "command": "echo Build zoning joins for lake-county-co.",
+      "requiredOutputs": [
+        "public/data/counties/lake-county-co/zoning/manifest.json"
+      ]
+    },
+    {
+      "id": "build-floodplain-index",
+      "label": "Build floodplain parcel index",
+      "command": "echo Build floodplain joins for lake-county-co.",
+      "requiredOutputs": [
+        "public/data/counties/lake-county-co/floodplain/manifest.json"
+      ]
+    },
+    {
+      "id": "build-development-index",
+      "label": "Build development-signal parcel index",
+      "command": "echo Build development index for lake-county-co.",
+      "requiredOutputs": [
+        "public/data/counties/lake-county-co/developments/parcel-development-index.json"
+      ]
+    },
+    {
+      "id": "build-migration-demand",
+      "label": "Build aggregate migration and demand index",
+      "command": "echo Build aggregate demand joins for lake-county-co.",
+      "requiredOutputs": [
+        "public/data/counties/lake-county-co/demand/manifest.json"
+      ]
+    },
+    {
+      "id": "validate",
+      "label": "Run county QC",
+      "command": "npm.cmd run county:qc",
+      "requiredOutputs": [
+        "output/county-qc/lake-county-co.json",
+        "output/county-qc/lake-county-co.md"
+      ]
+    }
+  ],
+  "productionTileStep": {
+    "id": "build-pmtiles",
+    "label": "Build PMTiles/vector tiles after verified parcel GeoJSON exists",
+    "expectedOutput": "output/lake-county-co/lake-county-co-parcels.pmtiles"
+  },
+  "uiConstraint": "Do not redesign or activate White Rabbit pages while this county remains a pipeline scaffold."
+}

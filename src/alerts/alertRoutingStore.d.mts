@@ -1,0 +1,13 @@
+export const ALERT_SUBSCRIPTION_VERSION: "wr-alert-subscription-v1";
+export const PROPERTY_SNAPSHOT_VERSION: "wr-property-snapshot-v1";
+export const ALERT_DELIVERY_ATTEMPT_VERSION: "wr-alert-delivery-attempt-v1";
+export const ALERT_ROUTING_STATE_VERSION: "wr-alert-routing-state-v1";
+export const ALERT_ROUTING_DECISION_VERSION: "wr-alert-routing-decision-v1";
+export function createAlertSubscription(input?: Record<string, any>): Record<string, any>;
+export function createPropertySnapshot(input?: Record<string, any>): Record<string, any>;
+export function createAlertRoutingState(input?: Record<string, any>): Record<string, any>;
+export function upsertAlertSubscription(state: Record<string, any>, subscription: Record<string, any>, options?: Record<string, any>): Record<string, any>;
+export function appendPropertySnapshot(state: Record<string, any>, snapshot: Record<string, any>, options?: Record<string, any>): Record<string, any>;
+export function latestPropertySnapshots(state: Record<string, any>, whiteRabbitPropertyId: string): Array<Record<string, any>>;
+export function planAlertRouting(input?: Record<string, any>): Record<string, any>;
+export function recordDeliveryAttempts(state: Record<string, any>, attempts?: Array<Record<string, any>>, options?: Record<string, any>): Record<string, any>;

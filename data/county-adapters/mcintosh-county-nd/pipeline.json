@@ -1,0 +1,107 @@
+{
+  "id": "mcintosh-county-nd-ingestion",
+  "countyAdapter": "data/county-adapters/mcintosh-county-nd/adapter.json",
+  "universalParcelSchema": "data/schemas/universal-parcel.schema.json",
+  "defaultMode": "plan",
+  "enabledForProduction": false,
+  "scaffoldOnly": true,
+  "steps": [
+    {
+      "id": "verify-official-sources",
+      "label": "Verify official parcel and assessor/appraiser sources",
+      "command": "echo Verify official sources for mcintosh-county-nd.",
+      "requiredOutputs": [
+        "output/mcintosh-county-nd/schema-report.md",
+        "output/mcintosh-county-nd/schema-report.json"
+      ]
+    },
+    {
+      "id": "verify-join-keys",
+      "label": "Document exact parcel/account/GIS join keys",
+      "command": "echo Document exact join keys for mcintosh-county-nd.",
+      "requiredOutputs": [
+        "output/mcintosh-county-nd/join-key-report.md"
+      ]
+    },
+    {
+      "id": "build-parcel-geojson",
+      "label": "Build universal county parcel GeoJSON",
+      "command": "echo Build mcintosh-county-nd universal parcel GeoJSON after source verification.",
+      "requiredOutputs": [
+        "output/mcintosh-county-nd/mcintosh-county-nd-parcels.geojson",
+        "output/mcintosh-county-nd/full-parcel-access-report.md"
+      ]
+    },
+    {
+      "id": "build-parcel-service",
+      "label": "Build viewport chunks and search shards",
+      "command": "echo Build viewport-safe parcel service for mcintosh-county-nd.",
+      "requiredOutputs": [
+        "public/data/counties/mcintosh-county-nd/parcels/manifest.json"
+      ]
+    },
+    {
+      "id": "build-owner-matches",
+      "label": "Build owner/appraisal parcel joins",
+      "command": "echo Build owner and appraisal joins for mcintosh-county-nd.",
+      "requiredOutputs": [
+        "output/mcintosh-county-nd/mcintosh-county-nd-owner-appraisal-index.json"
+      ]
+    },
+    {
+      "id": "build-permit-service",
+      "label": "Normalize permits and certificates of occupancy",
+      "command": "echo Build permits and CO pipeline for mcintosh-county-nd.",
+      "requiredOutputs": [
+        "public/data/counties/mcintosh-county-nd/permits/manifest.json"
+      ]
+    },
+    {
+      "id": "build-zoning-index",
+      "label": "Build zoning parcel index",
+      "command": "echo Build zoning joins for mcintosh-county-nd.",
+      "requiredOutputs": [
+        "public/data/counties/mcintosh-county-nd/zoning/manifest.json"
+      ]
+    },
+    {
+      "id": "build-floodplain-index",
+      "label": "Build floodplain parcel index",
+      "command": "echo Build floodplain joins for mcintosh-county-nd.",
+      "requiredOutputs": [
+        "public/data/counties/mcintosh-county-nd/floodplain/manifest.json"
+      ]
+    },
+    {
+      "id": "build-development-index",
+      "label": "Build development-signal parcel index",
+      "command": "echo Build development index for mcintosh-county-nd.",
+      "requiredOutputs": [
+        "public/data/counties/mcintosh-county-nd/developments/parcel-development-index.json"
+      ]
+    },
+    {
+      "id": "build-migration-demand",
+      "label": "Build aggregate migration and demand index",
+      "command": "echo Build aggregate demand joins for mcintosh-county-nd.",
+      "requiredOutputs": [
+        "public/data/counties/mcintosh-county-nd/demand/manifest.json"
+      ]
+    },
+    {
+      "id": "validate",
+      "label": "Run county QC",
+      "command": "npm.cmd run county:qc",
+      "requiredOutputs": [
+        "output/county-qc/mcintosh-county-nd.json",
+        "output/county-qc/mcintosh-county-nd.md"
+      ]
+    }
+  ],
+  "productionTileStep": {
+    "id": "build-pmtiles",
+    "label": "Build PMTiles/vector tiles after verified parcel GeoJSON exists",
+    "expectedOutput": "output/mcintosh-county-nd/mcintosh-county-nd-parcels.pmtiles"
+  },
+  "uiConstraint": "Do not redesign or activate White Rabbit pages while this county remains a pipeline scaffold."
+}

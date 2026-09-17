@@ -1,0 +1,33 @@
+{
+  "sourceCountyId": "bexar-county-tx",
+  "sourceLayer": "Parcels/MapServer/0",
+  "schemaVersion": "wr-universal-parcel-v1",
+  "verifiedAt": "2026-09-12",
+  "identityPolicy": {
+    "runtimeFeatureId": "OBJECTID",
+    "sourceFeatureKey": "OBJECTID",
+    "businessKeyStatus": "incomplete-and-non-unique",
+    "candidateFields": ["AcctNumb", "PropID"],
+    "reason": "OBJECTID is complete and unique in the audited snapshot. AcctNumb and PropID are missing on 5,461 features and contain duplicate excess occurrences."
+  },
+  "fields": {
+    "parcelId": "OBJECTID",
+    "accountNumber": "AcctNumb",
+    "alternatePropertyId": "PropID",
+    "ownerName": "Owner",
+    "businessName": "DBA",
+    "ownerMailingAddress": "AddrLn1",
+    "situsAddress": "Situs",
+    "legalDescription": "LglDesc",
+    "landUseCode": "State_cd",
+    "landUseDescription": "PropUse",
+    "landAcres": "Acres",
+    "marketValue": "TotVal",
+    "landValue": "LandVal",
+    "improvementValue": "ImprVal",
+    "yearBuilt": "YrBlt",
+    "grossBuildingArea": "TOT_GBA",
+    "geometryArea": "Shape.STArea()",
+    "geometryPerimeter": "Shape.STLength()"
+  }
+}

@@ -1,0 +1,13 @@
+export const COUNTY_DEVELOPMENT_FEED_BINDING_VERSION: string;
+export const COUNTY_DEVELOPMENT_COVERAGE_VERSION: string;
+export const COUNTY_DEVELOPMENT_CLASSIFICATION_RULE_VERSION: string;
+export const NORMALIZED_COUNTY_DEVELOPMENT_EVENT_VERSION: string;
+export const COUNTY_DEVELOPMENT_SIGNAL_AUDIT_VERSION: string;
+export const COUNTY_DEVELOPMENT_INDEX_MANIFEST_VERSION: string;
+export function countyDevelopmentSha256(value: unknown): string;
+export function createCountyDevelopmentFeedBinding(input?: Record<string, unknown>): Readonly<Record<string, unknown>>;
+export function reconcileCountyDevelopmentCoverage(input?: Record<string, unknown>): Readonly<Record<string, unknown>>;
+export function createCountyDevelopmentClassificationRule(input?: Record<string, unknown>): Readonly<Record<string, unknown>>;
+export function createNormalizedCountyDevelopmentEvent(input?: Record<string, unknown>): Readonly<Record<string, unknown>>;
+export function createCountyDevelopmentSignalAudit(input?: Record<string, unknown>): Readonly<Record<string, unknown>>;
+export function createCountyDevelopmentIndexManifest(input?: Record<string, unknown>): Readonly<Record<string, unknown>>;

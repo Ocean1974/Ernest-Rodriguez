@@ -1,0 +1,11 @@
+export const COUNTY_PERMIT_SOURCE_PROBE_VERSION: string;
+export const COUNTY_PERMIT_COVERAGE_RECONCILIATION_VERSION: string;
+export const COUNTY_PERMIT_NORMALIZATION_POLICY_VERSION: string;
+export const NORMALIZED_COUNTY_PERMIT_EVENT_VERSION: string;
+export const COUNTY_PERMIT_PARCEL_LINK_AUDIT_VERSION: string;
+export function countyPermitSha256(value: unknown): string;
+export function createCountyPermitSourceProbe(input?: Record<string, unknown>): Readonly<Record<string, unknown>>;
+export function reconcileCountyPermitCoverage(input?: Record<string, unknown>): Readonly<Record<string, unknown>>;
+export function createCountyPermitNormalizationPolicy(input?: Record<string, unknown>): Readonly<Record<string, unknown>>;
+export function createNormalizedCountyPermitEvent(input?: Record<string, unknown>): Readonly<Record<string, unknown>>;
+export function createCountyPermitParcelLinkAudit(input?: Record<string, unknown>): Readonly<Record<string, unknown>>;

@@ -1,0 +1,33 @@
+{
+  "sourceCountyId": "fort-bend-county-tx",
+  "sourceLayer": "InteractiveMap/Parcels_Public/FeatureServer/1",
+  "schemaVersion": "wr-universal-parcel-v1",
+  "verifiedAt": "2026-09-12",
+  "identityPolicy": {
+    "runtimeFeatureId": "GlobalID",
+    "sourceFeatureKey": "GlobalID",
+    "businessKeyStatus": "complete-but-non-unique",
+    "candidateFields": ["Property_Number", "CAD_Reference_Number", "UID"],
+    "reason": "GlobalID and OBJECTID are complete and unique in the audited snapshot. Each business parcel candidate has 8 duplicate excess occurrences."
+  },
+  "fields": {
+    "parcelId": "GlobalID",
+    "accountNumber": "Property_Number",
+    "gisParcelId": "GlobalID",
+    "ownerName": "Owner_Name",
+    "ownerMailingAddress": "Owner_Address_1",
+    "situsAddress": "Situs",
+    "legalDescription": "Legal",
+    "landUseCode": "Land_State_Code",
+    "landUseDescription": "Common_Land_Use_Type",
+    "landAcres": "Land_Size_AC",
+    "landSquareFeet": "Land_Size_FT",
+    "marketValue": "Total_Value",
+    "landValue": "Land_Value",
+    "improvementValue": "Improvement_Value",
+    "yearBuilt": "Year_Built",
+    "grossBuildingArea": "Total_Living_Area_SqFT",
+    "geometryArea": "Shape__Area",
+    "geometryPerimeter": "Shape__Length"
+  }
+}

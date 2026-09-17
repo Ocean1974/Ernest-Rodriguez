@@ -1,0 +1,95 @@
+{
+  "id": "saginaw-county-mi",
+  "countyId": "saginaw-county-mi",
+  "countyName": "Saginaw County",
+  "state": "MI",
+  "fips": "26145",
+  "stateFips": "26",
+  "countyFips": "145",
+  "censusClassFp": "H1",
+  "status": "pilot",
+  "enabledForProduction": false,
+  "scaffoldOnly": true,
+  "appraisalDistrictName": "Saginaw County official assessor/appraiser source-needed",
+  "appraisalDistrictAcronym": "SOURCE-NEEDED",
+  "map": {
+    "locationName": "Saginaw County, MI pipeline scaffold",
+    "status": "disabled pipeline scaffold - verified bounds and sources needed",
+    "coordinates": [
+      0,
+      0
+    ],
+    "camera": {
+      "x": 50,
+      "y": 50,
+      "zoom": 1,
+      "pitch": 0,
+      "bearing": 0
+    },
+    "geoBounds": {
+      "minLng": null,
+      "minLat": null,
+      "maxLng": null,
+      "maxLat": null
+    },
+    "boundsStatus": "source-needed: do not use these placeholder values for rendering"
+  },
+  "universalParcelSchema": {
+    "version": "wr-universal-parcel-v1",
+    "schemaPath": "data/schemas/universal-parcel.schema.json",
+    "documentationPath": "data/schemas/universal-parcel.md",
+    "parcelServiceBuilder": "scripts/build-app-parcel-service.cjs",
+    "fieldMapPath": "data/county-adapters/saginaw-county-mi/saginaw-county-mi-universal-field-map.json",
+    "sourceManifestPath": "data/county-adapters/saginaw-county-mi/saginaw-county-mi-source-manifest.json"
+  },
+  "sourceFiles": {
+    "parcelGeometry": "source-needed",
+    "appraisalDistrictExtract": "source-needed",
+    "ownerAppraisal": "source-needed",
+    "permitsRaw": "source-needed",
+    "zoningRaw": "source-needed",
+    "floodplainRaw": "source-needed",
+    "migrationDemandRaw": "source-needed"
+  },
+  "publicDataRoots": {
+    "parcels": "/data/counties/saginaw-county-mi/parcels/",
+    "permits": "/data/counties/saginaw-county-mi/permits/",
+    "developments": "/data/counties/saginaw-county-mi/developments/",
+    "zoning": "/data/counties/saginaw-county-mi/zoning/",
+    "floodplain": "/data/counties/saginaw-county-mi/floodplain/",
+    "demand": "/data/counties/saginaw-county-mi/demand/"
+  },
+  "ownerEnrichment": {
+    "propertyRecordSource": "source-needed: official assessor/appraiser source must be verified",
+    "officialJoinKey": "source-needed: exact parcel/account join key must be verified",
+    "fields": {
+      "parcelId": "source-needed",
+      "ownerName": "source-needed",
+      "ownerPhone": "No official owner phone field verified",
+      "ownerEmail": "No official owner email field verified"
+    }
+  },
+  "joinKeys": {
+    "primaryParcelAccount": "source-needed: document exact geometry-to-assessor parcel/account key",
+    "appraisal": "source-needed: document exact appraisal key",
+    "land": "source-needed: document exact land/building/value key",
+    "secondaryParcelGisId": "source-needed: document exact GIS feature key",
+    "blockLabels": "source-needed: direct key, spatial join, or unavailable",
+    "dimensions": "source-needed: direct key, spatial join, generated measurement fallback, or unavailable",
+    "permits": "source-needed: parcel/account ID, normalized address, spatial join, or combination",
+    "zoning": "source-needed: parcel/account bridge or polygon spatial join",
+    "floodplain": "source-needed: FEMA/local floodplain spatial join",
+    "migrationDemand": "source-needed: aggregate geography join only"
+  },
+  "optionalLayers": [],
+  "verifiedCounts": {
+    "parcelGeometryFeatures": 0,
+    "appraisalAccountRows": 0,
+    "appParcelChunks": 0,
+    "parcelSearchShards": 0,
+    "sourcePermitRecords": 0
+  },
+  "requiredOutputs": [],
+  "productionGap": "Pipeline scaffold only. Official sources, exact counts, exact join keys, parcel services, enrichment layers, QA, and production tiles are not built.",
+  "uiConstraint": "Do not activate this county or change visible frontend behavior until its pipeline is source-verified and passes QC."
+}

@@ -1,0 +1,30 @@
+const assert = require("assert");
+const fs = require("fs");
+const path = require("path");
+
+(() => {
+  const root = path.join(__dirname, "..");
+  const report = JSON.parse(fs.readFileSync(path.join(root, "output", "acquisition-handoff-readiness.json"), "utf8"));
+  const schema = JSON.parse(fs.readFileSync(path.join(root, "data", "schemas", "acquisition-handoff-readiness.schema.json"), "utf8"));
+  assert.equal(report.schemaVersion, schema.properties.schemaVersion.const);
+  assert(schema.required.every((field) => schema.properties[field]));
+  assert.equal(report.status, "foundation-ready-release-blocked");
+  assert(report.checks.every((item) => item.passed));
+  assert.deepEqual(report.durableHandoff.atomicNamespaces, ["acquisition-handoff", "underwriting"]);
+  assert.equal(report.durableHandoff.canonicalPropertyJoinKey, "whiteRabbitPropertyId");
+  assert.equal(report.durableHandoff.idempotentReplay, true);
+  assert.equal(report.evidenceBoundary.signedUnderwritingEvidenceRequired, true);
+  assert.equal(report.evidenceBoundary.licensedPointInTimeComparablesRequired, true);
+  assert.equal(report.evidenceBoundary.rawProfilePersisted, false);
+  assert.equal(report.humanDecisionBoundary.scenarioStatus, "draft");
+  assert.equal(report.humanDecisionBoundary.reviewManufactured, false);
+  assert.equal(report.humanDecisionBoundary.approvalManufactured, false);
+  assert.equal(report.humanDecisionBoundary.exportAuthorized, false);
+  assert.equal(report.certificationScenario.atomicMutationCount, 2);
+  assert.equal(report.certificationScenario.exactReplayPreservedRevision, true);
+  assert.equal(report.activation.productionReleaseDecisionsPresent, false);
+  assert.equal(report.activation.visibleUiActivated, false);
+  assert.equal(report.activation.lockedWebsiteDesignChanged, false);
+  assert(report.releaseBlockers.length >= 4);
+  console.log("White Rabbit acquisition handoff readiness artifact tests passed.");
+})();

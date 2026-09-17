@@ -1,0 +1,15 @@
+{
+  "schemaVersion": "wr-national-parcel-search-routes-v1",
+  "routingKey": "five-digit-county-fips",
+  "routes": [
+    { "countyFips": "48113", "countyId": "dallas-county-dcad", "datasetId": "dallas-county-dcad", "dataRoot": "/data/parcels/", "adapterPath": "data/county-adapters/dallas/adapter.json" },
+    { "countyFips": "21111", "countyId": "jefferson-ky", "datasetId": "jefferson-ky", "dataRoot": "/data/counties/jefferson-ky/parcels/", "adapterPath": "data/county-adapters/louisville/adapter.json" },
+    { "countyFips": "48439", "countyId": "tarrant-county-tad", "datasetId": "tarrant-county-tad", "dataRoot": "/data/counties/tarrant/parcels/", "adapterPath": "data/county-adapters/tarrant/adapter.json" },
+    { "countyFips": "48201", "countyId": "harris-county-tx", "datasetId": "harris-county-tx", "dataRoot": "/data/counties/harris-county-tx/parcels/", "adapterPath": "data/county-adapters/harris-county-tx/adapter.json" },
+    { "countyFips": "48453", "countyId": "travis-county-tx", "datasetId": "travis-county-tx", "dataRoot": "/data/counties/travis-county-tx/parcels/", "adapterPath": "data/county-adapters/travis-county-tx/adapter.json" },
+    { "countyFips": "48085", "countyId": "collin-county-tx", "datasetId": "collin-county-tx", "dataRoot": "/data/counties/collin-county-tx/parcels/", "adapterPath": "data/county-adapters/collin-county-tx/adapter.json" },
+    { "countyFips": "48121", "countyId": "denton-county-tx", "datasetId": "denton-county-tx", "dataRoot": "/data/counties/denton-county-tx/parcels/", "adapterPath": "data/county-adapters/denton-county-tx/adapter.json" },
+    { "countyFips": "04013", "countyId": "maricopa-county-az", "datasetId": "maricopa-county-az", "dataRoot": "/data/counties/maricopa-county-az/parcels/", "adapterPath": "data/county-adapters/maricopa-county-az/adapter.json" },
+    { "countyFips": "53033", "countyId": "king-county-wa", "datasetId": "king-county-wa", "dataRoot": "/data/counties/king-county-wa/parcels/", "adapterPath": "data/county-adapters/king-county-wa/adapter.json" }
+  ]
+}

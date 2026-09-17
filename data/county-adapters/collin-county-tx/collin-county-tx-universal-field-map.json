@@ -1,0 +1,34 @@
+{
+  "sourceCountyId": "collin-county-tx",
+  "sourceLayer": "CCAD_Parcel_Feature_Set/FeatureServer/4",
+  "schemaVersion": "wr-universal-parcel-v1",
+  "verifiedAt": "2026-08-06",
+  "identityPolicy": {
+    "runtimeFeatureId": "OBJECTID",
+    "sourceFeatureKey": "GlobalID",
+    "businessKeyStatus": "verified-source-feature-key",
+    "candidateFields": ["propID", "PROP_ID", "geoID", "gisPropID"],
+    "reason": "GlobalID is non-null and unique across all 437,063 features. Business identifiers remain searchable secondary fields because they contain documented nulls or duplicates."
+  },
+  "fields": {
+    "parcelId": "GlobalID",
+    "gisParcelId": "geoID",
+    "ownerName": "ownerName",
+    "ownerName2": "ownerNameAddtl",
+    "ownerMailingAddress": "ownerAddrLine1",
+    "ownerMailingAddress2": "ownerAddrLine2",
+    "ownerCity": "ownerAddrCity",
+    "ownerState": "ownerAddrState",
+    "ownerZip": "ownerAddrZip",
+    "situsAddress": "situsConcat",
+    "legalDescription": "legalDescription",
+    "landAcres": "landSizeAcres",
+    "landSquareFeet": "landSizeSqft",
+    "landValue": "currValLand",
+    "improvementValue": "currValImprv",
+    "marketValue": "currValMarket",
+    "appraisedValue": "currValAppraised",
+    "yearBuilt": "imprvYearBuilt",
+    "buildingArea": "imprvMainArea"
+  }
+}

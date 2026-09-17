@@ -1,0 +1,78 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://whiterabbit.local/schemas/tarrant-county-release-preflight.schema.json",
+  "title": "White Rabbit Tarrant County Release Preflight",
+  "type": "object",
+  "required": [
+    "schemaVersion",
+    "generatedAt",
+    "evaluatedAt",
+    "countyId",
+    "countyFips",
+    "mode",
+    "pageDesignChanged",
+    "productionActivationAttempted",
+    "productionActivationAuthorized",
+    "observedEvidence",
+    "exactCounts",
+    "deliveryArtifacts",
+    "quality",
+    "sourceSnapshotCandidate",
+    "artifactBundleCandidate",
+    "policy",
+    "decision",
+    "dryRunSummary",
+    "nextRequiredActions"
+  ],
+  "properties": {
+    "schemaVersion": { "const": "wr-tarrant-county-release-preflight-v1" },
+    "countyId": { "const": "tarrant-county-tad" },
+    "countyFips": { "const": "48439" },
+    "mode": { "const": "non-visible-dry-run" },
+    "pageDesignChanged": { "const": false },
+    "productionActivationAttempted": { "const": false },
+    "productionActivationAuthorized": { "const": false },
+    "observedEvidence": {
+      "type": "array",
+      "minItems": 7,
+      "items": {
+        "type": "object",
+        "required": ["type", "relativePath", "bytes", "sha256", "exists"],
+        "properties": {
+          "bytes": { "type": "integer", "minimum": 1 },
+          "sha256": { "type": "string", "pattern": "^[a-f0-9]{64}$" },
+          "exists": { "const": true }
+        }
+      }
+    },
+    "exactCounts": {
+      "type": "object",
+      "required": ["officialAuditFeatureCount", "emittedFeatureCount", "viewportIndexedFeatureCount", "searchIndexCount", "primaryJoinKeyNonNullCount", "primaryJoinKeyMaxMultiplicity", "parcelCountParity"],
+      "properties": {
+        "officialAuditFeatureCount": { "const": 758633 },
+        "emittedFeatureCount": { "const": 758633 },
+        "viewportIndexedFeatureCount": { "const": 758633 },
+        "searchIndexCount": { "const": 758633 },
+        "primaryJoinKeyNonNullCount": { "const": 758633 },
+        "primaryJoinKeyMaxMultiplicity": { "const": 1 },
+        "parcelCountParity": { "const": true }
+      }
+    },
+    "decision": {
+      "type": "object",
+      "required": ["status", "activationAuthorized", "checks", "blockers", "decisionSha256"],
+      "properties": {
+        "status": { "const": "rejected" },
+        "activationAuthorized": { "const": false }
+      }
+    },
+    "dryRunSummary": {
+      "type": "object",
+      "required": ["status", "passedCheckCount", "failedCheckCount", "passedCheckIds", "failedCheckIds", "blockers"],
+      "properties": {
+        "status": { "const": "rejected" },
+        "failedCheckCount": { "type": "integer", "minimum": 1 }
+      }
+    }
+  }
+}

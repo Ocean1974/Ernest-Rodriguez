@@ -1,0 +1,50 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://white-rabbit.local/schemas/persistence-operations.schema.json",
+  "title": "White Rabbit Persistence Operations",
+  "oneOf": [
+    { "$ref": "#/$defs/encryptedBackup" },
+    { "$ref": "#/$defs/retentionPolicy" },
+    { "$ref": "#/$defs/auditExport" },
+    { "$ref": "#/$defs/operationalHealth" }
+  ],
+  "$defs": {
+    "encryptedBackup": {
+      "type": "object",
+      "required": ["schemaVersion", "organizationId", "keyId", "createdAt", "cipher", "kdf", "salt", "iv", "authTag", "ciphertext", "plaintextSha256", "snapshotSha256", "recordCount", "sourceTenantRevision"],
+      "properties": {
+        "schemaVersion": { "const": "wr-encrypted-backup-bundle-v1" },
+        "cipher": { "const": "aes-256-gcm" },
+        "kdf": { "const": "scrypt-n16384-r8-p1" },
+        "plaintextSha256": { "type": "string", "pattern": "^[a-f0-9]{64}$" },
+        "snapshotSha256": { "type": "string", "pattern": "^[a-f0-9]{64}$" }
+      }
+    },
+    "retentionPolicy": {
+      "type": "object",
+      "required": ["schemaVersion", "organizationId", "createdAt", "policies", "protectedNamespaces"],
+      "properties": {
+        "schemaVersion": { "const": "wr-retention-policy-v1" },
+        "protectedNamespaces": { "contains": { "const": "collaboration" } }
+      }
+    },
+    "auditExport": {
+      "type": "object",
+      "required": ["schemaVersion", "organizationId", "exportedAt", "entries", "verification", "exportSha256"],
+      "properties": {
+        "schemaVersion": { "const": "wr-immutable-audit-export-v1" },
+        "exportSha256": { "type": "string", "pattern": "^[a-f0-9]{64}$" }
+      }
+    },
+    "operationalHealth": {
+      "type": "object",
+      "required": ["schemaVersion", "organizationId", "evaluatedAt", "status", "pageDesignChanged", "database", "backups", "worker", "providers", "findings", "reportSha256"],
+      "properties": {
+        "schemaVersion": { "const": "wr-operational-health-v1" },
+        "status": { "enum": ["healthy", "degraded", "critical"] },
+        "pageDesignChanged": { "const": false },
+        "reportSha256": { "type": "string", "pattern": "^[a-f0-9]{64}$" }
+      }
+    }
+  }
+}

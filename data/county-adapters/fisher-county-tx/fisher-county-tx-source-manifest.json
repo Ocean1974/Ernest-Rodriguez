@@ -1,0 +1,30 @@
+{
+  "version": "wr-county-source-manifest-v1",
+  "generatedAt": "2026-06-30T00:00:00.000Z",
+  "county_id": "fisher-county-tx",
+  "county_name": "Fisher County",
+  "state": "TX",
+  "status": "source-discovery-started-official-source-not-verified",
+  "officialSourceStatus": "not-verified",
+  "officialPortal": null,
+  "parcelGeometrySource": "source-needed",
+  "appraisalPropertySource": "source-needed",
+  "permitSource": "source-needed",
+  "candidateSearchQueries": [
+    "Fisher County Appraisal District parcel data official",
+    "Fisher County Texas GIS parcel boundaries official",
+    "Fisher County Texas permits open data parcel address"
+  ],
+  "sourceRules": [
+    "Use official county, assessor/appraiser, GIS, municipal, state, or federal sources first.",
+    "Do not activate this county until exact parcel counts and join keys are verified.",
+    "Do not infer owner phone/email from permits, contractors, applicants, or scraped pages."
+  ],
+  "blockingGaps": [
+    "official appraisal district site not verified",
+    "official parcel geometry bulk source not verified",
+    "exact parcel count not verified",
+    "exact geometry-to-appraisal join key not verified",
+    "viewport/search outputs not built"
+  ]
+}

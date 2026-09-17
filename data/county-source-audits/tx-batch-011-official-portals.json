@@ -1,0 +1,85 @@
+{
+  "version": "wr-tx-batch-011-official-portals-v1",
+  "retrievedAt": "2026-07-03",
+  "scope": "Texas verification queue batch 11, final queue source-discovery candidates",
+  "rule": "Official portals are evidence for source discovery only. They do not make a county core-complete until exact counts, join keys, bulk/source provenance, viewport chunks, search shards, and QC are verified.",
+  "counties": [
+    {
+      "countyId": "young-county-tx",
+      "countyName": "Young County",
+      "state": "TX",
+      "officialPortals": [
+        {
+          "label": "Young County Appraisal District official-site candidate",
+          "url": "https://youngcad.org/",
+          "sourceType": "appraisal-district-site-candidate",
+          "verificationStatus": "official-site-candidate-needs-verification",
+          "notes": "Local adapter still marks official parcel/GIS source not verified. Verify official property search, map/GIS source, parcel ID fields, exact parcel count, and join key before promotion."
+        }
+      ],
+      "completionImpact": "source-discovery-started",
+      "remainingBlockers": [
+        "official appraisal district site not verified",
+        "property search not inspected",
+        "parcel ID field names not verified",
+        "exact parcel count not verified",
+        "exact geometry-to-appraisal join key not verified",
+        "viewport/search outputs not built"
+      ]
+    },
+    {
+      "countyId": "zapata-county-tx",
+      "countyName": "Zapata County",
+      "state": "TX",
+      "officialPortals": [
+        {
+          "label": "Zapata County Appraisal District official-site candidate",
+          "url": "https://zapatacad.org/",
+          "sourceType": "appraisal-district-site-candidate",
+          "verificationStatus": "official-site-candidate-needs-verification",
+          "notes": "Local adapter still marks official parcel/GIS source not verified. Verify official property search, map/GIS source, parcel ID fields, exact parcel count, and join key before promotion."
+        }
+      ],
+      "completionImpact": "source-discovery-started",
+      "remainingBlockers": [
+        "official appraisal district site not verified",
+        "property search not inspected",
+        "parcel ID field names not verified",
+        "exact parcel count not verified",
+        "exact geometry-to-appraisal join key not verified",
+        "viewport/search outputs not built"
+      ]
+    },
+    {
+      "countyId": "zavala-county-tx",
+      "countyName": "Zavala County",
+      "state": "TX",
+      "officialPortals": [
+        {
+          "label": "Zavala County Appraisal District official-site candidate",
+          "url": "https://zavalacad.org/",
+          "sourceType": "appraisal-district-site-candidate",
+          "verificationStatus": "official-site-candidate-needs-verification",
+          "notes": "Local adapter still marks official parcel/GIS source not verified. Verify official property search, map/GIS source, parcel ID fields, exact parcel count, and join key before promotion."
+        }
+      ],
+      "completionImpact": "source-discovery-started",
+      "remainingBlockers": [
+        "official appraisal district site not verified",
+        "property search not inspected",
+        "parcel ID field names not verified",
+        "exact parcel count not verified",
+        "exact geometry-to-appraisal join key not verified",
+        "viewport/search outputs not built"
+      ]
+    }
+  ],
+  "generatedAt": "2026-07-03T00:00:00.000Z",
+  "completionRule": "Official portals are evidence for source discovery only. They do not make a county core-complete until exact counts, join keys, bulk/source provenance, viewport chunks, search shards, and QC are verified.",
+  "summary": {
+    "countyCount": 3,
+    "officialSiteCandidateNeedsVerification": 3,
+    "officialSiteVerified": 0,
+    "promotedToCoreComplete": 0
+  }
+}

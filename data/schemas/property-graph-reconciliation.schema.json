@@ -1,0 +1,10 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://white-rabbit.local/schemas/property-graph-reconciliation.schema.json",
+  "title": "White Rabbit Property Graph Reconciliation Results",
+  "oneOf": [
+    { "type": "object", "required": ["schemaVersion", "entities", "recordCount", "canonicalEntityCount", "matchEvidence", "conflicts", "unmatchedRecordIds"], "properties": { "schemaVersion": { "const": "wr-entity-reconciliation-v1" } } },
+    { "type": "object", "required": ["schemaVersion", "asOf", "resolvedFacts", "conflicts", "inactiveAssertionIds", "rule"], "properties": { "schemaVersion": { "const": "wr-property-fact-reconciliation-v1" } } },
+    { "type": "object", "required": ["schemaVersion", "at", "startNodeIds", "maxDepth", "maxNodes", "direction", "nodes", "edges", "truncated", "evidence"], "properties": { "schemaVersion": { "const": "wr-property-graph-query-result-v1" } } }
+  ]
+}

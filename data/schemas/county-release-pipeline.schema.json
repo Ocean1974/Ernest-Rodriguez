@@ -1,0 +1,60 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://whiterabbit.local/schemas/county-release-pipeline.schema.json",
+  "title": "White Rabbit County Release Pipeline Contracts",
+  "oneOf": [
+    { "$ref": "#/$defs/sourceSnapshot" },
+    { "$ref": "#/$defs/artifactBundle" },
+    { "$ref": "#/$defs/releaseDecision" },
+    { "$ref": "#/$defs/releaseState" }
+  ],
+  "$defs": {
+    "sha256": { "type": "string", "pattern": "^[a-f0-9]{64}$" },
+    "sourceSnapshot": {
+      "type": "object",
+      "required": ["schemaVersion", "organizationId", "countyId", "countyFips", "datasetId", "sourceRevision", "contentKind", "officialSourceUrl", "officialSource", "license", "sourcePublishedAt", "capturedAt", "sourceFeatureCount", "sourceBytes", "sourceSha256", "joinKeys", "snapshotSha256"],
+      "properties": {
+        "schemaVersion": { "const": "wr-county-source-snapshot-v1" },
+        "organizationId": { "type": "string", "minLength": 1 },
+        "countyId": { "type": "string", "minLength": 1 },
+        "countyFips": { "type": "string", "pattern": "^[0-9]{5}$" },
+        "contentKind": { "enum": ["source-data", "source-audit"] },
+        "officialSource": { "const": true },
+        "sourceFeatureCount": { "type": "integer", "minimum": 0 },
+        "sourceSha256": { "$ref": "#/$defs/sha256" },
+        "joinKeys": { "type": "array", "minItems": 1 },
+        "snapshotSha256": { "$ref": "#/$defs/sha256" }
+      }
+    },
+    "artifactBundle": {
+      "type": "object",
+      "required": ["schemaVersion", "organizationId", "countyId", "releaseId", "sourceSnapshotSha256", "generatedAt", "builderActorId", "buildRevision", "counts", "exclusions", "artifacts", "bundleSha256"],
+      "properties": {
+        "schemaVersion": { "const": "wr-county-artifact-bundle-v1" },
+        "sourceSnapshotSha256": { "$ref": "#/$defs/sha256" },
+        "bundleSha256": { "$ref": "#/$defs/sha256" },
+        "artifacts": { "type": "array", "minItems": 1 },
+        "counts": { "type": "object" }
+      }
+    },
+    "releaseDecision": {
+      "type": "object",
+      "required": ["schemaVersion", "organizationId", "countyId", "releaseId", "checks", "blockers", "status", "activationAuthorized", "decisionSha256"],
+      "properties": {
+        "schemaVersion": { "const": "wr-county-release-decision-v1" },
+        "status": { "enum": ["authorized", "rejected"] },
+        "activationAuthorized": { "type": "boolean" },
+        "decisionSha256": { "$ref": "#/$defs/sha256" }
+      }
+    },
+    "releaseState": {
+      "type": "object",
+      "required": ["schemaVersion", "organizationId", "countyId", "revision", "activeRelease", "stagedRelease", "runs", "updatedAt"],
+      "properties": {
+        "schemaVersion": { "const": "wr-county-release-state-v1" },
+        "revision": { "type": "integer", "minimum": 0 },
+        "runs": { "type": "array" }
+      }
+    }
+  }
+}

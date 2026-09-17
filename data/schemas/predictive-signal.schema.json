@@ -1,0 +1,11 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://white-rabbit.local/schemas/predictive-signal.schema.json",
+  "title": "White Rabbit Predictive Signal Contracts",
+  "oneOf": [
+    { "type": "object", "required": ["schemaVersion", "id", "version", "definitions", "createdAt", "intendedOutcome", "horizonDays", "status"], "properties": { "schemaVersion": { "const": "wr-predictive-signal-model-v1" }, "status": { "enum": ["experimental", "validated"] } } },
+    { "type": "object", "required": ["schemaVersion", "id", "whiteRabbitPropertyId", "category", "metric", "value", "normalizedValue", "effectiveAt", "observedAt", "availableAt", "expiresAt", "confidence", "source"], "properties": { "schemaVersion": { "const": "wr-market-signal-observation-v1" }, "whiteRabbitPropertyId": { "type": "string", "pattern": "^wrp:v1:[^:]+:.+$" }, "category": { "enum": ["ownership-transfer", "distress", "entitlement", "infrastructure", "demand"] }, "confidence": { "type": "number", "minimum": 0, "maximum": 1 } } },
+    { "type": "object", "required": ["schemaVersion", "modelId", "modelVersion", "whiteRabbitPropertyId", "asOf", "status", "features", "missingFeatureIds", "leakageAudit", "model"], "properties": { "schemaVersion": { "const": "wr-point-in-time-feature-set-v1" }, "status": { "enum": ["complete", "partial", "insufficient-evidence"] } } },
+    { "type": "object", "required": ["schemaVersion", "modelId", "modelVersion", "whiteRabbitPropertyId", "asOf", "status", "opportunityScore", "riskScore", "netScore", "evidenceCoveragePct", "evidenceConfidence", "effectiveConfidence", "bands", "factors", "missingFeatureIds", "leakageAudit", "scoringRule", "validationStatus"], "properties": { "schemaVersion": { "const": "wr-explainable-signal-score-v1" }, "status": { "enum": ["scored", "scored-with-missing-evidence", "insufficient-evidence"] }, "validationStatus": { "enum": ["experimental", "validated"] } } }
+  ]
+}

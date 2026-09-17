@@ -1,0 +1,85 @@
+{
+  "version": "wr-state-county-growth-next-wave-v1",
+  "uiConstraint": "Do not redesign White Rabbit pages while expanding county parcel intelligence plumbing.",
+  "strategy": "Stay within states already present in the White Rabbit county queue and grow county-by-county from source discovery to full DCAD parity.",
+  "waves": [
+    {
+      "state": "TX",
+      "nextCounties": [
+        { "countyId": "el-paso-county-tx", "countyName": "El Paso County", "market": "El Paso", "startingStage": "source-discovery-needed" },
+        { "countyId": "montgomery-county-tx", "countyName": "Montgomery County", "market": "Houston exurban", "startingStage": "source-discovery-needed" },
+        { "countyId": "williamson-county-tx", "countyName": "Williamson County", "market": "Austin North", "startingStage": "source-discovery-needed" }
+      ]
+    },
+    {
+      "state": "CA",
+      "nextCounties": [
+        { "countyId": "sacramento-county-ca", "countyName": "Sacramento County", "market": "Sacramento", "startingStage": "source-discovery-needed" },
+        { "countyId": "san-bernardino-county-ca", "countyName": "San Bernardino County", "market": "Inland Empire", "startingStage": "source-discovery-needed" },
+        { "countyId": "ventura-county-ca", "countyName": "Ventura County", "market": "Ventura", "startingStage": "source-discovery-needed" }
+      ]
+    },
+    {
+      "state": "FL",
+      "nextCounties": [
+        { "countyId": "palm-beach-county-fl", "countyName": "Palm Beach County", "market": "Palm Beach", "startingStage": "source-discovery-needed" },
+        { "countyId": "hillsborough-county-fl", "countyName": "Hillsborough County", "market": "Tampa", "startingStage": "source-discovery-needed" },
+        { "countyId": "orange-county-fl", "countyName": "Orange County", "market": "Orlando", "startingStage": "source-discovery-needed" }
+      ]
+    },
+    {
+      "state": "AZ",
+      "nextCounties": [
+        { "countyId": "pima-county-az", "countyName": "Pima County", "market": "Tucson", "startingStage": "source-discovery-needed" },
+        { "countyId": "pinal-county-az", "countyName": "Pinal County", "market": "Phoenix exurban", "startingStage": "source-discovery-needed" }
+      ]
+    },
+    {
+      "state": "WA",
+      "nextCounties": [
+        { "countyId": "pierce-county-wa", "countyName": "Pierce County", "market": "Tacoma", "startingStage": "source-discovery-needed" },
+        { "countyId": "snohomish-county-wa", "countyName": "Snohomish County", "market": "Seattle North", "startingStage": "source-discovery-needed" }
+      ]
+    },
+    {
+      "state": "KY",
+      "nextCounties": [
+        { "countyId": "fayette-county-ky", "countyName": "Fayette County", "market": "Lexington", "startingStage": "source-discovery-needed" }
+      ]
+    },
+    {
+      "state": "IL",
+      "nextCounties": [
+        { "countyId": "dupage-county-il", "countyName": "DuPage County", "market": "Chicago West", "startingStage": "source-discovery-needed" },
+        { "countyId": "lake-county-il", "countyName": "Lake County", "market": "Chicago North", "startingStage": "source-discovery-needed" }
+      ]
+    },
+    {
+      "state": "NY",
+      "nextCounties": [
+        { "countyId": "nassau-county-ny", "countyName": "Nassau County", "market": "Long Island", "startingStage": "source-discovery-needed" },
+        { "countyId": "suffolk-county-ny", "countyName": "Suffolk County", "market": "Long Island", "startingStage": "source-discovery-needed" }
+      ]
+    },
+    {
+      "state": "NV",
+      "nextCounties": [
+        { "countyId": "washoe-county-nv", "countyName": "Washoe County", "market": "Reno", "startingStage": "source-discovery-needed" }
+      ]
+    },
+    {
+      "state": "MI",
+      "nextCounties": [
+        { "countyId": "oakland-county-mi", "countyName": "Oakland County", "market": "Detroit North", "startingStage": "source-discovery-needed" },
+        { "countyId": "macomb-county-mi", "countyName": "Macomb County", "market": "Detroit Northeast", "startingStage": "source-discovery-needed" }
+      ]
+    },
+    {
+      "state": "PA",
+      "nextCounties": [
+        { "countyId": "allegheny-county-pa", "countyName": "Allegheny County", "market": "Pittsburgh", "startingStage": "source-discovery-needed" },
+        { "countyId": "montgomery-county-pa", "countyName": "Montgomery County", "market": "Philadelphia suburbs", "startingStage": "source-discovery-needed" }
+      ]
+    }
+  ]
+}

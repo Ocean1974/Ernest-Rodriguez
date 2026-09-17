@@ -1,0 +1,117 @@
+const assert = require("assert");
+const fs = require("fs");
+const os = require("os");
+const path = require("path");
+
+(async () => {
+  const feeds = await import("../src/operations/feedCertification.mjs");
+  const telemetry = await import("../src/operations/serviceObservability.mjs");
+  const runtime = await import("../src/portfolio/operatingConnectorRuntime.mjs");
+  const assurance = await import("../src/portfolio/operatingConnectorAssurance.mjs");
+  const sdk = await import("../src/portfolio/operatingProviderSdk.mjs");
+  const persistence = await import("../src/persistence/platformPersistenceService.mjs");
+  const { SqlitePlatformRepository } = await import("../src/persistence/sqlitePlatformRepository.mjs");
+
+  const organizationId = "org-a", connectorId = "yardi-statements", now = "2026-11-15T12:00:00.000Z";
+  assert.equal(sdk.OPERATING_VENDOR_SANDBOX_PROFILES.length, 3);
+  const yardiProfile = sdk.OPERATING_VENDOR_SANDBOX_PROFILES.find((item) => item.providerId === "yardi"), mriProfile = sdk.OPERATING_VENDOR_SANDBOX_PROFILES.find((item) => item.providerId === "mri"), appfolioProfile = sdk.OPERATING_VENDOR_SANDBOX_PROFILES.find((item) => item.providerId === "appfolio");
+  assert.equal(yardiProfile.sandboxAvailability, "partner-program");
+  assert(yardiProfile.activationPrerequisites.includes("data-exchange-agreement"));
+  assert(yardiProfile.officialEvidenceUrls.some((url) => url.includes("yardi.com")));
+  assert.equal(mriProfile.sandboxAvailability, "provider-confirmation-required");
+  assert.equal(appfolioProfile.enrollmentModel, "stack-marketplace-partner");
+  assert(sdk.OPERATING_VENDOR_SANDBOX_PROFILES.every((item) => item.endpointProvisioning === "tenant-specific-provider-assigned"), "the catalog must not invent shared vendor API endpoints");
+
+  const manifest = feeds.createFeedConnectorManifest({ connectorId, connectorVersion: "1.0.0", providerId: "yardi", datasetId: "operating-statements", expectedEventSchemaVersion: "wr-operating-feed-record-v1", licenseId: "yardi-license", contractStartsAt: "2026-01-01", contractExpiresAt: "2027-12-31", thresholds: { minimumFixtureCount: 1, minimumSampleCount: 1, minimumGeometryPct: 0 } });
+  const evidence = feeds.createFeedCertificationEvidence({ connectorId, connectorVersion: "1.0.0", generatedAt: "2026-11-15T11:00:00.000Z", license: { contractExecuted: true, licenseId: "yardi-license", rights: { store: true, derive: true, query: true } }, schema: { schemaVersion: "wr-operating-feed-record-v1", fixtureCount: 25, failedFixtureCount: 0 }, pointInTime: { futureEvidenceRejected: true, availabilityTimePreserved: true, expiryEnforced: true }, replay: { idempotencyPassed: true, checkpointResumePassed: true, duplicateWriteCount: 0 }, freshness: { sampleCount: 100, p95LagMs: 100, maxLagMs: 200, currentPct: 100 }, coverage: { sampleCount: 100, canonicalIdentityPct: 100, requiredFieldPct: 100, geometryPct: 100 }, dataQuality: { duplicatePct: 0, invalidIdentityPct: 0, quarantinePct: 0 }, security: { secretRefOnly: true, encryptedTransport: true, ssrfProtection: true, leastPrivilege: true }, loadReport: { schemaVersion: "wr-load-resilience-report-v1", status: "passed" }, provenance: { artifactSha256: "a".repeat(64), testRunId: "yardi-sdk-1", independentReviewer: true } });
+  const certification = feeds.certifyFeedConnector({ manifest, evidence, asOf: now });
+  const connector = runtime.createOperatingConnector({ organizationId, connectorId, connectorVersion: "1.0.0", providerId: "yardi", datasetId: "operating-statements", baseUrl: "https://tenant-api.example.com/yardi", allowedHosts: ["tenant-api.example.com"], credentialRef: "secret-ref:vault/yardi-v1", licenseId: "yardi-license", rights: { store: true, derive: true, query: true }, mappingProfileId: "yardi-statement-map", mappingProfileVersion: 1, maxPageSize: 10, maxPagesPerRun: 2, maxRecordsPerRun: 20, certification });
+  const mappingProfile = runtime.createOperatingMappingProfile({ id: "yardi-statement-map", organizationId, connectorId, version: 1, targetKind: "operating-statement", mappings: [{ sourceField: "statement_id", targetPath: "id", required: true }, { sourceField: "asset_id", targetPath: "assetId", required: true }, { sourceField: "entries", targetPath: "entries", required: true }], constants: { organizationId, whiteRabbitPropertyId: "wrp:v1:dallas-county-dcad:A1", periodStart: "2026-10-01", periodEnd: "2026-10-31", basis: "accrual", currency: "USD", expectedAccountCodes: ["rent"] }, createdByUserId: "mapping-author", createdAt: now, approvedByUserId: "mapping-approver", approvedAt: "2026-11-15T11:10:00.000Z" });
+
+  const auditReceipts = [], secretBackend = { resolve: async (reference) => ({ reference, organizationId, connectorId, version: "vault-version-1", validFrom: "2026-11-01T00:00:00.000Z", expiresAt: "2027-01-01T00:00:00.000Z", revoked: false, value: { clientId: "yardi-client", apiKey: "top-secret-key" } }) };
+  const secretResolver = sdk.createManagedSecretResolver({ backend: secretBackend, auditSink: { record: (receipt) => auditReceipts.push(receipt) }, clock: () => now });
+  const resolved = await secretResolver.resolve("secret-ref:vault/yardi-v1", { organizationId, connectorId, purpose: "operating-connector-fetch" });
+  assert.equal(resolved.credential.apiKey, "top-secret-key");
+  assert.equal(JSON.stringify(resolved.receipt).includes("top-secret-key"), false);
+  await assert.rejects(() => secretResolver.resolve("secret-ref:vault/yardi-v1", { organizationId, connectorId, purpose: "unapproved-purpose" }), (error) => error.code === "WR_SECRET_PURPOSE_DENIED");
+  const crossTenantResolver = sdk.createManagedSecretResolver({ backend: { resolve: async (reference) => ({ reference, organizationId: "org-b", connectorId, version: "1", validFrom: "2026-01-01", expiresAt: "2027-01-01", value: { token: "x" } }) }, auditSink: { record() {} }, clock: () => now });
+  await assert.rejects(() => crossTenantResolver.resolve("secret-ref:vault/yardi-v1", { organizationId, connectorId, purpose: "operating-connector-fetch" }), (error) => error.code === "WR_SECRET_SCOPE_DENIED");
+  const expiredResolver = sdk.createManagedSecretResolver({ backend: { resolve: async (reference) => ({ reference, organizationId, connectorId, version: "old", validFrom: "2025-01-01", expiresAt: "2026-01-01", value: { token: "x" } }) }, auditSink: { record() {} }, clock: () => now });
+  await assert.rejects(() => expiredResolver.resolve("secret-ref:vault/yardi-v1", { organizationId, connectorId, purpose: "operating-connector-fetch" }), (error) => error.code === "WR_SECRET_NOT_ACTIVE");
+
+  let transportInput;
+  const providerAdapter = sdk.createOperatingProviderAdapter({ profile: yardiProfile, secretResolver, allowedHosts: connector.allowedHosts, clock: () => now, transport: { fetchPage: async (input) => { transportInput = input; return { status: 200, requestId: "yardi-request-1", body: { responseId: "yardi-response-1", fetchedAt: now, nextCursor: "cursor-0", hasMore: false, records: [] } }; } } });
+  const providerResponse = await providerAdapter.fetchPage({ organizationId, connectorId, providerId: "yardi", baseUrl: connector.baseUrl, credentialRef: connector.credentialRef, cursor: "", limit: 10, mode: "incremental", idempotencyKey: "fetch-1" });
+  assert.equal(transportInput.credential.apiKey, "top-secret-key");
+  assert.equal(providerResponse.providerRequestId, "yardi-request-1");
+  assert.equal(JSON.stringify(providerResponse).includes("top-secret-key"), false);
+  assert.equal(auditReceipts.length, 2);
+  const rateLimitedAdapter = sdk.createOperatingProviderAdapter({ profile: yardiProfile, secretResolver, allowedHosts: connector.allowedHosts, clock: () => now, transport: { fetchPage: async () => ({ status: 429, retryAfterSeconds: 30 }) } });
+  await assert.rejects(() => rateLimitedAdapter.fetchPage({ organizationId, connectorId, providerId: "yardi", baseUrl: connector.baseUrl, credentialRef: connector.credentialRef, cursor: "", limit: 10, mode: "incremental", idempotencyKey: "fetch-rate" }), (error) => error.code === "WR_PROVIDER_RATE_LIMITED" && error.retryAfterSeconds === 30 && error.retryable === true);
+  await assert.rejects(() => providerAdapter.fetchPage({ organizationId, connectorId, providerId: "mri", baseUrl: connector.baseUrl, credentialRef: connector.credentialRef, cursor: "", limit: 10, mode: "incremental", idempotencyKey: "fetch-wrong" }), (error) => error.code === "WR_PROVIDER_PROFILE_MISMATCH");
+  await assert.rejects(() => providerAdapter.fetchPage({ organizationId, connectorId, providerId: "yardi", baseUrl: "https://attacker.example.net/yardi", credentialRef: connector.credentialRef, cursor: "", limit: 10, mode: "incremental", idempotencyKey: "fetch-ssrf" }), (error) => error.code === "WR_PROVIDER_ENDPOINT_REJECTED");
+
+  const executionPolicy = sdk.createProviderExecutionPolicy({ connectorId, capacity: 1, refillTokensPerSecond: 0.1, maximumConcurrency: 1, failureThreshold: 2, resetAfterSeconds: 10, permitSeconds: 5 });
+  let executionState = sdk.createProviderExecutionState({ organizationId, policy: executionPolicy, updatedAt: now });
+  const firstPermit = sdk.beginProviderExecution(executionState, { now, jobId: "job-1", workerId: "worker-1", cursor: "" });
+  assert.equal(firstPermit.allowed, true); executionState = firstPermit.state;
+  assert.equal(sdk.beginProviderExecution(executionState, { now, jobId: "job-2", workerId: "worker-2", cursor: "" }).code, "WR_PROVIDER_CONCURRENCY_LIMITED");
+  executionState = sdk.completeProviderExecution(executionState, firstPermit.permit, { success: false, errorCode: "WR_PROVIDER_UNAVAILABLE" }, { completedAt: "2026-11-15T12:00:01.000Z" });
+  assert.equal(executionState.circuitStatus, "closed");
+  const secondPermit = sdk.beginProviderExecution(executionState, { now: "2026-11-15T12:00:11.000Z", jobId: "job-2", workerId: "worker-2", cursor: "c1" }); executionState = secondPermit.state;
+  executionState = sdk.completeProviderExecution(executionState, secondPermit.permit, { success: false, errorCode: "WR_PROVIDER_UNAVAILABLE" }, { completedAt: "2026-11-15T12:00:12.000Z" });
+  assert.equal(executionState.circuitStatus, "open");
+  assert.equal(sdk.beginProviderExecution(executionState, { now: "2026-11-15T12:00:15.000Z", jobId: "job-3", workerId: "worker-3" }).code, "WR_PROVIDER_CIRCUIT_OPEN");
+  const probe = sdk.beginProviderExecution(executionState, { now: "2026-11-15T12:00:22.000Z", jobId: "job-probe", workerId: "worker-probe" });
+  assert.equal(probe.allowed, true); assert.equal(probe.permit.probe, true);
+  assert.equal(sdk.beginProviderExecution(probe.state, { now: "2026-11-15T12:00:22.000Z", jobId: "job-probe-2", workerId: "worker-probe-2" }).code, "WR_PROVIDER_CIRCUIT_PROBE_BUSY");
+  executionState = sdk.completeProviderExecution(probe.state, probe.permit, { success: true }, { completedAt: "2026-11-15T12:00:23.000Z" });
+  assert.equal(executionState.circuitStatus, "closed"); assert.equal(executionState.consecutiveFailures, 0);
+  const expiring = sdk.beginProviderExecution(sdk.createProviderExecutionState({ organizationId, policy: executionPolicy, updatedAt: now }), { now, jobId: "job-expire", workerId: "worker-old" });
+  const recovered = sdk.beginProviderExecution(expiring.state, { now: "2026-11-15T12:00:11.000Z", jobId: "job-recovered", workerId: "worker-new" });
+  assert.deepEqual(recovered.recoveredPermitIds, [expiring.permit.id]);
+
+  const validFields = { statement_id: "statement-oct", asset_id: "asset-1", entries: [{ accountCode: "rent", amount: 10000 }] };
+  const baseline = assurance.createConnectorSchemaBaseline({ id: "yardi-schema", organizationId, connectorId, version: 1, sampleRecords: [validFields], requiredPaths: ["statement_id", "asset_id", "entries", "entries[].accountCode"], createdByUserId: "data-engineer", createdAt: now, approvedByUserId: "data-governor", approvedAt: "2026-11-15T11:15:00.000Z" });
+  const credential = assurance.createConnectorCredentialBinding({ id: "yardi-credential-v1", organizationId, connectorId, version: 1, secretRef: connector.credentialRef, validFrom: "2026-11-01", expiresAt: "2027-01-01", status: "active", createdByUserId: "security", createdAt: "2026-11-01", evidenceRefs: ["evidence-ref:yardi-vault-version"] });
+  const drillPlan = assurance.createConnectorDrillPlan({ id: "yardi-drill-plan", organizationId, connectorId, connectorSha256: connector.connectorSha256, createdByUserId: "sre", createdAt: "2026-11-14T09:00:00Z", approvedByUserId: "sre-director", approvedAt: "2026-11-14T10:00:00Z" });
+  const drillResult = await assurance.runConnectorDrillSuite(drillPlan, ({ scenario }) => ({ passed: true, assertionCount: 3, durationMs: 20, evidenceRefs: [`evidence-ref:yardi-${scenario}`] }), { startedAt: "2026-11-14T11:00:00Z", completedAt: "2026-11-14T11:05:00Z" });
+  const sloCollector = telemetry.createTelemetryCollector({ organizationId }); sloCollector.record({ organizationId, serviceName: "operating-connector", operation: "fetch-page", traceId: "yardi-slo", spanId: "yardi-slo-1", startedAt: "2026-11-15T11:59:00Z", endedAt: "2026-11-15T11:59:00.100Z", status: "success", measurements: { durationMs: 100, saturationPct: 10, sourceLagMs: 1000 }, attributes: { connectorId, providerId: "yardi" } });
+  const sloReport = telemetry.evaluateServiceSlo(sloCollector.snapshot({ capturedAt: now, serviceName: "operating-connector", operation: "fetch-page" }), telemetry.createServiceSloPolicy({ serviceName: "operating-connector", operation: "fetch-page", windowMinutes: 10, minimumSampleCount: 1, availabilityTargetPct: 99, latencyP95Ms: 500, maxSaturationPct: 80, maxSourceLagMs: 5000 }), { evaluatedAt: now });
+  const adapterCertification = assurance.certifyOperatingAdapter({ connector, mappingProfile, schemaBaseline: baseline, credentialBinding: credential, drillResult, sloReport, reviewerUserId: "independent-reviewer", certifiedAt: now });
+  const blockedPack = sdk.buildVendorSandboxCertificationPack({ profile: yardiProfile, connector, adapterCertification, evaluatedAt: now, sandboxEvidence: {} });
+  assert.equal(blockedPack.status, "blocked"); assert.equal(blockedPack.activationAuthorized, false); assert(blockedPack.blockers.includes("program-enrollment"));
+  const certifiedPack = sdk.buildVendorSandboxCertificationPack({ id: "yardi-pack-1", profile: yardiProfile, connector, adapterCertification, evaluatedAt: now, sandboxEvidence: { programEnrollmentApproved: true, dataExchangeAgreementExecuted: true, sandboxAccessConfirmed: true, tenantAuthorizationConfirmed: true, cursorSemanticsVerified: true, rateLimitSemanticsVerified: true, correctionAndDeletionSemanticsVerified: true, fixtureCount: 25, failedFixtureCount: 0, evidenceRefs: ["evidence-ref:yardi-program", "evidence-ref:yardi-agreement", "evidence-ref:yardi-sandbox-run"] } });
+  assert.equal(certifiedPack.status, "certified"); assert.equal(certifiedPack.activationAuthorized, true);
+  assert.throws(() => sdk.validateVendorSandboxCertificationPack({ ...certifiedPack, blockers: ["tampered"] }), (error) => error.code === "WR_VENDOR_SANDBOX_CERTIFICATION_PACK_INTEGRITY_FAILURE");
+
+  const driftJob = runtime.createOperatingConnectorJob({ id: "yardi-drift-job", organizationId, connectorId, maxFailures: 1, createdAt: "2026-11-15T12:02:00.000Z" });
+  const workerState = runtime.createOperatingConnectorWorkerState({ organizationId, connectors: [connector], mappingProfiles: [mappingProfile], jobs: [driftJob], updatedAt: "2026-11-15T12:02:00.000Z" });
+  const assuranceState = assurance.createConnectorAssuranceState({ organizationId, schemaBaselines: [baseline], credentialBindings: [credential], drillPlans: [drillPlan], drillResults: [drillResult], adapterCertifications: [adapterCertification], updatedAt: "2026-11-15T12:02:00.000Z" });
+  const tempDir = fs.mkdtempSync(path.join(os.tmpdir(), "white-rabbit-provider-sdk-")), dbPath = path.join(tempDir, "provider.sqlite"), context = { organizationId, actorUserId: "provider-worker", subjectUserId: "provider-worker", sessionId: "session-1", requestId: "request-1", grants: ["persistence:read", "persistence:write"], issuedAt: "2026-11-15T11:00:00.000Z", expiresAt: "2026-11-15T14:00:00.000Z" };
+  let repository = new SqlitePlatformRepository({ filename: dbPath, clock: () => "2026-11-15T12:02:03.000Z" });
+  persistence.persistOperatingConnectorWorkerState(repository, context, workerState, { expectedTenantRevision: 0, expectedRecordRevision: 0, idempotencyKey: "seed-provider-worker", occurredAt: "2026-11-15T12:02:00.000Z", validation: { now: "2026-11-15T12:02:00.000Z" } });
+  const durableController = sdk.createDurableProviderExecutionController({ repository, context, policyByConnector: { [connectorId]: { connectorId, capacity: 2, refillTokensPerSecond: 1, maximumConcurrency: 1, failureThreshold: 2, resetAfterSeconds: 10, permitSeconds: 30 } }, clock: () => "2026-11-15T12:02:02.000Z" });
+  const journal = sdk.createDurableSchemaAssessmentJournal({ repository, context });
+  const schemaGuard = assurance.createConnectorSchemaGuard(assuranceState, connectorId, { clock: () => "2026-11-15T12:02:02.000Z" });
+  let routedRuntimeIncident;
+  let governedTransportCredential;
+  const governedAdapter = sdk.createOperatingProviderAdapter({ profile: yardiProfile, secretResolver, allowedHosts: connector.allowedHosts, clock: () => "2026-11-15T12:02:01.000Z", transport: { fetchPage: async (input) => { governedTransportCredential = input.credential; return { status: 200, body: { responseId: "yardi-drift-response", fetchedAt: "2026-11-15T12:02:01.000Z", nextCursor: "cursor-0", hasMore: false, records: [{ id: "raw-drift", sequence: 0, cursor: "cursor-0", observedAt: "2026-11-15T11:50:00.000Z", availableAt: "2026-11-15T11:51:00.000Z", effectiveAt: "2026-10-31T23:59:59.000Z", fields: { statement_id: "bad", asset_id: 123, entries: [] } }] } }; } } });
+  const run = await runtime.runOperatingConnectorWorkerCycle({ repository, context, workerId: "provider-worker-1", now: "2026-11-15T12:02:00.000Z", leaseSeconds: 60, clock: () => "2026-11-15T12:02:02.000Z", schemaGuard, assessmentJournal: journal, providerExecutionController: durableController, incidentRouter: { record: (input) => { routedRuntimeIncident = input; return { tenantRevision: repository.tenantRevision(context, { now: input.occurredAt }) }; } }, adapterRegistry: { [connectorId]: governedAdapter } });
+  assert.deepEqual(run.deadLetteredJobIds, ["yardi-drift-job"]); assert.equal(run.pageApplicationSha256s.length, 0); assert.equal(governedTransportCredential.apiKey, "top-secret-key");
+  assert.equal(routedRuntimeIncident.errorCode, "WR_CONNECTOR_SCHEMA_DRIFT"); assert(routedRuntimeIncident.evidenceRefs[0].startsWith("evidence-ref:connector-runtime:"));
+  const providerState = persistence.loadProviderExecutionState(repository, context, connectorId, { validation: { now: "2026-11-15T12:03:00.000Z" } });
+  assert.equal(providerState.circuitStatus, "closed", "a valid provider response followed by schema rejection must not trip the provider circuit"); assert.equal(providerState.activePermits.length, 0);
+  const journalPage = repository.listRecordsPage(context, "operating-feed", { keyPrefix: `schema-assessment:${connectorId}:`, limit: 10, validation: { now: "2026-11-15T12:03:00.000Z" } });
+  assert.equal(journalPage.records.length, 1); assert.equal(journalPage.records[0].value.status, "incompatible");
+  persistence.persistVendorSandboxCertificationPack(repository, context, certifiedPack, { expectedTenantRevision: repository.tenantRevision(context, { now: "2026-11-15T12:03:00.000Z" }), expectedRecordRevision: 0, idempotencyKey: "persist-yardi-pack", occurredAt: "2026-11-15T12:03:00.000Z", validation: { now: "2026-11-15T12:03:00.000Z" } });
+  repository.close(); repository = new SqlitePlatformRepository({ filename: dbPath, clock: () => "2026-11-15T12:03:01.000Z" });
+  assert.equal(persistence.loadVendorSandboxCertificationPack(repository, context, certifiedPack.id, { validation: { now: "2026-11-15T12:03:01.000Z" } }).status, "certified");
+  assert.equal(persistence.loadVendorSandboxCertificationPack(repository, { ...context, organizationId: "org-b" }, certifiedPack.id, { validation: { now: "2026-11-15T12:03:01.000Z" } }), null);
+  repository.close(); fs.rmSync(tempDir, { recursive: true, force: true });
+
+  const schema = JSON.parse(fs.readFileSync(path.join(__dirname, "..", "data", "schemas", "operating-provider-sdk.schema.json"), "utf8")); assert.equal(schema.$defs.sandboxPack.properties.schemaVersion.const, "wr-vendor-sandbox-certification-pack-v1");
+  const gates = fs.readFileSync(path.join(__dirname, "..", "src", "data", "platformFeatureGates.ts"), "utf8"); for (const gate of ["operatingProviderAdapterSdk", "managedConnectorSecrets", "durableProviderRateLimits", "durableProviderCircuits", "automaticSchemaAssessmentJournal", "vendorSandboxCertification"]) assert.match(gates, new RegExp(`${gate}: false`));
+  const app = fs.readFileSync(path.join(__dirname, "..", "src", "App.tsx"), "utf8"); assert.equal(app.includes("operatingProviderSdk"), false);
+  console.log("White Rabbit vendor profiles, managed secrets, provider SDK, durable rate/circuit controls, assessment journal, and sandbox-pack tests passed.");
+})().catch((error) => { console.error(error); process.exit(1); });

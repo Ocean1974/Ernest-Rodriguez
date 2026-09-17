@@ -1,0 +1,15 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://whiterabbit.local/schemas/county-development-intelligence.schema.json",
+  "title": "White Rabbit County Development Intelligence Contracts",
+  "oneOf": [{ "$ref": "#/$defs/binding" }, { "$ref": "#/$defs/coverage" }, { "$ref": "#/$defs/rule" }, { "$ref": "#/$defs/event" }, { "$ref": "#/$defs/audit" }, { "$ref": "#/$defs/manifest" }],
+  "$defs": {
+    "sha256": { "type": "string", "pattern": "^[a-f0-9]{64}$" },
+    "binding": { "type": "object", "required": ["schemaVersion", "candidateRecordCount", "candidateRecordsAreSignals", "status", "bindingSha256"], "properties": { "schemaVersion": { "const": "wr-county-development-feed-binding-v1" }, "candidateRecordsAreSignals": { "const": false }, "status": { "enum": ["candidate-only", "feed-certified"] }, "bindingSha256": { "$ref": "#/$defs/sha256" } } },
+    "coverage": { "type": "object", "required": ["schemaVersion", "candidateRecordCount", "emittedSignalCount", "status", "coverageSha256"], "properties": { "schemaVersion": { "const": "wr-county-development-coverage-v1" }, "emittedSignalCount": { "const": 0 }, "coverageSha256": { "$ref": "#/$defs/sha256" } } },
+    "rule": { "type": "object", "required": ["schemaVersion", "conditions", "modelGenerated", "status", "ruleSha256"], "properties": { "schemaVersion": { "const": "wr-county-development-classification-rule-v1" }, "modelGenerated": { "const": false }, "ruleSha256": { "$ref": "#/$defs/sha256" } } },
+    "event": { "type": "object", "required": ["schemaVersion", "sourceSnapshotSha256", "sourceRecordSha256", "classificationRuleSha256", "eligibleAsSignal", "eventSha256"], "properties": { "schemaVersion": { "const": "wr-normalized-county-development-event-v1" }, "eventSha256": { "$ref": "#/$defs/sha256" } } },
+    "audit": { "type": "object", "required": ["schemaVersion", "counts", "checks", "status", "auditSha256"], "properties": { "schemaVersion": { "const": "wr-county-development-signal-audit-v1" }, "status": { "enum": ["rejected", "certified"] }, "auditSha256": { "$ref": "#/$defs/sha256" } } },
+    "manifest": { "type": "object", "required": ["schemaVersion", "activationChecks", "activationAuthorized", "status", "manifestSha256"], "properties": { "schemaVersion": { "const": "wr-county-development-index-manifest-v1" }, "status": { "enum": ["blocked", "activation-authorized"] }, "manifestSha256": { "$ref": "#/$defs/sha256" } } }
+  }
+}

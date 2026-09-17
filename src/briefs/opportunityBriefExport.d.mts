@@ -1,0 +1,16 @@
+export const OPPORTUNITY_BRIEF_EXPORT_POLICY_VERSION: "wr-opportunity-brief-export-policy-v1";
+export const OPPORTUNITY_BRIEF_EXPORT_REQUEST_VERSION: "wr-opportunity-brief-export-request-v1";
+export const OPPORTUNITY_BRIEF_ACCESS_GRANT_VERSION: "wr-opportunity-brief-access-grant-v1";
+export const OPPORTUNITY_BRIEF_REVOCATION_VERSION: "wr-opportunity-brief-revocation-v1";
+export const OPPORTUNITY_BRIEF_EXPORT_ARTIFACT_VERSION: "wr-opportunity-brief-export-artifact-v1";
+export const BRIEF_CLASSIFICATIONS: readonly string[];
+export function opportunityBriefSha256(value: unknown): string;
+export function createOpportunityBriefExportPolicy(input?: Record<string, any>): Readonly<Record<string, any>>;
+export function createOpportunityBriefExportRequest(input?: Record<string, any>): Readonly<Record<string, any>>;
+export function grantOpportunityBriefAccess(policy: Record<string, any>, request: Record<string, any>, options?: Record<string, any>): Readonly<Record<string, any>>;
+export function revokeOpportunityBriefAccess(grant: Record<string, any>, input?: Record<string, any>): Readonly<Record<string, any>>;
+export function assertOpportunityBriefAccess(grant: Record<string, any>, options?: Record<string, any>): Record<string, any>;
+export function redactOpportunityBrief(brief: Record<string, any>, policy: Record<string, any>, clearance?: string): Readonly<Record<string, any>>;
+export function prepareOpportunityBriefExport(input?: Record<string, any>): Readonly<Record<string, any>>;
+export function sealOpportunityBriefExportArtifact(input?: Record<string, any>): Readonly<Record<string, any>>;
+export function verifyOpportunityBriefExportArtifact(artifact: Record<string, any>, options?: Record<string, any>): Readonly<Record<string, any>>;

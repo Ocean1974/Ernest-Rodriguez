@@ -1,0 +1,272 @@
+{
+  "id": "travis-county-tx",
+  "countyId": "travis-county-tx",
+  "countyName": "Travis County",
+  "state": "TX",
+  "fips": "48453",
+  "marketName": "Austin",
+  "appraisalDistrictName": "Travis Central Appraisal District",
+  "appraisalDistrictAcronym": "TCAD",
+  "gisSource": "https://gis.traviscountytx.gov/server1/rest/services/Boundaries_and_Jurisdictions/TCAD/MapServer/0",
+  "uniqueGisKey": "OBJECTID (snapshot-unique; monthly refresh stability unverified)",
+  "parcelIdField": "OBJECTID",
+  "accountIdField": "PROP_ID",
+  "geometryType": "polygon",
+  "sourceSpatialReference": "EPSG:2277 (service WKID 102739, output normalized to EPSG:4326)",
+  "status": "pilot",
+  "map": {
+    "locationId": 1018,
+    "locationName": "Travis County TX / Austin Pilot",
+    "locationType": "Travis Central Appraisal District",
+    "status": "pilot full TCAD viewport/search service built - activation gated",
+    "coordinates": [
+      -97.7431,
+      30.2672
+    ],
+    "camera": {
+      "x": 50,
+      "y": 50,
+      "zoom": 1.2,
+      "pitch": 48,
+      "bearing": 0
+    },
+    "geoBounds": {
+      "minLng": -98.192625,
+      "minLat": 30.01527,
+      "maxLng": -97.36306,
+      "maxLat": 30.644515
+    },
+    "boundsStatus": "official service geographic extent verified 2026-09-08"
+  },
+  "universalParcelSchema": {
+    "version": "wr-universal-parcel-v1",
+    "schemaPath": "data/schemas/universal-parcel.schema.json",
+    "documentationPath": "data/schemas/universal-parcel.md",
+    "parcelServiceBuilder": "scripts/build-app-parcel-service.cjs",
+    "fieldMapPath": "data/county-adapters/travis-county-tx/travis-county-tx-universal-field-map.json",
+    "sourceManifestPath": "data/county-adapters/travis-county-tx/travis-county-tx-source-manifest.json"
+  },
+  "sourceFiles": {
+    "parcelGeometry": "https://gis.traviscountytx.gov/server1/rest/services/Boundaries_and_Jurisdictions/TCAD/MapServer/0",
+    "appraisalDistrictExtract": "https://traviscad.org/publicinformation",
+    "ownerAppraisal": "data/raw/travis-county-tx/TCAD_2026_SUPP_333/AppraisalExport.zip",
+    "permitsRaw": "source-needed",
+    "permitsProcessed": "data/permits/processed/travis-county-tx",
+    "developmentRaw": "source-needed",
+    "zoningRaw": "source-needed",
+    "floodplainRaw": "source-needed",
+    "migrationDemandRaw": "source-needed"
+  },
+  "publicDataRoots": {
+    "parcels": "/data/counties/travis-county-tx/parcels/",
+    "permits": "/data/counties/travis-county-tx/permits/",
+    "developments": "/data/counties/travis-county-tx/developments/",
+    "zoning": "/data/counties/travis-county-tx/zoning/",
+    "floodplain": "/data/counties/travis-county-tx/floodplain/",
+    "demand": "/data/counties/travis-county-tx/demand/"
+  },
+  "productionOutputs": {
+    "parcelGeojson": "output/travis-county-tx/travis-county-tx-parcels.geojson",
+    "parcelPmtiles": "output/travis-county-tx/travis-county-tx-parcels.pmtiles",
+    "vectorTilesDirectory": "output/travis-county-tx/vector-tiles/"
+  },
+  "optionalLayers": [
+    {
+      "id": "county-parcels",
+      "label": "County parcels",
+      "source": "Travis County TNR monthly TCAD Parcel MapServer",
+      "status": "full-viewport-service-built-qc-warning",
+      "joinBehavior": "OBJECTID provides snapshot feature identity; PROP_ID and geo_id are searchable business identifiers with documented nulls and duplicates",
+      "defaultVisible": false,
+      "renderStrategy": "build-time official source fetch, offline universal mapping, viewport chunks, capped runtime loader",
+      "maxFeaturesPerViewport": 750
+    },
+    {
+      "id": "owner-appraisal",
+      "label": "Owner/appraisal",
+      "source": "TCAD owner and appraisal attributes on the official monthly parcel layer",
+      "status": "source-verified-partial-field-coverage",
+      "joinBehavior": "direct same-feature attributes for 373,552 records with PROP_ID; 13,130 geometry-only records remain blank-safe",
+      "defaultVisible": false,
+      "renderStrategy": "build-time official source fetch, offline owner/appraisal normalization, viewport chunks, capped runtime loader",
+      "maxFeaturesPerViewport": 750
+    },
+    {
+      "id": "parcel-dimensions",
+      "label": "Parcel dimensions",
+      "source": "TCAD acres plus ArcGIS shape area/perimeter",
+      "status": "source-verified",
+      "joinBehavior": "direct same-feature tcad_acres/GIS_acres and Shape.STArea()/Shape.STLength() fields",
+      "defaultVisible": false,
+      "renderStrategy": "build-time official source inspection, offline mapping, viewport chunks",
+      "maxFeaturesPerViewport": 750
+    },
+    {
+      "id": "block-grid",
+      "label": "Block, subdivision, and map-grid context",
+      "source": "TCAD LOTS, subdivision code, and subdivision description fields",
+      "status": "source-verified-partial-context",
+      "joinBehavior": "direct same-feature LOTS, abs_subdv_cd, and sub_dec fields",
+      "defaultVisible": false,
+      "renderStrategy": "build-time official source inspection, offline joins, viewport chunks",
+      "maxFeaturesPerViewport": 750
+    },
+    {
+      "id": "permits",
+      "label": "Permits and certificates of occupancy",
+      "source": "source-needed",
+      "status": "source-needed",
+      "joinBehavior": "source-needed: parcel/account, normalized address, or spatial point-in-parcel join",
+      "defaultVisible": false,
+      "publicDataRoot": "/data/counties/travis-county-tx/permits/",
+      "manifestPath": "public/data/counties/travis-county-tx/permits/manifest.json",
+      "renderStrategy": "build-time official source verification, offline permit normalization, viewport-safe chunks",
+      "maxFeaturesPerViewport": 750
+    },
+    {
+      "id": "zoning-intelligence",
+      "label": "Zoning intelligence",
+      "source": "source-needed",
+      "status": "source-needed",
+      "joinBehavior": "source-needed: parcel/account ID bridge first; spatial join for zoning polygons and case areas",
+      "defaultVisible": false,
+      "publicDataRoot": "/data/counties/travis-county-tx/zoning/",
+      "manifestPath": "public/data/counties/travis-county-tx/zoning/manifest.json",
+      "schemaPath": "data/schemas/dallas-zoning-layer.schema.json",
+      "reportPath": "output/travis-county-tx/zoning-source-report.md",
+      "renderStrategy": "build-time official source verification, offline joins, viewport chunks, capped runtime loader",
+      "maxFeaturesPerViewport": 750
+    },
+    {
+      "id": "development-signals",
+      "label": "Development signals",
+      "source": "source-needed",
+      "status": "source-needed",
+      "joinBehavior": "source-needed: normalized permit, certificate, demolition, plat, and project evidence joined to parcel IDs",
+      "defaultVisible": false,
+      "publicDataRoot": "/data/counties/travis-county-tx/developments/",
+      "manifestPath": "public/data/counties/travis-county-tx/developments/parcel-development-index.json",
+      "renderStrategy": "build-time evidence normalization, parcel/address/spatial joins, viewport-safe parcel index lookup",
+      "maxFeaturesPerViewport": 750
+    },
+    {
+      "id": "floodplain-intelligence",
+      "label": "Floodplain intelligence",
+      "source": "source-needed",
+      "status": "source-needed",
+      "joinBehavior": "source-needed: FEMA/local floodplain spatial join keyed back to parcel/account IDs",
+      "defaultVisible": false,
+      "publicDataRoot": "/data/counties/travis-county-tx/floodplain/",
+      "manifestPath": "public/data/counties/travis-county-tx/floodplain/manifest.json",
+      "parcelIndexPath": "public/data/counties/travis-county-tx/floodplain/parcel-floodplain-index.json",
+      "schemaPath": "data/schemas/parcel-floodplain-index.schema.json",
+      "parcelIndexSchemaPath": "data/schemas/parcel-floodplain-index.schema.json",
+      "reportPath": "output/travis-county-tx/floodplain-source-report.md",
+      "renderStrategy": "build-time official source verification, offline parcel centroid spatial join, viewport-safe sharded parcel ID lookup",
+      "maxFeaturesPerViewport": 750
+    },
+    {
+      "id": "migration-demand",
+      "label": "Migration and demand",
+      "source": "source-needed",
+      "status": "source-needed",
+      "joinBehavior": "source-needed: aggregate Census/ACS/IRS or approved demand geography joined by tract/block group/market, not individual people",
+      "defaultVisible": false,
+      "publicDataRoot": "/data/counties/travis-county-tx/demand/",
+      "manifestPath": "public/data/counties/travis-county-tx/demand/manifest.json",
+      "renderStrategy": "build-time aggregate demand scoring, offline geography-to-parcel join, viewport-safe parcel index lookup",
+      "maxFeaturesPerViewport": 750
+    }
+  ],
+  "publicSourceDiscovery": {
+    "status": "official-parcel-and-appraisal-source-verified",
+    "priorityReason": "Texas growth market; strong candidate after DCAD/Tarrant/Bexar/Harris.",
+    "sourceSearchQueries": [
+      "Travis Central Appraisal District parcel data",
+      "Travis County GIS parcels",
+      "Austin permits open data"
+    ],
+    "sourceRules": [
+      "Use official county, assessor/appraiser, GIS, municipal, state, or federal sources first.",
+      "Do not activate this county until exact parcel counts and join keys are verified.",
+      "Do not infer owner phone/email from permits, contractors, applicants, or scraped pages."
+    ],
+    "problemSolvingLoop": [
+      "Discover official sources and preserve source dataset identifiers.",
+      "Audit schema, exact counts, geometry validity, nulls, and duplicate candidate keys.",
+      "Select a complete duplicate-safe feature identity and document secondary business identifiers.",
+      "Build a bounded-memory sample before attempting the full county snapshot.",
+      "Publish viewport chunks and search shards, then reconcile source, emitted, skipped, and joined counts.",
+      "Run county QC and keep visible activation disabled until every individual gate passes."
+    ]
+  },
+  "ownerEnrichment": {
+    "sourceLabel": "Official Travis County monthly TCAD parcel layer",
+    "propertyRecordSource": "direct TCAD parcel feature attributes",
+    "officialJoinKey": "same-feature attributes; PROP_ID is the appraisal account candidate",
+    "noOfficialEmailFieldNote": "The official monthly layer has no owner phone, email, or mailing-address fields. Keep them blank; do not infer contacts.",
+    "fields": {
+      "parcelId": "OBJECTID",
+      "gisParcelId": "geo_id",
+      "ownerName": "py_owner_name",
+      "ownerName2": "Unavailable in monthly layer",
+      "businessName": "Unavailable as a separate field in monthly layer",
+      "ownerMailingAddress": "Unavailable in monthly layer",
+      "ownerMailingAddress2": "Unavailable in monthly layer",
+      "ownerCity": "Unavailable in monthly layer",
+      "ownerState": "Unavailable in monthly layer",
+      "ownerZip": "Unavailable in monthly layer",
+      "ownerPhone": "No official owner phone field verified",
+      "ownerEmail": "No official owner email field verified"
+    }
+  },
+  "joinKeys": {
+    "primaryParcelAccount": "PROP_ID (373,552 populated; 13,130 missing; 28 duplicate excess occurrences)",
+    "appraisal": "direct same-feature TCAD attributes, keyed by snapshot OBJECTID and business PROP_ID",
+    "land": "direct same-feature TCAD acres, land use, improvement year, and value fields",
+    "secondaryParcelGisId": "geo_id (373,552 populated; 13,130 missing; 88 duplicate excess occurrences)",
+    "blockLabels": "direct LOTS / abs_subdv_cd / sub_dec fields",
+    "dimensions": "direct Shape.STArea() / Shape.STLength() plus TCAD and GIS acre fields",
+    "permits": "source-needed: parcel/account ID, address match, spatial join, or combination",
+    "zoning": "source-needed: parcel/account ID bridge first; spatial join for zoning polygons and case areas",
+    "floodplain": "source-needed: FEMA/local floodplain parcel centroid spatial join keyed to parcel/account IDs",
+    "developmentSignals": "source-needed: verified permit, plat, demolition, certificate, project, address, or spatial join evidence",
+    "migrationDemand": "source-needed: aggregate geography join, not individual people"
+  },
+  "verifiedCounts": {
+    "parcelGeometryFeatures": 386682,
+    "missingGeometry": 0,
+    "appraisalAccountRows": 373552,
+    "appraisalRows": 373552,
+    "landRows": 386682,
+    "appParcelChunks": 1183,
+    "parcelSearchShards": 1024,
+    "sourcePermitRecords": 0,
+    "permitRowsJoined": 0,
+    "permitRowsUnmatched": 0,
+    "parcelsWithDevelopmentSignals": 0,
+    "migrationDemandGeographies": 0,
+    "certifiedAppraisalRows": 493300,
+    "certifiedEnrichedParcels": 373538,
+    "certifiedUnmatchedParcels": 13144,
+    "certifiedImprovementDetailRows": 3310123
+  },
+  "requiredOutputs": [
+    "output/travis-county-tx/schema-report.md",
+    "output/travis-county-tx/schema-report.json",
+    "output/travis-county-tx/join-key-report.md",
+    "output/travis-county-tx/full-parcel-access-report.md",
+    "output/travis-county-tx/qa-report.md",
+    "output/travis-county-tx/qa-report.json",
+    "output/travis-county-tx/travis-county-tx-parcels.geojson",
+    "output/travis-county-tx/travis-county-tx-parcels.pmtiles or output/travis-county-tx/vector-tiles/",
+    "public/data/counties/travis-county-tx/parcels/manifest.json",
+    "public/data/counties/travis-county-tx/permits/manifest.json",
+    "public/data/counties/travis-county-tx/developments/parcel-development-index.json",
+    "public/data/counties/travis-county-tx/zoning/manifest.json",
+    "public/data/counties/travis-county-tx/floodplain/manifest.json",
+    "public/data/counties/travis-county-tx/demand/manifest.json"
+  ],
+  "productionGap": "Full parcel geometry, certified appraisal enrichment, viewport chunks, and search shards are built. Refresh-stable identity, permits/CO, zoning, floodplain, development signals, demand, and PMTiles remain gated.",
+  "pilotNotes": "Do not activate this county yet. Preserve the current UI. Retain all geometry-only features with unavailable intelligence fields blank."
+}

@@ -1,0 +1,39 @@
+{
+  "schemaVersion": "wr-county-importer-registry-v1",
+  "executionRule": "Plans may include blocked counties. Sample and full execution require an official source, a verified duplicate-safe join key, an existing adapter, and an executable importer command.",
+  "importerFamilies": {
+    "arcgis-rest-parcel-service": {
+      "label": "ArcGIS REST parcel and appraisal service",
+      "transport": "ArcGIS FeatureServer or MapServer paged query",
+      "sharedCapabilities": ["pagination", "geometry-normalization", "universal-field-mapping", "viewport-chunks", "search-shards", "count-reconciliation"]
+    },
+    "lojic-pva-bulk": {
+      "label": "LOJIC geometry plus PVA bulk appraisal",
+      "transport": "Official GIS geometry joined to official PVA bulk records",
+      "sharedCapabilities": ["archive-ingestion", "duplicate-safe-parcel-join", "universal-field-mapping", "viewport-chunks", "search-shards", "count-reconciliation"]
+    }
+  },
+  "counties": [
+    { "countyId": "jefferson-ky", "countyFips": "21111", "state": "KY", "adapterFolder": "louisville", "importerFamily": "lojic-pva-bulk", "joinKey": "PARCELID -> PVA parcel identifier", "sampleCommand": "npm.cmd run jefferson:sample", "fullCommand": "npm.cmd run jefferson:build", "manifestPath": "public/data/counties/jefferson-ky/parcels/manifest.json", "pilot": true },
+    { "countyId": "tarrant-county-tad", "countyFips": "48439", "state": "TX", "adapterFolder": "tarrant", "importerFamily": "arcgis-rest-parcel-service", "joinKey": "ACCOUNT -> White Rabbit accountNum", "sampleCommand": "npm.cmd run tarrant:service:sample", "fullCommand": "npm.cmd run tarrant:service:full", "manifestPath": "public/data/counties/tarrant/parcels/manifest.json", "pilot": true },
+    { "countyId": "harris-county-tx", "countyFips": "48201", "state": "TX", "adapterFolder": "harris-county-tx", "importerFamily": "arcgis-rest-parcel-service", "joinKey": "HCAD_NUM/acct_num -> White Rabbit accountNum", "sampleCommand": "npm.cmd run harris:service:sample", "fullCommand": "npm.cmd run harris:service:full", "manifestPath": "public/data/counties/harris-county-tx/parcels/manifest.json", "pilot": true },
+    { "countyId": "travis-county-tx", "countyFips": "48453", "state": "TX", "adapterFolder": "travis-county-tx", "importerFamily": "arcgis-rest-parcel-service", "joinKey": "OBJECTID unique geometry key; PROP_ID business parcel key", "sampleCommand": "npm.cmd run travis:service:sample", "fullCommand": "npm.cmd run travis:service:full", "manifestPath": "public/data/counties/travis-county-tx/parcels/manifest.json", "pilot": true },
+    { "countyId": "collin-county-tx", "countyFips": "48085", "state": "TX", "adapterFolder": "collin-county-tx", "importerFamily": "arcgis-rest-parcel-service", "joinKey": "GlobalID unique geometry key; PROP_ID business parcel key", "sampleCommand": "npm.cmd run collin:service:sample", "fullCommand": "npm.cmd run collin:service:full", "manifestPath": "public/data/counties/collin-county-tx/parcels/manifest.json", "pilot": true },
+    { "countyId": "denton-county-tx", "countyFips": "48121", "state": "TX", "adapterFolder": "denton-county-tx", "importerFamily": "arcgis-rest-parcel-service", "joinKey": "GlobalID unique geometry key; PID business parcel key", "sampleCommand": "npm.cmd run denton:service:sample", "fullCommand": "npm.cmd run denton:service:full", "manifestPath": "public/data/counties/denton-county-tx/parcels/manifest.json", "pilot": true },
+    { "countyId": "maricopa-county-az", "countyFips": "04013", "state": "AZ", "adapterFolder": "maricopa-county-az", "importerFamily": "arcgis-rest-parcel-service", "joinKey": "APN -> White Rabbit accountNum; OBJECTID unique GIS key", "sampleCommand": "npm.cmd run maricopa:service:sample", "fullCommand": "npm.cmd run maricopa:service:full", "manifestPath": "public/data/counties/maricopa-county-az/parcels/manifest.json", "pilot": true },
+    { "countyId": "king-county-wa", "countyFips": "53033", "state": "WA", "adapterFolder": "king-county-wa", "importerFamily": "arcgis-rest-parcel-service", "joinKey": "OBJECTID unique geometry key; PIN one-to-many business parcel key", "sampleCommand": "npm.cmd run king:service:sample", "fullCommand": "npm.cmd run king:service:full", "manifestPath": "public/data/counties/king-county-wa/parcels/manifest.json", "pilot": true },
+
+    { "countyId": "bexar-county-tx", "countyFips": "48029", "state": "TX", "adapterFolder": "bexar-county-tx", "importerFamily": "arcgis-rest-parcel-service", "joinKey": "OBJECTID unique snapshot geometry key; AcctNumb/PropID non-unique business identifiers", "sampleCommand": "npm.cmd run bexar:service:sample", "fullCommand": "npm.cmd run bexar:service:full", "manifestPath": "public/data/counties/bexar-county-tx/parcels/manifest.json", "pilot": false },
+    { "countyId": "fort-bend-county-tx", "countyFips": "48157", "state": "TX", "adapterFolder": "fort-bend-county-tx", "importerFamily": "arcgis-rest-parcel-service", "joinKey": "GlobalID unique geometry key; Property_Number non-unique business identifier", "sampleCommand": "npm.cmd run fort-bend:service:sample", "fullCommand": "npm.cmd run fort-bend:service:full", "manifestPath": "public/data/counties/fort-bend-county-tx/parcels/manifest.json", "pilot": false },
+    { "countyId": "fayette-county-ky", "countyFips": "21067", "state": "KY", "adapterFolder": "fayette-county-ky", "importerFamily": "lojic-pva-bulk", "joinKey": "source-needed", "sampleCommand": "", "fullCommand": "", "manifestPath": "public/data/counties/fayette-county-ky/parcels/manifest.json", "pilot": false },
+    { "countyId": "boone-county-ky", "countyFips": "21015", "state": "KY", "adapterFolder": "boone-county-ky", "importerFamily": "lojic-pva-bulk", "joinKey": "source-needed", "sampleCommand": "", "fullCommand": "", "manifestPath": "public/data/counties/boone-county-ky/parcels/manifest.json", "pilot": false },
+    { "countyId": "kenton-county-ky", "countyFips": "21117", "state": "KY", "adapterFolder": "kenton-county-ky", "importerFamily": "lojic-pva-bulk", "joinKey": "source-needed", "sampleCommand": "", "fullCommand": "", "manifestPath": "public/data/counties/kenton-county-ky/parcels/manifest.json", "pilot": false },
+    { "countyId": "campbell-county-ky", "countyFips": "21037", "state": "KY", "adapterFolder": "campbell-county-ky", "importerFamily": "lojic-pva-bulk", "joinKey": "source-needed", "sampleCommand": "", "fullCommand": "", "manifestPath": "public/data/counties/campbell-county-ky/parcels/manifest.json", "pilot": false }
+  ],
+  "batches": {
+    "pilot-eight": ["jefferson-ky", "tarrant-county-tad", "harris-county-tx", "travis-county-tx", "collin-county-tx", "denton-county-tx", "maricopa-county-az", "king-county-wa"],
+    "texas-arcgis": ["tarrant-county-tad", "harris-county-tx", "travis-county-tx", "collin-county-tx", "denton-county-tx", "bexar-county-tx", "fort-bend-county-tx"],
+    "kentucky-pva": ["jefferson-ky", "fayette-county-ky", "boone-county-ky", "kenton-county-ky", "campbell-county-ky"],
+    "national-arcgis": ["maricopa-county-az", "king-county-wa"]
+  }
+}

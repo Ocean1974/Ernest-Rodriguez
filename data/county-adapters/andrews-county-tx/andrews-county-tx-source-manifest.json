@@ -1,0 +1,64 @@
+{
+  "county_id": "andrews-county-tx",
+  "county_name": "Andrews County",
+  "state": "TX",
+  "fips": "48003",
+  "cad_name": "Andrews County Appraisal District",
+  "source_discovery_status": "official-site-property-search-and-map-discovered",
+  "retrieved_at": "2026-06-26",
+  "ui_constraint": "Do not redesign White Rabbit pages while expanding county parcel intelligence plumbing.",
+  "official_sources": [
+    {
+      "label": "Andrews County Appraisal District official site",
+      "url": "https://andrewscad.org/",
+      "source_type": "appraisal-district-site",
+      "observed_evidence": [
+        "official site links to property search",
+        "official site links to interactive maps",
+        "official site says the district appraises real and business personal property within Andrews County"
+      ]
+    },
+    {
+      "label": "Andrews CAD Property Search",
+      "url": "https://esearch.andrewscad.org/",
+      "source_type": "property-search",
+      "observed_evidence": [
+        "search modes include owner, address, ID, ARB, and advanced search",
+        "fields include Property ID, Owner ID, Geographic ID, tax year, subdivision, neighborhood, and property type",
+        "available tax years observed: 2026 through 2017"
+      ]
+    },
+    {
+      "label": "Andrews CAD Interactive Map",
+      "url": "https://gis.bisclient.com/",
+      "source_type": "interactive-map",
+      "observed_evidence": [
+        "linked from the official Andrews CAD site and property search header"
+      ]
+    }
+  ],
+  "verified_counts": {
+    "parcel_geometry_features": 0,
+    "appraisal_property_rows": 0,
+    "count_verified_at": null,
+    "status": "not-verified"
+  },
+  "join_keys": {
+    "primary_parcel_account": "unverified: property search exposes Property ID and Geographic ID fields, but exact geometry-to-appraisal key is not verified",
+    "secondary_gis_id": "unverified",
+    "owner_appraisal": "unverified"
+  },
+  "bulk_source_status": {
+    "parcel_geometry_bulk": "not-verified",
+    "owner_appraisal_bulk": "not-verified",
+    "download_terms": "not-verified"
+  },
+  "remaining_blockers": [
+    "bulk/export terms not verified",
+    "exact parcel count not verified",
+    "exact geometry-to-appraisal join key not verified",
+    "viewport chunks and search shards not built",
+    "QC report not built"
+  ],
+  "completion_impact": "source-discovery-started"
+}

@@ -1,0 +1,50 @@
+{
+  "county_id": "coke-county-tx",
+  "county_name": "Coke County",
+  "state": "TX",
+  "fips": "48081",
+  "cad_name": "Coke Central Appraisal District",
+  "source_discovery_status": "official-site-property-search-map-and-downloads-discovered",
+  "retrieved_at": "2026-06-29",
+  "official_portal": {
+    "label": "Coke Central Appraisal District official site",
+    "url": "https://cokecad.org/",
+    "source_type": "appraisal-district-site",
+    "verification_status": "official-site-verified"
+  },
+  "property_search": {
+    "label": "Coke CAD property search",
+    "url": "https://esearch.cokecad.org/",
+    "source_type": "property-search",
+    "verification_status": "linked-from-official-site"
+  },
+  "interactive_map": {
+    "label": "Coke CAD interactive map",
+    "url": "https://gis.bisclient.com/",
+    "source_type": "interactive-map",
+    "verification_status": "linked-from-official-site"
+  },
+  "candidate_bulk_or_report_leads": [
+    "Reports",
+    "Open Records Downloads"
+  ],
+  "verified_counts": {
+    "parcel_geometry_features": 0,
+    "appraisal_property_rows": 0,
+    "count_verified_at": null,
+    "status": "not-verified"
+  },
+  "join_keys": {
+    "primary_parcel_account": "unverified",
+    "secondary_gis_id": "unverified",
+    "owner_appraisal": "unverified"
+  },
+  "remaining_blockers": [
+    "reports/open-records download files not inspected",
+    "exact parcel count not verified",
+    "exact geometry-to-appraisal join key not verified",
+    "viewport chunks and search shards not built",
+    "QC report not built"
+  ],
+  "completion_impact": "source-discovery-started"
+}

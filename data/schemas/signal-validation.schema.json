@@ -1,0 +1,9 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://white-rabbit.local/schemas/signal-validation.schema.json",
+  "title": "White Rabbit Signal Validation Contracts",
+  "oneOf": [
+    { "type": "object", "required": ["schemaVersion", "modelId", "modelVersion", "generatedAt", "horizonDays", "status", "sample", "metrics", "calibration", "leakageAudit", "excluded", "caveats"], "properties": { "schemaVersion": { "const": "wr-signal-backtest-v1" }, "status": { "enum": ["evaluated", "insufficient-sample"] } } },
+    { "type": "object", "required": ["schemaVersion", "modelId", "modelVersion", "generatedAt", "status", "thresholds", "features", "action"], "properties": { "schemaVersion": { "const": "wr-signal-drift-report-v1" }, "status": { "enum": ["stable", "warning", "alert", "insufficient-evidence"] } } }
+  ]
+}

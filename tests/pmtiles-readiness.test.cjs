@@ -1,0 +1,14 @@
+const assert = require("assert");
+const fs = require("fs");
+const path = require("path");
+const root = path.join(__dirname, "..");
+const report = JSON.parse(fs.readFileSync(path.join(root, "output", "pmtiles-readiness.json"), "utf8"));
+assert.equal(report.schemaVersion, "wr-pmtiles-readiness-v1");
+assert.equal(report.pageDesignChanged, false);
+assert.equal(report.sourceCountyId, "dallas-county-dcad");
+assert(report.checks.sourceGeoJsonBytes > 1000000000, "Dallas tile source must be the full joined GeoJSON");
+assert.equal(report.checks.sourceFeatureCountVerified, true);
+assert.equal(report.checks.outputPathGuarded, true);
+assert.equal(report.checks.artifactHashManifestConfigured, true);
+assert.equal(report.checks.immutableDeploymentRequired, true);
+console.log("White Rabbit PMTiles readiness tests passed.");

@@ -1,0 +1,37 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://white-rabbit.local/schemas/property-intelligence-query.schema.json",
+  "title": "White Rabbit Property Intelligence Query Boundary",
+  "oneOf": [
+    {
+      "type": "object",
+      "required": ["schemaVersion", "requestId", "organizationId", "plan", "countyIds", "bounds", "cursor", "candidateBudgets", "candidatePolicies", "graph", "asOf"],
+      "properties": {
+        "schemaVersion": { "const": "wr-property-intelligence-query-request-v1" },
+        "graph": {
+          "type": "object",
+          "required": ["enabled", "maxHydrations", "maxDepth", "maxNodes", "pageSize", "maxEventsPerProperty"],
+          "properties": {
+            "maxHydrations": { "type": "integer", "minimum": 0, "maximum": 25 },
+            "maxDepth": { "type": "integer", "minimum": 0, "maximum": 3 },
+            "maxNodes": { "type": "integer", "minimum": 1, "maximum": 500 },
+            "maxEventsPerProperty": { "type": "integer", "minimum": 1, "maximum": 5000 }
+          }
+        }
+      }
+    },
+    {
+      "type": "object",
+      "required": ["schemaVersion", "requestId", "organizationId", "status", "generatedAt", "startedAt", "asOf", "candidates", "graph", "executionEvidence"],
+      "properties": {
+        "schemaVersion": { "const": "wr-property-intelligence-query-response-v1" },
+        "status": { "enum": ["complete", "partial"] },
+        "graph": {
+          "type": "object",
+          "required": ["status", "requested", "attempted", "completed", "truncated", "failed", "neighborhoods", "errors"],
+          "properties": { "status": { "enum": ["not-requested", "complete", "partial"] } }
+        }
+      }
+    }
+  ]
+}

@@ -1,0 +1,32 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://white-rabbit.local/schemas/underwriting-model.schema.json",
+  "title": "White Rabbit Underwriting Model",
+  "type": "object",
+  "required": ["schemaVersion", "assumptions", "missing", "defaulted", "requiredMissing"],
+  "properties": {
+    "schemaVersion": { "const": "wr-underwriting-model-v1" },
+    "assumptions": {
+      "type": "object",
+      "additionalProperties": { "$ref": "#/$defs/assumption" }
+    },
+    "missing": { "type": "array", "items": { "type": "string" } },
+    "defaulted": { "type": "array", "items": { "type": "string" } },
+    "requiredMissing": { "type": "array", "items": { "type": "string" } }
+  },
+  "$defs": {
+    "assumption": {
+      "type": "object",
+      "required": ["value", "unit", "source", "sourceField", "asOf", "confidence", "status"],
+      "properties": {
+        "value": { "type": ["number", "null"] },
+        "unit": { "type": "string" },
+        "source": { "type": "string" },
+        "sourceField": { "type": "string" },
+        "asOf": { "type": "string" },
+        "confidence": { "type": "number", "minimum": 0, "maximum": 1 },
+        "status": { "enum": ["provided", "defaulted", "missing"] }
+      }
+    }
+  }
+}

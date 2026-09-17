@@ -1,0 +1,268 @@
+{
+  "id": "rusk-county-tx",
+  "countyId": "rusk-county-tx",
+  "countyName": "Rusk County",
+  "state": "TX",
+  "fips": "48401",
+  "marketName": "Rusk County",
+  "appraisalDistrictName": "Rusk County Appraisal District",
+  "appraisalDistrictAcronym": "RCAD",
+  "gisSource": "source-needed: official county parcel/GIS source not verified yet",
+  "uniqueGisKey": "source-needed",
+  "parcelIdField": "source-needed",
+  "accountIdField": "source-needed",
+  "geometryType": "polygon",
+  "sourceSpatialReference": "source-needed",
+  "status": "pilot",
+  "map": {
+    "locationId": 2200,
+    "locationName": "Rusk County TX Pilot",
+    "locationType": "Rusk County Appraisal District",
+    "status": "pilot adapter shell - source discovery needed",
+    "coordinates": [
+      -105.33000000000001,
+      30.69
+    ],
+    "camera": {
+      "x": 50,
+      "y": 50,
+      "zoom": 1.2,
+      "pitch": 48,
+      "bearing": 0
+    },
+    "geoBounds": {
+      "minLng": -105.61,
+      "minLat": 30.51,
+      "maxLng": -105.05,
+      "maxLat": 30.87
+    },
+    "boundsStatus": "pilot approximate statewide grid bounds; replace with verified parcel extent during source inspection"
+  },
+  "universalParcelSchema": {
+    "version": "wr-universal-parcel-v1",
+    "schemaPath": "data/schemas/universal-parcel.schema.json",
+    "documentationPath": "data/schemas/universal-parcel.md",
+    "parcelServiceBuilder": "scripts/build-app-parcel-service.cjs",
+    "fieldMapPath": "data/county-adapters/rusk-county-tx/rusk-county-tx-universal-field-map.json",
+    "sourceManifestPath": "data/county-adapters/rusk-county-tx/rusk-county-tx-source-manifest.json"
+  },
+  "sourceFiles": {
+    "parcelGeometry": "source-needed",
+    "appraisalDistrictExtract": "source-needed",
+    "ownerAppraisal": "source-needed",
+    "permitsRaw": "source-needed",
+    "permitsProcessed": "data/permits/processed/rusk-county-tx",
+    "developmentRaw": "source-needed",
+    "zoningRaw": "source-needed",
+    "floodplainRaw": "source-needed",
+    "migrationDemandRaw": "source-needed"
+  },
+  "publicDataRoots": {
+    "parcels": "/data/counties/rusk-county-tx/parcels/",
+    "permits": "/data/counties/rusk-county-tx/permits/",
+    "developments": "/data/counties/rusk-county-tx/developments/",
+    "zoning": "/data/counties/rusk-county-tx/zoning/",
+    "floodplain": "/data/counties/rusk-county-tx/floodplain/",
+    "demand": "/data/counties/rusk-county-tx/demand/"
+  },
+  "productionOutputs": {
+    "parcelGeojson": "output/rusk-county-tx/rusk-county-tx-parcels.geojson",
+    "parcelPmtiles": "output/rusk-county-tx/rusk-county-tx-parcels.pmtiles",
+    "vectorTilesDirectory": "output/rusk-county-tx/vector-tiles/"
+  },
+  "optionalLayers": [
+    {
+      "id": "county-parcels",
+      "label": "County parcels",
+      "source": "source-needed",
+      "status": "source-needed",
+      "joinBehavior": "source-needed: official parcel/account and GIS keys must be verified before activation",
+      "defaultVisible": false,
+      "renderStrategy": "build-time official source fetch, offline universal mapping, viewport chunks, capped runtime loader",
+      "maxFeaturesPerViewport": 750
+    },
+    {
+      "id": "owner-appraisal",
+      "label": "Owner/appraisal",
+      "source": "source-needed",
+      "status": "source-needed",
+      "joinBehavior": "source-needed: official assessor/appraisal bulk source must provide owner, mailing, situs, value, land/building, and legal fields",
+      "defaultVisible": false,
+      "renderStrategy": "build-time official source fetch, offline owner/appraisal normalization, viewport chunks, capped runtime loader",
+      "maxFeaturesPerViewport": 750
+    },
+    {
+      "id": "parcel-dimensions",
+      "label": "Parcel dimensions",
+      "source": "source-needed",
+      "status": "source-needed",
+      "joinBehavior": "source-needed: direct dimension fields, label layer, or generated measurement fallback",
+      "defaultVisible": false,
+      "renderStrategy": "build-time official source inspection, offline mapping, viewport chunks",
+      "maxFeaturesPerViewport": 750
+    },
+    {
+      "id": "block-grid",
+      "label": "Block, subdivision, and map-grid context",
+      "source": "source-needed",
+      "status": "source-needed",
+      "joinBehavior": "source-needed: direct parcel fields or spatial join to subdivision, block, or grid sources",
+      "defaultVisible": false,
+      "renderStrategy": "build-time official source inspection, offline joins, viewport chunks",
+      "maxFeaturesPerViewport": 750
+    },
+    {
+      "id": "permits",
+      "label": "Permits and certificates of occupancy",
+      "source": "source-needed",
+      "status": "source-needed",
+      "joinBehavior": "source-needed: parcel/account, normalized address, or spatial point-in-parcel join",
+      "defaultVisible": false,
+      "publicDataRoot": "/data/counties/rusk-county-tx/permits/",
+      "manifestPath": "public/data/counties/rusk-county-tx/permits/manifest.json",
+      "renderStrategy": "build-time official source verification, offline permit normalization, viewport-safe chunks",
+      "maxFeaturesPerViewport": 750
+    },
+    {
+      "id": "zoning-intelligence",
+      "label": "Zoning intelligence",
+      "source": "source-needed",
+      "status": "source-needed",
+      "joinBehavior": "source-needed: parcel/account ID bridge first; spatial join for zoning polygons and case areas",
+      "defaultVisible": false,
+      "publicDataRoot": "/data/counties/rusk-county-tx/zoning/",
+      "manifestPath": "public/data/counties/rusk-county-tx/zoning/manifest.json",
+      "schemaPath": "data/schemas/dallas-zoning-layer.schema.json",
+      "reportPath": "output/rusk-county-tx/zoning-source-report.md",
+      "renderStrategy": "build-time official source verification, offline joins, viewport chunks, capped runtime loader",
+      "maxFeaturesPerViewport": 750
+    },
+    {
+      "id": "development-signals",
+      "label": "Development signals",
+      "source": "source-needed",
+      "status": "source-needed",
+      "joinBehavior": "source-needed: normalized permit, certificate, demolition, plat, and project evidence joined to parcel IDs",
+      "defaultVisible": false,
+      "publicDataRoot": "/data/counties/rusk-county-tx/developments/",
+      "manifestPath": "public/data/counties/rusk-county-tx/developments/parcel-development-index.json",
+      "renderStrategy": "build-time evidence normalization, parcel/address/spatial joins, viewport-safe parcel index lookup",
+      "maxFeaturesPerViewport": 750
+    },
+    {
+      "id": "floodplain-intelligence",
+      "label": "Floodplain intelligence",
+      "source": "source-needed",
+      "status": "source-needed",
+      "joinBehavior": "source-needed: FEMA/local floodplain spatial join keyed back to parcel/account IDs",
+      "defaultVisible": false,
+      "publicDataRoot": "/data/counties/rusk-county-tx/floodplain/",
+      "manifestPath": "public/data/counties/rusk-county-tx/floodplain/manifest.json",
+      "parcelIndexPath": "public/data/counties/rusk-county-tx/floodplain/parcel-floodplain-index.json",
+      "schemaPath": "data/schemas/parcel-floodplain-index.schema.json",
+      "parcelIndexSchemaPath": "data/schemas/parcel-floodplain-index.schema.json",
+      "reportPath": "output/rusk-county-tx/floodplain-source-report.md",
+      "renderStrategy": "build-time official source verification, offline parcel centroid spatial join, viewport-safe sharded parcel ID lookup",
+      "maxFeaturesPerViewport": 750
+    },
+    {
+      "id": "migration-demand",
+      "label": "Migration and demand",
+      "source": "source-needed",
+      "status": "source-needed",
+      "joinBehavior": "source-needed: aggregate Census/ACS/IRS or approved demand geography joined by tract/block group/market, not individual people",
+      "defaultVisible": false,
+      "publicDataRoot": "/data/counties/rusk-county-tx/demand/",
+      "manifestPath": "public/data/counties/rusk-county-tx/demand/manifest.json",
+      "renderStrategy": "build-time aggregate demand scoring, offline geography-to-parcel join, viewport-safe parcel index lookup",
+      "maxFeaturesPerViewport": 750
+    }
+  ],
+  "publicSourceDiscovery": {
+    "status": "queued",
+    "priorityReason": "TX full-state county coverage shell; source verification required before ingest.",
+    "sourceSearchQueries": [
+      "Rusk County Appraisal District parcel data official",
+      "Rusk County Texas GIS parcel boundaries official",
+      "Rusk County Texas permits open data parcel address"
+    ],
+    "sourceRules": [
+      "Use official county, assessor/appraiser, GIS, municipal, state, or federal sources first.",
+      "Do not activate this county until exact parcel counts and join keys are verified.",
+      "Do not infer owner phone/email from permits, contractors, applicants, or scraped pages."
+    ],
+    "problemSolvingLoop": [
+      "Discover official sources and preserve source dataset identifiers.",
+      "Audit schema, exact counts, geometry validity, nulls, and duplicate candidate keys.",
+      "Select a complete duplicate-safe feature identity and document secondary business identifiers.",
+      "Build a bounded-memory sample before attempting the full county snapshot.",
+      "Publish viewport chunks and search shards, then reconcile source, emitted, skipped, and joined counts.",
+      "Run county QC and keep visible activation disabled until every individual gate passes."
+    ]
+  },
+  "ownerEnrichment": {
+    "sourceLabel": "source-needed",
+    "propertyRecordSource": "source-needed: official assessor/appraisal parcel/property source must be verified",
+    "officialJoinKey": "source-needed: official parcel/account join key must be verified",
+    "noOfficialEmailFieldNote": "No official owner phone/email source is verified. Do not infer owner contact fields.",
+    "fields": {
+      "parcelId": "source-needed",
+      "gisParcelId": "source-needed",
+      "ownerName": "source-needed",
+      "ownerName2": "source-needed",
+      "businessName": "source-needed",
+      "ownerMailingAddress": "source-needed",
+      "ownerMailingAddress2": "source-needed",
+      "ownerCity": "source-needed",
+      "ownerState": "source-needed",
+      "ownerZip": "source-needed",
+      "ownerPhone": "No official owner phone field verified",
+      "ownerEmail": "No official owner email field verified"
+    }
+  },
+  "joinKeys": {
+    "primaryParcelAccount": "source-needed: document exact parcel geometry key -> assessor/appraisal account key",
+    "appraisal": "source-needed: document exact appraisal/property key",
+    "land": "source-needed: document exact land/building/value key",
+    "secondaryParcelGisId": "source-needed: document exact GIS feature key",
+    "blockLabels": "source-needed: direct key, spatial join, or unavailable",
+    "dimensions": "source-needed: direct key, spatial join, generated measurement fallback, or unavailable",
+    "permits": "source-needed: parcel/account ID, address match, spatial join, or combination",
+    "zoning": "source-needed: parcel/account ID bridge first; spatial join for zoning polygons and case areas",
+    "floodplain": "source-needed: FEMA/local floodplain parcel centroid spatial join keyed to parcel/account IDs",
+    "developmentSignals": "source-needed: verified permit, plat, demolition, certificate, project, address, or spatial join evidence",
+    "migrationDemand": "source-needed: aggregate geography join, not individual people"
+  },
+  "verifiedCounts": {
+    "parcelGeometryFeatures": 0,
+    "missingGeometry": 0,
+    "appraisalAccountRows": 0,
+    "appraisalRows": 0,
+    "landRows": 0,
+    "appParcelChunks": 0,
+    "parcelSearchShards": 0,
+    "sourcePermitRecords": 0,
+    "permitRowsJoined": 0,
+    "permitRowsUnmatched": 0,
+    "parcelsWithDevelopmentSignals": 0,
+    "migrationDemandGeographies": 0
+  },
+  "requiredOutputs": [
+    "output/rusk-county-tx/schema-report.md",
+    "output/rusk-county-tx/schema-report.json",
+    "output/rusk-county-tx/join-key-report.md",
+    "output/rusk-county-tx/full-parcel-access-report.md",
+    "output/rusk-county-tx/qa-report.md",
+    "output/rusk-county-tx/qa-report.json",
+    "output/rusk-county-tx/rusk-county-tx-parcels.geojson",
+    "output/rusk-county-tx/rusk-county-tx-parcels.pmtiles or output/rusk-county-tx/vector-tiles/",
+    "public/data/counties/rusk-county-tx/parcels/manifest.json",
+    "public/data/counties/rusk-county-tx/permits/manifest.json",
+    "public/data/counties/rusk-county-tx/developments/parcel-development-index.json",
+    "public/data/counties/rusk-county-tx/zoning/manifest.json",
+    "public/data/counties/rusk-county-tx/floodplain/manifest.json",
+    "public/data/counties/rusk-county-tx/demand/manifest.json"
+  ],
+  "productionGap": "Pilot adapter shell only. Official parcel geometry, assessor/appraisal owner/value source, exact join keys, viewport chunks, search shards, permits/CO, zoning, floodplain, development signals, migration/demand, QA reports, and PMTiles are not built yet.",
+  "pilotNotes": "Do not activate this county in the app. Do not redesign any pages. Fill official sources and exact join keys before any visible behavior changes."
+}

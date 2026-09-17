@@ -1,0 +1,107 @@
+{
+  "id": "mercer-county-oh-ingestion",
+  "countyAdapter": "data/county-adapters/mercer-county-oh/adapter.json",
+  "universalParcelSchema": "data/schemas/universal-parcel.schema.json",
+  "defaultMode": "plan",
+  "enabledForProduction": false,
+  "scaffoldOnly": true,
+  "steps": [
+    {
+      "id": "verify-official-sources",
+      "label": "Verify official parcel and assessor/appraiser sources",
+      "command": "echo Verify official sources for mercer-county-oh.",
+      "requiredOutputs": [
+        "output/mercer-county-oh/schema-report.md",
+        "output/mercer-county-oh/schema-report.json"
+      ]
+    },
+    {
+      "id": "verify-join-keys",
+      "label": "Document exact parcel/account/GIS join keys",
+      "command": "echo Document exact join keys for mercer-county-oh.",
+      "requiredOutputs": [
+        "output/mercer-county-oh/join-key-report.md"
+      ]
+    },
+    {
+      "id": "build-parcel-geojson",
+      "label": "Build universal county parcel GeoJSON",
+      "command": "echo Build mercer-county-oh universal parcel GeoJSON after source verification.",
+      "requiredOutputs": [
+        "output/mercer-county-oh/mercer-county-oh-parcels.geojson",
+        "output/mercer-county-oh/full-parcel-access-report.md"
+      ]
+    },
+    {
+      "id": "build-parcel-service",
+      "label": "Build viewport chunks and search shards",
+      "command": "echo Build viewport-safe parcel service for mercer-county-oh.",
+      "requiredOutputs": [
+        "public/data/counties/mercer-county-oh/parcels/manifest.json"
+      ]
+    },
+    {
+      "id": "build-owner-matches",
+      "label": "Build owner/appraisal parcel joins",
+      "command": "echo Build owner and appraisal joins for mercer-county-oh.",
+      "requiredOutputs": [
+        "output/mercer-county-oh/mercer-county-oh-owner-appraisal-index.json"
+      ]
+    },
+    {
+      "id": "build-permit-service",
+      "label": "Normalize permits and certificates of occupancy",
+      "command": "echo Build permits and CO pipeline for mercer-county-oh.",
+      "requiredOutputs": [
+        "public/data/counties/mercer-county-oh/permits/manifest.json"
+      ]
+    },
+    {
+      "id": "build-zoning-index",
+      "label": "Build zoning parcel index",
+      "command": "echo Build zoning joins for mercer-county-oh.",
+      "requiredOutputs": [
+        "public/data/counties/mercer-county-oh/zoning/manifest.json"
+      ]
+    },
+    {
+      "id": "build-floodplain-index",
+      "label": "Build floodplain parcel index",
+      "command": "echo Build floodplain joins for mercer-county-oh.",
+      "requiredOutputs": [
+        "public/data/counties/mercer-county-oh/floodplain/manifest.json"
+      ]
+    },
+    {
+      "id": "build-development-index",
+      "label": "Build development-signal parcel index",
+      "command": "echo Build development index for mercer-county-oh.",
+      "requiredOutputs": [
+        "public/data/counties/mercer-county-oh/developments/parcel-development-index.json"
+      ]
+    },
+    {
+      "id": "build-migration-demand",
+      "label": "Build aggregate migration and demand index",
+      "command": "echo Build aggregate demand joins for mercer-county-oh.",
+      "requiredOutputs": [
+        "public/data/counties/mercer-county-oh/demand/manifest.json"
+      ]
+    },
+    {
+      "id": "validate",
+      "label": "Run county QC",
+      "command": "npm.cmd run county:qc",
+      "requiredOutputs": [
+        "output/county-qc/mercer-county-oh.json",
+        "output/county-qc/mercer-county-oh.md"
+      ]
+    }
+  ],
+  "productionTileStep": {
+    "id": "build-pmtiles",
+    "label": "Build PMTiles/vector tiles after verified parcel GeoJSON exists",
+    "expectedOutput": "output/mercer-county-oh/mercer-county-oh-parcels.pmtiles"
+  },
+  "uiConstraint": "Do not redesign or activate White Rabbit pages while this county remains a pipeline scaffold."
+}

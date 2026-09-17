@@ -1,0 +1,133 @@
+const fs = require("fs");
+const path = require("path");
+
+const root = path.join(__dirname, "..");
+
+function readJson(relativePath) {
+  return JSON.parse(fs.readFileSync(path.join(root, relativePath), "utf8"));
+}
+
+function assert(condition, message) {
+  if (!condition) throw new Error(message);
+}
+
+const workQueue = readJson("data/national-county-intelligence/source-work-queue.json");
+const parcelWindowProfile = readJson("data/national-county-intelligence/dcad-parcel-window-profile.json");
+const packageJson = readJson("package.json");
+const countyUniverse = readJson("data/national-county-intelligence/us-county-universe.json");
+const report = readJson("output/national-county-parcel-intelligence-report.json");
+const seedReport = readJson("output/national-county-intelligence/adapter-seed-report.json");
+const countyUniverseReport = readJson("output/national-county-intelligence/us-county-universe-report.json");
+const reportMd = fs.readFileSync(path.join(root, "output", "national-county-parcel-intelligence-report.md"), "utf8");
+const seedReportMd = fs.readFileSync(path.join(root, "output", "national-county-intelligence", "adapter-seed-report.md"), "utf8");
+const countyUniverseReportMd = fs.readFileSync(path.join(root, "output", "national-county-intelligence", "us-county-universe-report.md"), "utf8");
+const scriptSource = fs.readFileSync(path.join(root, "scripts", "build-national-county-parcel-intelligence.cjs"), "utf8");
+const seedScriptSource = fs.readFileSync(path.join(root, "scripts", "seed-national-county-adapters.cjs"), "utf8");
+const countyUniverseScriptSource = fs.readFileSync(path.join(root, "scripts", "build-us-county-universe.cjs"), "utf8");
+const appSource = fs.readFileSync(path.join(root, "src", "App.tsx"), "utf8");
+
+assert(workQueue.coverageGoal.includes("All United States counties"), "National queue must target all U.S. counties");
+assert(workQueue.uiConstraint.includes("Do not redesign"), "National queue must preserve the no-redesign constraint");
+assert(workQueue.dcadModelAdapterId === "dallas-county-dcad", "DCAD must be the national model adapter");
+assert(workQueue.countyIntelligenceChecklist.length >= 12, "National queue must define a full DCAD-style intelligence checklist");
+assert(workQueue.countyIntelligenceChecklist.some((item) => item.id === "parcel-geometry" && item.requiredForCountyActivation), "Parcel geometry must be required for activation");
+assert(workQueue.countyIntelligenceChecklist.some((item) => item.id === "owner-appraisal" && item.dcadExample.includes("DCAD2026_CURRENT")), "Owner/appraisal must use DCAD as the example");
+assert(workQueue.countyIntelligenceChecklist.some((item) => item.id === "migration-demand"), "Migration/demand intelligence must be tracked");
+assert(workQueue.activeExamples.some((county) => county.countyId === "dallas-county-dcad" && county.status === "active-dcad-model"), "Dallas/DCAD must be the active model example");
+assert(workQueue.activeExamples.some((county) => county.countyId === "jefferson-ky"), "Jefferson County KY pilot must stay in the national queue");
+assert(workQueue.activeExamples.some((county) => county.countyId === "tarrant-county-tad"), "Tarrant County pilot must stay in the national queue");
+assert(workQueue.priorityCountyQueue.length >= 20, "National queue must seed at least 20 priority counties");
+assert(workQueue.priorityCountyQueue.every((county) => county.fips && county.sourceSearchQueries.length >= 3), "Every priority county must carry FIPS and official source search queries");
+assert(workQueue.priorityCountyQueue.some((county) => county.countyId === "harris-county-tx"), "Harris County should be queued as a priority county");
+const harrisQueue = workQueue.priorityCountyQueue.find((county) => county.countyId === "harris-county-tx");
+assert(harrisQueue.status === "source-verified-adapter-created", "Harris County should be marked as the first source-verified adapter");
+assert(harrisQueue.adapterPath === "data/county-adapters/harris-county-tx/adapter.json", "Harris County queue entry must point to its adapter");
+const maricopaQueue = workQueue.priorityCountyQueue.find((county) => county.countyId === "maricopa-county-az");
+assert(maricopaQueue.status === "source-verified-adapter-created", "Maricopa County should be marked as the next source-verified adapter");
+assert(maricopaQueue.adapterPath === "data/county-adapters/maricopa-county-az/adapter.json", "Maricopa County queue entry must point to its adapter");
+const kingQueue = workQueue.priorityCountyQueue.find((county) => county.countyId === "king-county-wa");
+assert(kingQueue.status === "source-verified-adapter-created", "King County should be marked as a source-verified adapter");
+assert(kingQueue.adapterPath === "data/county-adapters/king-county-wa/adapter.json", "King County queue entry must point to its adapter");
+assert(workQueue.priorityCountyQueue.some((county) => county.countyId === "los-angeles-county-ca"), "Los Angeles County should be queued as a priority county");
+assert(packageJson.scripts["national:seed-adapters"] === "node scripts/seed-national-county-adapters.cjs", "Package scripts must expose national adapter seeding");
+assert(packageJson.scripts["national:county-universe"] === "node scripts/build-us-county-universe.cjs", "Package scripts must expose the Census county-universe build");
+assert(seedScriptSource.includes("skipped-existing"), "National adapter seeding must not overwrite existing adapters");
+assert(seedScriptSource.includes("source-needed: official"), "National adapter seeding must keep unverified sources source-needed");
+assert(countyUniverseScriptSource.includes("national_county.txt"), "County universe builder must use the official Census county code file");
+assert(countyUniverse.sourceName.includes("U.S. Census Bureau"), "County universe must preserve official Census source lineage");
+assert(countyUniverse.countyEquivalentCount > 3000, "County universe must cover thousands of county-equivalent records");
+assert(countyUniverse.countyEquivalentCount === countyUniverseReport.countyEquivalentCount, "County universe report must match the data count");
+assert(countyUniverse.adapterShellCount >= seedReport.totalPriorityCount, "County universe must count seeded adapter shells");
+assert(countyUniverse.counties.some((county) => county.fips === "48113" && county.countyName === "Dallas County"), "County universe must include Dallas County");
+assert(countyUniverse.counties.some((county) => county.fips === "48201" && county.countyName === "Harris County"), "County universe must include Harris County");
+assert(countyUniverse.uiConstraint.includes("No White Rabbit pages"), "County universe build must document no page changes");
+assert(countyUniverseReportMd.includes("U.S. County Universe Report"), "County universe markdown report must exist");
+assert(seedReport.totalPriorityCount === workQueue.priorityCountyQueue.length, "National adapter seed report must process the full priority queue");
+assert(seedReport.seeded.some((county) => county.countyId === "los-angeles-county-ca" && county.adapterPath === "data/county-adapters/los-angeles-county-ca/adapter.json"), "Seed report must include Los Angeles County adapter shell");
+assert(seedReport.seeded.some((county) => county.countyId === "harris-county-tx" && county.status === "skipped-existing"), "Seed report must not overwrite the Harris adapter");
+assert(seedReport.uiConstraint.includes("No White Rabbit pages"), "Seed report must document that pages were not changed");
+assert(seedReportMd.includes("National County Adapter Seed Report"), "National adapter seed markdown report must exist");
+
+assert(parcelWindowProfile.version === "wr-dcad-parcel-window-profile-v1", "DCAD-style parcel window profile must have a stable version");
+assert(parcelWindowProfile.modelCountyId === "dallas-county-dcad", "Parcel window profile must use DCAD as the model");
+assert(parcelWindowProfile.uiConstraint.includes("Do not redesign"), "Parcel window profile must preserve the no-redesign rule");
+assert(parcelWindowProfile.parityRule.includes("Source-needed placeholders are not parity"), "Parcel window profile must reject source-needed placeholders as DCAD parity");
+assert(parcelWindowProfile.texasRolloutRule.includes("Every Texas county"), "Parcel window profile must require every Texas county to follow the DCAD parity contract");
+assert(parcelWindowProfile.texasRolloutRule.includes("do-not-activate"), "Texas rollout rule must keep generic county shells inactive");
+assert(parcelWindowProfile.fieldGroups.length >= 14, "Parcel window profile must cover all DCAD-like field groups");
+assert(parcelWindowProfile.fieldGroups.some((group) => group.id === "owner-contact" && group.privacyRule.includes("Never infer owner phone or email")), "Owner contact group must protect against inferred contact data");
+assert(parcelWindowProfile.fieldGroups.some((group) => group.id === "permits-certificates"), "Parcel window profile must include permits and certificates");
+assert(parcelWindowProfile.fieldGroups.some((group) => group.id === "migration-demand"), "Parcel window profile must include migration and demand");
+assert(parcelWindowProfile.activationGate.some((gate) => gate.includes("County QC")), "Parcel window activation must require county QC");
+
+assert(report.coverageGoal === workQueue.coverageGoal, "Generated report must preserve the national coverage goal");
+assert(report.uiConstraint.includes("Do not redesign"), "Generated report must preserve the no-redesign rule");
+assert(report.dcadModel.adapterId === "dallas-county-dcad", "Generated report must identify DCAD as the model");
+assert(report.dcadModel.exactParcelGeometryFeatures === 696601, "Generated report must preserve the exact DCAD parcel count");
+assert(report.dcadModel.exactAccountRows === 861357, "Generated report must preserve exact DCAD account rows");
+assert(report.dcadModel.primaryJoinKey.includes("PARCEL_GEOM.Acct"), "Generated report must preserve the DCAD primary join key");
+assert(report.dcadModel.ownerFields.ownerName.includes("OWNER_NAME1"), "Generated report must preserve DCAD owner fields");
+assert(report.parcelWindowProfile.version === parcelWindowProfile.version, "Generated report must embed the DCAD parcel window profile");
+assert(report.summary.priorityCountyCount === workQueue.priorityCountyQueue.length, "Generated report must summarize queued county count");
+assert(report.summary.queuedOfficialSourceSearches >= 60, "Generated report must count official source discovery searches");
+const harrisReport = report.priorityCountyQueue.find((county) => county.countyId === "harris-county-tx");
+assert(harrisReport.hasAdapter === true, "National report must recognize the Harris adapter");
+assert(harrisReport.verifiedCounts.parcelGeometryFeatures === 1535525, "National report must preserve the Harris verified parcel count");
+assert(harrisReport.dcadLikeWindowStatus.status === "source-verified-build-needed", "Harris window status must stay source-verified/build-needed");
+assert(harrisReport.dcadLikeWindowStatus.sourceVerifiedFieldGroups.includes("owner-contact"), "Harris source-verified window groups must include owner-contact");
+assert(harrisReport.dcadLikeWindowStatus.sourceNeededFieldGroups.includes("permits-certificates"), "Harris must keep permits/CO source-needed");
+const maricopaReport = report.priorityCountyQueue.find((county) => county.countyId === "maricopa-county-az");
+assert(maricopaReport.hasAdapter === true, "National report must recognize the Maricopa adapter");
+assert(maricopaReport.verifiedCounts.parcelGeometryFeatures === 1758244, "National report must preserve the Maricopa verified parcel count");
+assert(maricopaReport.dcadLikeWindowStatus.status === "source-verified-build-needed", "Maricopa window status must stay source-verified/build-needed");
+assert(maricopaReport.dcadLikeWindowStatus.sourceVerifiedFieldGroups.includes("owner-contact"), "Maricopa source-verified window groups must include owner-contact");
+assert(maricopaReport.dcadLikeWindowStatus.sourceNeededFieldGroups.includes("permits-certificates"), "Maricopa must keep permits/CO source-needed");
+const kingReport = report.priorityCountyQueue.find((county) => county.countyId === "king-county-wa");
+assert(kingReport.hasAdapter === true, "National report must recognize the King County adapter");
+assert(kingReport.verifiedCounts.parcelGeometryFeatures === 638648, "National report must preserve the King verified parcel count");
+assert(kingReport.verifiedCounts.duplicatePin === 2581, "National report must preserve King duplicate PIN count");
+assert(kingReport.dcadLikeWindowStatus.status === "source-verified-build-needed", "King window status must stay source-verified/build-needed");
+assert(kingReport.dcadLikeWindowStatus.sourceVerifiedFieldGroups.includes("geometry"), "King source-verified window groups must include geometry");
+assert(kingReport.dcadLikeWindowStatus.sourceNeededFieldGroups.includes("owner-contact"), "King must keep current owner fields source-needed");
+const losAngelesReport = report.priorityCountyQueue.find((county) => county.countyId === "los-angeles-county-ca");
+assert(losAngelesReport.hasAdapter === true, "National report must recognize the Los Angeles adapter shell");
+assert(losAngelesReport.verifiedCounts.parcelGeometryFeatures === 0, "Los Angeles adapter shell must not fake parcel counts");
+assert(losAngelesReport.dcadLikeWindowStatus.status === "adapter-created-source-needed", "Los Angeles window status must stay source-needed until official sources are verified");
+assert(losAngelesReport.dcadLikeWindowStatus.sourceNeededFieldGroups.includes("owner-contact"), "Los Angeles owner contact must remain source-needed");
+assert(report.activeExamples.find((county) => county.countyId === "dallas-county-dcad").loadedIntelGroups.includes("owner-appraisal"), "Dallas should remain the owner/appraisal model");
+assert(report.activeExamples.find((county) => county.countyId === "dallas-county-dcad").dcadLikeWindowStatus.status === "model-loaded", "Dallas parcel window should be the loaded model");
+assert(report.activeExamples.find((county) => county.countyId === "dallas-county-dcad").dcadLikeWindowStatus.readyFieldGroups.includes("owner-contact"), "Dallas parcel window must include owner contact readiness");
+assert(report.activeExamples.find((county) => county.countyId === "jefferson-ky").sourceNeededIntelGroups.includes("owner-appraisal"), "Jefferson should keep owner/appraisal marked source-needed");
+assert(report.activeExamples.find((county) => county.countyId === "jefferson-ky").dcadLikeWindowStatus.status === "partial-source-needed", "Jefferson parcel window should remain partial until PVA/appraisal joins are loaded");
+assert(report.activeExamples.find((county) => county.countyId === "jefferson-ky").dcadLikeWindowStatus.sourceNeededFieldGroups.includes("owner-contact"), "Jefferson parcel window must keep owner contact source-needed");
+assert(report.activeExamples.find((county) => county.countyId === "tarrant-county-tad").loadedIntelGroups.length === 0, "Tarrant should not look loaded before source files are present");
+assert(report.activeExamples.find((county) => county.countyId === "tarrant-county-tad").dcadLikeWindowStatus.status === "source-needed", "Tarrant parcel window should not be ready before source files are loaded");
+assert(report.activeExamples.find((county) => county.countyId === "tarrant-county-tad").sourceNeededIntelGroups.includes("parcel-geometry"), "Tarrant should show parcel geometry as source-needed");
+assert(reportMd.includes("# National County Parcel Intelligence Report"), "Markdown report must be generated");
+assert(reportMd.includes("DCAD Model County"), "Markdown report must put DCAD forward as the example");
+assert(reportMd.includes("DCAD-Style Parcel Window Field Groups"), "Markdown report must include the parcel window field groups");
+assert(scriptSource.includes("sourceNeededIntelGroups"), "Builder must distinguish missing/source-needed intel from loaded intel");
+assert(scriptSource.includes("dcadLikeWindowStatus"), "Builder must report DCAD-like parcel window readiness");
+assert(!appSource.includes("national-county-parcel-intelligence-report"), "National intelligence plumbing must not redesign or wire visible pages");
+
+console.log("White Rabbit national county parcel intelligence tests passed.");

@@ -1,0 +1,10 @@
+export const USER_INTELLIGENCE_STATE_VERSION: "wr-user-intelligence-state-v1";
+export const SAVED_SEARCH_VERSION: "wr-saved-search-v1";
+export const WATCHLIST_VERSION: "wr-watchlist-v1";
+export function createSavedSearch(input?: Record<string, unknown>): Record<string, unknown>;
+export function createWatchlist(input?: Record<string, unknown>): Record<string, unknown>;
+export function createUserIntelligenceState(input?: Record<string, unknown>): Record<string, unknown>;
+export function upsertSavedSearch(state: Record<string, unknown>, savedSearch: Record<string, unknown>, options?: Record<string, unknown>): Record<string, unknown>;
+export function upsertWatchlist(state: Record<string, unknown>, watchlist: Record<string, unknown>, options?: Record<string, unknown>): Record<string, unknown>;
+export function removeSavedSearch(state: Record<string, unknown>, savedSearchId: string, options?: Record<string, unknown>): Record<string, unknown>;
+export function removeWatchlist(state: Record<string, unknown>, watchlistId: string, options?: Record<string, unknown>): Record<string, unknown>;

@@ -1,0 +1,9 @@
+{
+  "description": "White Rabbit contact suppression controls. Add account numbers, owner names, mailing addresses, phone numbers, or email addresses here to exclude them from contact-enrichment outputs.",
+  "updatedAt": "2026-05-17T00:00:00.000Z",
+  "suppressAccounts": [],
+  "suppressOwnerNames": [],
+  "suppressMailingAddresses": [],
+  "suppressPhones": [],
+  "suppressEmails": []
+}

@@ -1,0 +1,46 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://white-rabbit.local/schemas/release-activation.schema.json",
+  "title": "White Rabbit Signed Release Activation",
+  "oneOf": [
+    { "$ref": "#/$defs/attestation" },
+    { "$ref": "#/$defs/policy" },
+    { "$ref": "#/$defs/decision" },
+    { "$ref": "#/$defs/manifest" }
+  ],
+  "$defs": {
+    "attestation": {
+      "type": "object",
+      "required": ["schemaVersion", "organizationId", "capabilityId", "evidenceType", "artifactId", "artifactRef", "artifactSchemaVersion", "artifactSha256", "artifactGeneratedAt", "issuedAt", "expiresAt", "environment", "synthetic", "artifactAuthorId", "signer", "claims", "signatureAlgorithm", "signature"],
+      "properties": {
+        "schemaVersion": { "const": "wr-release-evidence-attestation-v1" },
+        "artifactSha256": { "type": "string", "pattern": "^[a-f0-9]{64}$" },
+        "signatureAlgorithm": { "const": "Ed25519" },
+        "signature": { "type": "string", "minLength": 1 }
+      }
+    },
+    "policy": {
+      "type": "object",
+      "required": ["schemaVersion", "id", "policyVersion", "organizationId", "capabilityId", "featureGates", "requiredEvidence", "requiredApprovalRoles", "decisionTtlHours", "rollback"],
+      "properties": { "schemaVersion": { "const": "wr-capability-release-policy-v1" } }
+    },
+    "decision": {
+      "type": "object",
+      "required": ["schemaVersion", "organizationId", "capabilityId", "policyId", "policyVersion", "requestedBy", "candidate", "candidateSha256", "evaluatedAt", "expiresAt", "checks", "blockers", "rollbackPlan", "evidenceAttestationSha256s", "approvalAttestationSha256s", "status", "activationAuthorized", "decisionSha256"],
+      "properties": {
+        "schemaVersion": { "const": "wr-capability-release-decision-v1" },
+        "status": { "enum": ["authorized", "rejected"] },
+        "activationAuthorized": { "type": "boolean" }
+      }
+    },
+    "manifest": {
+      "type": "object",
+      "required": ["schemaVersion", "organizationId", "releaseId", "environment", "generatedAt", "expiresAt", "decisions", "activationAuthorized", "signer", "signatureAlgorithm", "manifestSha256", "signature"],
+      "properties": {
+        "schemaVersion": { "const": "wr-platform-release-manifest-v1" },
+        "signatureAlgorithm": { "const": "Ed25519" },
+        "manifestSha256": { "type": "string", "pattern": "^[a-f0-9]{64}$" }
+      }
+    }
+  }
+}

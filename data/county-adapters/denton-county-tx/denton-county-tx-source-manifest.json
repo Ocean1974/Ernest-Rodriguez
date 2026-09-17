@@ -1,0 +1,57 @@
+{
+  "version": "wr-county-source-manifest-v1",
+  "generatedAt": "2026-08-06T00:00:00.000Z",
+  "county_id": "denton-county-tx",
+  "county_name": "Denton County",
+  "state": "TX",
+  "fips": "48121",
+  "status": "official-live-parcel-appraisal-service-verified",
+  "officialSourceStatus": "verified",
+  "official_sources": {
+    "appraisal_district": "https://www.dentoncad.com/",
+    "data_extracts": "https://www.dentoncad.com/index.php/Data-Extracts",
+    "parcels_appraisal_map_layer": "https://geo.dentoncad.com/arcgis/rest/services/LandRecords/Parcels_Appraisal/MapServer/1",
+    "service_owner": "Denton Central Appraisal District",
+    "service_description": "Official parcel polygons with CAMA appraisal attributes"
+  },
+  "verified_counts": {
+    "parcel_geometry_features": 384684,
+    "global_id_non_null_features": 384684,
+    "global_id_missing_features": 0,
+    "global_id_max_observed_multiplicity": 1,
+    "pid_missing_features": 1,
+    "pid_zero_features": 288,
+    "pid_nonzero_max_observed_multiplicity": 5,
+    "geo_id_missing_features": 1400,
+    "geo_id_non_null_max_observed_multiplicity": 7,
+    "count_verified_at": "2026-08-06",
+    "status": "live-service-feature-count-and-key-audit-verified"
+  },
+  "join_keys": {
+    "service_feature_identity": "GlobalID (verified non-null and maximum multiplicity 1 across all 384,684 live features)",
+    "primary_parcel_account": "GlobalID is the stable source-feature identity; pid is a secondary business identifier with documented null, zero, and duplicate groups",
+    "secondary_gis_id": "geoID is searchable but contains 1,400 nulls and duplicate groups up to multiplicity 7",
+    "owner_appraisal": "direct CAMA fields on the same official parcel feature; no external geometry-to-appraisal join required"
+  },
+  "query": {
+    "primary_where": "GlobalID IS NOT NULL",
+    "order_by": "OBJECTID",
+    "max_record_count": 2000,
+    "geometry_out_sr": 4326,
+    "out_fields": ["OBJECTID", "GlobalID", "pYear", "pid", "name", "nameSecondary", "propType", "useCd", "legalDescription", "abstractSubdivisionDescription", "block", "tract", "lot", "land_sqft", "effectiveSizeAcres", "cad_zoning", "geoID", "dba", "situsCity", "situsZip", "situs_street_address", "situs_full_address", "addrDeliveryLine", "addrUnitDesignator", "addrCity", "addrState", "addrZip", "landType", "imprvActualYearBuilt", "imprvMainArea", "imprvTotalArea", "landTotalSqft", "imprvEffYearBuilt", "improvementValue", "ownerMarketValue", "ownerAppraisedValue", "landHSValue", "landNHSValue", "Shape.STArea()", "Shape.STLength()"]
+  },
+  "verified_field_groups": {
+    "identity": ["GlobalID", "OBJECTID", "pid", "geoID"],
+    "owner": ["name", "nameSecondary", "dba", "addrDeliveryLine", "addrUnitDesignator", "addrCity", "addrState", "addrZip"],
+    "situs": ["situs_street_address", "situs_full_address", "situsCity", "situsZip"],
+    "land_building": ["land_sqft", "landTotalSqft", "effectiveSizeAcres", "imprvActualYearBuilt", "imprvEffYearBuilt", "imprvMainArea", "imprvTotalArea"],
+    "value": ["improvementValue", "ownerMarketValue", "ownerAppraisedValue", "landHSValue", "landNHSValue"],
+    "legal_zoning": ["legalDescription", "abstractSubdivisionDescription", "block", "tract", "lot", "cad_zoning"]
+  },
+  "remaining_blockers": [
+    "run county QC and production tile handoff",
+    "verify and join permits, floodplain, development, and demand sources"
+  ],
+  "completion_impact": "map-search-pilot-built-qc-needed",
+  "activation": "do-not-activate"
+}

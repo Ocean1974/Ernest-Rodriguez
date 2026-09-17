@@ -1,0 +1,11 @@
+export const COUNTY_TILE_SOURCE_BUNDLE_VERSION: string;
+export const COUNTY_TILE_PROPERTY_POLICY_VERSION: string;
+export const COUNTY_TILE_BUILD_PLAN_VERSION: string;
+export const COUNTY_TILE_ARTIFACT_AUDIT_VERSION: string;
+export const COUNTY_TILE_PUBLICATION_DECISION_VERSION: string;
+export function countyTileSha256(value: unknown): string;
+export function createCountyTileSourceBundle(input?: Record<string, unknown>): Readonly<Record<string, unknown>>;
+export function createCountyTilePropertyPolicy(input?: Record<string, unknown>): Readonly<Record<string, unknown>>;
+export function createCountyTileBuildPlan(input?: Record<string, unknown>): Readonly<Record<string, unknown>>;
+export function createCountyTileArtifactAudit(input?: Record<string, unknown>): Readonly<Record<string, unknown>>;
+export function createCountyTilePublicationDecision(input?: Record<string, unknown>): Readonly<Record<string, unknown>>;

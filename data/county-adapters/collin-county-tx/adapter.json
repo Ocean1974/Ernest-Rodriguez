@@ -1,0 +1,287 @@
+{
+  "id": "collin-county-tx",
+  "countyId": "collin-county-tx",
+  "countyName": "Collin County",
+  "state": "TX",
+  "fips": "48085",
+  "marketName": "North Dallas",
+  "appraisalDistrictName": "Collin Central Appraisal District",
+  "appraisalDistrictAcronym": "CCAD",
+  "gisSource": "https://services2.arcgis.com/uXyoacYrZTPTKD3R/arcgis/rest/services/CCAD_Parcel_Feature_Set/FeatureServer/4",
+  "uniqueGisKey": "GlobalID; verified non-null and maximum multiplicity 1 across all 437063 features",
+  "parcelIdField": "GlobalID",
+  "accountIdField": "propID secondary business identifier; documented nulls and duplicates",
+  "geometryType": "polygon",
+  "sourceSpatialReference": "EPSG:2276 (NAD83 / Texas North Central ftUS)",
+  "status": "pilot",
+  "map": {
+    "locationId": 1019,
+    "locationName": "Collin County TX / North Dallas Pilot",
+    "locationType": "Collin Central Appraisal District",
+    "status": "source verified; parcel service build in progress",
+    "coordinates": [
+      -96.57,
+      33.19
+    ],
+    "camera": {
+      "x": 50,
+      "y": 50,
+      "zoom": 1.2,
+      "pitch": 48,
+      "bearing": 0
+    },
+    "geoBounds": {
+      "minLng": -96.95,
+      "minLat": 32.95,
+      "maxLng": -96.3,
+      "maxLat": 33.45
+    },
+    "boundsStatus": "county approximate bounds only; replace with verified parcel extent during source inspection"
+  },
+  "universalParcelSchema": {
+    "version": "wr-universal-parcel-v1",
+    "schemaPath": "data/schemas/universal-parcel.schema.json",
+    "documentationPath": "data/schemas/universal-parcel.md",
+    "parcelServiceBuilder": "scripts/build-app-parcel-service.cjs",
+    "fieldMapPath": "data/county-adapters/collin-county-tx/collin-county-tx-universal-field-map.json",
+    "sourceManifestPath": "data/county-adapters/collin-county-tx/collin-county-tx-source-manifest.json"
+  },
+  "sourceFiles": {
+    "parcelGeometry": "https://services2.arcgis.com/uXyoacYrZTPTKD3R/arcgis/rest/services/CCAD_Parcel_Feature_Set/FeatureServer/4",
+    "appraisalDistrictExtract": "https://services2.arcgis.com/uXyoacYrZTPTKD3R/arcgis/rest/services/CCAD_Parcel_Feature_Set/FeatureServer/4",
+    "ownerAppraisal": "https://services2.arcgis.com/uXyoacYrZTPTKD3R/arcgis/rest/services/CCAD_Parcel_Feature_Set/FeatureServer/4",
+    "permitsRaw": "source-needed",
+    "permitsProcessed": "data/permits/processed/collin-county-tx",
+    "developmentRaw": "source-needed",
+    "zoningRaw": "source-needed",
+    "floodplainRaw": "source-needed",
+    "migrationDemandRaw": "source-needed"
+  },
+  "publicDataRoots": {
+    "parcels": "/data/counties/collin-county-tx/parcels/",
+    "permits": "/data/counties/collin-county-tx/permits/",
+    "developments": "/data/counties/collin-county-tx/developments/",
+    "zoning": "/data/counties/collin-county-tx/zoning/",
+    "floodplain": "/data/counties/collin-county-tx/floodplain/",
+    "demand": "/data/counties/collin-county-tx/demand/"
+  },
+  "productionOutputs": {
+    "parcelGeojson": "output/collin-county-tx/collin-county-tx-parcels.geojson",
+    "parcelPmtiles": "output/collin-county-tx/collin-county-tx-parcels.pmtiles",
+    "vectorTilesDirectory": "output/collin-county-tx/vector-tiles/"
+  },
+  "optionalLayers": [
+    {
+      "id": "county-parcels",
+      "label": "County parcels",
+      "source": "Official CCAD Parcels FeatureServer/4; full service manifest at public/data/counties/collin-county-tx/parcels/manifest.json",
+      "status": "ready",
+      "joinBehavior": "GlobalID-keyed full parcel geometry service; propID/PROP_ID/geoID remain searchable secondary identifiers",
+      "defaultVisible": false,
+      "renderStrategy": "build-time official source fetch, offline universal mapping, viewport chunks, capped runtime loader",
+      "maxFeaturesPerViewport": 750
+    },
+    {
+      "id": "owner-appraisal",
+      "label": "Owner/appraisal",
+      "source": "Direct official CCAD owner, mailing, situs, value, land, building, and legal fields on the parcel feature",
+      "status": "ready",
+      "joinBehavior": "Direct same-feature attributes keyed by verified GlobalID; no external appraisal join required",
+      "defaultVisible": false,
+      "renderStrategy": "build-time official source fetch, offline owner/appraisal normalization, viewport chunks, capped runtime loader",
+      "maxFeaturesPerViewport": 750
+    },
+    {
+      "id": "parcel-dimensions",
+      "label": "Parcel dimensions",
+      "source": "Direct CCAD landSizeSqft, landSizeAcres, and Shape__Length fields",
+      "status": "ready",
+      "joinBehavior": "Direct same-feature parcel dimension fields keyed by GlobalID",
+      "defaultVisible": false,
+      "renderStrategy": "build-time official source inspection, offline mapping, viewport chunks",
+      "maxFeaturesPerViewport": 750
+    },
+    {
+      "id": "block-grid",
+      "label": "Block, subdivision, and map-grid context",
+      "source": "Direct CCAD legalAbsSubBlock, legalAbsSubName, and mapID fields",
+      "status": "ready",
+      "joinBehavior": "Direct same-feature block, subdivision, and map context keyed by GlobalID",
+      "defaultVisible": false,
+      "renderStrategy": "build-time official source inspection, offline joins, viewport chunks",
+      "maxFeaturesPerViewport": 750
+    },
+    {
+      "id": "permits",
+      "label": "Permits and certificates of occupancy",
+      "source": "source-needed",
+      "status": "source-needed",
+      "joinBehavior": "source-needed: parcel/account, normalized address, or spatial point-in-parcel join",
+      "defaultVisible": false,
+      "publicDataRoot": "/data/counties/collin-county-tx/permits/",
+      "manifestPath": "public/data/counties/collin-county-tx/permits/manifest.json",
+      "renderStrategy": "build-time official source verification, offline permit normalization, viewport-safe chunks",
+      "maxFeaturesPerViewport": 750
+    },
+    {
+      "id": "zoning-intelligence",
+      "label": "Zoning intelligence",
+      "source": "source-needed",
+      "status": "source-needed",
+      "joinBehavior": "source-needed: parcel/account ID bridge first; spatial join for zoning polygons and case areas",
+      "defaultVisible": false,
+      "publicDataRoot": "/data/counties/collin-county-tx/zoning/",
+      "manifestPath": "public/data/counties/collin-county-tx/zoning/manifest.json",
+      "schemaPath": "data/schemas/dallas-zoning-layer.schema.json",
+      "reportPath": "output/collin-county-tx/zoning-source-report.md",
+      "renderStrategy": "build-time official source verification, offline joins, viewport chunks, capped runtime loader",
+      "maxFeaturesPerViewport": 750
+    },
+    {
+      "id": "development-signals",
+      "label": "Development signals",
+      "source": "source-needed",
+      "status": "source-needed",
+      "joinBehavior": "source-needed: normalized permit, certificate, demolition, plat, and project evidence joined to parcel IDs",
+      "defaultVisible": false,
+      "publicDataRoot": "/data/counties/collin-county-tx/developments/",
+      "manifestPath": "public/data/counties/collin-county-tx/developments/parcel-development-index.json",
+      "renderStrategy": "build-time evidence normalization, parcel/address/spatial joins, viewport-safe parcel index lookup",
+      "maxFeaturesPerViewport": 750
+    },
+    {
+      "id": "floodplain-intelligence",
+      "label": "Floodplain intelligence",
+      "source": "source-needed",
+      "status": "source-needed",
+      "joinBehavior": "source-needed: FEMA/local floodplain spatial join keyed back to parcel/account IDs",
+      "defaultVisible": false,
+      "publicDataRoot": "/data/counties/collin-county-tx/floodplain/",
+      "manifestPath": "public/data/counties/collin-county-tx/floodplain/manifest.json",
+      "parcelIndexPath": "public/data/counties/collin-county-tx/floodplain/parcel-floodplain-index.json",
+      "schemaPath": "data/schemas/parcel-floodplain-index.schema.json",
+      "parcelIndexSchemaPath": "data/schemas/parcel-floodplain-index.schema.json",
+      "reportPath": "output/collin-county-tx/floodplain-source-report.md",
+      "renderStrategy": "build-time official source verification, offline parcel centroid spatial join, viewport-safe sharded parcel ID lookup",
+      "maxFeaturesPerViewport": 750
+    },
+    {
+      "id": "migration-demand",
+      "label": "Migration and demand",
+      "source": "source-needed",
+      "status": "source-needed",
+      "joinBehavior": "source-needed: aggregate Census/ACS/IRS or approved demand geography joined by tract/block group/market, not individual people",
+      "defaultVisible": false,
+      "publicDataRoot": "/data/counties/collin-county-tx/demand/",
+      "manifestPath": "public/data/counties/collin-county-tx/demand/manifest.json",
+      "renderStrategy": "build-time aggregate demand scoring, offline geography-to-parcel join, viewport-safe parcel index lookup",
+      "maxFeaturesPerViewport": 750
+    }
+  ],
+  "publicSourceDiscovery": {
+    "status": "official-parcel-source-verified-and-full-service-built",
+    "priorityReason": "North Texas growth county near the active DCAD market.",
+    "sourceSearchQueries": [
+      "Collin Central Appraisal District parcel data",
+      "Collin County GIS parcels",
+      "Plano permits open data"
+    ],
+    "sourceRules": [
+      "Use official county, assessor/appraiser, GIS, municipal, state, or federal sources first.",
+      "Do not activate this county until exact parcel counts and join keys are verified.",
+      "Do not infer owner phone/email from permits, contractors, applicants, or scraped pages."
+    ],
+    "problemSolvingLoop": [
+      "Discover official sources and preserve source dataset identifiers.",
+      "Audit schema, exact counts, geometry validity, nulls, and duplicate candidate keys.",
+      "Select a complete duplicate-safe feature identity and document secondary business identifiers.",
+      "Build a bounded-memory sample before attempting the full county snapshot.",
+      "Publish viewport chunks and search shards, then reconcile source, emitted, skipped, and joined counts.",
+      "Run county QC and keep visible activation disabled until every individual gate passes."
+    ]
+  },
+  "ownerEnrichment": {
+    "sourceLabel": "Collin Central Appraisal District parcel feature service",
+    "propertyRecordSource": "Official CCAD parcel layer with nightly refreshed appraisal and ownership fields joined to geometry",
+    "officialJoinKey": "GlobalID is the verified stable source-feature identity; owner/appraisal fields are direct on the same feature",
+    "noOfficialEmailFieldNote": "The official parcel layer does not expose owner phone or email. Do not infer them.",
+    "fields": {
+      "parcelId": "GlobalID",
+      "gisParcelId": "geoID candidate; unresolved duplicates/nulls",
+      "ownerName": "ownerName",
+      "ownerName2": "ownerNameAddtl",
+      "businessName": "ownerName when the recorded owner is an entity; do not infer classification",
+      "ownerMailingAddress": "ownerAddrLine1",
+      "ownerMailingAddress2": "ownerAddrLine2",
+      "ownerCity": "ownerAddrCity",
+      "ownerState": "ownerAddrState",
+      "ownerZip": "ownerAddrZip",
+      "ownerPhone": "No official owner phone field verified",
+      "ownerEmail": "No official owner email field verified"
+    }
+  },
+  "joinKeys": {
+    "primaryParcelAccount": "GlobalID source-feature identity; propID/PROP_ID retained as secondary business identifiers with documented nulls and duplicates",
+    "appraisal": "direct fields on the same CCAD parcel feature: currValLand, currValImprv, currValMarket, currValAppraised",
+    "land": "direct fields on the same CCAD parcel feature: landSizeAcres and landSizeSqft",
+    "secondaryParcelGisId": "geoID candidate; duplicate groups exist and must be resolved before production",
+    "blockLabels": "direct fields on the same CCAD parcel feature: legalAbsSubBlock, legalAbsSubName, and mapID",
+    "dimensions": "direct fields on the same CCAD parcel feature: landSizeSqft, landSizeAcres, and Shape__Length",
+    "permits": "source-needed: parcel/account ID, address match, spatial join, or combination",
+    "zoning": "source-needed: parcel/account ID bridge first; spatial join for zoning polygons and case areas",
+    "floodplain": "source-needed: FEMA/local floodplain parcel centroid spatial join keyed to parcel/account IDs",
+    "developmentSignals": "source-needed: verified permit, plat, demolition, certificate, project, address, or spatial join evidence",
+    "migrationDemand": "source-needed: aggregate geography join, not individual people"
+  },
+  "verifiedCounts": {
+    "parcelGeometryFeatures": 437063,
+    "missingGeometry": 2,
+    "appraisalAccountRows": 437061,
+    "appraisalRows": 437061,
+    "landRows": 437061,
+    "appParcelChunks": 1604,
+    "parcelSearchShards": 1095,
+    "sourcePermitRecords": 0,
+    "permitRowsJoined": 0,
+    "permitRowsUnmatched": 0,
+    "parcelsWithDevelopmentSignals": 0,
+    "migrationDemandGeographies": 0,
+    "globalIdMissing": 0,
+    "globalIdDistinctValues": 437063
+  },
+  "requiredOutputs": [
+    "output/collin-county-tx/schema-report.md",
+    "output/collin-county-tx/schema-report.json",
+    "output/collin-county-tx/join-key-report.md",
+    "output/collin-county-tx/full-parcel-access-report.md",
+    "output/collin-county-tx/qa-report.md",
+    "output/collin-county-tx/qa-report.json",
+    "output/collin-county-tx/collin-county-tx-parcels.geojson",
+    "output/collin-county-tx/collin-county-tx-parcels.pmtiles or output/collin-county-tx/vector-tiles/",
+    "public/data/counties/collin-county-tx/parcels/manifest.json",
+    "public/data/counties/collin-county-tx/permits/manifest.json",
+    "public/data/counties/collin-county-tx/developments/parcel-development-index.json",
+    "public/data/counties/collin-county-tx/zoning/manifest.json",
+    "public/data/counties/collin-county-tx/floodplain/manifest.json",
+    "public/data/counties/collin-county-tx/demand/manifest.json"
+  ],
+  "productionGap": "The full 437,061-record viewport/search parcel service is built from 437,063 official features; two source features were skipped during geometry normalization, including GlobalID 831189f7-8ef2-4f18-8092-20b72402e92d with null geometry. Permits, zoning, floodplain, development, demand, final QA, and PMTiles remain.",
+  "pilotNotes": "Do not activate this county in the app. Do not redesign any pages. Fill official sources and exact join keys before any visible behavior changes.",
+  "verifiedDiscovery": {
+    "status": "official-live-feature-service-verified-and-full-map-search-service-built",
+    "officialSite": "https://www.collincad.org/",
+    "propertySearch": "https://www.collincad.org/propertysearch",
+    "interactiveMap": "https://maps.collincad.org/",
+    "candidateBulkOrExportLeads": [
+      "Property search",
+      "Maps/GIS",
+      "Downloads/reports"
+    ],
+    "remainingBlockers": [
+      "county QC and explicit pilot activation review",
+      "permits, zoning, floodplain, development, and demand sources not verified",
+      "production PMTiles/vector tile handoff not built",
+      "two source features excluded during geometry normalization"
+    ]
+  }
+}

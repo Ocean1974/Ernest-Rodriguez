@@ -1,0 +1,15 @@
+export const ALERT_DELIVERY_JOB_VERSION: "wr-alert-delivery-job-v1";
+export const ALERT_WORKER_STATE_VERSION: "wr-alert-worker-state-v1";
+export const ALERT_WORKER_CYCLE_VERSION: "wr-alert-worker-cycle-v1";
+export const ALERT_PROVIDER_REQUEST_VERSION: "wr-alert-provider-request-v1";
+export const ALERT_PROVIDER_RESULT_VERSION: "wr-alert-provider-result-v1";
+export const ALERT_DEAD_LETTER_VERSION: "wr-alert-dead-letter-v1";
+export const DELIVERY_JOB_STATUSES: readonly string[];
+export const DELIVERY_CHANNELS: readonly string[];
+export function createAlertDeliveryJob(input?: Record<string, any>): Record<string, any>;
+export function createAlertWorkerState(input?: Record<string, any>): Record<string, any>;
+export function enqueueDeliveryAttempts(stateInput: Record<string, any>, attempts?: Array<Record<string, any>>, options?: Record<string, any>): Record<string, any>;
+export function leaseDeliveryJobs(stateInput: Record<string, any>, options?: Record<string, any>): Record<string, any>;
+export function createProviderRequest(jobInput: Record<string, any>): Readonly<Record<string, any>>;
+export function executeProviderDelivery(jobInput: Record<string, any>, provider: Record<string, any>): Promise<Readonly<Record<string, any>>>;
+export function completeDeliveryJob(stateInput: Record<string, any>, input?: Record<string, any>, options?: Record<string, any>): Record<string, any>;

@@ -1,0 +1,252 @@
+{
+  "id": "king-county-wa",
+  "countyId": "king-county-wa",
+  "countyName": "King County",
+  "state": "WA",
+  "fips": "53033",
+  "marketName": "Seattle",
+  "appraisalDistrictName": "King County Department of Assessments",
+  "appraisalDistrictAcronym": "KCDOA",
+  "gisSource": "King County GIS Property/KingCo_Parcels and Property/KingCo_PropertyInfo",
+  "uniqueGisKey": "OBJECTID",
+  "parcelIdField": "PIN",
+  "accountIdField": "PIN",
+  "geometryType": "polygon",
+  "sourceSpatialReference": "EPSG:3857 / WGS 1984 Web Mercator Auxiliary Sphere (source service wkid 102100/latestWkid 3857)",
+  "status": "pilot",
+  "map": {
+    "locationId": 1011,
+    "locationName": "King County WA / Seattle Pilot",
+    "locationType": "King County Department of Assessments",
+    "status": "pilot map/search built - activation gated",
+    "coordinates": [
+      -122.3321,
+      47.6062
+    ],
+    "camera": {
+      "x": 50,
+      "y": 50,
+      "zoom": 1.2,
+      "pitch": 48,
+      "bearing": 0
+    },
+    "geoBounds": {
+      "minLng": -122.5503964,
+      "minLat": 47.0720599,
+      "maxLng": -121.0843837,
+      "maxLat": 47.7884468
+    },
+    "boundsStatus": "verified from KingCo_Parcels service extent converted to WGS84"
+  },
+  "universalParcelSchema": {
+    "version": "wr-universal-parcel-v1",
+    "schemaPath": "data/schemas/universal-parcel.schema.json",
+    "documentationPath": "data/schemas/universal-parcel.md",
+    "parcelServiceBuilder": "scripts/build-app-parcel-service.cjs",
+    "fieldMapPath": "data/county-adapters/king-county-wa/king-universal-field-map.json",
+    "sourceManifestPath": "data/county-adapters/king-county-wa/king-county-parcel-source-manifest.json"
+  },
+  "sourceFiles": {
+    "parcelGeometry": "https://gismaps.kingcounty.gov/arcgis/rest/services/Property/KingCo_Parcels/MapServer/0",
+    "appraisalDistrictExtract": "https://gismaps.kingcounty.gov/arcgis/rest/services/Property/KingCo_PropertyInfo/MapServer/2",
+    "ownerAppraisal": "source-needed",
+    "permitsRaw": "source-needed",
+    "permitsProcessed": "data/permits/processed/king-county-wa",
+    "zoningRaw": "source-needed",
+    "floodplainRaw": "source-needed",
+    "migrationDemandRaw": "source-needed"
+  },
+  "publicDataRoots": {
+    "parcels": "/data/counties/king-county-wa/parcels/",
+    "permits": "/data/counties/king-county-wa/permits/",
+    "developments": "/data/counties/king-county-wa/developments/",
+    "zoning": "/data/counties/king-county-wa/zoning/",
+    "floodplain": "/data/counties/king-county-wa/floodplain/",
+    "demand": "/data/counties/king-county-wa/demand/"
+  },
+  "productionOutputs": {
+    "parcelGeojson": "output/king-county-wa/king-county-wa-parcels.geojson",
+    "parcelPmtiles": "output/king-county-wa/king-county-wa-parcels.pmtiles",
+    "vectorTilesDirectory": "output/king-county-wa/vector-tiles/"
+  },
+  "optionalLayers": [
+    {
+      "id": "county-parcels",
+      "label": "County parcels",
+      "source": "https://gismaps.kingcounty.gov/arcgis/rest/services/Property/KingCo_Parcels/MapServer/0",
+      "status": "official-source-verified-service-built",
+      "joinBehavior": "PIN -> White Rabbit accountNum/sourceParcelId, but PIN has duplicate geometry records; OBJECTID -> unique GIS feature id; viewport chunks and search shards are built but remain activation gated",
+      "defaultVisible": false,
+      "renderStrategy": "build-time official source fetch, offline universal mapping, viewport chunks, capped runtime loader",
+      "maxFeaturesPerViewport": 750
+    },
+    {
+      "id": "owner-appraisal",
+      "label": "Owner/appraisal",
+      "source": "https://gismaps.kingcounty.gov/arcgis/rest/services/Property/KingCo_PropertyInfo/MapServer/2",
+      "status": "partial-property-info-owner-needed",
+      "joinBehavior": "PIN joins address, land value, improvement value, zoning, lot size, property type, and use fields; current owner fields remain source-needed",
+      "defaultVisible": false,
+      "renderStrategy": "build-time official source fetch, offline owner/appraisal normalization, viewport chunks, capped runtime loader",
+      "maxFeaturesPerViewport": 750
+    },
+    {
+      "id": "parcel-dimensions",
+      "label": "Parcel dimensions",
+      "source": "https://gismaps.kingcounty.gov/arcgis/rest/services/Property/KingCo_ParcelLabels/MapServer",
+      "status": "source-identified-inspection-needed",
+      "joinBehavior": "PropertyInfo exposes LOTSQFT, KCA_ACRES, Shape.STArea(), and Shape.STLength(); ParcelLabels service needs inspection for dimension labels",
+      "defaultVisible": false,
+      "renderStrategy": "build-time official source inspection, offline mapping, viewport chunks",
+      "maxFeaturesPerViewport": 750
+    },
+    {
+      "id": "block-grid",
+      "label": "Block, subdivision, and map-grid context",
+      "source": "PLAT_NAME, MAJOR, MINOR fields in PropertyInfo parcels",
+      "status": "partial-source-verified-build-needed",
+      "joinBehavior": "PIN-keyed PropertyInfo fields include PLAT_NAME plus MAJOR/MINOR; additional plat/block services still need source inspection",
+      "defaultVisible": false,
+      "renderStrategy": "build-time official source inspection, offline joins, viewport chunks",
+      "maxFeaturesPerViewport": 750
+    },
+    {
+      "id": "permits",
+      "label": "Permits and certificates of occupancy",
+      "source": "source-needed",
+      "status": "source-needed",
+      "joinBehavior": "source-needed: parcel/account, normalized address, or spatial point-in-parcel join",
+      "defaultVisible": false,
+      "publicDataRoot": "/data/counties/king-county-wa/permits/",
+      "manifestPath": "public/data/counties/king-county-wa/permits/manifest.json",
+      "renderStrategy": "build-time official source verification, offline permit normalization, viewport-safe chunks",
+      "maxFeaturesPerViewport": 750
+    },
+    {
+      "id": "zoning-intelligence",
+      "label": "Zoning intelligence",
+      "source": "KCA_ZONING field in King County PropertyInfo parcels",
+      "status": "partial-source-verified-local-detail-needed",
+      "joinBehavior": "PIN-keyed KCA_ZONING field gives zoning text; city zoning polygons/cases remain source-needed where county parcel text is not enough",
+      "defaultVisible": false,
+      "publicDataRoot": "/data/counties/king-county-wa/zoning/",
+      "manifestPath": "public/data/counties/king-county-wa/zoning/manifest.json",
+      "schemaPath": "data/schemas/dallas-zoning-layer.schema.json",
+      "reportPath": "output/king-county-wa/zoning-source-report.md",
+      "renderStrategy": "build-time official source verification, offline joins, viewport chunks, capped runtime loader",
+      "maxFeaturesPerViewport": 750
+    },
+    {
+      "id": "floodplain-intelligence",
+      "label": "Floodplain intelligence",
+      "source": "source-needed",
+      "status": "source-needed",
+      "joinBehavior": "source-needed: FEMA/local floodplain spatial join keyed back to parcel/account IDs",
+      "defaultVisible": false,
+      "publicDataRoot": "/data/counties/king-county-wa/floodplain/",
+      "manifestPath": "public/data/counties/king-county-wa/floodplain/manifest.json",
+      "parcelIndexPath": "public/data/counties/king-county-wa/floodplain/parcel-floodplain-index.json",
+      "schemaPath": "data/schemas/parcel-floodplain-index.schema.json",
+      "parcelIndexSchemaPath": "data/schemas/parcel-floodplain-index.schema.json",
+      "reportPath": "output/king-county-wa/floodplain-source-report.md",
+      "renderStrategy": "build-time official source verification, offline parcel centroid spatial join, viewport-safe sharded parcel ID lookup",
+      "maxFeaturesPerViewport": 750
+    },
+    {
+      "id": "migration-demand",
+      "label": "Migration and demand",
+      "source": "source-needed",
+      "status": "source-needed",
+      "joinBehavior": "source-needed: aggregate Census/ACS/IRS or approved demand geography joined by tract/block group/market, not individual people",
+      "defaultVisible": false,
+      "publicDataRoot": "/data/counties/king-county-wa/demand/",
+      "manifestPath": "public/data/counties/king-county-wa/demand/manifest.json",
+      "renderStrategy": "build-time aggregate demand scoring, offline geography-to-parcel join, viewport-safe parcel index lookup",
+      "maxFeaturesPerViewport": 750
+    }
+  ],
+  "publicSourceDiscovery": {
+    "status": "parcel-source-verified",
+    "priorityReason": "Major West Coast market with mature GIS and permitting data sources.",
+    "sourceSearchQueries": [
+      "King County assessor parcel GIS",
+      "King County parcel data download",
+      "Seattle permits open data"
+    ],
+    "sourceRules": [
+      "Use official county, assessor/appraiser, GIS, municipal, state, or federal sources first.",
+      "Do not activate this county until exact parcel counts and join keys are verified.",
+      "Do not infer owner phone/email from permits, contractors, applicants, or scraped pages."
+    ]
+  },
+  "ownerEnrichment": {
+    "sourceLabel": "King County PropertyInfo parcels",
+    "propertyRecordSource": "https://gismaps.kingcounty.gov/arcgis/rest/services/Property/KingCo_PropertyInfo/MapServer/2",
+    "officialJoinKey": "PIN -> address, land/improvement value, zoning, lot size, property type, and present use fields; owner name remains source-needed",
+    "noOfficialEmailFieldNote": "No official owner name, owner phone, or owner email field is exposed by the verified layers inspected. Do not infer owner contact fields.",
+    "fields": {
+      "parcelId": "PIN",
+      "gisParcelId": "OBJECTID",
+      "ownerName": "source-needed",
+      "ownerName2": "source-needed",
+      "businessName": "source-needed",
+      "ownerMailingAddress": "source-needed",
+      "ownerMailingAddress2": "source-needed",
+      "ownerCity": "source-needed",
+      "ownerState": "source-needed",
+      "ownerZip": "source-needed",
+      "ownerPhone": "No official owner phone field verified",
+      "ownerEmail": "No official owner email field verified"
+    }
+  },
+  "joinKeys": {
+    "primaryParcelAccount": "PIN -> White Rabbit accountNum/sourceParcelId; one-to-many geometry joins allowed because duplicate PIN values exist",
+    "appraisal": "PIN -> APPRLNDVAL, APPR_IMPR, LOTSQFT, KCA_ACRES, PROPTYPE, PREUSE_CODE, PREUSE_DESC",
+    "land": "PIN -> LOTSQFT, KCA_ACRES, KCA_ZONING, PROPTYPE, PREUSE_CODE, PREUSE_DESC",
+    "secondaryParcelGisId": "OBJECTID -> White Rabbit gisParcelId and unique GIS feature id",
+    "blockLabels": "PLAT_NAME plus MAJOR/MINOR direct fields; additional plat/block source inspection remains build-needed",
+    "dimensions": "LOTSQFT, KCA_ACRES, Shape.STArea(), and Shape.STLength() available; ParcelLabels MapServer needs inspection for segment dimension labels",
+    "permits": "source-needed: parcel/account ID, address match, spatial join, or combination",
+    "zoning": "KCA_ZONING field is PIN-keyed parcel zoning text; municipal zoning polygons/cases remain source-needed",
+    "floodplain": "source-needed: FEMA/local floodplain parcel centroid spatial join keyed to parcel/account IDs",
+    "migrationDemand": "source-needed: aggregate geography join, not individual people"
+  },
+  "verifiedCounts": {
+    "parcelGeometryFeatures": 638648,
+    "missingGeometry": 0,
+    "pinMissing": 0,
+    "pinDistinctValues": 636067,
+    "duplicatePin": 2581,
+    "propertyInfoRows": 636076,
+    "propertyInfoDuplicatePin": 6,
+    "recentSalesRows": 110857,
+    "appraisalAccountRows": 636076,
+    "appraisalRows": 636076,
+    "landRows": 636076,
+    "appParcelChunks": 1603,
+    "parcelSearchShards": 614,
+    "sourcePermitRecords": 0,
+    "permitRowsJoined": 0,
+    "permitRowsUnmatched": 0,
+    "parcelsWithDevelopmentSignals": 0,
+    "migrationDemandGeographies": 0
+  },
+  "requiredOutputs": [
+    "output/king-county-wa/schema-report.md",
+    "output/king-county-wa/schema-report.json",
+    "output/king-county-wa/join-key-report.md",
+    "output/king-county-wa/full-parcel-access-report.md",
+    "output/king-county-wa/qa-report.md",
+    "output/king-county-wa/qa-report.json",
+    "output/king-county-wa/king-county-wa-parcels.geojson",
+    "output/king-county-wa/king-county-wa-parcels.pmtiles or output/king-county-wa/vector-tiles/",
+    "public/data/counties/king-county-wa/parcels/manifest.json",
+    "public/data/counties/king-county-wa/permits/manifest.json",
+    "public/data/counties/king-county-wa/developments/parcel-development-index.json",
+    "public/data/counties/king-county-wa/zoning/manifest.json",
+    "public/data/counties/king-county-wa/floodplain/manifest.json",
+    "public/data/counties/king-county-wa/demand/manifest.json"
+  ],
+  "productionGap": "Pilot source verified with full viewport chunks and production search shards built, but PIN duplicate handling, current owner source, permits/CO, complete zoning detail, floodplain, development signals, migration/demand, PMTiles/vector tiles, and activation QA are not built yet.",
+  "pilotNotes": "Do not activate this county in the app. Do not redesign any pages. The King source is verified and the map/search parcel service is built, but duplicate-PIN handling, owner source, optional layers, and explicit activation review remain gated."
+}

@@ -1,0 +1,282 @@
+{
+  "id": "denton-county-tx",
+  "countyId": "denton-county-tx",
+  "countyName": "Denton County",
+  "state": "TX",
+  "fips": "48121",
+  "marketName": "North Dallas",
+  "appraisalDistrictName": "Denton Central Appraisal District",
+  "appraisalDistrictAcronym": "DCAD-DENTON",
+  "gisSource": "https://geo.dentoncad.com/arcgis/rest/services/LandRecords/Parcels_Appraisal/MapServer/1",
+  "uniqueGisKey": "GlobalID; verified non-null and maximum multiplicity 1 across all 384684 features",
+  "parcelIdField": "GlobalID",
+  "accountIdField": "pid secondary business identifier; documented nulls, zeros, and duplicates",
+  "geometryType": "polygon",
+  "sourceSpatialReference": "EPSG:2276 (NAD83 / Texas North Central ftUS)",
+  "status": "pilot",
+  "map": {
+    "locationId": 1020,
+    "locationName": "Denton County TX / North Dallas Pilot",
+    "locationType": "Denton Central Appraisal District",
+    "status": "official parcel/appraisal source verified; full service build needed",
+    "coordinates": [
+      -97.13,
+      33.21
+    ],
+    "camera": {
+      "x": 50,
+      "y": 50,
+      "zoom": 1.2,
+      "pitch": 48,
+      "bearing": 0
+    },
+    "geoBounds": {
+      "minLng": -97.55,
+      "minLat": 32.95,
+      "maxLng": -96.75,
+      "maxLat": 33.45
+    },
+    "boundsStatus": "county approximate bounds only; replace with verified parcel extent during source inspection"
+  },
+  "universalParcelSchema": {
+    "version": "wr-universal-parcel-v1",
+    "schemaPath": "data/schemas/universal-parcel.schema.json",
+    "documentationPath": "data/schemas/universal-parcel.md",
+    "parcelServiceBuilder": "scripts/build-app-parcel-service.cjs",
+    "fieldMapPath": "data/county-adapters/denton-county-tx/denton-county-tx-universal-field-map.json",
+    "sourceManifestPath": "data/county-adapters/denton-county-tx/denton-county-tx-source-manifest.json"
+  },
+  "sourceFiles": {
+    "parcelGeometry": "https://geo.dentoncad.com/arcgis/rest/services/LandRecords/Parcels_Appraisal/MapServer/1",
+    "appraisalDistrictExtract": "https://www.dentoncad.com/index.php/Data-Extracts",
+    "ownerAppraisal": "https://geo.dentoncad.com/arcgis/rest/services/LandRecords/Parcels_Appraisal/MapServer/1",
+    "permitsRaw": "source-needed",
+    "permitsProcessed": "data/permits/processed/denton-county-tx",
+    "developmentRaw": "source-needed",
+    "zoningRaw": "source-needed",
+    "floodplainRaw": "source-needed",
+    "migrationDemandRaw": "source-needed"
+  },
+  "publicDataRoots": {
+    "parcels": "/data/counties/denton-county-tx/parcels/",
+    "permits": "/data/counties/denton-county-tx/permits/",
+    "developments": "/data/counties/denton-county-tx/developments/",
+    "zoning": "/data/counties/denton-county-tx/zoning/",
+    "floodplain": "/data/counties/denton-county-tx/floodplain/",
+    "demand": "/data/counties/denton-county-tx/demand/"
+  },
+  "productionOutputs": {
+    "parcelGeojson": "output/denton-county-tx/denton-county-tx-parcels.geojson",
+    "parcelPmtiles": "output/denton-county-tx/denton-county-tx-parcels.pmtiles",
+    "vectorTilesDirectory": "output/denton-county-tx/vector-tiles/"
+  },
+  "optionalLayers": [
+    {
+      "id": "county-parcels",
+      "label": "County parcels",
+      "source": "Official Denton CAD Parcels_Appraisal MapServer/1; full manifest at public/data/counties/denton-county-tx/parcels/manifest.json",
+      "status": "ready",
+      "joinBehavior": "GlobalID-keyed full parcel geometry service; pid and geoID remain searchable secondary identifiers",
+      "defaultVisible": false,
+      "renderStrategy": "build-time official source fetch, offline universal mapping, viewport chunks, capped runtime loader",
+      "maxFeaturesPerViewport": 750
+    },
+    {
+      "id": "owner-appraisal",
+      "label": "Owner/appraisal",
+      "source": "Direct official Denton CAD CAMA owner, mailing, situs, value, land, building, and legal fields",
+      "status": "ready",
+      "joinBehavior": "Direct same-feature attributes keyed by verified GlobalID; no external appraisal join required",
+      "defaultVisible": false,
+      "renderStrategy": "build-time official source fetch, offline owner/appraisal normalization, viewport chunks, capped runtime loader",
+      "maxFeaturesPerViewport": 750
+    },
+    {
+      "id": "parcel-dimensions",
+      "label": "Parcel dimensions",
+      "source": "Direct landTotalSqft, land_sqft, effectiveSizeAcres, Shape.STArea(), and Shape.STLength() fields",
+      "status": "ready",
+      "joinBehavior": "Direct same-feature parcel dimension fields keyed by GlobalID",
+      "defaultVisible": false,
+      "renderStrategy": "build-time official source inspection, offline mapping, viewport chunks",
+      "maxFeaturesPerViewport": 750
+    },
+    {
+      "id": "block-grid",
+      "label": "Block, subdivision, and map-grid context",
+      "source": "Direct block, tract, lot, and abstractSubdivisionDescription fields",
+      "status": "ready",
+      "joinBehavior": "Direct same-feature block/subdivision context keyed by GlobalID",
+      "defaultVisible": false,
+      "renderStrategy": "build-time official source inspection, offline joins, viewport chunks",
+      "maxFeaturesPerViewport": 750
+    },
+    {
+      "id": "permits",
+      "label": "Permits and certificates of occupancy",
+      "source": "source-needed",
+      "status": "source-needed",
+      "joinBehavior": "source-needed: parcel/account, normalized address, or spatial point-in-parcel join",
+      "defaultVisible": false,
+      "publicDataRoot": "/data/counties/denton-county-tx/permits/",
+      "manifestPath": "public/data/counties/denton-county-tx/permits/manifest.json",
+      "renderStrategy": "build-time official source verification, offline permit normalization, viewport-safe chunks",
+      "maxFeaturesPerViewport": 750
+    },
+    {
+      "id": "zoning-intelligence",
+      "label": "Zoning intelligence",
+      "source": "source-needed",
+      "status": "source-needed",
+      "joinBehavior": "source-needed: parcel/account ID bridge first; spatial join for zoning polygons and case areas",
+      "defaultVisible": false,
+      "publicDataRoot": "/data/counties/denton-county-tx/zoning/",
+      "manifestPath": "public/data/counties/denton-county-tx/zoning/manifest.json",
+      "schemaPath": "data/schemas/dallas-zoning-layer.schema.json",
+      "reportPath": "output/denton-county-tx/zoning-source-report.md",
+      "renderStrategy": "build-time official source verification, offline joins, viewport chunks, capped runtime loader",
+      "maxFeaturesPerViewport": 750
+    },
+    {
+      "id": "development-signals",
+      "label": "Development signals",
+      "source": "source-needed",
+      "status": "source-needed",
+      "joinBehavior": "source-needed: normalized permit, certificate, demolition, plat, and project evidence joined to parcel IDs",
+      "defaultVisible": false,
+      "publicDataRoot": "/data/counties/denton-county-tx/developments/",
+      "manifestPath": "public/data/counties/denton-county-tx/developments/parcel-development-index.json",
+      "renderStrategy": "build-time evidence normalization, parcel/address/spatial joins, viewport-safe parcel index lookup",
+      "maxFeaturesPerViewport": 750
+    },
+    {
+      "id": "floodplain-intelligence",
+      "label": "Floodplain intelligence",
+      "source": "source-needed",
+      "status": "source-needed",
+      "joinBehavior": "source-needed: FEMA/local floodplain spatial join keyed back to parcel/account IDs",
+      "defaultVisible": false,
+      "publicDataRoot": "/data/counties/denton-county-tx/floodplain/",
+      "manifestPath": "public/data/counties/denton-county-tx/floodplain/manifest.json",
+      "parcelIndexPath": "public/data/counties/denton-county-tx/floodplain/parcel-floodplain-index.json",
+      "schemaPath": "data/schemas/parcel-floodplain-index.schema.json",
+      "parcelIndexSchemaPath": "data/schemas/parcel-floodplain-index.schema.json",
+      "reportPath": "output/denton-county-tx/floodplain-source-report.md",
+      "renderStrategy": "build-time official source verification, offline parcel centroid spatial join, viewport-safe sharded parcel ID lookup",
+      "maxFeaturesPerViewport": 750
+    },
+    {
+      "id": "migration-demand",
+      "label": "Migration and demand",
+      "source": "source-needed",
+      "status": "source-needed",
+      "joinBehavior": "source-needed: aggregate Census/ACS/IRS or approved demand geography joined by tract/block group/market, not individual people",
+      "defaultVisible": false,
+      "publicDataRoot": "/data/counties/denton-county-tx/demand/",
+      "manifestPath": "public/data/counties/denton-county-tx/demand/manifest.json",
+      "renderStrategy": "build-time aggregate demand scoring, offline geography-to-parcel join, viewport-safe parcel index lookup",
+      "maxFeaturesPerViewport": 750
+    }
+  ],
+  "publicSourceDiscovery": {
+    "status": "official-live-parcel-appraisal-service-verified",
+    "priorityReason": "North Texas growth county adjacent to DCAD and Tarrant.",
+    "sourceSearchQueries": [
+      "Denton Central Appraisal District parcel data",
+      "Denton County GIS parcels",
+      "Denton permits open data"
+    ],
+    "sourceRules": [
+      "Use official county, assessor/appraiser, GIS, municipal, state, or federal sources first.",
+      "Do not activate this county until exact parcel counts and join keys are verified.",
+      "Do not infer owner phone/email from permits, contractors, applicants, or scraped pages."
+    ],
+    "problemSolvingLoop": [
+      "Discover official sources and preserve source dataset identifiers.",
+      "Audit schema, exact counts, geometry validity, nulls, and duplicate candidate keys.",
+      "Select a complete duplicate-safe feature identity and document secondary business identifiers.",
+      "Build a bounded-memory sample before attempting the full county snapshot.",
+      "Publish viewport chunks and search shards, then reconcile source, emitted, skipped, and joined counts.",
+      "Run county QC and keep visible activation disabled until every individual gate passes."
+    ]
+  },
+  "ownerEnrichment": {
+    "sourceLabel": "Denton CAD Parcels_Appraisal MapServer/1",
+    "propertyRecordSource": "Official Denton CAD parcel polygons with direct CAMA owner/appraisal attributes",
+    "officialJoinKey": "GlobalID is the verified stable source-feature identity; owner/appraisal fields are direct on the same feature",
+    "noOfficialEmailFieldNote": "No official owner phone/email source is verified. Do not infer owner contact fields.",
+    "fields": {
+      "parcelId": "GlobalID",
+      "gisParcelId": "geoID secondary identifier",
+      "ownerName": "name",
+      "ownerName2": "nameSecondary",
+      "businessName": "dba",
+      "ownerMailingAddress": "addrDeliveryLine",
+      "ownerMailingAddress2": "addrUnitDesignator",
+      "ownerCity": "addrCity",
+      "ownerState": "addrState",
+      "ownerZip": "addrZip",
+      "ownerPhone": "No official owner phone field verified",
+      "ownerEmail": "No official owner email field verified"
+    }
+  },
+  "joinKeys": {
+    "primaryParcelAccount": "GlobalID source-feature identity; pid retained as a secondary business identifier with documented nulls and duplicates",
+    "appraisal": "direct fields on the same Denton CAD parcel feature",
+    "land": "direct fields on the same Denton CAD parcel feature",
+    "secondaryParcelGisId": "geoID searchable secondary identifier with documented nulls and duplicates",
+    "blockLabels": "direct fields: block, tract, lot, and abstractSubdivisionDescription",
+    "dimensions": "direct fields: landTotalSqft, land_sqft, effectiveSizeAcres, Shape.STArea(), and Shape.STLength()",
+    "permits": "source-needed: parcel/account ID, address match, spatial join, or combination",
+    "zoning": "source-needed: parcel/account ID bridge first; spatial join for zoning polygons and case areas",
+    "floodplain": "source-needed: FEMA/local floodplain parcel centroid spatial join keyed to parcel/account IDs",
+    "developmentSignals": "source-needed: verified permit, plat, demolition, certificate, project, address, or spatial join evidence",
+    "migrationDemand": "source-needed: aggregate geography join, not individual people"
+  },
+  "verifiedCounts": {
+    "parcelGeometryFeatures": 384684,
+    "missingGeometry": 0,
+    "appraisalAccountRows": 384684,
+    "appraisalRows": 384684,
+    "landRows": 384684,
+    "appParcelChunks": 1400,
+    "parcelSearchShards": 1051,
+    "sourcePermitRecords": 0,
+    "permitRowsJoined": 0,
+    "permitRowsUnmatched": 0,
+    "parcelsWithDevelopmentSignals": 0,
+    "migrationDemandGeographies": 0,
+    "globalIdMissing": 0,
+    "globalIdDistinctValues": 384684
+  },
+  "requiredOutputs": [
+    "output/denton-county-tx/schema-report.md",
+    "output/denton-county-tx/schema-report.json",
+    "output/denton-county-tx/join-key-report.md",
+    "output/denton-county-tx/full-parcel-access-report.md",
+    "output/denton-county-tx/qa-report.md",
+    "output/denton-county-tx/qa-report.json",
+    "output/denton-county-tx/denton-county-tx-parcels.geojson",
+    "output/denton-county-tx/denton-county-tx-parcels.pmtiles or output/denton-county-tx/vector-tiles/",
+    "public/data/counties/denton-county-tx/parcels/manifest.json",
+    "public/data/counties/denton-county-tx/permits/manifest.json",
+    "public/data/counties/denton-county-tx/developments/parcel-development-index.json",
+    "public/data/counties/denton-county-tx/zoning/manifest.json",
+    "public/data/counties/denton-county-tx/floodplain/manifest.json",
+    "public/data/counties/denton-county-tx/demand/manifest.json"
+  ],
+  "productionGap": "The full 384,684-record GlobalID-keyed viewport/search service is built with zero geometry exclusions. Permits/CO, authoritative municipal zoning, floodplain, development, demand, final QA, and PMTiles remain.",
+  "pilotNotes": "Do not activate this county in the app. Do not redesign any pages. Fill official sources and exact join keys before any visible behavior changes.",
+  "verifiedDiscovery": {
+    "status": "official-live-parcel-appraisal-service-verified",
+    "officialSite": "https://www.dentoncad.com/",
+    "propertySearch": "https://propaccess.trueautomation.com/clientdb/?cid=19",
+    "interactiveMap": "https://geo.dentoncad.com/arcgis/rest/services/LandRecords/Parcels_Appraisal/MapServer/1",
+    "candidateBulkOrExportLeads": [
+      "https://www.dentoncad.com/index.php/Data-Extracts"
+    ],
+    "remainingBlockers": [
+      "viewport/search outputs not built"
+    ]
+  }
+}

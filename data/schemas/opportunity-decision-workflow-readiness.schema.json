@@ -1,0 +1,20 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://white-rabbit.local/schemas/opportunity-decision-workflow-readiness.schema.json",
+  "type": "object",
+  "required": ["schemaVersion", "generatedAt", "status", "contracts", "decisionWorkflow", "validationEvidence", "alertBoundary", "activation", "certificationScenario", "checks", "releaseBlockers"],
+  "properties": {
+    "schemaVersion": { "const": "wr-opportunity-decision-workflow-readiness-v1" },
+    "generatedAt": { "type": "string", "format": "date-time" },
+    "status": { "enum": ["foundation-ready-release-blocked", "rejected"] },
+    "contracts": { "type": "array", "minItems": 1, "items": { "type": "string" } },
+    "decisionWorkflow": { "type": "object" },
+    "validationEvidence": { "type": "object" },
+    "alertBoundary": { "type": "object" },
+    "activation": { "type": "object" },
+    "certificationScenario": { "type": "object" },
+    "checks": { "type": "array", "minItems": 1, "items": { "type": "object", "required": ["id", "passed"] } },
+    "releaseBlockers": { "type": "array", "minItems": 1, "items": { "type": "string" } }
+  },
+  "additionalProperties": false
+}

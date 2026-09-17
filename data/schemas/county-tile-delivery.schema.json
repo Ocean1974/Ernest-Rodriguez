@@ -1,0 +1,14 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://whiterabbit.local/schemas/county-tile-delivery.schema.json",
+  "title": "White Rabbit County Tile Delivery Contracts",
+  "oneOf": [{ "$ref": "#/$defs/source" }, { "$ref": "#/$defs/policy" }, { "$ref": "#/$defs/plan" }, { "$ref": "#/$defs/audit" }, { "$ref": "#/$defs/decision" }],
+  "$defs": {
+    "sha256": { "type": "string", "pattern": "^[a-f0-9]{64}$" },
+    "source": { "type": "object", "required": ["schemaVersion", "counts", "checks", "status", "bundleSha256"], "properties": { "schemaVersion": { "const": "wr-county-tile-source-bundle-v1" }, "bundleSha256": { "$ref": "#/$defs/sha256" } } },
+    "policy": { "type": "object", "required": ["schemaVersion", "includedFields", "forbiddenFields", "checks", "status", "policySha256"], "properties": { "schemaVersion": { "const": "wr-county-tile-property-policy-v1" }, "policySha256": { "$ref": "#/$defs/sha256" } } },
+    "plan": { "type": "object", "required": ["schemaVersion", "sourceMode", "tileTool", "checks", "status", "planSha256"], "properties": { "schemaVersion": { "const": "wr-county-tile-build-plan-v1" }, "sourceMode": { "const": "viewport-chunk-stream" }, "planSha256": { "$ref": "#/$defs/sha256" } } },
+    "audit": { "type": "object", "required": ["schemaVersion", "counts", "checks", "status", "auditSha256"], "properties": { "schemaVersion": { "const": "wr-county-tile-artifact-audit-v1" }, "auditSha256": { "$ref": "#/$defs/sha256" } } },
+    "decision": { "type": "object", "required": ["schemaVersion", "activationAuthorized", "fallbackRuntime", "checks", "status", "decisionSha256"], "properties": { "schemaVersion": { "const": "wr-county-tile-publication-decision-v1" }, "fallbackRuntime": { "const": "viewport-geojson-service" }, "decisionSha256": { "$ref": "#/$defs/sha256" } } }
+  }
+}

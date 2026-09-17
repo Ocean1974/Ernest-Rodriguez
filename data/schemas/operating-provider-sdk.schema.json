@@ -1,0 +1,22 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://white-rabbit.local/schemas/operating-provider-sdk.schema.json",
+  "title": "White Rabbit operating provider SDK contracts",
+  "oneOf": [
+    { "$ref": "#/$defs/vendorProfile" },
+    { "$ref": "#/$defs/secretResolution" },
+    { "$ref": "#/$defs/executionPolicy" },
+    { "$ref": "#/$defs/executionState" },
+    { "$ref": "#/$defs/executionPermit" },
+    { "$ref": "#/$defs/sandboxPack" }
+  ],
+  "$defs": {
+    "digest": { "type": "string", "pattern": "^[a-f0-9]{64}$" },
+    "vendorProfile": { "type": "object", "required": ["schemaVersion", "id", "providerId", "productName", "enrollmentModel", "sandboxAvailability", "endpointProvisioning", "activationPrerequisites", "supportedDomainKinds", "officialEvidenceUrls", "profileSha256"], "properties": { "schemaVersion": { "const": "wr-operating-vendor-profile-v1" }, "profileSha256": { "$ref": "#/$defs/digest" } } },
+    "secretResolution": { "type": "object", "required": ["schemaVersion", "organizationId", "connectorId", "purpose", "secretRef", "secretVersion", "resolvedAt", "expiresAt", "resolutionSha256"], "properties": { "schemaVersion": { "const": "wr-managed-secret-resolution-v1" }, "secretRef": { "type": "string", "pattern": "^secret-ref:" }, "resolutionSha256": { "$ref": "#/$defs/digest" } } },
+    "executionPolicy": { "type": "object", "required": ["schemaVersion", "connectorId", "capacity", "refillTokensPerSecond", "maximumConcurrency", "failureThreshold", "resetAfterSeconds", "permitSeconds"], "properties": { "schemaVersion": { "const": "wr-provider-execution-policy-v1" } } },
+    "executionState": { "type": "object", "required": ["schemaVersion", "organizationId", "connectorId", "revision", "policy", "tokens", "lastRefillAt", "circuitStatus", "consecutiveFailures", "openedAt", "retryAfterUntil", "activePermits", "updatedAt", "stateSha256"], "properties": { "schemaVersion": { "const": "wr-provider-execution-state-v1" }, "circuitStatus": { "enum": ["closed", "open", "half-open"] }, "stateSha256": { "$ref": "#/$defs/digest" } } },
+    "executionPermit": { "type": "object", "required": ["schemaVersion", "id", "connectorId", "jobId", "workerId", "cursor", "issuedAt", "expiresAt", "probe", "permitSha256"], "properties": { "schemaVersion": { "const": "wr-provider-execution-permit-v1" }, "permitSha256": { "$ref": "#/$defs/digest" } } },
+    "sandboxPack": { "type": "object", "required": ["schemaVersion", "id", "organizationId", "connectorId", "providerId", "vendorProfileId", "vendorProfileSha256", "connectorSha256", "adapterCertificationSha256", "evaluatedAt", "status", "activationAuthorized", "checks", "blockers", "evidenceRefs", "officialEvidenceUrls", "packSha256"], "properties": { "schemaVersion": { "const": "wr-vendor-sandbox-certification-pack-v1" }, "status": { "enum": ["blocked", "certified"] }, "packSha256": { "$ref": "#/$defs/digest" } } }
+  }
+}

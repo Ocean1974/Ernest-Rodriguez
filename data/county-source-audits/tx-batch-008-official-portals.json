@@ -1,0 +1,154 @@
+{
+  "version": "wr-tx-batch-008-official-portals-v1",
+  "retrievedAt": "2026-07-03",
+  "scope": "Texas verification queue batch 8, official portal and parcel-source discovery in progress",
+  "rule": "Official portals are evidence for source discovery only. They do not make a county core-complete until exact counts, join keys, bulk/source provenance, viewport chunks, search shards, and QC are verified.",
+  "counties": [
+    {
+      "countyId": "nueces-county-tx",
+      "countyName": "Nueces County",
+      "state": "TX",
+      "officialPortals": [
+        {
+          "label": "Nueces Central Appraisal District official site",
+          "url": "https://nuecescad.net/",
+          "sourceType": "appraisal-district-site",
+          "verificationStatus": "official-site-verified",
+          "notes": "Official site exposes Property Search, Interactive Map, Downloads & Reports, Annual Reports, Mass Appraisal Report, and Reappraisal Plan. The page says property can be searched by name, address, or property ID."
+        },
+        {
+          "label": "Nueces CAD property search",
+          "url": "https://esearch.nuecescad.net/",
+          "sourceType": "property-search",
+          "verificationStatus": "linked-from-official-site",
+          "notes": "Linked directly from the official NCAD site. Property ID is a candidate join key, but property-search payload fields still need direct schema inspection before joining."
+        },
+        {
+          "label": "Nueces CAD interactive map",
+          "url": "https://gis.bisclient.com/",
+          "sourceType": "interactive-map",
+          "verificationStatus": "linked-from-official-site",
+          "notes": "Linked directly from the official NCAD site. Treat as map/GIS discovery until bulk/API-safe parcel geometry, exact count, and join key are verified."
+        },
+        {
+          "label": "Nueces CAD downloads and reports",
+          "url": "https://nuecescad.net/",
+          "sourceType": "downloads-and-reports",
+          "verificationStatus": "linked-from-official-site",
+          "notes": "Official navigation exposes Downloads & Reports. Candidate source files must be inspected for schemas, parcel IDs, account IDs, and exact counts."
+        }
+      ],
+      "completionImpact": "source-discovery-started",
+      "remainingBlockers": [
+        "downloads/report files not inspected",
+        "Property ID candidate join key not validated against geometry",
+        "exact parcel count not verified",
+        "exact geometry-to-appraisal join key not verified",
+        "viewport/search outputs not built"
+      ]
+    },
+    {
+      "countyId": "parker-county-tx",
+      "countyName": "Parker County",
+      "state": "TX",
+      "officialPortals": [
+        {
+          "label": "Parker County Appraisal District property search portal",
+          "url": "https://www.parkercad.org/",
+          "sourceType": "property-search-and-appraisal-portal",
+          "verificationStatus": "property-search-portal-redirect-verified",
+          "notes": "The county appraisal domain redirects into a Southwest Data Solution public property-search portal with dbkey PARKERCAD. Treat as portal discovery only until official site provenance, parcel ID fields, export availability, exact counts, and joins are documented."
+        }
+      ],
+      "completionImpact": "source-discovery-started",
+      "remainingBlockers": [
+        "official appraisal district site provenance not fully documented",
+        "property search parcel ID field names not verified",
+        "bulk parcel/GIS source not verified",
+        "exact parcel count not verified",
+        "exact geometry-to-appraisal join key not verified",
+        "viewport/search outputs not built"
+      ]
+    },
+    {
+      "countyId": "potter-county-tx",
+      "countyName": "Potter County",
+      "state": "TX",
+      "officialPortals": [
+        {
+          "label": "Potter-Randall Appraisal District public portal",
+          "url": "https://www.prad.org/",
+          "sourceType": "property-search-and-appraisal-portal",
+          "verificationStatus": "portal-discovered-payload-needed",
+          "notes": "Public portal endpoint responds, but text extraction did not expose field names. Treat as portal discovery only until property search payload, parcel ID fields, exact counts, and geometry source are documented."
+        }
+      ],
+      "completionImpact": "source-discovery-started",
+      "remainingBlockers": [
+        "portal payload not inspected",
+        "property search parcel ID field names not verified",
+        "bulk parcel/GIS source not verified",
+        "exact parcel count not verified",
+        "exact geometry-to-appraisal join key not verified",
+        "viewport/search outputs not built"
+      ]
+    },
+    {
+      "countyId": "randall-county-tx",
+      "countyName": "Randall County",
+      "state": "TX",
+      "officialPortals": [
+        {
+          "label": "Potter-Randall Appraisal District public portal",
+          "url": "https://www.prad.org/",
+          "sourceType": "property-search-and-appraisal-portal",
+          "verificationStatus": "portal-discovered-payload-needed",
+          "notes": "Public portal endpoint responds for the Potter-Randall appraisal district area, but text extraction did not expose field names. Treat as portal discovery only until property search payload, parcel ID fields, exact counts, and geometry source are documented."
+        }
+      ],
+      "completionImpact": "source-discovery-started",
+      "remainingBlockers": [
+        "portal payload not inspected",
+        "property search parcel ID field names not verified",
+        "bulk parcel/GIS source not verified",
+        "exact parcel count not verified",
+        "exact geometry-to-appraisal join key not verified",
+        "viewport/search outputs not built"
+      ]
+    },
+    {
+      "countyId": "rockwall-county-tx",
+      "countyName": "Rockwall County",
+      "state": "TX",
+      "officialPortals": [
+        {
+          "label": "Rockwall Central Appraisal District public portal",
+          "url": "https://www.rockwallcad.com/",
+          "sourceType": "property-search-and-appraisal-portal",
+          "verificationStatus": "portal-discovered-payload-needed",
+          "notes": "Public portal endpoint responds, but text extraction did not expose field names. Treat as portal discovery only until property search payload, parcel ID fields, exact counts, and geometry source are documented."
+        }
+      ],
+      "completionImpact": "source-discovery-started",
+      "remainingBlockers": [
+        "portal payload not inspected",
+        "property search parcel ID field names not verified",
+        "bulk parcel/GIS source not verified",
+        "exact parcel count not verified",
+        "exact geometry-to-appraisal join key not verified",
+        "viewport/search outputs not built"
+      ]
+    }
+  ],
+  "generatedAt": "2026-07-03T00:00:00.000Z",
+  "completionRule": "Official portals are evidence for source discovery only. They do not make a county core-complete until exact counts, join keys, bulk/source provenance, viewport chunks, search shards, and QC are verified.",
+  "summary": {
+    "countyCount": 5,
+    "officialSiteVerified": 1,
+    "linkedPropertySearch": 1,
+    "linkedInteractiveMap": 1,
+    "portalDiscoveredPayloadNeeded": 3,
+    "propertySearchPortalRedirectVerified": 1,
+    "promotedToCoreComplete": 0
+  }
+}

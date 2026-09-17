@@ -1,0 +1,51 @@
+﻿{
+    "county_id":  "colorado-county-tx",
+    "county_name":  "Colorado County",
+    "state":  "TX",
+    "fips":  "48089",
+    "cad_name":  "Colorado County Appraisal District",
+    "source_discovery_status":  "official-site-property-search-and-map-discovered",
+    "retrieved_at":  "2026-06-29",
+    "verified_counts":  {
+                            "parcel_geometry_features":  0,
+                            "appraisal_property_rows":  0,
+                            "count_verified_at":  null,
+                            "status":  "not-verified"
+                        },
+    "join_keys":  {
+                      "primary_parcel_account":  "unverified",
+                      "secondary_gis_id":  "unverified",
+                      "owner_appraisal":  "unverified"
+                  },
+    "remaining_blockers":  [
+                               "public report/source files not inspected",
+                               "exact parcel count not verified",
+                               "exact geometry-to-appraisal join key not verified",
+                               "viewport chunks and search shards not built",
+                               "QC report not built"
+                           ],
+    "completion_impact":  "source-discovery-started",
+    "official_portal":  {
+                            "label":  "Colorado County Appraisal District official site",
+                            "url":  "https://coloradocad.org/",
+                            "source_type":  "appraisal-district-site",
+                            "verification_status":  "official-site-verified"
+                        },
+    "property_search":  {
+                            "label":  "Colorado County CAD property search",
+                            "url":  "https://esearch.coloradocad.org/",
+                            "source_type":  "property-search",
+                            "verification_status":  "linked-from-official-site"
+                        },
+    "interactive_map":  {
+                            "label":  "Colorado County CAD interactive map",
+                            "url":  "https://gis.bisclient.com/",
+                            "source_type":  "interactive-map",
+                            "verification_status":  "linked-from-official-site"
+                        },
+    "candidate_bulk_or_report_leads":  [
+                                           "Property search",
+                                           "Interactive map",
+                                           "Public reports/resources"
+                                       ]
+}

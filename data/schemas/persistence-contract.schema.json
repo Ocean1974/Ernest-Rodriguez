@@ -1,0 +1,77 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://white-rabbit.local/schemas/persistence-contract.schema.json",
+  "title": "White Rabbit Durable Persistence Contracts",
+  "oneOf": [
+    { "$ref": "#/$defs/context" },
+    { "$ref": "#/$defs/mutation" },
+    { "$ref": "#/$defs/receipt" },
+    { "$ref": "#/$defs/batchMutation" },
+    { "$ref": "#/$defs/batchReceipt" }
+  ],
+  "$defs": {
+    "context": {
+      "type": "object",
+      "required": ["schemaVersion", "organizationId", "actorUserId", "subjectUserId", "sessionId", "requestId", "grants", "issuedAt", "expiresAt"],
+      "properties": {
+        "schemaVersion": { "const": "wr-persistence-context-v1" },
+        "organizationId": { "type": "string", "minLength": 1 },
+        "actorUserId": { "type": "string", "minLength": 1 },
+        "subjectUserId": { "type": "string", "minLength": 1 },
+        "sessionId": { "type": "string", "minLength": 1 },
+        "requestId": { "type": "string", "minLength": 1 },
+        "grants": { "type": "array", "items": { "type": "string" }, "contains": { "const": "persistence:read" } },
+        "issuedAt": { "type": "string", "format": "date-time" },
+        "expiresAt": { "type": "string", "format": "date-time" }
+      }
+    },
+    "mutation": {
+      "type": "object",
+      "required": ["schemaVersion", "context", "namespace", "key", "operation", "value", "expectedTenantRevision", "idempotencyKey", "occurredAt"],
+      "properties": {
+        "schemaVersion": { "const": "wr-persistence-mutation-v1" },
+        "context": { "$ref": "#/$defs/context" },
+        "namespace": { "enum": ["user-intelligence", "collaboration", "alert-routing", "property-snapshots", "delivery-attempts", "alert-worker", "underwriting", "property-graph", "release-control", "brief-exports", "deal-room", "document-evidence", "diligence", "portfolio", "operating-feed", "opportunity-intelligence", "acquisition-handoff", "committee-workspace"] },
+        "operation": { "enum": ["put", "delete"] },
+        "expectedTenantRevision": { "type": "integer", "minimum": 0 },
+        "expectedRecordRevision": { "type": "integer", "minimum": 0 },
+        "idempotencyKey": { "type": "string", "minLength": 1 },
+        "occurredAt": { "type": "string", "format": "date-time" }
+      }
+    },
+    "batchMutation": {
+      "type": "object",
+      "required": ["schemaVersion", "context", "mutations", "expectedTenantRevision", "idempotencyKey", "occurredAt"],
+      "properties": {
+        "schemaVersion": { "const": "wr-persistence-batch-mutation-v1" },
+        "context": { "$ref": "#/$defs/context" },
+        "mutations": { "type": "array", "minItems": 1, "maxItems": 1000 },
+        "expectedTenantRevision": { "type": "integer", "minimum": 0 },
+        "idempotencyKey": { "type": "string", "minLength": 1 },
+        "occurredAt": { "type": "string", "format": "date-time" }
+      }
+    },
+    "batchReceipt": {
+      "type": "object",
+      "required": ["schemaVersion", "organizationId", "tenantRevision", "records", "mutationCount", "idempotencyKey", "committedAt", "actorUserId", "requestId", "replayed"],
+      "properties": {
+        "schemaVersion": { "const": "wr-persistence-batch-receipt-v1" },
+        "tenantRevision": { "type": "integer", "minimum": 1 },
+        "records": { "type": "array", "minItems": 1, "maxItems": 1000 },
+        "mutationCount": { "type": "integer", "minimum": 1, "maximum": 1000 },
+        "replayed": { "type": "boolean" }
+      }
+    },
+    "receipt": {
+      "type": "object",
+      "required": ["schemaVersion", "organizationId", "namespace", "key", "operation", "tenantRevision", "recordRevision", "valueSha256", "idempotencyKey", "committedAt", "actorUserId", "requestId", "replayed"],
+      "properties": {
+        "schemaVersion": { "const": "wr-persistence-receipt-v1" },
+        "tenantRevision": { "type": "integer", "minimum": 1 },
+        "recordRevision": { "type": "integer", "minimum": 0 },
+        "valueSha256": { "type": "string", "pattern": "^$|^[a-f0-9]{64}$" },
+        "replayed": { "type": "boolean" }
+      }
+    }
+  }
+}

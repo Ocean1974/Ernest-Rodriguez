@@ -1,0 +1,20 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://white-rabbit.local/schemas/production-parcel-query-result.schema.json",
+  "title": "White Rabbit Production Parcel Query Result",
+  "type": "object",
+  "required": ["schemaVersion", "status", "planFingerprint", "results", "nextCursor", "warnings", "errors", "sourceEvidence", "totals", "budget"],
+  "properties": {
+    "schemaVersion": { "const": "wr-production-parcel-query-result-v1" },
+    "status": { "enum": ["complete", "partial-results", "timed-out", "aborted", "adapter-error", "invalid-cursor", "stale-cursor", "stale-source-rejected"] },
+    "planFingerprint": { "type": "string" },
+    "results": { "type": "array", "items": { "type": "object", "required": ["parcel", "evaluation", "ranking"] } },
+    "nextCursor": { "type": "string" },
+    "warnings": { "type": "array", "items": { "type": "string" } },
+    "errors": { "type": "array", "items": { "type": "object" } },
+    "sourceEvidence": { "type": "array", "items": { "type": "object", "required": ["sourceCountyId", "datasetId", "sourceVersion", "sourceUpdatedAt", "freshnessStatus", "partial"] } },
+    "totals": { "type": "object", "required": ["adapterPages", "scannedRecords", "uniqueCandidates", "evaluated", "matched", "indeterminate", "rejected", "invalidIdentity"] },
+    "budget": { "type": "object", "required": ["pageSize", "adapterPageSize", "maxCandidates", "maxScannedRecords", "maxAdapterPages", "timeoutMs"] },
+    "executionEvidence": { "type": "object" }
+  }
+}

@@ -1,0 +1,66 @@
+{
+  "county_id": "collin-county-tx",
+  "county_name": "Collin County",
+  "state": "TX",
+  "fips": "48085",
+  "cad_name": "Collin Central Appraisal District",
+  "source_discovery_status": "official-live-parcel-service-schema-and-count-verified",
+  "retrieved_at": "2026-08-06",
+  "official_sources": {
+    "downloads_portal": "https://collincad.org/open-data-portal/",
+    "gis_downloads": "https://collincad.org/category/gis-downloads/",
+    "parcel_feature_service": "https://services2.arcgis.com/uXyoacYrZTPTKD3R/arcgis/rest/services/CCAD_Parcel_Feature_Set/FeatureServer/4",
+    "service_owner": "Collin Central Appraisal District",
+    "service_description": "Parcel polygons with nightly refreshed appraisal data and ownership information joined to geometry"
+  },
+  "verified_counts": {
+    "parcel_geometry_features": 437063,
+    "global_id_non_null_features": 437063,
+    "global_id_missing_features": 0,
+    "global_id_max_observed_multiplicity": 1,
+    "full_build_source_features_fetched": 437063,
+    "full_build_features_emitted": 437061,
+    "full_build_geometry_skipped": 2,
+    "verified_null_geometry_global_id": "831189f7-8ef2-4f18-8092-20b72402e92d",
+    "prop_id_non_null_features": 436372,
+    "prop_id_missing_features": 691,
+    "prop_id_max_observed_multiplicity": 2403,
+    "prop_id_zero_multiplicity": 2403,
+    "prop_id_nonzero_max_observed_multiplicity": 3,
+    "prop_id_lowercase_non_null_features": 429584,
+    "prop_id_lowercase_not_returned_as_non_null": 7479,
+    "geo_id_non_null_features": 429584,
+    "geo_id_not_returned_as_non_null": 7479,
+    "geo_id_max_observed_multiplicity": 3,
+    "count_verified_at": "2026-08-06",
+    "status": "live-service-feature-count-verified"
+  },
+  "join_keys": {
+    "service_feature_identity": "GlobalID (verified non-null and maximum multiplicity 1 across all 437,063 live features)",
+    "primary_parcel_account": "GlobalID is the stable source-feature identity; propID/PROP_ID remain secondary business identifiers with documented nulls and duplicates",
+    "secondary_gis_id": "unresolved: geoID contains missing values or duplicate groups",
+    "owner_appraisal": "direct fields on the same feature; no external geometry-to-appraisal join is needed for the live service"
+  },
+  "query": {
+    "primary_where": "GlobalID IS NOT NULL",
+    "order_by": "OBJECTID",
+    "max_record_count": 2000,
+    "geometry_out_sr": 4326,
+    "out_fields": ["OBJECTID", "GlobalID", "PROP_ID", "propID", "geoID", "gisPropID", "ownerID", "ownerName", "ownerNameAddtl", "ownerAddrLine1", "ownerAddrLine2", "ownerAddrCity", "ownerAddrState", "ownerAddrZip", "situsConcat", "situsCity", "situsZip", "landSizeAcres", "landSizeSqft", "propUseCode", "propType", "currValLand", "currValImprv", "currValMarket", "currValAppraised", "imprvYearBuilt", "imprvMainArea", "legalDescription", "legalAbsSubName", "legalAbsSubBlock", "legalAbsSubLot", "mapID", "Shape__Length"]
+  },
+  "verified_field_groups": {
+    "identity": ["PROP_ID", "propID", "geoID", "ownerID", "OBJECTID"],
+    "owner": ["ownerName", "ownerNameAddtl", "ownerAddrLine1", "ownerAddrLine2", "ownerAddrCity", "ownerAddrState", "ownerAddrZip"],
+    "situs": ["situsConcat", "situsBldgNum", "situsStreetPrefix", "situsStreetName", "situsStreetSuffix", "situsUnit", "situsCity", "situsZip"],
+    "land": ["landSizeAcres", "landSizeSqft", "landAgAcres"],
+    "improvement": ["imprvYearBuilt", "imprvMainArea", "imprvUnits", "imprvPoolFlag"],
+    "value": ["currValLand", "currValImprv", "currValMarket", "currValAppraised"],
+    "legal": ["legalDescription", "legalAbsSubName", "legalAbsSubBlock", "legalAbsSubLot"]
+  },
+  "remaining_blockers": [
+    "build county QC and production tile handoff",
+    "verify and join permits, zoning, floodplain, development, and demand sources"
+  ],
+  "completion_impact": "map-search-pilot-built-qc-needed",
+  "activation": "do-not-activate"
+}

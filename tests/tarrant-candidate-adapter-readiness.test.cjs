@@ -1,0 +1,34 @@
+const assert = require("assert");
+const fs = require("fs");
+const path = require("path");
+
+(() => {
+  const root = path.join(__dirname, "..");
+  const report = JSON.parse(fs.readFileSync(path.join(root, "output", "tarrant", "search-readiness", "tarrant-candidate-adapter-certification.json"), "utf8"));
+  const schema = JSON.parse(fs.readFileSync(path.join(root, "data", "schemas", "county-candidate-adapter-certification.schema.json"), "utf8"));
+  assert.equal(report.schemaVersion, schema.properties.schemaVersion.const);
+  assert(schema.required.every((field) => schema.properties[field]), "every required certification field must be defined by the schema");
+  assert.equal(report.status, "contract-ready-release-blocked");
+  assert.equal(report.manifest.featureCount, 758633);
+  assert.equal(report.manifest.searchIndexCount, 758633);
+  assert.equal(report.manifest.chunkCount, 1608);
+  assert.equal(report.manifest.searchShardKeyCount, 1111);
+  assert.equal(report.manifest.searchShardFileCount, 1177);
+  assert.equal(report.manifest.sha256, "5daadcce359cffb75f057212cf19cb10b1f998c222e8f213b60650535be1a985");
+  assert.equal(report.manifest.primaryJoinKey, "ACCOUNT -> accountNum/sourceParcelId");
+  assert.equal(report.manifest.secondaryJoinKey, "TAXPIN -> gisParcelId");
+  assert.equal(report.representativeProbe.expectedFound, true);
+  assert.equal(report.representativeProbe.expectedAccount, "01424211");
+  assert.equal(report.representativeProbe.scannedRecords, 5000);
+  assert(report.checks.every((item) => item.passed));
+  assert.equal(report.runtime.serverSideOnly, true);
+  assert.equal(report.runtime.uiWired, false);
+  assert.equal(report.runtime.lockedWebsiteDesignChanged, false);
+  assert.equal(report.runtime.activationAuthorized, false);
+  assert.equal(report.runtime.unknownSourcePolicy, "reject");
+  assert(Object.values(report.featureGates).every((value) => value === false));
+  const app = fs.readFileSync(path.join(root, "src", "App.tsx"), "utf8");
+  assert(!app.includes("countyArtifactCandidateAdapter"));
+  assert(!app.includes("countyArtifactQueryRuntime"));
+  console.log("White Rabbit Tarrant candidate adapter readiness artifact tests passed.");
+})();

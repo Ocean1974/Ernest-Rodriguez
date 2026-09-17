@@ -1,0 +1,49 @@
+﻿{
+    "county_id":  "cooke-county-tx",
+    "county_name":  "Cooke County",
+    "state":  "TX",
+    "fips":  "48097",
+    "cad_name":  "Cooke County Appraisal District",
+    "source_discovery_status":  "official-portal-discovered-text-limited",
+    "retrieved_at":  "2026-06-29",
+    "official_portal":  {
+                            "label":  "Cooke County Appraisal District official portal",
+                            "url":  "https://cookecad.org/",
+                            "source_type":  "public-portal",
+                            "verification_status":  "portal-reachable-text-limited"
+                        },
+    "property_search":  {
+                            "label":  "Cooke County CAD property search",
+                            "url":  "https://cookecad.org/",
+                            "source_type":  "property-search",
+                            "verification_status":  "not-inspected"
+                        },
+    "interactive_map":  {
+                            "label":  "Cooke County CAD interactive map",
+                            "url":  "https://cookecad.org/",
+                            "source_type":  "interactive-map",
+                            "verification_status":  "not-inspected"
+                        },
+    "candidate_bulk_or_report_leads":  [
+                                           "Public portal"
+                                       ],
+    "verified_counts":  {
+                            "parcel_geometry_features":  0,
+                            "appraisal_property_rows":  0,
+                            "count_verified_at":  null,
+                            "status":  "not-verified"
+                        },
+    "join_keys":  {
+                      "primary_parcel_account":  "unverified",
+                      "secondary_gis_id":  "unverified",
+                      "owner_appraisal":  "unverified"
+                  },
+    "remaining_blockers":  [
+                               "portal payload/source files not inspected",
+                               "exact parcel count not verified",
+                               "exact geometry-to-appraisal join key not verified",
+                               "viewport chunks and search shards not built",
+                               "QC report not built"
+                           ],
+    "completion_impact":  "source-discovery-started"
+}

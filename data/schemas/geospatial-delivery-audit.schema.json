@@ -1,0 +1,22 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://white-rabbit.local/schemas/geospatial-delivery-audit.schema.json",
+  "title": "White Rabbit Geospatial Delivery Audit",
+  "type": "object",
+  "required": ["schemaVersion", "generatedAt", "sourceCountyId", "status", "pageDesignChanged", "checks", "artifact", "blockers", "requiredDeploymentHeaders", "runtimePolicy"],
+  "properties": {
+    "schemaVersion": { "const": "wr-geospatial-delivery-audit-v1" },
+    "sourceCountyId": { "const": "dallas-county-dcad" },
+    "status": { "enum": ["artifact-verified", "source-verified-builder-blocked"] },
+    "pageDesignChanged": { "const": false },
+    "checks": {
+      "type": "object",
+      "required": ["sourcePresent", "sourceBytes", "sourceSha256", "exactFeatureCount", "expectedFeatureCountMatched", "tippecanoeAvailable", "pmtilesArtifactPresent", "pmtilesArtifactVerified"],
+      "properties": { "sourceSha256": { "type": "string", "pattern": "^[a-f0-9]{64}$" }, "exactFeatureCount": { "const": 696601 } }
+    },
+    "artifact": { "type": ["object", "null"] },
+    "blockers": { "type": "array", "items": { "type": "string" } },
+    "requiredDeploymentHeaders": { "type": "object" },
+    "runtimePolicy": { "type": "string" }
+  }
+}

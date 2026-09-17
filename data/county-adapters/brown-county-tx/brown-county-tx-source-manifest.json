@@ -1,0 +1,58 @@
+{
+  "county_id": "brown-county-tx",
+  "county_name": "Brown County",
+  "state": "TX",
+  "fips": "48049",
+  "cad_name": "Brown County Appraisal District",
+  "source_discovery_status": "official-site-property-search-and-map-discovered",
+  "retrieved_at": "2026-06-29",
+  "ui_constraint": "Do not redesign White Rabbit pages while expanding county parcel intelligence plumbing.",
+  "official_portal": {
+    "label": "Brown County Appraisal District official site",
+    "url": "https://brown-cad.org/",
+    "source_type": "appraisal-district-site",
+    "verification_status": "official-site-verified",
+    "notes": "Official site exposes property search, interactive map, taxpayer portal, entity boundary maps, downloads, and says BCAD is responsible for fair market appraisal of properties for Brown County taxing units."
+  },
+  "property_search": {
+    "label": "Brown CAD property search",
+    "url": "https://esearch.brown-cad.org/",
+    "source_type": "property-search",
+    "verification_status": "linked-from-official-site"
+  },
+  "interactive_map": {
+    "label": "Brown CAD interactive map",
+    "url": "https://gis.bisclient.com/",
+    "source_type": "interactive-map",
+    "verification_status": "linked-from-official-site"
+  },
+  "candidate_bulk_or_report_leads": [
+    "Taxpayer portal",
+    "Entity boundary maps",
+    "Downloads"
+  ],
+  "verified_counts": {
+    "parcel_geometry_features": 0,
+    "appraisal_property_rows": 0,
+    "count_verified_at": null,
+    "status": "not-verified"
+  },
+  "join_keys": {
+    "primary_parcel_account": "unverified",
+    "secondary_gis_id": "unverified",
+    "owner_appraisal": "unverified"
+  },
+  "bulk_source_status": {
+    "parcel_geometry_bulk": "not-verified",
+    "owner_appraisal_bulk": "not-verified",
+    "download_terms": "bulk/export terms not verified"
+  },
+  "remaining_blockers": [
+    "bulk/export terms not verified",
+    "exact parcel count not verified",
+    "exact geometry-to-appraisal join key not verified",
+    "viewport chunks and search shards not built",
+    "QC report not built"
+  ],
+  "completion_impact": "source-discovery-started"
+}

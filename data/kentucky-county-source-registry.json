@@ -1,0 +1,85 @@
+{
+  "schemaVersion": "wr-kentucky-county-source-registry-v1",
+  "updatedAt": "2026-09-11",
+  "purpose": "Official parcel source discovery and bounded, resumable Kentucky ingestion planning.",
+  "activationPolicy": "Source discovery and probing do not authorize capture, redistribution, or visible activation.",
+  "sources": [
+    {
+      "countyId": "jefferson-county-ky",
+      "adapterId": "louisville",
+      "countyName": "Jefferson County",
+      "countyFips": "21111",
+      "publisher": "Louisville/Jefferson County Information Consortium (LOJIC)",
+      "sourceUrl": "https://gis.lojic.org/maps/rest/services/LojicSolutions/OpenDataPVA/MapServer/1",
+      "identityCandidates": ["PARCELID", "LRSN", "PIN"],
+      "captureState": "existing-local-build",
+      "rightsStatus": "review-required-before-new-raw-capture"
+    },
+    {
+      "countyId": "fayette-county-ky",
+      "adapterId": "fayette-county-ky",
+      "countyName": "Fayette County",
+      "countyFips": "21067",
+      "publisher": "Lexington-Fayette Urban County Government GIS",
+      "sourceUrl": "https://services1.arcgis.com/Mg7DLdfYcSWIaDnu/arcgis/rest/services/Parcel/FeatureServer/0",
+      "identityCandidates": ["PVANUM", "PARCELID", "PARCEL_ID", "PIDN", "PIN", "OBJECTID"],
+      "captureState": "probe-ready",
+      "rightsStatus": "review-required-before-full-capture"
+    },
+    {
+      "countyId": "boone-county-ky",
+      "adapterId": "boone-county-ky",
+      "countyName": "Boone County",
+      "countyFips": "21015",
+      "publisher": "Boone County Planning Commission / Boone County PVA",
+      "sourceUrl": "https://secure.boonecountygis.com/server/rest/services/ParcelLayers/MapServer/32",
+      "identityCandidates": ["PIDN", "PARCELID", "PARCEL_ID", "PIN", "OBJECTID"],
+      "captureState": "probe-ready",
+      "rightsStatus": "review-required-before-full-capture"
+    },
+    {
+      "countyId": "webster-county-ky",
+      "adapterId": "webster-county-ky",
+      "countyName": "Webster County",
+      "countyFips": "21233",
+      "publisher": "Kentucky Division of Geographic Information / Webster County PVA",
+      "sourceUrl": "https://kygisserver.ky.gov/arcgis/rest/services/WGS84WM_Services/Ky_PVA_Webster_Parcels_WGS84WM/MapServer/1",
+      "identityCandidates": ["PIDN", "PARCEL_ID", "PARCEL", "ACCOUNT", "OBJECTID"],
+      "captureState": "probe-ready",
+      "rightsStatus": "review-required-before-full-capture"
+    },
+    {
+      "countyId": "campbell-county-ky",
+      "adapterId": "campbell-county-ky",
+      "countyName": "Campbell County",
+      "countyFips": "21037",
+      "publisher": "LINK-GIS / Campbell County PVA",
+      "sourceUrl": "https://maps.linkgis.org/server/rest/services/Parcel_QueryOnly/MapServer/0",
+      "identityCandidates": ["PIDN", "PARCEL_ID", "PARCELID", "OBJECTID"],
+      "captureState": "probe-ready",
+      "rightsStatus": "bulk-product-terms-and-fees-review-required"
+    },
+    {
+      "countyId": "kenton-county-ky",
+      "adapterId": "kenton-county-ky",
+      "countyName": "Kenton County",
+      "countyFips": "21117",
+      "publisher": "LINK-GIS / Kenton County PVA",
+      "sourceUrl": "https://maps.linkgis.org/server/rest/services/Parcel_QueryOnly/MapServer/1",
+      "identityCandidates": ["PIDN", "PARCEL_ID", "PARCELID", "OBJECTID"],
+      "captureState": "probe-ready",
+      "rightsStatus": "bulk-product-terms-and-fees-review-required"
+    },
+    {
+      "countyId": "pendleton-county-ky",
+      "adapterId": "pendleton-county-ky",
+      "countyName": "Pendleton County",
+      "countyFips": "21191",
+      "publisher": "LINK-GIS / Pendleton County PVA",
+      "sourceUrl": "https://maps.linkgis.org/server/rest/services/Parcel_QueryOnly/MapServer/2",
+      "identityCandidates": ["PARCEL_ID", "PIDN", "PARCELID", "OBJECTID"],
+      "captureState": "probe-ready",
+      "rightsStatus": "bulk-product-terms-and-fees-review-required"
+    }
+  ]
+}

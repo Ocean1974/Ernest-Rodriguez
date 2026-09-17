@@ -1,0 +1,16 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://white-rabbit.local/schemas/search-compatibility.schema.json",
+  "title": "White Rabbit Search Compatibility Result",
+  "type": "object",
+  "required": ["schemaVersion", "query", "topK", "minimumOverlapPct", "status", "overlapPct", "overlapIds", "missingLegacyIds", "addedProductionIds", "rankDisplacements", "legacyCount", "productionCount"],
+  "properties": {
+    "schemaVersion": { "const": "wr-search-compatibility-v1" },
+    "status": { "enum": ["compatible", "incompatible"] },
+    "overlapPct": { "type": "number", "minimum": 0, "maximum": 100 },
+    "overlapIds": { "type": "array", "items": { "type": "string" } },
+    "missingLegacyIds": { "type": "array", "items": { "type": "string" } },
+    "addedProductionIds": { "type": "array", "items": { "type": "string" } },
+    "rankDisplacements": { "type": "array", "items": { "type": "object" } }
+  }
+}

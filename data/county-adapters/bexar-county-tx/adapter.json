@@ -1,0 +1,275 @@
+{
+  "id": "bexar-county-tx",
+  "countyId": "bexar-county-tx",
+  "countyName": "Bexar County",
+  "state": "TX",
+  "fips": "48029",
+  "marketName": "San Antonio",
+  "appraisalDistrictName": "Bexar Appraisal District",
+  "appraisalDistrictAcronym": "BCAD",
+  "gisSource": "Bexar County GIS Parcels MapServer layer 0; BCAD-attributed source, freshness blocked",
+  "uniqueGisKey": "OBJECTID",
+  "parcelIdField": "OBJECTID",
+  "accountIdField": "AcctNumb",
+  "geometryType": "polygon",
+  "sourceSpatialReference": "EPSG:2278 (NAD83 Texas South Central US Feet); importer requests EPSG:4326",
+  "status": "pilot",
+  "map": {
+    "locationId": 1012,
+    "locationName": "Bexar County TX / San Antonio Pilot",
+    "locationType": "Bexar Appraisal District",
+    "status": "full parcel map/search built - freshness, intelligence, and activation gated",
+    "coordinates": [
+      -98.4936,
+      29.4241
+    ],
+    "camera": {
+      "x": 50,
+      "y": 50,
+      "zoom": 1.2,
+      "pitch": 48,
+      "bearing": 0
+    },
+    "geoBounds": {
+      "minLng": -99,
+      "minLat": 29,
+      "maxLng": -98,
+      "maxLat": 29.8
+    },
+    "boundsStatus": "pilot approximate market/county bounds; replace with verified parcel extent during source inspection"
+  },
+  "universalParcelSchema": {
+    "version": "wr-universal-parcel-v1",
+    "schemaPath": "data/schemas/universal-parcel.schema.json",
+    "documentationPath": "data/schemas/universal-parcel.md",
+    "parcelServiceBuilder": "scripts/build-app-parcel-service.cjs",
+    "fieldMapPath": "data/county-adapters/bexar-county-tx/bexar-county-tx-universal-field-map.json",
+    "sourceManifestPath": "data/county-adapters/bexar-county-tx/bexar-county-tx-source-manifest.json"
+  },
+  "sourceFiles": {
+    "parcelGeometry": "https://maps.bexar.org/arcgis/rest/services/Parcels/MapServer/0",
+    "appraisalDistrictExtract": "https://help.bcad.org/hc/en-us/articles/55264219130899-What-is-a-Public-Information-Act-Request",
+    "ownerAppraisal": "https://maps.bexar.org/arcgis/rest/services/Parcels/MapServer/0",
+    "permitsRaw": "source-needed",
+    "permitsProcessed": "data/permits/processed/bexar-county-tx",
+    "developmentRaw": "source-needed",
+    "zoningRaw": "source-needed",
+    "floodplainRaw": "source-needed",
+    "migrationDemandRaw": "source-needed"
+  },
+  "publicDataRoots": {
+    "parcels": "/data/counties/bexar-county-tx/parcels/",
+    "permits": "/data/counties/bexar-county-tx/permits/",
+    "developments": "/data/counties/bexar-county-tx/developments/",
+    "zoning": "/data/counties/bexar-county-tx/zoning/",
+    "floodplain": "/data/counties/bexar-county-tx/floodplain/",
+    "demand": "/data/counties/bexar-county-tx/demand/"
+  },
+  "productionOutputs": {
+    "parcelGeojson": "output/bexar-county-tx/bexar-county-tx-parcels.geojson",
+    "parcelPmtiles": "output/bexar-county-tx/bexar-county-tx-parcels.pmtiles",
+    "vectorTilesDirectory": "output/bexar-county-tx/vector-tiles/"
+  },
+  "optionalLayers": [
+    {
+      "id": "county-parcels",
+      "label": "County parcels",
+      "source": "Bexar County GIS Parcels MapServer layer 0",
+      "status": "official-source-verified-service-built-freshness-blocked",
+      "joinBehavior": "OBJECTID is snapshot-unique; AcctNumb and PropID are searchable but incomplete and non-unique",
+      "defaultVisible": false,
+      "renderStrategy": "build-time official source fetch, offline universal mapping, viewport chunks, capped runtime loader",
+      "maxFeaturesPerViewport": 750
+    },
+    {
+      "id": "owner-appraisal",
+      "label": "Owner/appraisal",
+      "source": "Bexar County GIS / BCAD-attributed parcel attributes",
+      "status": "official-source-verified-service-built-freshness-blocked",
+      "joinBehavior": "Owner, mailing, situs, value, land/building, and legal fields are carried on the parcel feature when AcctNumb is present",
+      "defaultVisible": false,
+      "renderStrategy": "build-time official source fetch, offline owner/appraisal normalization, viewport chunks, capped runtime loader",
+      "maxFeaturesPerViewport": 750
+    },
+    {
+      "id": "parcel-dimensions",
+      "label": "Parcel dimensions",
+      "source": "source-needed",
+      "status": "source-needed",
+      "joinBehavior": "source-needed: direct dimension fields, label layer, or generated measurement fallback",
+      "defaultVisible": false,
+      "renderStrategy": "build-time official source inspection, offline mapping, viewport chunks",
+      "maxFeaturesPerViewport": 750
+    },
+    {
+      "id": "block-grid",
+      "label": "Block, subdivision, and map-grid context",
+      "source": "source-needed",
+      "status": "source-needed",
+      "joinBehavior": "source-needed: direct parcel fields or spatial join to subdivision/block/grid sources",
+      "defaultVisible": false,
+      "renderStrategy": "build-time official source inspection, offline joins, viewport chunks",
+      "maxFeaturesPerViewport": 750
+    },
+    {
+      "id": "permits",
+      "label": "Permits and certificates of occupancy",
+      "source": "source-needed",
+      "status": "source-needed",
+      "joinBehavior": "source-needed: parcel/account, normalized address, or spatial point-in-parcel join",
+      "defaultVisible": false,
+      "publicDataRoot": "/data/counties/bexar-county-tx/permits/",
+      "manifestPath": "public/data/counties/bexar-county-tx/permits/manifest.json",
+      "renderStrategy": "build-time official source verification, offline permit normalization, viewport-safe chunks",
+      "maxFeaturesPerViewport": 750
+    },
+    {
+      "id": "zoning-intelligence",
+      "label": "Zoning intelligence",
+      "source": "source-needed",
+      "status": "source-needed",
+      "joinBehavior": "source-needed: parcel/account ID bridge first; spatial join for zoning polygons and case areas",
+      "defaultVisible": false,
+      "publicDataRoot": "/data/counties/bexar-county-tx/zoning/",
+      "manifestPath": "public/data/counties/bexar-county-tx/zoning/manifest.json",
+      "schemaPath": "data/schemas/dallas-zoning-layer.schema.json",
+      "reportPath": "output/bexar-county-tx/zoning-source-report.md",
+      "renderStrategy": "build-time official source verification, offline joins, viewport chunks, capped runtime loader",
+      "maxFeaturesPerViewport": 750
+    },
+    {
+      "id": "development-signals",
+      "label": "Development signals",
+      "source": "source-needed",
+      "status": "source-needed",
+      "joinBehavior": "source-needed: normalized permit, certificate, demolition, plat, and project evidence joined to parcel IDs",
+      "defaultVisible": false,
+      "publicDataRoot": "/data/counties/bexar-county-tx/developments/",
+      "manifestPath": "public/data/counties/bexar-county-tx/developments/parcel-development-index.json",
+      "renderStrategy": "build-time evidence normalization, parcel/address/spatial joins, viewport-safe parcel index lookup",
+      "maxFeaturesPerViewport": 750
+    },
+    {
+      "id": "floodplain-intelligence",
+      "label": "Floodplain intelligence",
+      "source": "source-needed",
+      "status": "source-needed",
+      "joinBehavior": "source-needed: FEMA/local floodplain spatial join keyed back to parcel/account IDs",
+      "defaultVisible": false,
+      "publicDataRoot": "/data/counties/bexar-county-tx/floodplain/",
+      "manifestPath": "public/data/counties/bexar-county-tx/floodplain/manifest.json",
+      "parcelIndexPath": "public/data/counties/bexar-county-tx/floodplain/parcel-floodplain-index.json",
+      "schemaPath": "data/schemas/parcel-floodplain-index.schema.json",
+      "parcelIndexSchemaPath": "data/schemas/parcel-floodplain-index.schema.json",
+      "reportPath": "output/bexar-county-tx/floodplain-source-report.md",
+      "renderStrategy": "build-time official source verification, offline parcel centroid spatial join, viewport-safe sharded parcel ID lookup",
+      "maxFeaturesPerViewport": 750
+    },
+    {
+      "id": "migration-demand",
+      "label": "Migration and demand",
+      "source": "source-needed",
+      "status": "source-needed",
+      "joinBehavior": "source-needed: aggregate Census/ACS/IRS or approved demand geography joined by tract/block group/market, not individual people",
+      "defaultVisible": false,
+      "publicDataRoot": "/data/counties/bexar-county-tx/demand/",
+      "manifestPath": "public/data/counties/bexar-county-tx/demand/manifest.json",
+      "renderStrategy": "build-time aggregate demand scoring, offline geography-to-parcel join, viewport-safe parcel index lookup",
+      "maxFeaturesPerViewport": 750
+    }
+  ],
+  "publicSourceDiscovery": {
+    "status": "official-site-new-search-classic-search-map-and-reports-discovered",
+    "priorityReason": "Texas market that can follow the DCAD county-adapter pattern.",
+    "sourceSearchQueries": [
+      "Bexar Appraisal District parcel data",
+      "Bexar County GIS parcel boundaries",
+      "San Antonio permits open data"
+    ],
+    "sourceRules": [
+      "Use official county, assessor/appraiser, GIS, municipal, state, or federal sources first.",
+      "Do not activate this county until exact parcel counts and join keys are verified.",
+      "Do not infer owner phone/email from permits, contractors, applicants, or scraped pages."
+    ],
+    "problemSolvingLoop": [
+      "Discover official sources and preserve source dataset identifiers.",
+      "Audit schema, exact counts, geometry validity, nulls, and duplicate candidate keys.",
+      "Select a complete duplicate-safe feature identity and document secondary business identifiers.",
+      "Build a bounded-memory sample before attempting the full county snapshot.",
+      "Publish viewport chunks and search shards, then reconcile source, emitted, skipped, and joined counts.",
+      "Run county QC and keep visible activation disabled until every individual gate passes."
+    ]
+  },
+  "verifiedDiscovery": {
+    "officialPortal": "https://bcad.org/",
+    "propertySearch": "https://hgo.harrisgovern.com/",
+    "classicPropertySearchAndMap": "https://bexar.trueautomation.com/",
+    "sourceManifestPath": "data/county-adapters/bexar-county-tx/bexar-county-tx-source-manifest.json",
+    "remainingStatus": "bulk source, exact search payload fields, exact counts, exact join keys, viewport chunks, and search shards not verified"
+  },
+  "ownerEnrichment": {
+    "sourceLabel": "Bexar County GIS / BCAD-attributed Parcels layer",
+    "propertyRecordSource": "official county MapServer parcel attributes; current BCAD snapshot still needed",
+    "officialJoinKey": "OBJECTID unique snapshot identity; AcctNumb business identifier is incomplete and non-unique",
+    "noOfficialEmailFieldNote": "No official owner phone/email source is verified. Do not infer owner contact fields.",
+    "fields": {
+      "parcelId": "OBJECTID",
+      "gisParcelId": "OBJECTID",
+      "ownerName": "Owner",
+      "ownerName2": "source-needed",
+      "businessName": "DBA",
+      "ownerMailingAddress": "AddrLn1",
+      "ownerMailingAddress2": "AddrLn2 + AddrLn3",
+      "ownerCity": "AddrCity",
+      "ownerState": "AddrSt",
+      "ownerZip": "Zip + Zip4",
+      "ownerPhone": "No official owner phone field verified",
+      "ownerEmail": "No official owner email field verified"
+    }
+  },
+  "joinKeys": {
+    "primaryParcelAccount": "AcctNumb is missing on 5,461 features and has 188 duplicate excess occurrences",
+    "appraisal": "parcel attributes are co-located when AcctNumb is populated; current BCAD bulk snapshot remains required",
+    "land": "co-located Acres/LglAcres, values, YrBlt, GBA/TOT_GBA, and geometry measurements",
+    "secondaryParcelGisId": "OBJECTID is complete and unique across 710,772 audited snapshot features; refresh stability unverified",
+    "blockLabels": "source-needed: direct key, spatial join, or unavailable",
+    "dimensions": "source-needed: direct key, spatial join, generated measurement fallback, or unavailable",
+    "permits": "source-needed: parcel/account ID, address match, spatial join, or combination",
+    "zoning": "source-needed: parcel/account ID bridge first; spatial join for zoning polygons and case areas",
+    "floodplain": "source-needed: FEMA/local floodplain parcel centroid spatial join keyed to parcel/account IDs",
+    "developmentSignals": "source-needed: verified permit, plat, demolition, certificate, project, address, or spatial join evidence",
+    "migrationDemand": "source-needed: aggregate geography join, not individual people"
+  },
+  "verifiedCounts": {
+    "parcelGeometryFeatures": 710772,
+    "missingGeometry": 2,
+    "appraisalAccountRows": 705311,
+    "appraisalRows": 705311,
+    "landRows": 710770,
+    "appParcelChunks": 902,
+    "parcelSearchShards": 1066,
+    "sourcePermitRecords": 0,
+    "permitRowsJoined": 0,
+    "permitRowsUnmatched": 0,
+    "parcelsWithDevelopmentSignals": 0,
+    "migrationDemandGeographies": 0
+  },
+  "requiredOutputs": [
+    "output/bexar-county-tx/schema-report.md",
+    "output/bexar-county-tx/schema-report.json",
+    "output/bexar-county-tx/join-key-report.md",
+    "output/bexar-county-tx/full-parcel-access-report.md",
+    "output/bexar-county-tx/qa-report.md",
+    "output/bexar-county-tx/qa-report.json",
+    "output/bexar-county-tx/bexar-county-tx-parcels.geojson",
+    "output/bexar-county-tx/bexar-county-tx-parcels.pmtiles or output/bexar-county-tx/vector-tiles/",
+    "public/data/counties/bexar-county-tx/parcels/manifest.json",
+    "public/data/counties/bexar-county-tx/permits/manifest.json",
+    "public/data/counties/bexar-county-tx/developments/parcel-development-index.json",
+    "public/data/counties/bexar-county-tx/zoning/manifest.json",
+    "public/data/counties/bexar-county-tx/floodplain/manifest.json",
+    "public/data/counties/bexar-county-tx/demand/manifest.json"
+  ],
+  "productionGap": "Official parcel service, exact source count, snapshot identity, 902 viewport chunks, and 1,066 search shards are built with two unusable geometries reconciled. Current BCAD freshness, stable refresh identity, rights review, optional intelligence layers, PMTiles, and final activation remain gated.",
+  "pilotNotes": "Do not activate this county in the app. Do not redesign any pages. Fill official sources and exact join keys before any visible behavior changes."
+}

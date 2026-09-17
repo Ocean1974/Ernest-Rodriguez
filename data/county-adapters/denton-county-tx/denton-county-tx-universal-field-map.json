@@ -1,0 +1,35 @@
+{
+  "sourceCountyId": "denton-county-tx",
+  "sourceLayer": "LandRecords/Parcels_Appraisal/MapServer/1",
+  "schemaVersion": "wr-universal-parcel-v1",
+  "verifiedAt": "2026-08-06",
+  "identityPolicy": {
+    "runtimeFeatureId": "OBJECTID",
+    "sourceFeatureKey": "GlobalID",
+    "businessKeyStatus": "verified-source-feature-key",
+    "candidateFields": ["pid", "geoID"],
+    "reason": "GlobalID is non-null and unique across all 384,684 features; pid and geoID remain secondary because their nulls and duplicates are documented."
+  },
+  "fields": {
+    "parcelId": "GlobalID",
+    "accountNumber": "pid",
+    "gisParcelId": "geoID",
+    "ownerName": "name",
+    "ownerName2": "nameSecondary",
+    "businessName": "dba",
+    "ownerMailingAddress": "addrDeliveryLine",
+    "ownerMailingAddress2": "addrUnitDesignator",
+    "ownerCity": "addrCity",
+    "ownerState": "addrState",
+    "ownerZip": "addrZip",
+    "situsAddress": "situs_full_address",
+    "legalDescription": "legalDescription",
+    "zoning": "cad_zoning",
+    "landSquareFeet": "landTotalSqft",
+    "improvementValue": "improvementValue",
+    "marketValue": "ownerMarketValue",
+    "appraisedValue": "ownerAppraisedValue",
+    "yearBuilt": "imprvActualYearBuilt",
+    "buildingArea": "imprvMainArea"
+  }
+}

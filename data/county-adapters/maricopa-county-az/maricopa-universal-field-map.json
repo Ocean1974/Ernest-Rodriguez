@@ -1,0 +1,162 @@
+{
+  "county_id": "maricopa-county-az",
+  "schema_version": "wr-universal-parcel-v1",
+  "source_manifest": "data/county-adapters/maricopa-county-az/maricopa-county-parcel-source-manifest.json",
+  "primary_join_key": "APN",
+  "secondary_join_key": "OBJECTID",
+  "display_parcel_key": "APN_DASH",
+  "field_map": {
+    "sourceParcelId": {
+      "sourceField": "APN",
+      "notes": "Raw Assessor parcel number without dashes."
+    },
+    "accountNum": {
+      "sourceField": "APN",
+      "notes": "Use APN as the primary account/parcel join key."
+    },
+    "accountNumber": {
+      "sourceField": "APN",
+      "notes": "Alias for accountNum retained for app compatibility."
+    },
+    "gisParcelId": {
+      "sourceField": "OBJECTID",
+      "notes": "Feature service object id. APN remains the durable parcel/account key."
+    },
+    "displayParcelId": {
+      "sourceField": "APN_DASH",
+      "notes": "Formatted parcel number for cards and search display."
+    },
+    "address": {
+      "sourceField": "PHYSICAL_ADDRESS"
+    },
+    "city": {
+      "sourceField": "PHYSICAL_CITY"
+    },
+    "propertyZip": {
+      "sourceField": "PHYSICAL_ZIP"
+    },
+    "ownerName": {
+      "sourceField": "OWNER_NAME"
+    },
+    "ownerMailingAddress": {
+      "sourceField": "MAIL_ADDRESS"
+    },
+    "ownerMailingAddress2": {
+      "sourceField": "MAIL_ADDR2"
+    },
+    "ownerCity": {
+      "sourceField": "MAIL_CITY"
+    },
+    "ownerState": {
+      "sourceField": "MAIL_STATE"
+    },
+    "ownerZip": {
+      "sourceField": "MAIL_ZIP"
+    },
+    "ownerCountry": {
+      "sourceField": "MAIL_CNTRY"
+    },
+    "ownerPhone": {
+      "type": "placeholder",
+      "value": "",
+      "notes": "No official owner phone field verified."
+    },
+    "ownerEmail": {
+      "type": "placeholder",
+      "value": "",
+      "notes": "No official owner email field verified."
+    },
+    "zoning": {
+      "sourceField": "CITY_ZONING"
+    },
+    "cityJurisdiction": {
+      "sourceField": "JURISDICTION"
+    },
+    "landUseCode": {
+      "sourceField": "PUC"
+    },
+    "landSection": {
+      "sourceField": "STR"
+    },
+    "landAreaSqFt": {
+      "sourceField": "LAND_SIZE"
+    },
+    "yearBuilt": {
+      "sourceField": "CONST_YEAR"
+    },
+    "grossBuildingArea": {
+      "sourceField": "LIVING_SPACE"
+    },
+    "totalValue": {
+      "sourceField": "FCV_CUR",
+      "notes": "Current full cash value."
+    },
+    "limitedPropertyValue": {
+      "sourceField": "LPV_CUR"
+    },
+    "previousTotalValue": {
+      "sourceField": "FCV_PREV"
+    },
+    "deedNumber": {
+      "sourceField": "DEED_NUMBER"
+    },
+    "deedDate": {
+      "sourceField": "DEED_DATE"
+    },
+    "saleDate": {
+      "sourceField": "SALE_DATE"
+    },
+    "salePrice": {
+      "sourceField": "SALE_PRICE"
+    },
+    "subdivisionName": {
+      "sourceField": "SUBNAME"
+    },
+    "lotNumber": {
+      "sourceField": "LOT_NUM"
+    },
+    "blockId": {
+      "sourceField": "BLOCK"
+    },
+    "tract": {
+      "sourceField": "TRACT"
+    },
+    "perimeter": {
+      "sourceField": "Shape__Length"
+    },
+    "sourceArea": {
+      "sourceField": "Shape__Area"
+    }
+  },
+  "search_index_fields": [
+    "APN",
+    "APN_DASH",
+    "OWNER_NAME",
+    "PHYSICAL_ADDRESS",
+    "MAIL_ADDRESS",
+    "SUBNAME",
+    "MCRNUM",
+    "JURISDICTION"
+  ],
+  "parcel_window_groups": {
+    "source_verified": [
+      "identity",
+      "address",
+      "owner-contact-without-phone-email",
+      "appraisal-values",
+      "land-building",
+      "geometry",
+      "block-grid",
+      "zoning-text",
+      "source-lineage"
+    ],
+    "source_needed": [
+      "official-owner-phone-email",
+      "permits-certificates",
+      "floodplain",
+      "development-signals",
+      "migration-demand",
+      "production-viewport-search"
+    ]
+  }
+}

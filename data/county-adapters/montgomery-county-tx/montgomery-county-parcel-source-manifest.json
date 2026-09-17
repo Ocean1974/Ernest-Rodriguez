@@ -1,0 +1,84 @@
+{
+  "schemaVersion": "wr-montgomery-county-source-audit-v1",
+  "county_id": "montgomery-county-tx",
+  "county_name": "Montgomery County",
+  "state": "TX",
+  "fips": "48339",
+  "cad_name": "Montgomery Central Appraisal District",
+  "publishing_authority": "City of Conroe GIS",
+  "source_attribution": "MCAD",
+  "arcgis_rest_url": "https://maps.cityofconroe.org/cvharcgis/rest/services/ENG/MANAGE_KML_TAX_PARCELS_1051_WGS84/MapServer/0",
+  "layer_id": 0,
+  "layer_name": "MCAD",
+  "geometry_type": "esriGeometryPolygon",
+  "public_service_spatial_reference": {
+    "wkid": 102100,
+    "latest_wkid": 3857,
+    "label": "Web Mercator Auxiliary Sphere"
+  },
+  "service_capabilities": ["Map", "Query", "Data"],
+  "max_record_count": 1000,
+  "rights": {
+    "status": "unverified",
+    "storage": false,
+    "derivation": false,
+    "redistribution": false,
+    "commercial_use": false,
+    "evidence": "Service metadata attributes the layer to MCAD but exposes no explicit reusable license statement. No raw feature capture or production redistribution is authorized by this audit."
+  },
+  "observed_counts": {
+    "service_features": 276557,
+    "missing_geometry": 0,
+    "objectid_non_null": 276557,
+    "objectid_distinct": 276557,
+    "pin_non_null": 275102,
+    "pin_null": 1455,
+    "pin_distinct_non_null": 270927,
+    "pin_duplicate_excess": 4175,
+    "property_number_non_null": 273076,
+    "property_number_null": 3481,
+    "property_number_distinct_non_null": 269073,
+    "property_number_duplicate_excess": 4003,
+    "pin_property_number_both_non_null": 273076,
+    "largest_observed_duplicate_pair_count": 20,
+    "count_observed_at": "2026-09-05",
+    "county_completeness_certified": false
+  },
+  "identity_findings": {
+    "snapshot_unique_feature_key": "OBJECTID",
+    "snapshot_unique_feature_key_status": "unique-in-observed-service-snapshot-not-certified-stable-across-refreshes",
+    "business_key_candidates": ["PIN", "PropertyNumber"],
+    "pin_status": "not-unique-and-incomplete",
+    "property_number_status": "not-unique-and-incomplete",
+    "pin_property_number_composite_status": "not-unique",
+    "composite_duplicate_proof": {
+      "pin": "R65616",
+      "property_number": "2180-00-00200",
+      "feature_count": 20
+    },
+    "production_county_parcel_id": "unresolved"
+  },
+  "freshness_findings": {
+    "edit_date_min": "2021-05-05T14:17:11.000Z",
+    "edit_date_max": "2021-05-05T14:17:11.000Z",
+    "status": "stale-or-bulk-stamped-unresolved",
+    "note": "Every observed EditDate aggregate resolves to the same 2021 timestamp. This field cannot certify current parcel freshness without publisher clarification."
+  },
+  "schema_fields": [
+    "PIN", "PropertyNumber", "fStateCode", "TotalSqFtLivingArea", "NeighborhoodCode", "PropertyAddress", "LegalDescription", "LegalLocationDesc", "SubBlock", "SubLot", "PartyAddress", "PartyName", "EditDate", "Shape.STArea()", "Shape.STLength()", "OBJECTID", "Tract", "Acres", "TaxingUnitList", "Shape"
+  ],
+  "activation": {
+    "authorized": false,
+    "status": "blocked",
+    "blockers": [
+      "Explicit storage, derivation, redistribution, and commercial-use rights are not verified.",
+      "PIN and PropertyNumber are incomplete and non-unique; their pair is also non-unique.",
+      "OBJECTID is unique only within the observed service snapshot and is not proven stable across source refreshes.",
+      "County completeness is not certified.",
+      "The only exposed EditDate aggregate is a uniform 2021 timestamp, so freshness is unresolved.",
+      "An official bulk appraisal export and deterministic geometry-to-appraisal relationship are not verified."
+    ]
+  },
+  "render_directly_in_browser": false
+}
+

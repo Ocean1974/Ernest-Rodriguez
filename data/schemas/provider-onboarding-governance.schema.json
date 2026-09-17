@@ -1,0 +1,32 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://white-rabbit.local/schemas/provider-onboarding-governance.schema.json",
+  "title": "White Rabbit provider onboarding and accounting governance contracts",
+  "oneOf": [
+    { "$ref": "#/$defs/taxonomy" },
+    { "$ref": "#/$defs/accountMapping" },
+    { "$ref": "#/$defs/accountingResult" },
+    { "$ref": "#/$defs/qualityReport" },
+    { "$ref": "#/$defs/onboardingWorkflow" },
+    { "$ref": "#/$defs/onboardingReadiness" },
+    { "$ref": "#/$defs/incidentPolicy" },
+    { "$ref": "#/$defs/incident" },
+    { "$ref": "#/$defs/lifecyclePolicy" },
+    { "$ref": "#/$defs/lifecycleReport" },
+    { "$ref": "#/$defs/governanceState" }
+  ],
+  "$defs": {
+    "digest": { "type": "string", "pattern": "^[a-f0-9]{64}$" },
+    "taxonomy": { "type": "object", "required": ["schemaVersion", "id", "version", "accounts", "createdAt", "taxonomySha256"], "properties": { "schemaVersion": { "const": "wr-canonical-real-estate-account-taxonomy-v1" }, "taxonomySha256": { "$ref": "#/$defs/digest" } } },
+    "accountMapping": { "type": "object", "required": ["schemaVersion", "id", "organizationId", "connectorId", "providerId", "vendorProfileId", "version", "taxonomyId", "taxonomyVersion", "taxonomySha256", "mappings", "effectiveFrom", "effectiveTo", "createdByUserId", "createdAt", "approvedByUserId", "approvedAt", "mappingSha256"], "properties": { "schemaVersion": { "const": "wr-vendor-account-mapping-v1" }, "mappingSha256": { "$ref": "#/$defs/digest" } } },
+    "accountingResult": { "type": "object", "required": ["schemaVersion", "organizationId", "connectorId", "providerId", "mappingProfileId", "mappingSha256", "taxonomySha256", "sourceStatementId", "assetId", "periodStart", "periodEnd", "currency", "mappedEntries", "unmappedEntries", "duplicateSourceAccountCodes", "missingRequiredSourceCodes", "sourceEntryCount", "mappedSourceEntryCount", "status", "resultSha256"], "properties": { "schemaVersion": { "const": "wr-canonical-accounting-result-v1" }, "status": { "enum": ["complete", "partial"] }, "resultSha256": { "$ref": "#/$defs/digest" } } },
+    "qualityReport": { "type": "object", "required": ["schemaVersion", "organizationId", "connectorId", "mappingProfileId", "mappingSha256", "canonicalResultSha256", "evaluatedAt", "status", "activationAuthorized", "score", "minimumScore", "metrics", "canonicalTotals", "controlChecks", "blockers", "qualitySha256"], "properties": { "schemaVersion": { "const": "wr-reconciliation-quality-report-v1" }, "status": { "enum": ["passed", "failed"] }, "qualitySha256": { "$ref": "#/$defs/digest" } } },
+    "onboardingWorkflow": { "type": "object", "required": ["schemaVersion", "id", "organizationId", "connectorId", "connectorSha256", "vendorProfileId", "revision", "status", "stages", "createdByUserId", "createdAt", "updatedAt", "workflowSha256"], "properties": { "schemaVersion": { "const": "wr-provider-onboarding-workflow-v1" }, "status": { "enum": ["in-progress", "production-ready"] }, "workflowSha256": { "$ref": "#/$defs/digest" } } },
+    "onboardingReadiness": { "type": "object", "required": ["schemaVersion", "organizationId", "connectorId", "workflowId", "workflowSha256", "evaluatedAt", "status", "activationAuthorized", "expiredStageIds", "unapprovedStageIds", "readinessSha256"], "properties": { "schemaVersion": { "const": "wr-provider-onboarding-readiness-v1" }, "status": { "enum": ["in-progress", "production-ready", "suspended"] }, "readinessSha256": { "$ref": "#/$defs/digest" } } },
+    "incidentPolicy": { "type": "object", "required": ["schemaVersion", "id", "organizationId", "rules", "createdAt", "policySha256"], "properties": { "schemaVersion": { "const": "wr-provider-incident-policy-v1" }, "policySha256": { "$ref": "#/$defs/digest" } } },
+    "incident": { "type": "object", "required": ["schemaVersion", "id", "organizationId", "connectorId", "errorCode", "severity", "queue", "fingerprint", "status", "occurrenceCount", "firstOccurredAt", "lastOccurredAt", "acknowledgeBy", "resolveBy", "evidenceRefs", "acknowledgedByUserId", "acknowledgedAt", "resolvedByUserId", "resolvedAt", "resolutionEvidenceRefs", "incidentSha256"], "properties": { "schemaVersion": { "const": "wr-provider-incident-v1" }, "status": { "enum": ["open", "acknowledged", "resolved"] }, "incidentSha256": { "$ref": "#/$defs/digest" } } },
+    "lifecyclePolicy": { "type": "object", "required": ["schemaVersion", "adapterMaximumAgeDays", "vendorPackMaximumAgeDays", "mappingMaximumAgeDays", "qualityMaximumAgeDays", "drillMaximumAgeDays", "sloMaximumAgeDays", "warningDays"], "properties": { "schemaVersion": { "const": "wr-certification-lifecycle-policy-v1" } } },
+    "lifecycleReport": { "type": "object", "required": ["schemaVersion", "organizationId", "connectorId", "connectorSha256", "evaluatedAt", "status", "activationAuthorized", "artifacts", "blockers", "warnings", "policy", "reportSha256"], "properties": { "schemaVersion": { "const": "wr-certification-lifecycle-report-v1" }, "status": { "enum": ["current", "warning", "suspended"] }, "reportSha256": { "$ref": "#/$defs/digest" } } },
+    "governanceState": { "type": "object", "required": ["schemaVersion", "organizationId", "revision", "connectors", "onboardingWorkflows", "incidents", "lifecycleReports", "accountMappings", "qualityReports", "updatedAt", "stateSha256"], "properties": { "schemaVersion": { "const": "wr-provider-governance-state-v1" }, "stateSha256": { "$ref": "#/$defs/digest" } } }
+  }
+}

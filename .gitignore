@@ -1,0 +1,49 @@
+# Dependencies and compiled application output
+node_modules/
+dist/
+
+# Local environment values. Commit only the safe template.
+.env
+.env.*
+!.env.example
+
+# Local tool/runtime state
+.artifact-runtime/
+.browser-runtime/
+.codex-tools/
+.restore-*
+tmp/
+
+# Historical local handoff/savepoint notes (retained on Ernest's computer)
+SAVEPOINT-*.md
+CODEX_HANDOFF_WHITE_RABBIT.txt
+CODEX_RECOVERY_PLAYBOOK_WHITE_RABBIT.txt
+white-rabbit-codex-*.txt
+
+# Editor and operating-system files
+.DS_Store
+Thumbs.db
+desktop.ini
+.idea/
+.vscode/
+
+# Logs and local development-server state
+*.log
+*.pid
+*.out
+*.err
+
+# Generated pipeline artifacts. Rebuild these or copy the shared data bundle.
+output/
+public/data/
+
+# Raw, extracted, and processed local data copies
+data/raw/
+data/extracted/
+data/processed/
+data/permits/raw/
+data/permits/processed/
+
+# Source archives and recovery packages
+*.zip
+*.ZIP

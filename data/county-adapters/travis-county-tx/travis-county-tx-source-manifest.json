@@ -1,0 +1,77 @@
+{
+  "version": "wr-county-source-manifest-v1",
+  "generatedAt": "2026-09-08T00:00:00.000Z",
+  "county_id": "travis-county-tx",
+  "county_name": "Travis County",
+  "state": "TX",
+  "fips": "48453",
+  "status": "official-monthly-parcel-appraisal-service-verified",
+  "officialSourceStatus": "verified",
+  "official_sources": {
+    "appraisal_district": "https://traviscad.org/",
+    "public_information": "https://traviscad.org/publicinformation",
+    "supplemental_appraisal_export": "https://traviscad.org/wp-content/largefiles/travis_SUPP%20333_2026_WEBSITE%20EXPORT_Renamed.zip",
+    "export_layouts": "https://traviscad.org/wp-content/largefiles/Website_Legacy8.0.33-AppraisalExportLayout_06182026.zip",
+    "improvement_detail_export": "https://traviscad.org/wp-content/largefiles/improvement_detail_2026.zip",
+    "property_search": "https://traviscad.org/propertysearch",
+    "parcel_map_service": "https://gis.traviscountytx.gov/server1/rest/services/Boundaries_and_Jurisdictions/TCAD/MapServer/0",
+    "service_item": "https://gis.traviscountytx.gov/server1/rest/services/Boundaries_and_Jurisdictions/TCAD/MapServer/info/iteminfo",
+    "service_owner": "Travis County Transportation and Natural Resources GIS",
+    "service_description": "TCAD parcel data assembled and refreshed monthly by Travis County TNR"
+  },
+  "verified_counts": {
+    "parcel_geometry_features": 386682,
+    "geometry_missing_features": 0,
+    "object_id_non_null_features": 386682,
+    "object_id_distinct_values": 386682,
+    "prop_id_missing_features": 13130,
+    "prop_id_non_null_features": 373552,
+    "prop_id_distinct_values": 373524,
+    "prop_id_duplicate_excess": 28,
+    "geo_id_missing_features": 13130,
+    "geo_id_non_null_features": 373552,
+    "geo_id_distinct_values": 373464,
+    "geo_id_duplicate_excess": 88,
+    "owner_id_missing_features": 13130,
+    "owner_id_non_null_features": 373552,
+    "owner_id_distinct_values": 326827,
+    "certified_property_rows": 493300,
+    "certified_property_distinct_prop_ids": 493222,
+    "certified_improvement_detail_rows": 3310123,
+    "certified_enriched_parcel_features": 373538,
+    "certified_unmatched_parcel_features": 13144,
+    "count_verified_at": "2026-09-08",
+    "status": "live-service-count-geometry-and-key-audit-verified"
+  },
+  "join_keys": {
+    "snapshot_feature_identity": "OBJECTID is non-null and unique for all 386,682 features in the audited service snapshot",
+    "primary_parcel_account": "PROP_ID is the primary appraisal account candidate but is absent on 13,130 polygons and has 28 duplicate excess occurrences",
+    "secondary_gis_id": "geo_id is the secondary searchable parcel identifier but is absent on 13,130 polygons and has 88 duplicate excess occurrences",
+    "owner_appraisal": "Owner and appraisal fields are attributes on the same parcel feature when PROP_ID is populated; no external join is required",
+    "refresh_warning": "OBJECTID persistence across monthly source refreshes is not yet verified, so activation remains gated"
+  },
+  "query": {
+    "primary_where": "1=1",
+    "order_by": "OBJECTID",
+    "max_record_count": 1000,
+    "geometry_out_sr": 4326,
+    "out_fields": ["OBJECTID", "PROP_ID", "geo_id", "situs_num", "situs_street", "situs_street_prefx", "situs_street_suffix", "situs_city", "situs_zip", "situs_address", "py_address", "abs_subdv_cd", "sub_dec", "land_state_cd", "land_type_desc", "entities", "tcad_acres", "GIS_acres", "legal_acre", "F1year_imprv", "market_value", "appraised_val", "assessed_val", "imprv_homesite_val", "imprv_non_homesite_val", "land_homesite_val", "land_non_homesite_val", "py_owner_id", "py_owner_name", "deed_num", "deed_book_id", "deed_book_page", "deed_date", "legal_desc", "timber_use", "timber_market", "hyperlink", "LOTS", "CENTROID_X", "CENTROID_Y", "Shape.STArea()", "Shape.STLength()"]
+  },
+  "verified_field_groups": {
+    "identity": ["OBJECTID", "PROP_ID", "geo_id"],
+    "owner": ["py_owner_id", "py_owner_name"],
+    "situs": ["situs_address", "py_address", "situs_num", "situs_street", "situs_city", "situs_zip"],
+    "land_building": ["tcad_acres", "GIS_acres", "legal_acre", "F1year_imprv", "Shape.STArea()", "Shape.STLength()"],
+    "value": ["market_value", "appraised_val", "assessed_val", "imprv_homesite_val", "imprv_non_homesite_val", "land_homesite_val", "land_non_homesite_val"],
+    "legal": ["legal_desc", "abs_subdv_cd", "sub_dec", "LOTS", "deed_num", "deed_date"]
+  },
+  "null_record_policy": "Retain all 13,130 geometry-only polygons; keep unavailable owner, value, and appraisal identifiers blank.",
+  "remaining_blockers": [
+    "verify OBJECTID persistence across a later monthly refresh or establish a durable composite/spatial identity crosswalk",
+    "run county QC and production tile handoff",
+    "verify and join permits, zoning, floodplain, development, and demand sources",
+    "supplement the monthly map layer with TCAD certified appraisal exports where additional building or mailing fields are required"
+  ],
+  "completion_impact": "full-parcel-and-appraisal-service-build-ready",
+  "activation": "do-not-activate"
+}

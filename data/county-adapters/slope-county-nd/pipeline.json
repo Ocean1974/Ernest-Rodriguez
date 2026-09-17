@@ -1,0 +1,107 @@
+{
+  "id": "slope-county-nd-ingestion",
+  "countyAdapter": "data/county-adapters/slope-county-nd/adapter.json",
+  "universalParcelSchema": "data/schemas/universal-parcel.schema.json",
+  "defaultMode": "plan",
+  "enabledForProduction": false,
+  "scaffoldOnly": true,
+  "steps": [
+    {
+      "id": "verify-official-sources",
+      "label": "Verify official parcel and assessor/appraiser sources",
+      "command": "echo Verify official sources for slope-county-nd.",
+      "requiredOutputs": [
+        "output/slope-county-nd/schema-report.md",
+        "output/slope-county-nd/schema-report.json"
+      ]
+    },
+    {
+      "id": "verify-join-keys",
+      "label": "Document exact parcel/account/GIS join keys",
+      "command": "echo Document exact join keys for slope-county-nd.",
+      "requiredOutputs": [
+        "output/slope-county-nd/join-key-report.md"
+      ]
+    },
+    {
+      "id": "build-parcel-geojson",
+      "label": "Build universal county parcel GeoJSON",
+      "command": "echo Build slope-county-nd universal parcel GeoJSON after source verification.",
+      "requiredOutputs": [
+        "output/slope-county-nd/slope-county-nd-parcels.geojson",
+        "output/slope-county-nd/full-parcel-access-report.md"
+      ]
+    },
+    {
+      "id": "build-parcel-service",
+      "label": "Build viewport chunks and search shards",
+      "command": "echo Build viewport-safe parcel service for slope-county-nd.",
+      "requiredOutputs": [
+        "public/data/counties/slope-county-nd/parcels/manifest.json"
+      ]
+    },
+    {
+      "id": "build-owner-matches",
+      "label": "Build owner/appraisal parcel joins",
+      "command": "echo Build owner and appraisal joins for slope-county-nd.",
+      "requiredOutputs": [
+        "output/slope-county-nd/slope-county-nd-owner-appraisal-index.json"
+      ]
+    },
+    {
+      "id": "build-permit-service",
+      "label": "Normalize permits and certificates of occupancy",
+      "command": "echo Build permits and CO pipeline for slope-county-nd.",
+      "requiredOutputs": [
+        "public/data/counties/slope-county-nd/permits/manifest.json"
+      ]
+    },
+    {
+      "id": "build-zoning-index",
+      "label": "Build zoning parcel index",
+      "command": "echo Build zoning joins for slope-county-nd.",
+      "requiredOutputs": [
+        "public/data/counties/slope-county-nd/zoning/manifest.json"
+      ]
+    },
+    {
+      "id": "build-floodplain-index",
+      "label": "Build floodplain parcel index",
+      "command": "echo Build floodplain joins for slope-county-nd.",
+      "requiredOutputs": [
+        "public/data/counties/slope-county-nd/floodplain/manifest.json"
+      ]
+    },
+    {
+      "id": "build-development-index",
+      "label": "Build development-signal parcel index",
+      "command": "echo Build development index for slope-county-nd.",
+      "requiredOutputs": [
+        "public/data/counties/slope-county-nd/developments/parcel-development-index.json"
+      ]
+    },
+    {
+      "id": "build-migration-demand",
+      "label": "Build aggregate migration and demand index",
+      "command": "echo Build aggregate demand joins for slope-county-nd.",
+      "requiredOutputs": [
+        "public/data/counties/slope-county-nd/demand/manifest.json"
+      ]
+    },
+    {
+      "id": "validate",
+      "label": "Run county QC",
+      "command": "npm.cmd run county:qc",
+      "requiredOutputs": [
+        "output/county-qc/slope-county-nd.json",
+        "output/county-qc/slope-county-nd.md"
+      ]
+    }
+  ],
+  "productionTileStep": {
+    "id": "build-pmtiles",
+    "label": "Build PMTiles/vector tiles after verified parcel GeoJSON exists",
+    "expectedOutput": "output/slope-county-nd/slope-county-nd-parcels.pmtiles"
+  },
+  "uiConstraint": "Do not redesign or activate White Rabbit pages while this county remains a pipeline scaffold."
+}

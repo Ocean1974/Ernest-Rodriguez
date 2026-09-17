@@ -1,0 +1,39 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://white-rabbit.local/schemas/property-graph.schema.json",
+  "title": "White Rabbit Canonical Property Graph",
+  "type": "object",
+  "required": ["schemaVersion", "propertyIds", "entities", "transactions", "listings", "edges", "conflicts", "generatedAt"],
+  "properties": {
+    "schemaVersion": { "const": "wr-property-graph-state-v1" },
+    "propertyIds": { "type": "array", "items": { "type": "string", "pattern": "^wrp:v1:[^:]+:.+$" }, "uniqueItems": true },
+    "entities": { "type": "array" },
+    "transactions": { "type": "array", "items": { "$ref": "#/$defs/transaction" } },
+    "listings": { "type": "array", "items": { "$ref": "#/$defs/listing" } },
+    "edges": { "type": "array", "items": { "$ref": "#/$defs/edge" } },
+    "conflicts": { "type": "array" },
+    "generatedAt": { "type": "string", "format": "date-time" }
+  },
+  "$defs": {
+    "source": {
+      "type": "object",
+      "required": ["sourceType", "providerId", "datasetId", "sourceVersion", "recordId", "licenseId", "licenseStatus", "observedAt", "availableAt", "expiresAt", "contentSha256", "priority", "lineage"],
+      "properties": { "sourceType": { "enum": ["official-record", "assessor", "recorder", "zoning", "permit", "mls", "broker", "user-provided", "unknown"] }, "licenseStatus": { "enum": ["authorized", "restricted", "expired", "unknown"] }, "priority": { "type": "number", "minimum": 0, "maximum": 100 } }
+    },
+    "transaction": {
+      "type": "object",
+      "required": ["schemaVersion", "id", "whiteRabbitPropertyId", "transactionType", "recordedAt", "effectiveAt", "consideration", "grantorEntityIds", "granteeEntityIds", "sourceRecordId", "source"],
+      "properties": { "schemaVersion": { "const": "wr-property-transaction-v1" }, "whiteRabbitPropertyId": { "type": "string", "pattern": "^wrp:v1:[^:]+:.+$" }, "transactionType": { "enum": ["sale", "transfer", "refinance", "foreclosure", "deed", "other"] }, "source": { "$ref": "#/$defs/source" } }
+    },
+    "listing": {
+      "type": "object",
+      "required": ["schemaVersion", "id", "whiteRabbitPropertyId", "listingStatus", "askingPrice", "listedAt", "offMarketAt", "brokerEntityIds", "sourceRecordId", "source"],
+      "properties": { "schemaVersion": { "const": "wr-property-listing-v1" }, "whiteRabbitPropertyId": { "type": "string", "pattern": "^wrp:v1:[^:]+:.+$" }, "listingStatus": { "enum": ["coming-soon", "active", "pending", "sold", "expired", "withdrawn", "off-market"] }, "source": { "$ref": "#/$defs/source" } }
+    },
+    "edge": {
+      "type": "object",
+      "required": ["schemaVersion", "id", "edgeType", "fromId", "toId", "validFrom", "validTo", "confidence", "sourceReferences", "status", "conflictIds"],
+      "properties": { "schemaVersion": { "const": "wr-property-graph-edge-v1" }, "edgeType": { "enum": ["owned-by", "transferred-by", "transferred-to", "recorded-as", "listed-as", "represented-by", "secured-by", "related-to"] }, "confidence": { "type": "number", "minimum": 0, "maximum": 1 }, "status": { "enum": ["asserted", "disputed"] } }
+    }
+  }
+}

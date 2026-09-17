@@ -1,0 +1,96 @@
+{
+  "schemaVersion": "wr-platform-capability-registry-v1",
+  "organizationId": "white-rabbit-platform",
+  "capabilities": [
+    {
+      "stage": 1,
+      "capabilityId": "production-geospatial-delivery",
+      "name": "Production geospatial delivery",
+      "featureGates": ["pmtilesRuntime"],
+      "foundationEvidence": ["output/pmtiles-readiness.json", "output/geospatial-delivery-audit.json"],
+      "requiredReleaseEvidence": ["artifact-verification", "http-range-delivery", "slo-report", "load-resilience", "rollback-drill", "security-review", "product-approval"],
+      "externalBlockers": ["No verified PMTiles artifact exists because Tippecanoe is not installed in this workspace."]
+    },
+    {
+      "stage": 2,
+      "capabilityId": "canonical-property-intelligence",
+      "name": "Canonical property intelligence",
+      "featureGates": ["canonicalPropertyGraph", "licensedPropertyEventIngestion", "durablePropertyGraph", "transactionHistory", "listingHistory", "entityResolution", "feedConnectorCertification"],
+      "foundationEvidence": ["output/platform-growth-tranche-17-report.json", "output/platform-growth-tranche-18-report.json"],
+      "requiredReleaseEvidence": ["feed-certification", "source-coverage", "slo-report", "load-resilience", "recovery-drill", "security-review", "product-approval"],
+      "externalBlockers": ["No contracted transaction/listing feed has been connected or certified.", "No supported production graph/event-store topology has been deployed."]
+    },
+    {
+      "stage": 3,
+      "capabilityId": "explainable-ai-acquisition-analyst",
+      "name": "Explainable AI acquisition analyst",
+      "featureGates": ["explainableQueryExecution", "searchBarQueryPlanning", "productionCandidateRetrieval", "propertyIntelligenceQueryService", "explainableSearchRanking", "stableSearchPagination"],
+      "foundationEvidence": ["output/platform-growth-tranche-17-report.json", "output/platform-growth-tranche-18-report.json", "output/tarrant/search-readiness/tarrant-candidate-adapter-certification.json"],
+      "requiredReleaseEvidence": ["candidate-adapter-certification", "search-compatibility", "slo-report", "load-resilience", "security-review", "rollback-drill", "product-approval"],
+      "externalBlockers": ["A server-side Tarrant artifact adapter now passes bounded compatibility probes, but it is not deployed or independently security-reviewed and parcel freshness remains unknown.", "Representative sustained-load, rollback, and product-approval evidence is incomplete."]
+    },
+    {
+      "stage": 4,
+      "capabilityId": "opportunity-briefs",
+      "name": "Opportunity Briefs",
+      "featureGates": ["opportunityBriefs"],
+      "foundationEvidence": ["output/cutting-edge-platform-roadmap.md", "output/acquisition-handoff-readiness.json"],
+      "requiredReleaseEvidence": ["profile-source-certification", "fact-lineage-audit", "export-validation", "security-review", "product-approval", "rollback-drill"],
+      "externalBlockers": ["The priority-decision-to-brief handoff passes a synthetic atomic certification, but verified production profile retrieval and export adapters are not connected.", "Production fact-lineage, export-renderer, security, rollback, and product approvals remain incomplete."]
+    },
+    {
+      "stage": 5,
+      "capabilityId": "scenario-underwriting",
+      "name": "Scenario underwriting",
+      "featureGates": ["underwriting", "underwritingExports", "marketComparables", "comparableAdjustments", "underwritingGovernance", "underwritingApprovals"],
+      "foundationEvidence": ["output/platform-growth-tranche-16-report.json", "output/acquisition-handoff-readiness.json"],
+      "requiredReleaseEvidence": ["feed-certification", "comparable-backtest", "approval-separation-audit", "security-review", "slo-report", "rollback-drill", "product-approval"],
+      "externalBlockers": ["The governed handoff creates only a draft scenario from signed point-in-time evidence, but licensed production comparable feeds are not connected.", "Property-type/geography holdouts, independent production review, security, rollback, and product approvals remain incomplete."]
+    },
+    {
+      "stage": 6,
+      "capabilityId": "explainable-predictive-signals",
+      "name": "Explainable predictive signals",
+      "featureGates": ["opportunitySignals", "predictiveSignalExpansion", "pointInTimeFeatures", "predictiveModelValidation"],
+      "foundationEvidence": ["output/cutting-edge-platform-roadmap.md", "output/opportunity-decision-workflow-readiness.json"],
+      "requiredReleaseEvidence": ["historical-source-certification", "temporal-backtest", "geographic-holdout", "calibration-report", "drift-baseline", "security-review", "product-approval", "rollback-drill"],
+      "externalBlockers": ["The point-in-time decision ledger and watchlist alert path pass a synthetic certification scenario, but verified historical production observation and profile providers are not connected.", "Production temporal/geographic holdouts, calibration, fairness, drift, security, and rollback evidence are incomplete."]
+    },
+    {
+      "stage": 7,
+      "capabilityId": "real-time-monitoring-alerts",
+      "name": "Real-time monitoring and alerts",
+      "featureGates": ["changeAlerts", "alertRouting", "externalAlertDelivery", "alertDeliveryWorkers", "alertProviderExecution", "authenticatedAlertProviders", "signedWebhookDelivery", "alertSchedulerRunner"],
+      "foundationEvidence": ["output/cutting-edge-platform-roadmap.md", "output/user-intelligence-workflow-readiness.json"],
+      "requiredReleaseEvidence": ["provider-sandbox-certification", "delivery-receipt-audit", "slo-report", "load-resilience", "security-review", "recovery-drill", "product-approval"],
+      "externalBlockers": ["No sandbox email/webhook provider account is connected.", "Provider health, receipt, and production metrics evidence is absent."]
+    },
+    {
+      "stage": 8,
+      "capabilityId": "optional-3d-development-analysis",
+      "name": "Optional 3D development analysis",
+      "featureGates": ["development3dAnalysis", "developmentMassing", "terrainStreaming"],
+      "foundationEvidence": ["output/cutting-edge-platform-roadmap.md"],
+      "requiredReleaseEvidence": ["terrain-source-certification", "building-source-certification", "accuracy-validation", "webgl-compatibility", "load-resilience", "rollback-drill", "product-approval"],
+      "externalBlockers": ["Verified terrain and building sources are not connected.", "Target-device WebGL compatibility and performance evidence is incomplete."]
+    },
+    {
+      "stage": 9,
+      "capabilityId": "deal-workflow-collaboration",
+      "name": "Deal workflow and collaboration",
+      "featureGates": ["savedSearches", "watchlists", "organizations", "dealCollaboration", "propertyTasksAndNotes", "durablePersistence", "tenantIsolation", "authenticatedPersistence", "encryptedTenantBackups", "pointInTimeRestore", "retentionAutomation", "operationalHealthMonitoring"],
+      "foundationEvidence": ["output/platform-growth-tranche-15-report.json", "output/user-intelligence-workflow-readiness.json", "output/acquisition-handoff-readiness.json"],
+      "requiredReleaseEvidence": ["identity-provider-certification", "kms-certification", "recovery-drill", "tenant-penetration-test", "slo-report", "load-resilience", "security-review", "product-approval"],
+      "externalBlockers": ["Saved-search monitoring and acquisition handoff persistence pass local certification; the committee workspace implementation is not registry evidence until its hardened executable certification can be rerun.", "Production identity, KMS, committee-package rendering, malware attestation, object storage, supported database topology, recovery, sustained-load, rollback, security, product approval, and tenant-penetration evidence remain incomplete."]
+    },
+    {
+      "stage": 10,
+      "capabilityId": "county-expansion",
+      "name": "County expansion",
+      "featureGates": ["priorityCountyActivation"],
+      "foundationEvidence": ["output/county-activation-manifest.json", "output/county-expansion-readiness-report.json"],
+      "requiredReleaseEvidence": ["official-source-certification", "exact-count-audit", "join-key-audit", "dcad-parity", "clean-qc", "freshness-audit", "viewport-search-load", "rollback-drill", "product-approval"],
+      "externalBlockers": ["All 10 priority counties remain blocked.", "Parcel freshness is unknown for all 10 priority counties."]
+    }
+  ]
+}

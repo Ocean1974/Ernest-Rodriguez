@@ -1,0 +1,58 @@
+{
+  "county_id": "brazoria-county-tx",
+  "county_name": "Brazoria County",
+  "state": "TX",
+  "fips": "48039",
+  "cad_name": "Brazoria County Appraisal District",
+  "source_discovery_status": "official-site-property-search-and-map-discovered",
+  "retrieved_at": "2026-06-29",
+  "ui_constraint": "Do not redesign White Rabbit pages while expanding county parcel intelligence plumbing.",
+  "official_portal": {
+    "label": "Brazoria Central Appraisal District official site",
+    "url": "https://brazoriacad.org/",
+    "source_type": "appraisal-district-site",
+    "verification_status": "official-site-verified",
+    "notes": "Official site exposes property search, interactive map, online portal, mapping department, tax roll and GIS downloads, and says its appraisal roll contains taxable properties within Brazoria County."
+  },
+  "property_search": {
+    "label": "Brazoria CAD property search",
+    "url": "https://esearch.brazoriacad.org/",
+    "source_type": "property-search",
+    "verification_status": "linked-from-official-site"
+  },
+  "interactive_map": {
+    "label": "Brazoria CAD interactive map",
+    "url": "https://gis.bisclient.com/",
+    "source_type": "interactive-map",
+    "verification_status": "linked-from-official-site"
+  },
+  "candidate_bulk_or_report_leads": [
+    "Mapping department",
+    "Tax roll downloads",
+    "GIS downloads"
+  ],
+  "verified_counts": {
+    "parcel_geometry_features": 0,
+    "appraisal_property_rows": 0,
+    "count_verified_at": null,
+    "status": "not-verified"
+  },
+  "join_keys": {
+    "primary_parcel_account": "unverified",
+    "secondary_gis_id": "unverified",
+    "owner_appraisal": "unverified"
+  },
+  "bulk_source_status": {
+    "parcel_geometry_bulk": "not-verified",
+    "owner_appraisal_bulk": "not-verified",
+    "download_terms": "tax roll/GIS download files not inspected"
+  },
+  "remaining_blockers": [
+    "tax roll/GIS download files not inspected",
+    "exact parcel count not verified",
+    "exact geometry-to-appraisal join key not verified",
+    "viewport chunks and search shards not built",
+    "QC report not built"
+  ],
+  "completion_impact": "source-discovery-started"
+}

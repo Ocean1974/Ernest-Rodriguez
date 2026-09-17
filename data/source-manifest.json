@@ -1,0 +1,92 @@
+{
+  "generatedAt": "2026-05-16T00:00:00.000Z",
+  "purpose": "Documents the local source data layout expected by the White Rabbit parcel and permit pipeline.",
+  "canonicalSourceDirectories": {
+    "parcelPipeline": "data/raw",
+    "permitPipelineRaw": "data/permits/raw",
+    "permitPipelineProcessed": "data/permits/processed"
+  },
+  "parcelSources": [
+    {
+      "id": "PARCEL_GEOM",
+      "canonicalPath": "data/raw/PARCEL_GEOM.zip"
+    },
+    {
+      "id": "DCAD2026_CURRENT",
+      "canonicalPath": "data/raw/DCAD2026_CURRENT.ZIP"
+    },
+    {
+      "id": "BLKID",
+      "canonicalPath": "data/raw/BLKID.zip"
+    },
+    {
+      "id": "ParcelDimension",
+      "canonicalPath": "data/raw/ParcelDimension.zip"
+    }
+  ],
+  "permitSources": [
+    {
+      "id": "e7gq-4sah",
+      "name": "Dallas OpenData Building Permits",
+      "canonicalPath": "data/permits/raw/e7gq-4sah.json"
+    },
+    {
+      "id": "9qet-qt9e",
+      "name": "Dallas OpenData Building Inspection Certificates Of Occupancy",
+      "canonicalPath": "data/permits/raw/9qet-qt9e.json"
+    },
+    {
+      "id": "louisville-building-permit-applications",
+      "name": "Louisville Metro All Building Permit Applications",
+      "canonicalPath": "data/permits/raw/louisville-building-permit-applications.json"
+    },
+    {
+      "id": "louisville-active-construction-permits",
+      "name": "Louisville Metro KY - Active Construction Permits",
+      "sourceUrl": "https://services1.arcgis.com/79kfd2K6fskCAkyg/arcgis/rest/services/active_construction_permits/FeatureServer/0",
+      "canonicalPath": "data/permits/raw/jefferson-ky/active-construction-permits.json",
+      "status": "source-verified-parcel-join-pending",
+      "verifiedRecordCount": 23543,
+      "countVerifiedAt": "2026-06-10"
+    },
+    {
+      "id": "louisville-property-maintenance-case-occupancy",
+      "name": "Louisville Metro KY - Property Maintenance Case Occupancy",
+      "sourceUrl": "https://services1.arcgis.com/79kfd2K6fskCAkyg/arcgis/rest/services/pm_occupancy/FeatureServer/0",
+      "canonicalPath": "data/permits/raw/jefferson-ky/property-maintenance-case-occupancy.json",
+      "status": "source-identified-parcel-join-pending"
+    }
+  ],
+  "zoningSources": [
+    {
+      "id": "lojic-jefferson-county-ky-zoning",
+      "name": "LOJIC Jefferson County KY Zoning",
+      "sourceUrl": "https://gis.lojic.org/maps/rest/services/LojicSolutions/OpenDataDevelopment/MapServer/15",
+      "canonicalPath": "public/data/counties/jefferson-ky/zoning/parcel-zoning-index.json",
+      "sourceManifestPath": "data/county-adapters/louisville/lojic-zoning-source-manifest.json",
+      "status": "parcel-index-ready",
+      "verifiedRecordCount": 4883,
+      "indexedPolygonCount": 4881,
+      "parcelZoningRecordCount": 284226,
+      "countVerifiedAt": "2026-06-10",
+      "fields": ["ZONING_CODE", "ZONING_NAME", "ZONING_TYPE"]
+    }
+  ],
+  "floodplainSources": [
+    {
+      "id": "jefferson-ky-current-fema-flood-zones",
+      "name": "Jefferson County KY Current FEMA Flood Zones",
+      "sourceUrl": "https://gis.lojic.org/maps/rest/services/PvaGis/CamaFloodContour/MapServer/2",
+      "canonicalPath": "public/data/counties/jefferson-ky/floodplain/parcel-floodplain-index.json",
+      "sourceManifestPath": "data/county-adapters/louisville/fema-floodplain-source-manifest.json",
+      "status": "parcel-index-ready",
+      "verifiedRecordCount": 10087,
+      "indexedPolygonCount": 10087,
+      "parcelFloodplainRecordCount": 284229,
+      "parcelsInSfha": 9312,
+      "parcelsInFloodway": 1223,
+      "countVerifiedAt": "2026-06-15",
+      "fields": ["FLD_ZONE", "FLOODWAY", "SFHA_TF", "STATIC_BFE", "V_DATUM", "DEPTH", "VELOCITY", "SOURCE_CIT", "ZONE_SUBTY", "EFF_DATE"]
+    }
+  ]
+}

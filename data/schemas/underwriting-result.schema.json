@@ -1,0 +1,18 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://white-rabbit.local/schemas/underwriting-result.schema.json",
+  "title": "White Rabbit Underwriting Result",
+  "type": "object",
+  "required": ["schemaVersion", "status", "assumptions", "metrics", "annualCashFlows", "warnings", "formulas", "generatedAt"],
+  "properties": {
+    "schemaVersion": { "const": "wr-underwriting-result-v1" },
+    "status": { "enum": ["modeled", "modeled-with-warnings", "insufficient-evidence"] },
+    "assumptions": { "type": "object" },
+    "metrics": { "type": ["object", "null"] },
+    "annualCashFlows": { "type": "array", "items": { "type": "object" } },
+    "equityCashFlows": { "type": "array", "items": { "type": "number" } },
+    "warnings": { "type": "array", "items": { "type": "string" } },
+    "formulas": { "type": "array", "items": { "type": "string" } },
+    "generatedAt": { "type": "string" }
+  }
+}

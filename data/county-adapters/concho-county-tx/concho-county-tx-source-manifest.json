@@ -1,0 +1,51 @@
+﻿{
+    "county_id":  "concho-county-tx",
+    "county_name":  "Concho County",
+    "state":  "TX",
+    "fips":  "48095",
+    "cad_name":  "Concho Central Appraisal District",
+    "source_discovery_status":  "official-site-property-search-and-map-discovered",
+    "retrieved_at":  "2026-06-29",
+    "official_portal":  {
+                            "label":  "Concho Central Appraisal District official portal",
+                            "url":  "https://conchocad.org/",
+                            "source_type":  "appraisal-district-site",
+                            "verification_status":  "official-site-verified"
+                        },
+    "property_search":  {
+                            "label":  "Concho County CAD property search",
+                            "url":  "https://esearch.conchocad.org/",
+                            "source_type":  "property-search",
+                            "verification_status":  "linked-from-official-site"
+                        },
+    "interactive_map":  {
+                            "label":  "Concho County CAD interactive map",
+                            "url":  "https://gis.bisclient.com/",
+                            "source_type":  "interactive-map",
+                            "verification_status":  "linked-from-official-site"
+                        },
+    "candidate_bulk_or_report_leads":  [
+                                           "Reports",
+                                           "Property search",
+                                           "Interactive map"
+                                       ],
+    "verified_counts":  {
+                            "parcel_geometry_features":  0,
+                            "appraisal_property_rows":  0,
+                            "count_verified_at":  null,
+                            "status":  "not-verified"
+                        },
+    "join_keys":  {
+                      "primary_parcel_account":  "unverified",
+                      "secondary_gis_id":  "unverified",
+                      "owner_appraisal":  "unverified"
+                  },
+    "remaining_blockers":  [
+                               "report/source files not inspected",
+                               "exact parcel count not verified",
+                               "exact geometry-to-appraisal join key not verified",
+                               "viewport chunks and search shards not built",
+                               "QC report not built"
+                           ],
+    "completion_impact":  "source-discovery-started"
+}

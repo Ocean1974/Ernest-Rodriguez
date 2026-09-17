@@ -1,0 +1,16 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://white-rabbit.local/schemas/forward-strategy.schema.json",
+  "title": "White Rabbit Forward Asset Strategy",
+  "oneOf": [{ "$ref": "#/$defs/assumption" }, { "$ref": "#/$defs/rollover" }, { "$ref": "#/$defs/project" }, { "$ref": "#/$defs/forecast" }, { "$ref": "#/$defs/scenario" }, { "$ref": "#/$defs/stress" }, { "$ref": "#/$defs/state" }],
+  "$defs": {
+    "digest": { "type": "string", "pattern": "^[a-f0-9]{64}$" },
+    "assumption": { "type": "object", "required": ["schemaVersion", "id", "organizationId", "assetId", "leaseId", "metric", "status", "value", "unit", "effectiveFrom", "effectiveTo", "rationale", "approvedByUserId", "createdByUserId", "createdAt", "source", "assumptionSha256"], "properties": { "schemaVersion": { "const": "wr-forecast-assumption-v1" }, "status": { "enum": ["observed", "assumed", "scenario-derived", "unknown"] }, "assumptionSha256": { "$ref": "#/$defs/digest" } } },
+    "rollover": { "type": "object", "required": ["schemaVersion", "organizationId", "assetId", "asOf", "evaluatedAt", "horizonMonths", "expirations", "years", "coverage", "reportSha256"], "properties": { "schemaVersion": { "const": "wr-lease-rollover-report-v1" }, "reportSha256": { "$ref": "#/$defs/digest" } } },
+    "project": { "type": "object", "required": ["schemaVersion", "id", "organizationId", "assetId", "name", "category", "startDate", "endDate", "dependencyProjectIds", "schedule", "contingencyPct", "status", "createdByUserId", "approvedByUserId", "approvedAt", "source", "projectSha256"], "properties": { "schemaVersion": { "const": "wr-capital-project-v1" }, "projectSha256": { "$ref": "#/$defs/digest" } } },
+    "forecast": { "type": "object", "required": ["schemaVersion", "organizationId", "assetId", "asOf", "evaluatedAt", "horizonMonths", "currency", "status", "months", "annual", "findings", "evidenceSha256s", "methodology", "probabilityClaim", "forecastSha256"], "properties": { "schemaVersion": { "const": "wr-cash-flow-forecast-v1" }, "probabilityClaim": { "const": false }, "forecastSha256": { "$ref": "#/$defs/digest" } } },
+    "scenario": { "type": "object", "required": ["schemaVersion", "id", "organizationId", "assetId", "name", "description", "shocks", "probabilityAssigned", "createdByUserId", "createdAt", "scenarioSha256"], "properties": { "schemaVersion": { "const": "wr-portfolio-stress-scenario-v1" }, "probabilityAssigned": { "const": false }, "scenarioSha256": { "$ref": "#/$defs/digest" } } },
+    "stress": { "type": "object", "required": ["schemaVersion", "organizationId", "assetId", "scenarioId", "scenarioSha256", "baseForecastSha256", "stressedForecastSha256", "evaluatedAt", "status", "deterministicScenario", "probabilityAssigned", "years", "reportSha256"], "properties": { "schemaVersion": { "const": "wr-portfolio-stress-report-v1" }, "deterministicScenario": { "const": true }, "probabilityAssigned": { "const": false }, "reportSha256": { "$ref": "#/$defs/digest" } } },
+    "state": { "type": "object", "required": ["schemaVersion", "organizationId", "revision", "assumptions", "capitalProjects", "stressScenarios", "updatedAt"], "properties": { "schemaVersion": { "const": "wr-forward-strategy-state-v1" } } }
+  }
+}

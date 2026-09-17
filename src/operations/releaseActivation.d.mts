@@ -1,0 +1,12 @@
+export const RELEASE_EVIDENCE_ATTESTATION_VERSION: "wr-release-evidence-attestation-v1";
+export const CAPABILITY_RELEASE_POLICY_VERSION: "wr-capability-release-policy-v1";
+export const CAPABILITY_RELEASE_DECISION_VERSION: "wr-capability-release-decision-v1";
+export const PLATFORM_RELEASE_MANIFEST_VERSION: "wr-platform-release-manifest-v1";
+export function computeReleaseAttestationSha256(attestation?: Record<string, unknown>): string;
+export function computeReleaseCandidateSha256(input?: Record<string, unknown>): string;
+export function createReleaseEvidenceAttestation(input?: Record<string, unknown>): Readonly<Record<string, unknown>>;
+export function verifyReleaseEvidenceAttestation(attestation: Record<string, unknown>, options?: Record<string, unknown>): Readonly<Record<string, unknown>>;
+export function createCapabilityReleasePolicy(input?: Record<string, unknown>): Readonly<Record<string, unknown>>;
+export function decideCapabilityRelease(input?: Record<string, unknown>): Readonly<Record<string, unknown>>;
+export function createPlatformReleaseManifest(input?: Record<string, unknown>): Readonly<Record<string, unknown>>;
+export function verifyPlatformReleaseManifest(manifest: Record<string, unknown>, options?: Record<string, unknown>): Readonly<Record<string, unknown>>;

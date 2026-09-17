@@ -1,0 +1,119 @@
+{
+  "county_id": "aransas-county-tx",
+  "county_name": "Aransas County",
+  "state": "TX",
+  "fips": "48007",
+  "cad_name": "Aransas County Appraisal District",
+  "source_discovery_status": "official-appraisal-and-public-gis-baseline-captured-licensed-parcel-geometry-pending",
+  "retrieved_at": "2026-09-12",
+  "ui_constraint": "Do not redesign White Rabbit pages while expanding county parcel intelligence plumbing.",
+  "official_sources": [
+    {
+      "label": "Aransas County Appraisal District official site",
+      "url": "https://aransascad.org/",
+      "source_type": "appraisal-district-site",
+      "observed_evidence": [
+        "official site links to Property Search / Pay Taxes",
+        "official site links to Interactive Map",
+        "official site says Aransas CAD is responsible for appraising all real and business personal property within Aransas County"
+      ]
+    },
+    {
+      "label": "Aransas CAD Property Search",
+      "url": "https://esearch.aransascad.org/",
+      "source_type": "property-search",
+      "observed_evidence": [
+        "search modes include owner, address, ID, ARB, and advanced search",
+        "fields include Property ID, Owner ID, Geographic ID, tax year, subdivision, neighborhood, and property type",
+        "available tax years observed: 2026 through 2017"
+      ]
+    },
+    {
+      "label": "Aransas CAD Interactive Map",
+      "url": "https://gis.bisclient.com/aransascad/",
+      "source_type": "interactive-map",
+      "observed_evidence": [
+        "linked from the official Aransas CAD site and property search header"
+      ]
+    }
+  ],
+  "captured_official_sources": [
+    {
+      "label": "2026 Certified Roll",
+      "source_url": "https://aransascad.org/wp-content/uploads/2026/07/2026-07-20-Certified-Roll.zip",
+      "capture_manifest": "data/raw/aransas-county-tx/official-2026-09-12/capture-manifest.json",
+      "status": "captured-hash-verified-and-row-counted"
+    },
+    {
+      "label": "Census TIGER/Line 2025 and TIGERweb BAS 2026 public GIS baseline",
+      "source_url": "https://www.census.gov/geographies/mapping-files/time-series/geo/tiger-line-file.html",
+      "capture_manifest": "data/raw/aransas-county-tx/public-gis-2026-09-12/capture-manifest.json",
+      "status": "captured-hash-verified-and-feature-counted"
+    },
+    {
+      "label": "FEMA National Flood Hazard Layer Aransas capture envelope",
+      "source_url": "https://hazards.fema.gov/arcgis/rest/services/public/NFHL/MapServer",
+      "capture_manifest": "data/raw/aransas-county-tx/public-gis-2026-09-12/capture-manifest.json",
+      "status": "captured-paginated-hash-verified-and-feature-counted"
+    }
+  ],
+  "candidate_bulk_or_export_leads": [
+    {
+      "label": "2026 Preliminary Mineral Appraisal Roll",
+      "status": "lead-not-inspected"
+    },
+    {
+      "label": "2026 Owner Agent Export",
+      "status": "included-in-certified-roll-capture"
+    },
+    {
+      "label": "2026 Aransas CAD Certified Roll",
+      "status": "captured-hash-verified-and-row-counted"
+    },
+    {
+      "label": "2025 Transfer Tape",
+      "status": "lead-not-inspected"
+    },
+    {
+      "label": "2025 Certified Totals",
+      "status": "lead-not-inspected"
+    },
+    {
+      "label": "2025 Freeze Totals",
+      "status": "lead-not-inspected"
+    }
+  ],
+  "verified_counts": {
+    "parcel_geometry_features": 0,
+    "appraisal_property_rows": 29964,
+    "owner_agent_rows": 47608,
+    "county_boundary_features": 1,
+    "county_road_features": 2033,
+    "aransas_area_census_place_features": 3,
+    "fema_flood_hazard_envelope_features": 1603,
+    "fema_flood_hazard_unique_object_ids": 1603,
+    "count_verified_at": "2026-09-12",
+    "status": "certified-appraisal-counts-verified-parcel-geometry-not-verified"
+  },
+  "join_keys": {
+    "primary_parcel_account": "unverified: property search exposes Property ID and Geographic ID fields, but exact geometry-to-appraisal key is not verified",
+    "secondary_gis_id": "unverified",
+    "owner_appraisal": "candidate fixed-width certified roll relationship; export layout and exact key positions still require verification"
+  },
+  "bulk_source_status": {
+    "parcel_geometry_bulk": "consent-or-license-required under the BIS viewer notice; not copied",
+    "owner_appraisal_bulk": "official 2026 certified roll captured, hash-verified, extracted, and row-counted",
+    "public_context_gis": "official Census and FEMA sources captured; FEMA and school layers are envelope selections pending exact county clipping",
+    "download_terms": "federal public-source layers were captured separately; BIS-hosted data remains excluded pending data-owner consent"
+  },
+  "remaining_blockers": [
+    "certified appraisal export layout and exact join fields not yet verified",
+    "written consent or an approved bulk license for BIS-hosted parcels, abstracts, subdivisions, lot lines, neighborhood codes, and EagleView mosaics",
+    "exact parcel geometry count not verified",
+    "exact geometry-to-appraisal join key not verified",
+    "FEMA and school envelope captures require exact county clipping",
+    "viewport chunks and search shards not built",
+    "QC report not built"
+  ],
+  "completion_impact": "official-appraisal-and-public-gis-baseline-captured-licensed-parcel-geometry-pending"
+}

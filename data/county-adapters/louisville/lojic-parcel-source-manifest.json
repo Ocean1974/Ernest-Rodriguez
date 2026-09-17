@@ -1,0 +1,225 @@
+{
+  "county_id": "jefferson-ky",
+  "county_name": "Jefferson County",
+  "market_name": "Louisville",
+  "cad_name": "Jefferson County PVA",
+  "gis_source": "LOJIC Jefferson County KY Parcels",
+  "arcgis_rest_url": "https://gis.lojic.org/maps/rest/services/LojicSolutions/OpenDataPVA/MapServer/1",
+  "layer_id": 1,
+  "layer_name": "Jefferson County KY Parcels",
+  "geometry_type": "polygon",
+  "source_spatial_reference": {
+    "epsg": 2246,
+    "label": "EPSG:2246 / NAD 1983 StatePlane Kentucky North FIPS 1601 Feet",
+    "arcgis_wkid": 102679,
+    "latest_wkid": 2246,
+    "units": "esriFeet"
+  },
+  "unique_gis_key": "LRSN",
+  "parcel_id_field": "PARCELID",
+  "parcel_type_field": "PARCEL_TYPE",
+  "geometry_field": "SHAPE",
+  "area_field": "SHAPE.AREA",
+  "length_field": "SHAPE.LEN",
+  "foundation_layers": [
+    "parcel boundary polygons",
+    "parcel IDs",
+    "LRSN unique parcel keys",
+    "parcel type",
+    "geometry area/length",
+    "Louisville/Jefferson County map layer foundation"
+  ],
+  "query": {
+    "primary_where": "PARCEL_TYPE = 0",
+    "page_size": 2000,
+    "out_fields": ["OBJECTID", "PARCELID", "PARCEL_TYPE", "LRSN", "PIN", "SHAPE.AREA", "SHAPE.LEN"],
+    "geometry_out_sr": 4326,
+    "order_by": "OBJECTID"
+  },
+  "verified_counts": {
+    "all_layer_features": 293119,
+    "parcel_type_0_features": 284429,
+    "missing_geometry": 0
+  },
+  "local_csv_snapshot": {
+    "path": "data/raw/jefferson-ky/Jefferson_County_KY_Parcels.csv",
+    "latest_provided_download_name": "Jefferson_County_KY_Parcels (3).csv",
+    "file_size_bytes": 29777617,
+    "sha256": "3AE16B41DC9E9F631541782324C095522DF89044E6D0659E7450EB18BDCA7C01",
+    "total_rows": 293119,
+    "parcel_type_0_rows": 284429,
+    "row_delta_vs_current_rest_parcel_type_0_count": 0,
+    "fields": ["OBJECTID", "PARCELID", "PARCEL_TYPE", "LRSN", "GLOBALID", "SHAPEAREA", "SHAPELEN", "PIN"],
+    "role": "local parcel attribute and identifier QA source"
+  },
+  "local_geojson_snapshot": {
+    "path": "data/raw/jefferson-ky/Jefferson_County_KY_Parcels.geojson",
+    "latest_provided_download_name": "Jefferson_County_KY_Parcels (3).geojson",
+    "file_size_bytes": 517547334,
+    "sha256": "2942A274C4B57A532E57573A5A8B330B35D14FAE293E5F7286F725DA369A7E59",
+    "total_features": 293119,
+    "parcel_type_0_features": 284429,
+    "exportable_parcel_polygon_features": 284428,
+    "missing_geometry": 0,
+    "missing_lrsn": 0,
+    "missing_parcelid": 22,
+    "invalid_polygon_ring_features": 1,
+    "invalid_polygon_ring_sample": {
+      "OBJECTID": 631976,
+      "LRSN": 8201759,
+      "PARCELID": null,
+      "reason": "Polygon ring has only three coordinates (A -> B -> A), below the valid closed linear ring requirement."
+    },
+    "geometry_types": {
+      "Polygon": 293106,
+      "MultiPolygon": 13
+    },
+    "coordinate_reference": "WGS84 longitude/latitude GeoJSON coordinates",
+    "bounds": {
+      "minLng": -85.94446955979414,
+      "minLat": 37.99729281987893,
+      "maxLng": -85.40505728011503,
+      "maxLat": 38.37801863803623
+    },
+    "fields": ["GLOBALID", "LRSN", "OBJECTID", "PARCELID", "PARCEL_TYPE", "PIN", "SHAPEAREA", "SHAPELEN"],
+    "role": "local WGS84 parcel boundary polygon geometry source"
+  },
+  "local_kml_snapshot": {
+    "path": "data/raw/jefferson-ky/Jefferson_County_KY_Parcels.kml",
+    "latest_provided_download_name": "Jefferson_County_KY_Parcels (2).kml",
+    "file_size_bytes": 560535797,
+    "sha256": "985ED0CE78FD9714C4AC7B7F5A5695708ACDC6B070992F5686652FF787AA4B2D",
+    "total_placemarks": 293119,
+    "parcel_type_0_placemarks": 284429,
+    "exportable_parcel_polygon_placemarks": 284428,
+    "missing_geometry": 0,
+    "missing_lrsn": 0,
+    "missing_parcelid": 22,
+    "invalid_polygon_ring_placemarks": 1,
+    "invalid_polygon_ring_sample": {
+      "OBJECTID": 631976,
+      "LRSN": 8201759,
+      "PARCELID": null,
+      "reason": "Polygon ring has only three coordinates (A -> B -> A), below the valid closed linear ring requirement."
+    },
+    "geometry_types": {
+      "Polygon": 293106,
+      "MultiGeometry": 13
+    },
+    "coordinate_reference": "WGS84 longitude/latitude KML coordinates",
+    "bounds": {
+      "minLng": -85.9444695597941,
+      "minLat": 37.9972928198789,
+      "maxLng": -85.405057280115,
+      "maxLat": 38.3780186380362
+    },
+    "schema_fields": ["OBJECTID", "PARCELID", "PARCEL_TYPE", "LRSN", "GLOBALID", "PIN", "SHAPEAREA", "SHAPELEN"],
+    "observed_simple_data_fields": ["GLOBALID", "LRSN", "OBJECTID", "PARCELID", "PARCEL_TYPE", "SHAPEAREA", "SHAPELEN"],
+    "note": "KML schema declares PIN, but no PIN SimpleData values were observed in the provided file.",
+    "role": "local KML parcel boundary polygon and parcel identifier source"
+  },
+  "local_shapefile_snapshot": {
+    "zip_path": "data/raw/jefferson-ky/Jefferson_County_KY_Parcels.zip",
+    "latest_provided_download_name": "Jefferson_County_KY_Parcels (2).zip",
+    "file_size_bytes": 89552481,
+    "sha256": "61152AB1F9422578F9C6C555B3BD1C83FA742910E63353690DB7504CC0FDFD75",
+    "extracted_directory": "data/extracted/jefferson-ky/Jefferson_County_KY_Parcels",
+    "shp_path": "data/extracted/jefferson-ky/Jefferson_County_KY_Parcels/Jefferson_County_KY_Parcels.shp",
+    "dbf_path": "data/extracted/jefferson-ky/Jefferson_County_KY_Parcels/Jefferson_County_KY_Parcels.dbf",
+    "shx_path": "data/extracted/jefferson-ky/Jefferson_County_KY_Parcels/Jefferson_County_KY_Parcels.shx",
+    "prj_path": "data/extracted/jefferson-ky/Jefferson_County_KY_Parcels/Jefferson_County_KY_Parcels.prj",
+    "cpg_path": "data/extracted/jefferson-ky/Jefferson_County_KY_Parcels/Jefferson_County_KY_Parcels.cpg",
+    "record_count": 293119,
+    "parcel_type_0_records": 284429,
+    "exportable_parcel_polygon_records": 284428,
+    "invalid_polygon_ring_records": 1,
+    "invalid_polygon_ring_sample": {
+      "OBJECTID": 631976,
+      "LRSN": 8201759,
+      "PARCELID": null,
+      "reason": "Polygon ring has only three coordinates (A -> B -> A), below the valid closed linear ring requirement."
+    },
+    "geometry_type": "Polygon",
+    "dbf_field_aliases": {
+      "PARCEL_TYP": "PARCEL_TYPE"
+    },
+    "encoding": "UTF-8",
+    "role": "local parcel boundary polygon geometry source"
+  },
+  "qa_findings": {
+    "duplicate_lrsn_groups": 20,
+    "duplicate_lrsn_feature_memberships": 40,
+    "duplicate_parcelid_groups": 11,
+    "duplicate_parcelid_feature_memberships": 22,
+    "missing_lrsn": 0,
+    "missing_parcelid": 22
+  },
+  "download_tests": {
+    "arcgis_rest_query": {
+      "supported": true,
+      "test_url": "https://gis.lojic.org/maps/rest/services/LojicSolutions/OpenDataPVA/MapServer/1/query?where=PARCEL_TYPE%3D0&returnCountOnly=true&f=json"
+    },
+    "geojson": {
+      "supported": true,
+      "test_url": "https://gis.lojic.org/maps/rest/services/LojicSolutions/OpenDataPVA/MapServer/1/query?where=PARCEL_TYPE%3D0&outFields=OBJECTID,PARCELID,PARCEL_TYPE,LRSN,PIN&returnGeometry=true&outSR=4326&resultRecordCount=1&f=geojson",
+      "provided_local_geojson_supported": true,
+      "provided_local_geojson_path": "data/raw/jefferson-ky/Jefferson_County_KY_Parcels.geojson",
+      "provided_local_geojson_latest_download_name": "Jefferson_County_KY_Parcels (3).geojson",
+      "provided_local_geojson_sha256": "2942A274C4B57A532E57573A5A8B330B35D14FAE293E5F7286F725DA369A7E59",
+      "provided_local_geojson_total_features": 293119,
+      "provided_local_geojson_parcel_type_0_features": 284429,
+      "provided_local_geojson_exportable_parcel_polygon_features": 284428,
+      "provided_local_geojson_invalid_polygon_ring_features": 1,
+      "provided_local_geojson_note": "Local GeoJSON uses WGS84 coordinates and matches the LOJIC parcel foundation counts."
+    },
+    "kml": {
+      "direct_layer_download_supported": false,
+      "observed_capability": "Layer supports JSON, geoJSON, and PBF query formats; direct KML export is not advertised.",
+      "provided_local_kml_supported": true,
+      "provided_local_kml_path": "data/raw/jefferson-ky/Jefferson_County_KY_Parcels.kml",
+      "provided_local_kml_latest_download_name": "Jefferson_County_KY_Parcels (2).kml",
+      "provided_local_kml_sha256": "985ED0CE78FD9714C4AC7B7F5A5695708ACDC6B070992F5686652FF787AA4B2D",
+      "provided_local_kml_total_placemarks": 293119,
+      "provided_local_kml_parcel_type_0_placemarks": 284429,
+      "provided_local_kml_exportable_parcel_polygon_placemarks": 284428,
+      "provided_local_kml_invalid_polygon_ring_placemarks": 1,
+      "provided_local_kml_note": "Local KML uses WGS84 coordinates and matches the LOJIC parcel foundation counts. KML is recorded as parcel ID/geometry intel, not the preferred production export format."
+    },
+    "csv": {
+      "direct_arcgis_query_supported": false,
+      "observed_error": "f=csv returned ArcGIS 400: Output format not supported.",
+      "provided_local_csv_supported": true,
+      "provided_local_csv_path": "data/raw/jefferson-ky/Jefferson_County_KY_Parcels.csv",
+      "provided_local_csv_latest_download_name": "Jefferson_County_KY_Parcels (3).csv",
+      "provided_local_csv_sha256": "3AE16B41DC9E9F631541782324C095522DF89044E6D0659E7450EB18BDCA7C01",
+      "provided_local_csv_total_rows": 293119,
+      "provided_local_csv_parcel_type_0_rows": 284429,
+      "provided_local_csv_note": "Local CSV contains LOJIC parcel identifiers and SHAPEAREA/SHAPELEN attributes, but not polygon coordinates.",
+      "pipeline_export": "output/jefferson-ky/jefferson-county-ky-parcel-search-index.csv"
+    },
+    "shapefile_zip": {
+      "direct_layer_download_supported": false,
+      "observed_capability": "Layer supports Query,Map,Data and supportedQueryFormats JSON, geoJSON, PBF; supportedExportFormats is not advertised.",
+      "provided_local_shapefile_zip_supported": true,
+      "provided_local_shapefile_zip_path": "data/raw/jefferson-ky/Jefferson_County_KY_Parcels.zip",
+      "provided_local_shapefile_zip_latest_download_name": "Jefferson_County_KY_Parcels (2).zip",
+      "provided_local_shapefile_zip_sha256": "61152AB1F9422578F9C6C555B3BD1C83FA742910E63353690DB7504CC0FDFD75",
+      "provided_local_shapefile_record_count": 293119,
+      "provided_local_shapefile_parcel_type_0_records": 284429,
+      "provided_local_shapefile_exportable_parcel_polygon_records": 284428,
+      "provided_local_shapefile_invalid_polygon_ring_records": 1,
+      "provided_local_shapefile_note": "Local ZIP contains SHP/DBF/SHX/PRJ/CPG/XML. Geometry is EPSG:2246 and DBF truncates PARCEL_TYPE to PARCEL_TYP.",
+      "pipeline_export_hook": "output/jefferson-ky/jefferson-county-ky-parcels.zip"
+    }
+  },
+  "output_paths": {
+    "universal_parcel_geojson": "output/jefferson-ky/jefferson-county-ky-parcels.geojson",
+    "source_manifest": "data/county-adapters/louisville/lojic-parcel-source-manifest.json",
+    "field_map": "data/county-adapters/louisville/lojic-universal-field-map.json",
+    "qa_report_json": "output/jefferson-ky/qa-report.json",
+    "qa_report_md": "output/jefferson-ky/qa-report.md",
+    "search_index_json": "output/jefferson-ky/jefferson-county-ky-parcel-search-index.json",
+    "search_index_csv": "output/jefferson-ky/jefferson-county-ky-parcel-search-index.csv"
+  },
+  "owner_appraisal_note": "This public GIS layer is the parcel geometry and parcel identifier foundation only. It must not be treated as owner phone/email or full assessment data. Jefferson County PVA owner/appraisal plumbing is join-ready through the separate PVA owner/appraisal source manifest and index builder, but the official PVA export is still source-needed before owner/value fields can populate Louisville parcels."
+}

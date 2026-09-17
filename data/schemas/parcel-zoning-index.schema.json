@@ -1,0 +1,114 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://white-rabbit.local/schemas/parcel-zoning-index.schema.json",
+  "title": "White Rabbit Parcel Zoning Index",
+  "description": "County-aware parcel zoning summaries keyed by White Rabbit countyParcelId/accountNum. These records enrich parcel IDs and do not overwrite base parcel data.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schemaVersion",
+    "sourceCountyId",
+    "countyParcelId",
+    "accountNum",
+    "zoningSummary",
+    "sourceLayerHits"
+  ],
+  "properties": {
+    "schemaVersion": {
+      "const": "wr-parcel-zoning-index-v1"
+    },
+    "sourceCountyId": {
+      "type": "string"
+    },
+    "countyParcelId": {
+      "type": "string"
+    },
+    "accountNum": {
+      "type": "string"
+    },
+    "gisParcelId": {
+      "type": "string"
+    },
+    "parcelChunkId": {
+      "type": "string"
+    },
+    "existingParcelZoning": {
+      "type": "string"
+    },
+    "zoningSummary": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "label": {
+          "type": "string"
+        },
+        "baseDistricts": {
+          "type": "array",
+          "items": { "type": "string" }
+        },
+        "longZoneDistricts": {
+          "type": "array",
+          "items": { "type": "string" }
+        },
+        "pdNumbers": {
+          "type": "array",
+          "items": { "type": "string" }
+        },
+        "pdsNumbers": {
+          "type": "array",
+          "items": { "type": "string" }
+        },
+        "supNumbers": {
+          "type": "array",
+          "items": { "type": "string" }
+        },
+        "cdNumbers": {
+          "type": "array",
+          "items": { "type": "string" }
+        },
+        "subdistricts": {
+          "type": "array",
+          "items": { "type": "string" }
+        },
+        "overlays": {
+          "type": "array",
+          "items": { "type": "string" }
+        },
+        "caseNumbers": {
+          "type": "array",
+          "items": { "type": "string" }
+        }
+      }
+    },
+    "sourceLayerHits": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": true,
+        "required": [
+          "sourceLayerId",
+          "recordType",
+          "objectId"
+        ],
+        "properties": {
+          "sourceLayerId": { "type": "string" },
+          "sourceLayerTitle": { "type": "string" },
+          "recordType": { "type": "string" },
+          "objectId": { "type": ["string", "number"] },
+          "zoneDistrict": { "type": "string" },
+          "longZoneDistrict": { "type": "string" },
+          "pdNumber": { "type": "string" },
+          "pdsNumber": { "type": "string" },
+          "supNumber": { "type": "string" },
+          "cdNumber": { "type": "string" },
+          "subdistrict": { "type": "string" },
+          "caseNumber": { "type": "string" },
+          "overlayName": { "type": "string" }
+        }
+      }
+    },
+    "searchText": {
+      "type": "string"
+    }
+  }
+}

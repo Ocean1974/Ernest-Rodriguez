@@ -1,0 +1,8 @@
+{
+  "source": "output/white-rabbit-dallas-parcels.geojson",
+  "featureCount": 696601,
+  "joinedAppraisalCount": 695033,
+  "joinedBlkIdCount": 696601,
+  "joinedParcelDimensionCount": 573026,
+  "productionAccess": "viewport-loader-or-vector-tiles"
+}

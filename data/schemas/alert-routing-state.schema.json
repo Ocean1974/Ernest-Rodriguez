@@ -1,0 +1,32 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://white-rabbit.local/schemas/alert-routing-state.schema.json",
+  "title": "White Rabbit Alert Routing State",
+  "type": "object",
+  "required": ["schemaVersion", "revision", "subscriptions", "snapshots", "deliveryAttempts", "updatedAt"],
+  "properties": {
+    "schemaVersion": { "const": "wr-alert-routing-state-v1" },
+    "revision": { "type": "integer", "minimum": 1 },
+    "subscriptions": { "type": "array", "items": { "$ref": "#/$defs/subscription" } },
+    "snapshots": { "type": "array", "items": { "$ref": "#/$defs/snapshot" } },
+    "deliveryAttempts": { "type": "array", "items": { "$ref": "#/$defs/attempt" } },
+    "updatedAt": { "type": "string", "format": "date-time" }
+  },
+  "$defs": {
+    "subscription": {
+      "type": "object",
+      "required": ["schemaVersion", "id", "organizationId", "ownerUserId", "sourceType", "sourceId", "enabled", "channels", "policy", "revision", "createdAt", "updatedAt"],
+      "properties": { "schemaVersion": { "const": "wr-alert-subscription-v1" }, "sourceType": { "enum": ["watchlist", "saved-search"] }, "channels": { "type": "array" }, "policy": { "type": "object" } }
+    },
+    "snapshot": {
+      "type": "object",
+      "required": ["schemaVersion", "id", "whiteRabbitPropertyId", "profileSchemaVersion", "capturedAt", "digest", "sourceLineage", "profile"],
+      "properties": { "schemaVersion": { "const": "wr-property-snapshot-v1" }, "organizationId": { "type": "string" }, "ownerUserId": { "type": "string" }, "sourceType": { "type": "string" }, "sourceId": { "type": "string" }, "whiteRabbitPropertyId": { "type": "string", "pattern": "^wrp:v1:[^:]+:.+$" }, "digest": { "type": "string", "pattern": "^fnv1a32:[0-9a-f]{8}$" } }
+    },
+    "attempt": {
+      "type": "object",
+      "required": ["schemaVersion", "id", "alertEnvelopeId", "subscriptionId", "channelType", "status", "suppressionReasons", "eligibleEventCount", "scheduledFor", "createdAt"],
+      "properties": { "schemaVersion": { "const": "wr-alert-delivery-attempt-v1" }, "channelType": { "enum": ["in-app", "email", "webhook"] }, "status": { "enum": ["queued", "suppressed", "delivered", "failed"] } }
+    }
+  }
+}

@@ -1,0 +1,87 @@
+{
+  "county_id": "jefferson-ky",
+  "county_name": "Jefferson County",
+  "market_name": "Louisville",
+  "status": "source-verified-parcel-join-pending",
+  "last_reviewed": "2026-06-10",
+  "ui_constraint": "Do not redesign or restyle any White Rabbit pages while adding Jefferson County permit and Certificate of Occupancy plumbing.",
+  "sources": [
+    {
+      "id": "louisville-active-construction-permits",
+      "name": "Louisville Metro KY - Active Construction Permits",
+      "status": "official-open-data-source-verified",
+      "source_url": "https://services1.arcgis.com/79kfd2K6fskCAkyg/arcgis/rest/services/active_construction_permits/FeatureServer/0",
+      "catalog_item_id": "0251a88cefdc4ab3a0d85943074e6d7b",
+      "count_verified_at": "2026-06-10",
+      "verified_record_count": 23543,
+      "public_authority": "Louisville Metro Department of Codes and Regulations",
+      "field_map": {
+        "permitNumber": "PERMIT_NUMBER",
+        "permitType": "PERMIT_TYPE",
+        "permitStatus": "PERMIT_STATUS",
+        "contractor": "CONTRACTOR",
+        "occupancyCategory": "CATEGORY_NAME",
+        "workType": "WORK_TYPE",
+        "zoning": "ZONING",
+        "squareFeet": "SQFT",
+        "permitFee": "PERMIT_FEE",
+        "projectCost": "PROJECT_COSTS",
+        "address": "ADDRESS",
+        "city": "CITY",
+        "state": "STATE",
+        "zip": "ZIPCODE",
+        "latitude": "LATITUDE",
+        "longitude": "LONGITUDE",
+        "district": "DISTRICT",
+        "neighborhood": "NEIGHBORHOOD",
+        "issueDate": "ISSUE_DATE"
+      },
+      "white_rabbit_use": "Permit and construction activity source for the parcel intelligence window after spatial/address join."
+    },
+    {
+      "id": "louisville-property-maintenance-case-occupancy",
+      "name": "Louisville Metro KY - Property Maintenance Case Occupancy",
+      "status": "official-open-data-source-identified",
+      "source_url": "https://services1.arcgis.com/79kfd2K6fskCAkyg/arcgis/rest/services/pm_occupancy/FeatureServer/0",
+      "catalog_item_id": "9a0d888dd9704133ab7a9ccfb4b4ec6f",
+      "field_map": {
+        "caseInspectionId": "Case Inspection ID",
+        "address": "Address",
+        "occupancy": "Occupancy",
+        "inspectionDate": "Inspection Date",
+        "status": "Status",
+        "owner": "Owner",
+        "ownerAddress": "Owner Address"
+      },
+      "white_rabbit_use": "Occupancy inspection context only. Do not label this as a Certificate of Occupancy."
+    },
+    {
+      "id": "jefferson-ky-certificate-of-occupancy",
+      "name": "Certificate of Occupancy records",
+      "status": "bulk-source-not-confirmed",
+      "source_url": "",
+      "white_rabbit_use": "Keep CO records source-needed until an official bulk dataset, Accela export, or open records response is verified."
+    }
+  ],
+  "join_strategy": {
+    "primary": "Spatial join active permit LATITUDE/LONGITUDE to LOJIC parcel polygon.",
+    "secondary": "Normalized permit ADDRESS to PVA/parcel situs address after PVA owner/appraisal address export is loaded.",
+    "tertiary": "Permit record parcel/PIN field only if an official source field is verified.",
+    "owner_contact_rule": "Contractors, applicants, permit parties, and occupancy-case owners must stay separate from property-owner contact fields."
+  },
+  "current_public_outputs": {
+    "manifest": "public/data/counties/jefferson-ky/permits/manifest.json",
+    "search_index": "public/data/counties/jefferson-ky/permits/search-index.json"
+  },
+  "verified_counts": {
+    "sourcePermitRecords": 23543,
+    "permitRowsJoined": 0,
+    "permitRowsUnmatched": 0,
+    "pendingParcelJoinRecords": 23543
+  },
+  "notes": [
+    "The official active construction permit source is available and count-verified.",
+    "Do not show active permit records as parcel-linked until the spatial/address join is built and QA passes.",
+    "No official bulk Certificate of Occupancy dataset was confirmed during review on 2026-06-10."
+  ]
+}

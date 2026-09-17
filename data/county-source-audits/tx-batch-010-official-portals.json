@@ -1,0 +1,106 @@
+{
+  "version": "wr-tx-batch-010-official-portals-v1",
+  "retrievedAt": "2026-07-03",
+  "scope": "Texas verification queue batch 10, official portal and parcel-source discovery in progress",
+  "rule": "Official portals are evidence for source discovery only. They do not make a county core-complete until exact counts, join keys, bulk/source provenance, viewport chunks, search shards, and QC are verified.",
+  "counties": [
+    {
+      "countyId": "travis-county-tx",
+      "countyName": "Travis County",
+      "state": "TX",
+      "officialPortals": [
+        {
+          "label": "Travis Central Appraisal District official site",
+          "url": "https://traviscad.org/",
+          "sourceType": "appraisal-district-site",
+          "verificationStatus": "official-site-verified",
+          "notes": "Official site exposes Property Search, Resources > Maps, and Data/Public Information. The site describes its mission to appraise all property in Travis County at market value."
+        },
+        {
+          "label": "Travis CAD property search",
+          "url": "https://traviscad.org/",
+          "sourceType": "property-search",
+          "verificationStatus": "linked-from-official-site",
+          "notes": "Official landing page links to Property Search and says users can search the property database. Parcel/account field names and payload schema still need inspection before joining."
+        },
+        {
+          "label": "Travis CAD maps",
+          "url": "https://traviscad.org/",
+          "sourceType": "maps-lead",
+          "verificationStatus": "linked-from-official-site",
+          "notes": "Official resources navigation includes Maps. Map/GIS file availability, parcel geometry source, exact counts, and join keys still need inspection."
+        },
+        {
+          "label": "Travis CAD data/public information",
+          "url": "https://traviscad.org/",
+          "sourceType": "data-public-information-lead",
+          "verificationStatus": "linked-from-official-site",
+          "notes": "Official landing page exposes Data/Public Information for public reports and public information requests. Candidate data route must be inspected for export schemas and parcel/account keys."
+        }
+      ],
+      "completionImpact": "source-discovery-started",
+      "remainingBlockers": [
+        "data/public information files not inspected",
+        "map/GIS source not inspected",
+        "property search parcel ID field names not verified",
+        "exact parcel count not verified",
+        "exact geometry-to-appraisal join key not verified",
+        "viewport/search outputs not built"
+      ]
+    },
+    {
+      "countyId": "williamson-county-tx",
+      "countyName": "Williamson County",
+      "state": "TX",
+      "officialPortals": [
+        {
+          "label": "Williamson Central Appraisal District official site",
+          "url": "https://www.wcad.org/",
+          "sourceType": "appraisal-district-site",
+          "verificationStatus": "official-site-verified",
+          "notes": "Official WCAD site exposes property search modes OWNER, ADDRESS, ACCOUNT, and PROPERTY ID. Quick links include Data Portal and Parcel Map."
+        },
+        {
+          "label": "Williamson CAD property search",
+          "url": "https://search.wcad.org/",
+          "sourceType": "property-search",
+          "verificationStatus": "linked-from-official-site",
+          "notes": "Official site links to search.wcad.org and exposes ACCOUNT and PROPERTY ID as explicit search keys. Treat both as candidate join keys until validated against parcel map/data portal schemas."
+        },
+        {
+          "label": "Williamson CAD data portal",
+          "url": "https://data.wcad.org/",
+          "sourceType": "data-portal",
+          "verificationStatus": "linked-from-official-site",
+          "notes": "Official quick links expose a Data Portal. Candidate parcel/appraisal exports must be inspected for schemas, exact counts, and join keys."
+        },
+        {
+          "label": "Williamson CAD parcel map",
+          "url": "https://publicdata.wcad.org/",
+          "sourceType": "parcel-map",
+          "verificationStatus": "linked-from-official-site",
+          "notes": "Official quick links expose a Parcel Map. Treat as geometry-source discovery until bulk/API-safe geometry and exact geometry-to-appraisal joins are verified."
+        }
+      ],
+      "completionImpact": "source-discovery-started",
+      "remainingBlockers": [
+        "data portal schemas not inspected",
+        "parcel map geometry source not inspected",
+        "ACCOUNT and PROPERTY ID candidate join keys not validated against geometry",
+        "exact parcel count not verified",
+        "exact geometry-to-appraisal join key not verified",
+        "viewport/search outputs not built"
+      ]
+    }
+  ],
+  "generatedAt": "2026-07-03T00:00:00.000Z",
+  "completionRule": "Official portals are evidence for source discovery only. They do not make a county core-complete until exact counts, join keys, bulk/source provenance, viewport chunks, search shards, and QC are verified.",
+  "summary": {
+    "countyCount": 2,
+    "officialSiteVerified": 2,
+    "linkedPropertySearch": 2,
+    "dataOrExportLead": 2,
+    "mapOrParcelMapLead": 2,
+    "promotedToCoreComplete": 0
+  }
+}

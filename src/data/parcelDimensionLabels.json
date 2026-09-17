@@ -1,0 +1,237 @@
+{
+  "generatedAt": "2026-04-26T23:38:33.618Z",
+  "parcels": [
+    {
+      "accountNum": "008052000B01A0000",
+      "sourceLayer": "ParcelDimension",
+      "labels": [
+        {
+          "text": "1719.82",
+          "distanceFt": 173
+        },
+        {
+          "text": "976.79",
+          "distanceFt": 514
+        },
+        {
+          "text": "144.71",
+          "distanceFt": 665
+        },
+        {
+          "text": "352.09",
+          "distanceFt": 680
+        },
+        {
+          "text": "174.02",
+          "distanceFt": 680
+        },
+        {
+          "text": "5.05",
+          "distanceFt": 687
+        },
+        {
+          "text": "5.98",
+          "distanceFt": 687
+        },
+        {
+          "text": "174.84",
+          "distanceFt": 688
+        }
+      ]
+    },
+    {
+      "accountNum": "00000155887000000",
+      "sourceLayer": "ParcelDimension",
+      "labels": [
+        {
+          "text": "82.99",
+          "distanceFt": 16
+        },
+        {
+          "text": "150",
+          "distanceFt": 53
+        },
+        {
+          "text": "200",
+          "distanceFt": 61
+        },
+        {
+          "text": "102.25",
+          "distanceFt": 62
+        },
+        {
+          "text": "46.4",
+          "distanceFt": 64
+        },
+        {
+          "text": "94.49",
+          "distanceFt": 77
+        },
+        {
+          "text": "0.24",
+          "distanceFt": 79
+        },
+        {
+          "text": "27.25",
+          "distanceFt": 89
+        },
+        {
+          "text": "50",
+          "distanceFt": 91
+        },
+        {
+          "text": "82.29",
+          "distanceFt": 92
+        },
+        {
+          "text": "177.6",
+          "distanceFt": 97
+        },
+        {
+          "text": "50.12",
+          "distanceFt": 98
+        },
+        {
+          "text": "149.01",
+          "distanceFt": 104
+        },
+        {
+          "text": "150.1",
+          "distanceFt": 104
+        },
+        {
+          "text": "149.81",
+          "distanceFt": 104
+        }
+      ]
+    },
+    {
+      "accountNum": "00000182602000000",
+      "sourceLayer": "ParcelDimension",
+      "labels": [
+        {
+          "text": "170.07",
+          "distanceFt": 36
+        },
+        {
+          "text": "175.52",
+          "distanceFt": 58
+        },
+        {
+          "text": "64.29",
+          "distanceFt": 58
+        },
+        {
+          "text": "13.16",
+          "distanceFt": 64
+        },
+        {
+          "text": "6.31",
+          "distanceFt": 73
+        },
+        {
+          "text": "149.97",
+          "distanceFt": 83
+        },
+        {
+          "text": "79.12",
+          "distanceFt": 94
+        },
+        {
+          "text": "70.8",
+          "distanceFt": 101
+        },
+        {
+          "text": "43.95",
+          "distanceFt": 101
+        },
+        {
+          "text": "47.74",
+          "distanceFt": 109
+        },
+        {
+          "text": "12.33",
+          "distanceFt": 117
+        },
+        {
+          "text": "5.31",
+          "distanceFt": 118
+        },
+        {
+          "text": "169.86",
+          "distanceFt": 118
+        },
+        {
+          "text": "65.61",
+          "distanceFt": 119
+        }
+      ]
+    },
+    {
+      "accountNum": "00000156442000000",
+      "sourceLayer": "ParcelDimension",
+      "labels": [
+        {
+          "text": "182.98",
+          "distanceFt": 45
+        },
+        {
+          "text": "198.64",
+          "distanceFt": 88
+        },
+        {
+          "text": "173.21",
+          "distanceFt": 117
+        },
+        {
+          "text": "12.98",
+          "distanceFt": 124
+        },
+        {
+          "text": "140.49",
+          "distanceFt": 142
+        },
+        {
+          "text": "7.07",
+          "distanceFt": 152
+        },
+        {
+          "text": "7.68",
+          "distanceFt": 159
+        },
+        {
+          "text": "140.28",
+          "distanceFt": 168
+        },
+        {
+          "text": "2.11",
+          "distanceFt": 174
+        },
+        {
+          "text": "23.68",
+          "distanceFt": 176
+        },
+        {
+          "text": "35.11",
+          "distanceFt": 193
+        },
+        {
+          "text": "78.09",
+          "distanceFt": 193
+        },
+        {
+          "text": "111.14",
+          "distanceFt": 198
+        },
+        {
+          "text": "12.89",
+          "distanceFt": 214
+        },
+        {
+          "text": "13.05",
+          "distanceFt": 217
+        }
+      ]
+    }
+  ]
+}

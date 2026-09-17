@@ -1,0 +1,62 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://white-rabbit.local/schemas/opportunity-brief-export.schema.json",
+  "title": "White Rabbit Evidence-Bound Opportunity Brief Exports",
+  "oneOf": [
+    { "$ref": "#/$defs/policy" },
+    { "$ref": "#/$defs/request" },
+    { "$ref": "#/$defs/accessGrant" },
+    { "$ref": "#/$defs/revocation" },
+    { "$ref": "#/$defs/artifact" },
+    { "$ref": "#/$defs/job" },
+    { "$ref": "#/$defs/workerState" }
+  ],
+  "$defs": {
+    "recipient": {
+      "type": "object",
+      "required": ["type", "id", "displayName"],
+      "properties": { "type": { "enum": ["user", "email"] }, "id": { "type": "string", "minLength": 1 }, "displayName": { "type": "string" } }
+    },
+    "policy": {
+      "type": "object",
+      "required": ["schemaVersion", "id", "organizationId", "issuedAt", "allowedFormats", "allowedRecipientIds", "allowedEmailDomains", "defaultClassification", "fieldClassifications", "maxRecipientClearance", "maxAccessSeconds", "watermarkRequired", "policySha256"],
+      "properties": { "schemaVersion": { "const": "wr-opportunity-brief-export-policy-v1" }, "watermarkRequired": { "type": "boolean" } }
+    },
+    "request": {
+      "type": "object",
+      "required": ["schemaVersion", "id", "organizationId", "requestedByUserId", "briefRef", "briefSha256", "recipient", "recipientClearance", "format", "purpose", "requestedAt", "expiresAt", "requestSha256"],
+      "properties": { "schemaVersion": { "const": "wr-opportunity-brief-export-request-v1" }, "briefSha256": { "type": "string", "pattern": "^[a-f0-9]{64}$" }, "recipient": { "$ref": "#/$defs/recipient" } }
+    },
+    "accessGrant": {
+      "type": "object",
+      "required": ["schemaVersion", "id", "organizationId", "policyId", "policySha256", "requestId", "requestSha256", "recipient", "recipientClearance", "format", "briefRef", "briefSha256", "purpose", "grantedByUserId", "grantedAt", "expiresAt", "revokedAt", "revocationId", "grantAuthorizationSha256"],
+      "properties": { "schemaVersion": { "const": "wr-opportunity-brief-access-grant-v1" }, "recipient": { "$ref": "#/$defs/recipient" } }
+    },
+    "revocation": {
+      "type": "object",
+      "required": ["schemaVersion", "id", "organizationId", "accessGrantId", "revokedByUserId", "reason", "revokedAt"],
+      "properties": { "schemaVersion": { "const": "wr-opportunity-brief-revocation-v1" } }
+    },
+    "artifact": {
+      "type": "object",
+      "required": ["schemaVersion", "id", "organizationId", "requestId", "accessGrantId", "policyId", "briefRef", "sourceBriefSha256", "redactedPayloadSha256", "contentSha256", "contentLength", "format", "recipient", "classification", "watermark", "watermarkSha256", "lineage", "createdAt", "expiresAt", "artifactRef", "artifactSha256"],
+      "properties": {
+        "schemaVersion": { "const": "wr-opportunity-brief-export-artifact-v1" },
+        "sourceBriefSha256": { "type": "string", "pattern": "^[a-f0-9]{64}$" },
+        "redactedPayloadSha256": { "type": "string", "pattern": "^[a-f0-9]{64}$" },
+        "contentSha256": { "type": "string", "pattern": "^[a-f0-9]{64}$" },
+        "artifactSha256": { "type": "string", "pattern": "^[a-f0-9]{64}$" }
+      }
+    },
+    "job": {
+      "type": "object",
+      "required": ["schemaVersion", "id", "organizationId", "requestId", "policyRef", "requestRef", "accessGrantRef", "briefRef", "status", "attemptNumber", "maxAttempts", "nextAttemptAt", "lease", "artifact", "lastErrorCode", "lastErrorMessage", "createdAt", "updatedAt", "completedAt"],
+      "properties": { "schemaVersion": { "const": "wr-opportunity-brief-export-job-v1" }, "status": { "enum": ["queued", "leased", "retry-scheduled", "artifact-ready", "dead-lettered"] } }
+    },
+    "workerState": {
+      "type": "object",
+      "required": ["schemaVersion", "organizationId", "revision", "jobs", "deadLetters", "updatedAt"],
+      "properties": { "schemaVersion": { "const": "wr-opportunity-brief-export-worker-state-v1" }, "jobs": { "type": "array", "items": { "$ref": "#/$defs/job" } } }
+    }
+  }
+}

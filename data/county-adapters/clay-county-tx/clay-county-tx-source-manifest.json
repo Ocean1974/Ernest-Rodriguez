@@ -1,0 +1,48 @@
+{
+  "county_id": "clay-county-tx",
+  "county_name": "Clay County",
+  "state": "TX",
+  "fips": "48077",
+  "cad_name": "Clay County Appraisal District",
+  "source_discovery_status": "official-property-search-portal-discovered",
+  "retrieved_at": "2026-06-29",
+  "official_portal": {
+    "label": "Clay County Appraisal District property search portal",
+    "url": "https://claycad.org/",
+    "source_type": "property-search-and-appraisal-portal",
+    "verification_status": "official-site-verified"
+  },
+  "observed_search_fields": [
+    "Owner ID",
+    "Owner Name",
+    "Property ID",
+    "Geo ID",
+    "Legal Description",
+    "Abstract",
+    "Subdivision",
+    "Tax Year",
+    "Property Type"
+  ],
+  "candidate_bulk_or_report_leads": [
+    "Records | Data | Reports portal link"
+  ],
+  "verified_counts": {
+    "parcel_geometry_features": 0,
+    "appraisal_property_rows": 0,
+    "count_verified_at": null,
+    "status": "not-verified"
+  },
+  "join_keys": {
+    "primary_parcel_account": "unverified",
+    "secondary_gis_id": "unverified",
+    "owner_appraisal": "unverified"
+  },
+  "remaining_blockers": [
+    "records/data/reports files not inspected",
+    "exact parcel count not verified",
+    "exact geometry-to-appraisal join key not verified",
+    "viewport chunks and search shards not built",
+    "QC report not built"
+  ],
+  "completion_impact": "source-discovery-started"
+}

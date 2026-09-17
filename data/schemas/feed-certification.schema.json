@@ -1,0 +1,22 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://white-rabbit.local/schemas/feed-certification.schema.json",
+  "title": "White Rabbit Feed Connector Certification",
+  "oneOf": [
+    {
+      "type": "object",
+      "required": ["schemaVersion", "connectorId", "connectorVersion", "providerId", "datasetId", "expectedEventSchemaVersion", "licenseId", "contractStartsAt", "contractExpiresAt", "minimumContractDaysRemaining", "requiredRights", "permittedCountyIds", "thresholds"],
+      "properties": { "schemaVersion": { "const": "wr-feed-connector-manifest-v1" } }
+    },
+    {
+      "type": "object",
+      "required": ["schemaVersion", "connectorId", "connectorVersion", "generatedAt", "license", "schema", "pointInTime", "replay", "freshness", "coverage", "dataQuality", "security", "loadReport", "provenance"],
+      "properties": { "schemaVersion": { "const": "wr-feed-certification-evidence-v1" } }
+    },
+    {
+      "type": "object",
+      "required": ["schemaVersion", "connectorId", "connectorVersion", "providerId", "datasetId", "evaluatedAt", "checks", "blockers", "status", "activationAuthorized", "certificationSha256", "manifest", "evidence"],
+      "properties": { "schemaVersion": { "const": "wr-feed-certification-decision-v1" }, "status": { "enum": ["certified", "rejected"] }, "activationAuthorized": { "type": "boolean" } }
+    }
+  ]
+}

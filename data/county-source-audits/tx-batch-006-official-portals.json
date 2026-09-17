@@ -1,0 +1,292 @@
+{
+  "version": "wr-tx-batch-006-official-portals-v1",
+  "retrievedAt": "2026-07-03",
+  "scope": "Texas verification queue batch 6, official portal and parcel-source discovery in progress",
+  "rule": "Official portals are evidence for source discovery only. They do not make a county core-complete until exact counts, join keys, bulk/source provenance, viewport chunks, search shards, and QC are verified.",
+  "counties": [
+    {
+      "countyId": "kaufman-county-tx",
+      "countyName": "Kaufman County",
+      "state": "TX",
+      "officialPortals": [
+        {
+          "label": "Kaufman Central Appraisal District official site",
+          "url": "https://kaufman-cad.org/",
+          "sourceType": "appraisal-district-site",
+          "verificationStatus": "official-site-verified",
+          "notes": "Official site exposes Property Search, Interactive Map, Online Forms, Reports, Download Map Data, and Appraisal Data Export. This is a strong parcel pipeline lead, but exact files, schemas, counts, and parcel/account join keys are not yet verified."
+        },
+        {
+          "label": "Kaufman CAD property search",
+          "url": "https://esearch.kaufman-cad.org/",
+          "sourceType": "property-search",
+          "verificationStatus": "linked-from-official-site",
+          "notes": "Linked directly from the official KCAD site. Parcel ID/search payload fields still need inspection before any join key is accepted."
+        },
+        {
+          "label": "Kaufman CAD interactive map",
+          "url": "https://gis.bisclient.com/",
+          "sourceType": "interactive-map",
+          "verificationStatus": "linked-from-official-site",
+          "notes": "Linked directly from the official KCAD site. Treat as map/GIS discovery until map data downloads and geometry-to-appraisal keys are inspected."
+        },
+        {
+          "label": "Kaufman CAD map data and appraisal export leads",
+          "url": "https://kaufman-cad.org/",
+          "sourceType": "downloads-and-appraisal-export",
+          "verificationStatus": "linked-from-official-site",
+          "notes": "Official navigation includes Download Map Data and Appraisal Data Export under Public Info. These are candidate bulk-source leads for DCAD-style parcel service buildout."
+        }
+      ],
+      "completionImpact": "source-discovery-started",
+      "remainingBlockers": [
+        "download map data files not inspected",
+        "appraisal data export files not inspected",
+        "property search parcel ID field names not verified",
+        "exact parcel count not verified",
+        "exact geometry-to-appraisal join key not verified",
+        "viewport/search outputs not built"
+      ]
+    },
+    {
+      "countyId": "kendall-county-tx",
+      "countyName": "Kendall County",
+      "state": "TX",
+      "officialPortals": [
+        {
+          "label": "Kendall Appraisal District official site",
+          "url": "https://kendallad.org/",
+          "sourceType": "appraisal-district-site",
+          "verificationStatus": "official-site-verified",
+          "notes": "Official site exposes Property Search, Interactive Map, Taxpayer Portal, reports, and downloads. Treat as official source discovery only until parcel ID fields, export schemas, counts, and join keys are verified."
+        },
+        {
+          "label": "Kendall AD property search",
+          "url": "https://esearch.kendallad.org/",
+          "sourceType": "property-search",
+          "verificationStatus": "linked-from-official-site",
+          "notes": "Linked directly from the official Kendall AD site. Parcel ID/search payload fields still need inspection before any join key is accepted."
+        },
+        {
+          "label": "Kendall AD interactive map",
+          "url": "https://gis.bisclient.com/",
+          "sourceType": "interactive-map",
+          "verificationStatus": "linked-from-official-site",
+          "notes": "Linked directly from the official Kendall AD site. Treat as geometry-source discovery until bulk/API-safe geometry and exact count are verified."
+        }
+      ],
+      "completionImpact": "source-discovery-started",
+      "remainingBlockers": [
+        "downloads/report files not inspected",
+        "property search parcel ID field names not verified",
+        "exact parcel count not verified",
+        "exact geometry-to-appraisal join key not verified",
+        "viewport/search outputs not built"
+      ]
+    },
+    {
+      "countyId": "kerr-county-tx",
+      "countyName": "Kerr County",
+      "state": "TX",
+      "officialPortals": [
+        {
+          "label": "Kerr Central Appraisal District official site",
+          "url": "https://kerrcad.org/",
+          "sourceType": "appraisal-district-site",
+          "verificationStatus": "official-site-verified",
+          "notes": "Official site exposes Property Search, Interactive Map, Online Appeals, and Appraisal Export. The site says property can be searched by name, address, or property ID."
+        },
+        {
+          "label": "Kerr CAD property search",
+          "url": "https://esearch.kerrcad.org/",
+          "sourceType": "property-search",
+          "verificationStatus": "linked-from-official-site",
+          "notes": "Linked directly from the official Kerr CAD site. Property ID is a candidate parcel key, but it must be validated against geometry/appraisal exports before joining."
+        },
+        {
+          "label": "Kerr CAD interactive map",
+          "url": "https://gis.bisclient.com/",
+          "sourceType": "interactive-map",
+          "verificationStatus": "linked-from-official-site",
+          "notes": "Linked directly from the official Kerr CAD site. Treat as geometry-source discovery until bulk/API-safe parcel geometry, exact count, and join key are verified."
+        },
+        {
+          "label": "Kerr CAD appraisal export",
+          "url": "https://kerrcad.org/",
+          "sourceType": "appraisal-export",
+          "verificationStatus": "linked-from-official-site",
+          "notes": "Official navigation includes Appraisal Export. Export schema and parcel/account key fields still need inspection."
+        }
+      ],
+      "completionImpact": "source-discovery-started",
+      "remainingBlockers": [
+        "appraisal export schema not inspected",
+        "Property ID candidate join key not validated against geometry",
+        "exact parcel count not verified",
+        "exact geometry-to-appraisal join key not verified",
+        "viewport/search outputs not built"
+      ]
+    },
+    {
+      "countyId": "llano-county-tx",
+      "countyName": "Llano County",
+      "state": "TX",
+      "officialPortals": [
+        {
+          "label": "Llano Central Appraisal District official site",
+          "url": "https://llanocad.net/",
+          "sourceType": "appraisal-district-site",
+          "verificationStatus": "official-site-verified",
+          "notes": "Official site exposes Property Search, Interactive Map, Online Protest, and Purchase GIS Data. GIS purchase/source terms must be inspected before any parcel geometry use."
+        },
+        {
+          "label": "Llano CAD property search",
+          "url": "https://esearch.llanocad.net/",
+          "sourceType": "property-search",
+          "verificationStatus": "linked-from-official-site",
+          "notes": "Linked directly from the official Llano CAD site. Parcel ID/search payload fields still need inspection before any join key is accepted."
+        },
+        {
+          "label": "Llano CAD interactive map",
+          "url": "https://gis.bisclient.com/",
+          "sourceType": "interactive-map",
+          "verificationStatus": "linked-from-official-site",
+          "notes": "Linked directly from the official Llano CAD site. Treat as geometry-source discovery until bulk/API-safe geometry and exact count are verified."
+        },
+        {
+          "label": "Llano CAD GIS data lead",
+          "url": "https://www.texascountygisdata.com/",
+          "sourceType": "gis-data-lead",
+          "verificationStatus": "linked-from-official-site-terms-needed",
+          "notes": "Official Llano CAD site links to Purchase GIS Data. This may be useful for parcel geometry but terms, schema, and legal use must be verified before ingestion."
+        }
+      ],
+      "completionImpact": "source-discovery-started",
+      "remainingBlockers": [
+        "GIS data terms not inspected",
+        "property search parcel ID field names not verified",
+        "exact parcel count not verified",
+        "exact geometry-to-appraisal join key not verified",
+        "viewport/search outputs not built"
+      ]
+    },
+    {
+      "countyId": "lamar-county-tx",
+      "countyName": "Lamar County",
+      "state": "TX",
+      "officialPortals": [
+        {
+          "label": "Lamar County Appraisal District official site",
+          "url": "https://lamarcad.org/",
+          "sourceType": "appraisal-district-site",
+          "verificationStatus": "official-site-verified",
+          "notes": "Official site exposes property search, tax information, public information, local reports, and appraisal district resources. Treat as source discovery until property-search schema, exact counts, and join keys are verified."
+        },
+        {
+          "label": "Lamar CAD property search",
+          "url": "https://esearch.lamarcad.org/",
+          "sourceType": "property-search",
+          "verificationStatus": "linked-from-official-site",
+          "notes": "Linked from the official Lamar CAD site. Parcel/account field names and payload schema still need inspection."
+        },
+        {
+          "label": "Lamar CAD public information and reports",
+          "url": "https://lamarcad.org/",
+          "sourceType": "public-information-and-reports",
+          "verificationStatus": "linked-from-official-site",
+          "notes": "Official navigation exposes Public Information and Local Reports. Candidate source files must be inspected for schemas, counts, and parcel/account keys."
+        }
+      ],
+      "completionImpact": "source-discovery-started",
+      "remainingBlockers": [
+        "public information/report files not inspected",
+        "property search parcel ID field names not verified",
+        "exact parcel count not verified",
+        "exact geometry-to-appraisal join key not verified",
+        "viewport/search outputs not built"
+      ]
+    },
+    {
+      "countyId": "liberty-county-tx",
+      "countyName": "Liberty County",
+      "state": "TX",
+      "officialPortals": [
+        {
+          "label": "Liberty County Appraisal District official site",
+          "url": "https://libertycad.com/",
+          "sourceType": "appraisal-district-site",
+          "verificationStatus": "official-site-verified",
+          "notes": "Official site exposes Property Search, GIS Map, Online Forms, and reports/public data navigation. Treat as source discovery until parcel ID fields, exact counts, GIS source, and join keys are verified."
+        },
+        {
+          "label": "Liberty CAD property search",
+          "url": "https://esearch.libertycad.com/",
+          "sourceType": "property-search",
+          "verificationStatus": "linked-from-official-site",
+          "notes": "Linked from the official Liberty CAD site. Search payload schema and parcel/account fields still need inspection."
+        },
+        {
+          "label": "Liberty CAD GIS map",
+          "url": "https://gis.bisclient.com/",
+          "sourceType": "interactive-map",
+          "verificationStatus": "linked-from-official-site",
+          "notes": "Linked from the official Liberty CAD site. Treat as geometry discovery until bulk/API-safe parcel geometry and exact joins are verified."
+        }
+      ],
+      "completionImpact": "source-discovery-started",
+      "remainingBlockers": [
+        "GIS map source files not inspected",
+        "property search parcel ID field names not verified",
+        "exact parcel count not verified",
+        "exact geometry-to-appraisal join key not verified",
+        "viewport/search outputs not built"
+      ]
+    },
+    {
+      "countyId": "medina-county-tx",
+      "countyName": "Medina County",
+      "state": "TX",
+      "officialPortals": [
+        {
+          "label": "Medina County Appraisal District official site",
+          "url": "https://medinacad.org/",
+          "sourceType": "appraisal-district-site",
+          "verificationStatus": "official-site-verified",
+          "notes": "Official site exposes Property Search, Interactive Map, Online Forms, and reports/resources. Treat as source discovery until parcel ID fields, exact counts, GIS source, and join keys are verified."
+        },
+        {
+          "label": "Medina CAD property search",
+          "url": "https://esearch.medinacad.org/",
+          "sourceType": "property-search",
+          "verificationStatus": "linked-from-official-site",
+          "notes": "Linked from the official Medina CAD site. Search payload schema and parcel/account fields still need inspection."
+        },
+        {
+          "label": "Medina CAD interactive map",
+          "url": "https://gis.bisclient.com/",
+          "sourceType": "interactive-map",
+          "verificationStatus": "linked-from-official-site",
+          "notes": "Linked from the official Medina CAD site. Treat as geometry discovery until bulk/API-safe parcel geometry and exact joins are verified."
+        }
+      ],
+      "completionImpact": "source-discovery-started",
+      "remainingBlockers": [
+        "GIS map source files not inspected",
+        "property search parcel ID field names not verified",
+        "exact parcel count not verified",
+        "exact geometry-to-appraisal join key not verified",
+        "viewport/search outputs not built"
+      ]
+    }
+  ],
+  "generatedAt": "2026-07-03T00:00:00.000Z",
+  "completionRule": "Official portals are evidence for source discovery only. They do not make a county core-complete until exact counts, join keys, bulk/source provenance, viewport chunks, search shards, and QC are verified.",
+  "summary": {
+    "countyCount": 7,
+    "officialSiteVerified": 7,
+    "linkedPropertySearch": 7,
+    "linkedInteractiveMap": 6,
+    "bulkOrExportLead": 3,
+    "promotedToCoreComplete": 0
+  }
+}

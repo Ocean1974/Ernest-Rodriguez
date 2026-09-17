@@ -1,0 +1,250 @@
+{
+  "id": "maricopa-county-az",
+  "countyId": "maricopa-county-az",
+  "countyName": "Maricopa County",
+  "state": "AZ",
+  "fips": "04013",
+  "marketName": "Phoenix",
+  "appraisalDistrictName": "Maricopa County Assessor",
+  "appraisalDistrictAcronym": "MCA",
+  "gisSource": "Maricopa County Assessor Parcel Viewer / Parcels_view FeatureServer",
+  "uniqueGisKey": "OBJECTID",
+  "parcelIdField": "APN",
+  "accountIdField": "APN",
+  "geometryType": "polygon",
+  "sourceSpatialReference": "EPSG:3857 / WGS 1984 Web Mercator Auxiliary Sphere (source service wkid 102100/latestWkid 3857)",
+  "status": "pilot",
+  "map": {
+    "locationId": 1003,
+    "locationName": "Maricopa County AZ / Phoenix Pilot",
+    "locationType": "Maricopa County Assessor",
+    "status": "pilot map/search built - activation gated",
+    "coordinates": [
+      -112.074,
+      33.4484
+    ],
+    "camera": {
+      "x": 50,
+      "y": 50,
+      "zoom": 1.2,
+      "pitch": 48,
+      "bearing": 0
+    },
+    "geoBounds": {
+      "minLng": -113.3349991,
+      "minLat": 32.6954607,
+      "maxLng": -111.0817606,
+      "maxLat": 34.046868
+    },
+    "boundsStatus": "verified from Maricopa Assessor Parcels_view service extent converted to WGS84"
+  },
+  "universalParcelSchema": {
+    "version": "wr-universal-parcel-v1",
+    "schemaPath": "data/schemas/universal-parcel.schema.json",
+    "documentationPath": "data/schemas/universal-parcel.md",
+    "parcelServiceBuilder": "scripts/build-app-parcel-service.cjs",
+    "fieldMapPath": "data/county-adapters/maricopa-county-az/maricopa-universal-field-map.json",
+    "sourceManifestPath": "data/county-adapters/maricopa-county-az/maricopa-county-parcel-source-manifest.json"
+  },
+  "sourceFiles": {
+    "parcelGeometry": "https://services.arcgis.com/ykpntM6e3tHvzKRJ/arcgis/rest/services/Parcels_view/FeatureServer/0",
+    "appraisalDistrictExtract": "https://services.arcgis.com/ykpntM6e3tHvzKRJ/arcgis/rest/services/Parcels_view/FeatureServer/0",
+    "ownerAppraisal": "https://services.arcgis.com/ykpntM6e3tHvzKRJ/arcgis/rest/services/Parcels_view/FeatureServer/0",
+    "permitsRaw": "source-needed",
+    "permitsProcessed": "data/permits/processed/maricopa-county-az",
+    "zoningRaw": "source-needed",
+    "floodplainRaw": "source-needed",
+    "migrationDemandRaw": "source-needed"
+  },
+  "publicDataRoots": {
+    "parcels": "/data/counties/maricopa-county-az/parcels/",
+    "permits": "/data/counties/maricopa-county-az/permits/",
+    "developments": "/data/counties/maricopa-county-az/developments/",
+    "zoning": "/data/counties/maricopa-county-az/zoning/",
+    "floodplain": "/data/counties/maricopa-county-az/floodplain/",
+    "demand": "/data/counties/maricopa-county-az/demand/"
+  },
+  "productionOutputs": {
+    "parcelGeojson": "output/maricopa-county-az/maricopa-county-az-parcels.geojson",
+    "parcelPmtiles": "output/maricopa-county-az/maricopa-county-az-parcels.pmtiles",
+    "vectorTilesDirectory": "output/maricopa-county-az/vector-tiles/"
+  },
+  "optionalLayers": [
+    {
+      "id": "county-parcels",
+      "label": "County parcels",
+      "source": "https://services.arcgis.com/ykpntM6e3tHvzKRJ/arcgis/rest/services/Parcels_view/FeatureServer/0",
+      "status": "official-source-verified-service-built",
+      "joinBehavior": "APN -> White Rabbit accountNum/sourceParcelId; OBJECTID -> GIS object id; viewport chunks and search shards are built but remain activation gated",
+      "defaultVisible": false,
+      "renderStrategy": "build-time official source fetch, offline universal mapping, viewport chunks, capped runtime loader",
+      "maxFeaturesPerViewport": 750
+    },
+    {
+      "id": "owner-appraisal",
+      "label": "Owner/appraisal",
+      "source": "https://services.arcgis.com/ykpntM6e3tHvzKRJ/arcgis/rest/services/Parcels_view/FeatureServer/0",
+      "status": "official-source-verified-service-built",
+      "joinBehavior": "APN joins owner, mailing, situs, sale/deed, land size, zoning text, jurisdiction, construction year, living space, and current/previous value fields; phone/email remain blank",
+      "defaultVisible": false,
+      "renderStrategy": "build-time official source fetch, offline owner/appraisal normalization, viewport chunks, capped runtime loader",
+      "maxFeaturesPerViewport": 750
+    },
+    {
+      "id": "parcel-dimensions",
+      "label": "Parcel dimensions",
+      "source": "https://gis.mcassessor.maricopa.gov/arcgis/rest/services/ParcelLabel/MapServer",
+      "status": "source-identified-inspection-needed",
+      "joinBehavior": "Parcel service exposes LAND_SIZE, Shape__Area, and Shape__Length; ParcelLabel MapServer needs inspection for dimension labels",
+      "defaultVisible": false,
+      "renderStrategy": "build-time official source inspection, offline mapping, viewport chunks",
+      "maxFeaturesPerViewport": 750
+    },
+    {
+      "id": "block-grid",
+      "label": "Block, subdivision, and map-grid context",
+      "source": "https://gis.mcassessor.maricopa.gov/arcgis/rest/services/SubdivisionOutline/MapServer",
+      "status": "source-identified-build-needed",
+      "joinBehavior": "Parcel fields include SUBNAME, LOT_NUM, BLOCK, TRACT, STR, MCRNUM/MCR_BOOK/MCR_PAGE; map/section services can provide spatial context",
+      "defaultVisible": false,
+      "renderStrategy": "build-time official source inspection, offline joins, viewport chunks",
+      "maxFeaturesPerViewport": 750
+    },
+    {
+      "id": "permits",
+      "label": "Permits and certificates of occupancy",
+      "source": "source-needed",
+      "status": "source-needed",
+      "joinBehavior": "source-needed: parcel/account, normalized address, or spatial point-in-parcel join",
+      "defaultVisible": false,
+      "publicDataRoot": "/data/counties/maricopa-county-az/permits/",
+      "manifestPath": "public/data/counties/maricopa-county-az/permits/manifest.json",
+      "renderStrategy": "build-time official source verification, offline permit normalization, viewport-safe chunks",
+      "maxFeaturesPerViewport": 750
+    },
+    {
+      "id": "zoning-intelligence",
+      "label": "Zoning intelligence",
+      "source": "CITY_ZONING field in Maricopa Assessor Parcels_view plus local jurisdiction detail still needed",
+      "status": "partial-source-verified-municipal-detail-needed",
+      "joinBehavior": "APN-keyed parcel field CITY_ZONING gives zoning text, but many records may require local jurisdiction zoning detail",
+      "defaultVisible": false,
+      "publicDataRoot": "/data/counties/maricopa-county-az/zoning/",
+      "manifestPath": "public/data/counties/maricopa-county-az/zoning/manifest.json",
+      "schemaPath": "data/schemas/dallas-zoning-layer.schema.json",
+      "reportPath": "output/maricopa-county-az/zoning-source-report.md",
+      "renderStrategy": "build-time official source verification, offline joins, viewport chunks, capped runtime loader",
+      "maxFeaturesPerViewport": 750
+    },
+    {
+      "id": "floodplain-intelligence",
+      "label": "Floodplain intelligence",
+      "source": "source-needed",
+      "status": "source-needed",
+      "joinBehavior": "source-needed: FEMA/local floodplain spatial join keyed back to parcel/account IDs",
+      "defaultVisible": false,
+      "publicDataRoot": "/data/counties/maricopa-county-az/floodplain/",
+      "manifestPath": "public/data/counties/maricopa-county-az/floodplain/manifest.json",
+      "parcelIndexPath": "public/data/counties/maricopa-county-az/floodplain/parcel-floodplain-index.json",
+      "schemaPath": "data/schemas/parcel-floodplain-index.schema.json",
+      "parcelIndexSchemaPath": "data/schemas/parcel-floodplain-index.schema.json",
+      "reportPath": "output/maricopa-county-az/floodplain-source-report.md",
+      "renderStrategy": "build-time official source verification, offline parcel centroid spatial join, viewport-safe sharded parcel ID lookup",
+      "maxFeaturesPerViewport": 750
+    },
+    {
+      "id": "migration-demand",
+      "label": "Migration and demand",
+      "source": "source-needed",
+      "status": "source-needed",
+      "joinBehavior": "source-needed: aggregate Census/ACS/IRS or approved demand geography joined by tract/block group/market, not individual people",
+      "defaultVisible": false,
+      "publicDataRoot": "/data/counties/maricopa-county-az/demand/",
+      "manifestPath": "public/data/counties/maricopa-county-az/demand/manifest.json",
+      "renderStrategy": "build-time aggregate demand scoring, offline geography-to-parcel join, viewport-safe parcel index lookup",
+      "maxFeaturesPerViewport": 750
+    }
+  ],
+  "publicSourceDiscovery": {
+    "status": "parcel-source-verified",
+    "priorityReason": "Large Sun Belt market with strong real estate demand signals.",
+    "sourceSearchQueries": [
+      "Maricopa County assessor parcel data GIS",
+      "Maricopa County parcel shapefile download",
+      "Phoenix permits open data"
+    ],
+    "sourceRules": [
+      "Use official county, assessor/appraiser, GIS, municipal, state, or federal sources first.",
+      "Do not activate this county until exact parcel counts and join keys are verified.",
+      "Do not infer owner phone/email from permits, contractors, applicants, or scraped pages."
+    ]
+  },
+  "ownerEnrichment": {
+    "sourceLabel": "Maricopa County Assessor Parcels_view",
+    "propertyRecordSource": "https://services.arcgis.com/ykpntM6e3tHvzKRJ/arcgis/rest/services/Parcels_view/FeatureServer/0",
+    "officialJoinKey": "APN -> owner, mailing, situs, sale/deed, land size, zoning text, jurisdiction, construction year, living space, and current/previous value fields",
+    "noOfficialEmailFieldNote": "No official owner phone/email field is exposed by the verified parcel service. Do not infer owner contact fields.",
+    "fields": {
+      "parcelId": "APN",
+      "gisParcelId": "OBJECTID",
+      "ownerName": "OWNER_NAME",
+      "ownerName2": "",
+      "businessName": "",
+      "ownerMailingAddress": "MAIL_ADDRESS",
+      "ownerMailingAddress2": "MAIL_ADDR2",
+      "ownerCity": "MAIL_CITY",
+      "ownerState": "MAIL_STATE",
+      "ownerZip": "MAIL_ZIP",
+      "ownerPhone": "No official owner phone field verified",
+      "ownerEmail": "No official owner email field verified"
+    }
+  },
+  "joinKeys": {
+    "primaryParcelAccount": "APN -> White Rabbit accountNum/sourceParcelId",
+    "appraisal": "APN -> FCV_CUR, LPV_CUR, LC_CUR, TAX_YR_CUR, FCV_PREV, LPV_PREV, LC_PREV",
+    "land": "APN -> LAND_SIZE, PUC, CITY_ZONING, JURISDICTION, CONST_YEAR, LIVING_SPACE",
+    "secondaryParcelGisId": "OBJECTID -> White Rabbit gisParcelId",
+    "blockLabels": "Direct parcel fields SUBNAME, LOT_NUM, BLOCK, TRACT, STR, MCRNUM/MCR_BOOK/MCR_PAGE; optional spatial joins to SubdivisionOutline/Sections/MapIDs remain build-needed",
+    "dimensions": "LAND_SIZE, Shape__Area, and Shape__Length available; ParcelLabel MapServer needs inspection for segment dimension labels",
+    "permits": "source-needed: parcel/account ID, address match, spatial join, or combination",
+    "zoning": "CITY_ZONING field is APN-keyed parcel zoning text; municipal zoning polygons/cases remain source-needed where the field says contact local jurisdiction",
+    "floodplain": "source-needed: FEMA/local floodplain parcel centroid spatial join keyed to parcel/account IDs",
+    "migrationDemand": "source-needed: aggregate geography join, not individual people"
+  },
+  "verifiedCounts": {
+    "parcelGeometryFeatures": 1758244,
+    "missingGeometry": 0,
+    "apnMissing": 0,
+    "apnDashMissing": 0,
+    "apnDistinctValues": 1758244,
+    "duplicateApn": 0,
+    "appraisalAccountRows": 1758244,
+    "appraisalRows": 1758244,
+    "landRows": 1758244,
+    "appParcelChunks": 943,
+    "parcelSearchShards": 1117,
+    "sourcePermitRecords": 0,
+    "permitRowsJoined": 0,
+    "permitRowsUnmatched": 0,
+    "parcelsWithDevelopmentSignals": 0,
+    "migrationDemandGeographies": 0
+  },
+  "requiredOutputs": [
+    "output/maricopa-county-az/schema-report.md",
+    "output/maricopa-county-az/schema-report.json",
+    "output/maricopa-county-az/join-key-report.md",
+    "output/maricopa-county-az/full-parcel-access-report.md",
+    "output/maricopa-county-az/qa-report.md",
+    "output/maricopa-county-az/qa-report.json",
+    "output/maricopa-county-az/maricopa-county-az-parcels.geojson",
+    "output/maricopa-county-az/maricopa-county-az-parcels.pmtiles or output/maricopa-county-az/vector-tiles/",
+    "public/data/counties/maricopa-county-az/parcels/manifest.json",
+    "public/data/counties/maricopa-county-az/permits/manifest.json",
+    "public/data/counties/maricopa-county-az/developments/parcel-development-index.json",
+    "public/data/counties/maricopa-county-az/zoning/manifest.json",
+    "public/data/counties/maricopa-county-az/floodplain/manifest.json",
+    "public/data/counties/maricopa-county-az/demand/manifest.json"
+  ],
+  "productionGap": "Pilot source verified with full viewport chunks and production search shards built, but permits/CO, full local zoning detail, floodplain, development signals, migration/demand, PMTiles/vector tiles, and activation QA are not built yet.",
+  "pilotNotes": "Do not activate this county in the app. Do not redesign any pages. The Maricopa source is verified and the map/search parcel service is built, but the county remains activation gated until QC, optional layers, and explicit activation review pass."
+}

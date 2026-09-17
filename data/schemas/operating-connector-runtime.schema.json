@@ -1,0 +1,71 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://white-rabbit.local/schemas/operating-connector-runtime.schema.json",
+  "title": "White Rabbit operating connector runtime contracts",
+  "oneOf": [
+    { "$ref": "#/$defs/connector" },
+    { "$ref": "#/$defs/mappingProfile" },
+    { "$ref": "#/$defs/rawPage" },
+    { "$ref": "#/$defs/mappingResult" },
+    { "$ref": "#/$defs/job" },
+    { "$ref": "#/$defs/workerState" },
+    { "$ref": "#/$defs/run" },
+    { "$ref": "#/$defs/deadLetter" },
+    { "$ref": "#/$defs/backfillPlan" }
+  ],
+  "$defs": {
+    "digest": { "type": "string", "pattern": "^[a-f0-9]{64}$" },
+    "dateTime": { "type": "string", "format": "date-time" },
+    "connector": {
+      "type": "object",
+      "required": ["schemaVersion", "organizationId", "connectorId", "connectorVersion", "providerId", "datasetId", "baseUrl", "allowedHosts", "credentialRef", "licenseId", "rights", "mappingProfileId", "mappingProfileVersion", "certification", "certificationSha256", "connectorSha256"],
+      "properties": {
+        "schemaVersion": { "const": "wr-operating-connector-v1" },
+        "baseUrl": { "type": "string", "pattern": "^https://" },
+        "credentialRef": { "type": "string", "pattern": "^secret-ref:" },
+        "certificationSha256": { "$ref": "#/$defs/digest" },
+        "connectorSha256": { "$ref": "#/$defs/digest" }
+      }
+    },
+    "mappingProfile": {
+      "type": "object",
+      "required": ["schemaVersion", "id", "organizationId", "connectorId", "version", "targetKind", "mappings", "createdByUserId", "approvedByUserId", "mappingSha256"],
+      "properties": { "schemaVersion": { "const": "wr-operating-mapping-profile-v1" }, "version": { "type": "integer", "minimum": 1 }, "mappingSha256": { "$ref": "#/$defs/digest" } }
+    },
+    "rawPage": {
+      "type": "object",
+      "required": ["schemaVersion", "responseId", "fetchedAt", "requestCursor", "nextCursor", "hasMore", "records", "pageSha256"],
+      "properties": { "schemaVersion": { "const": "wr-operating-raw-page-v1" }, "fetchedAt": { "$ref": "#/$defs/dateTime" }, "pageSha256": { "$ref": "#/$defs/digest" } }
+    },
+    "mappingResult": {
+      "type": "object",
+      "required": ["schemaVersion", "organizationId", "connectorId", "feedInputs", "quarantined", "stats", "mappingResultSha256"],
+      "properties": { "schemaVersion": { "const": "wr-operating-mapping-result-v1" }, "mappingResultSha256": { "$ref": "#/$defs/digest" } }
+    },
+    "job": {
+      "type": "object",
+      "required": ["schemaVersion", "id", "organizationId", "connectorId", "mode", "status", "failureCount", "maxFailures", "createdAt", "updatedAt", "jobSha256"],
+      "properties": { "schemaVersion": { "const": "wr-operating-connector-job-v1" }, "status": { "enum": ["queued", "leased", "continuation", "retry-scheduled", "succeeded", "dead-lettered", "cancelled"] }, "jobSha256": { "$ref": "#/$defs/digest" } }
+    },
+    "workerState": {
+      "type": "object",
+      "required": ["schemaVersion", "organizationId", "revision", "connectors", "mappingProfiles", "jobs", "deadLetters", "updatedAt", "stateSha256"],
+      "properties": { "schemaVersion": { "const": "wr-operating-connector-worker-state-v1" }, "revision": { "type": "integer", "minimum": 1 }, "stateSha256": { "$ref": "#/$defs/digest" } }
+    },
+    "run": {
+      "type": "object",
+      "required": ["schemaVersion", "organizationId", "workerId", "startedAt", "completedAt", "leasedJobIds", "succeededJobIds", "continuedJobIds", "retryScheduledJobIds", "deadLetteredJobIds", "pageApplicationSha256s"],
+      "properties": { "schemaVersion": { "const": "wr-operating-connector-run-v1" } }
+    },
+    "deadLetter": {
+      "type": "object",
+      "required": ["schemaVersion", "id", "organizationId", "jobId", "connectorId", "failureCount", "errorCode", "deadLetteredAt", "deadLetterSha256"],
+      "properties": { "schemaVersion": { "const": "wr-operating-connector-dead-letter-v1" }, "deadLetterSha256": { "$ref": "#/$defs/digest" } }
+    },
+    "backfillPlan": {
+      "type": "object",
+      "required": ["schemaVersion", "organizationId", "connectorId", "startDate", "endDate", "windowDays", "totalDays", "jobs", "createdAt", "planSha256"],
+      "properties": { "schemaVersion": { "const": "wr-operating-backfill-plan-v1" }, "planSha256": { "$ref": "#/$defs/digest" } }
+    }
+  }
+}

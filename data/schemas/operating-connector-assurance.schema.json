@@ -1,0 +1,64 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://white-rabbit.local/schemas/operating-connector-assurance.schema.json",
+  "title": "White Rabbit operating connector assurance contracts",
+  "oneOf": [
+    { "$ref": "#/$defs/schemaBaseline" },
+    { "$ref": "#/$defs/schemaAssessment" },
+    { "$ref": "#/$defs/credentialBinding" },
+    { "$ref": "#/$defs/credentialRotation" },
+    { "$ref": "#/$defs/drillPlan" },
+    { "$ref": "#/$defs/drillResult" },
+    { "$ref": "#/$defs/adapterCertification" },
+    { "$ref": "#/$defs/healthReport" },
+    { "$ref": "#/$defs/assuranceState" }
+  ],
+  "$defs": {
+    "digest": { "type": "string", "pattern": "^[a-f0-9]{64}$" },
+    "schemaBaseline": {
+      "type": "object",
+      "required": ["schemaVersion", "id", "organizationId", "connectorId", "version", "descriptor", "requiredPaths", "sampleCount", "createdByUserId", "createdAt", "approvedByUserId", "approvedAt", "baselineSha256"],
+      "properties": { "schemaVersion": { "const": "wr-connector-schema-baseline-v1" }, "baselineSha256": { "$ref": "#/$defs/digest" } }
+    },
+    "schemaAssessment": {
+      "type": "object",
+      "required": ["schemaVersion", "organizationId", "connectorId", "baselineId", "baselineVersion", "baselineSha256", "pageSha256", "assessedAt", "status", "missingRequiredPaths", "typeChanges", "addedPaths", "removedOptionalPaths", "observedDescriptor", "assessmentSha256"],
+      "properties": { "schemaVersion": { "const": "wr-connector-schema-assessment-v1" }, "status": { "enum": ["compatible", "compatible-with-drift", "incompatible"] }, "assessmentSha256": { "$ref": "#/$defs/digest" } }
+    },
+    "credentialBinding": {
+      "type": "object",
+      "required": ["schemaVersion", "id", "organizationId", "connectorId", "version", "secretRef", "validFrom", "expiresAt", "status", "createdByUserId", "createdAt", "evidenceRefs", "bindingSha256"],
+      "properties": { "schemaVersion": { "const": "wr-connector-credential-binding-v1" }, "secretRef": { "type": "string", "pattern": "^secret-ref:" }, "status": { "enum": ["staged", "active", "retired"] }, "bindingSha256": { "$ref": "#/$defs/digest" } }
+    },
+    "credentialRotation": {
+      "type": "object",
+      "required": ["schemaVersion", "id", "organizationId", "connectorId", "fromBindingId", "fromBindingSha256", "toBindingId", "toBindingSha256", "requestedByUserId", "requestedAt", "approvedByUserId", "approvedAt", "status", "evidenceRefs", "appliedAt", "rotationSha256"],
+      "properties": { "schemaVersion": { "const": "wr-connector-credential-rotation-v1" }, "status": { "enum": ["approved", "applied", "cancelled"] }, "rotationSha256": { "$ref": "#/$defs/digest" } }
+    },
+    "drillPlan": {
+      "type": "object",
+      "required": ["schemaVersion", "id", "organizationId", "connectorId", "connectorSha256", "scenarios", "createdByUserId", "createdAt", "approvedByUserId", "approvedAt", "planSha256"],
+      "properties": { "schemaVersion": { "const": "wr-connector-drill-plan-v1" }, "planSha256": { "$ref": "#/$defs/digest" } }
+    },
+    "drillResult": {
+      "type": "object",
+      "required": ["schemaVersion", "id", "organizationId", "connectorId", "planId", "planSha256", "startedAt", "completedAt", "status", "scenarioResults", "resultSha256"],
+      "properties": { "schemaVersion": { "const": "wr-connector-drill-result-v1" }, "status": { "enum": ["passed", "failed"] }, "resultSha256": { "$ref": "#/$defs/digest" } }
+    },
+    "adapterCertification": {
+      "type": "object",
+      "required": ["schemaVersion", "id", "organizationId", "connectorId", "connectorSha256", "mappingSha256", "baselineSha256", "credentialBindingSha256", "drillResultSha256", "sloEvaluatedAt", "reviewerUserId", "certifiedAt", "status", "activationAuthorized", "checks", "blockers", "certificationSha256"],
+      "properties": { "schemaVersion": { "const": "wr-operating-adapter-certification-v1" }, "status": { "enum": ["certified", "rejected"] }, "certificationSha256": { "$ref": "#/$defs/digest" } }
+    },
+    "healthReport": {
+      "type": "object",
+      "required": ["schemaVersion", "organizationId", "connectorId", "connectorSha256", "evaluatedAt", "status", "metrics", "findings", "healthSha256"],
+      "properties": { "schemaVersion": { "const": "wr-connector-health-report-v1" }, "status": { "enum": ["healthy", "degraded", "blocked"] }, "healthSha256": { "$ref": "#/$defs/digest" } }
+    },
+    "assuranceState": {
+      "type": "object",
+      "required": ["schemaVersion", "organizationId", "revision", "schemaBaselines", "credentialBindings", "credentialRotations", "drillPlans", "drillResults", "adapterCertifications", "healthReports", "schemaAssessments", "updatedAt", "stateSha256"],
+      "properties": { "schemaVersion": { "const": "wr-connector-assurance-state-v1" }, "revision": { "type": "integer", "minimum": 1 }, "stateSha256": { "$ref": "#/$defs/digest" } }
+    }
+  }
+}

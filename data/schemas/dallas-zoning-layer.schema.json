@@ -1,0 +1,197 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://white-rabbit.local/schemas/dallas-zoning-layer.schema.json",
+  "title": "White Rabbit Dallas Zoning Layer",
+  "description": "Optional, county-aware zoning and case overlay records normalized from City of Dallas public zoning ArcGIS services. Records enrich White Rabbit parcels and never replace DCAD base parcel data.",
+  "type": "object",
+  "additionalProperties": true,
+  "required": [
+    "schemaVersion",
+    "sourceCountyId",
+    "zoningRecordId",
+    "sourceLayerId",
+    "sourceLayerTitle",
+    "sourceUrl",
+    "recordType",
+    "joinMethod",
+    "sourceFields"
+  ],
+  "properties": {
+    "schemaVersion": {
+      "const": "wr-dallas-zoning-layer-v1"
+    },
+    "sourceCountyId": {
+      "type": "string"
+    },
+    "zoningRecordId": {
+      "type": "string",
+      "description": "Stable county-aware zoning record ID, usually sourceCountyId:sourceLayerId:objectId."
+    },
+    "countyParcelId": {
+      "type": "string"
+    },
+    "accountNum": {
+      "type": "string"
+    },
+    "gisParcelId": {
+      "type": "string"
+    },
+    "sourceLayerId": {
+      "type": "string"
+    },
+    "sourceLayerTitle": {
+      "type": "string"
+    },
+    "sourceUrl": {
+      "type": "string"
+    },
+    "recordType": {
+      "type": "string",
+      "enum": [
+        "tax-parcel-bridge",
+        "base-zoning",
+        "special-use-permit",
+        "zoning-case",
+        "area-of-request",
+        "subdistrict",
+        "overlay"
+      ]
+    },
+    "joinMethod": {
+      "type": "string",
+      "enum": [
+        "account",
+        "gisAccount",
+        "spatial",
+        "metadataOnly",
+        "unmatched"
+      ]
+    },
+    "zoneDistrict": {
+      "type": "string"
+    },
+    "longZoneDistrict": {
+      "type": "string"
+    },
+    "pdNumber": {
+      "type": "string"
+    },
+    "pdsNumber": {
+      "type": "string"
+    },
+    "supNumber": {
+      "type": "string"
+    },
+    "cdNumber": {
+      "type": "string"
+    },
+    "subdistrict": {
+      "type": "string"
+    },
+    "subdistricts": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "overlayType": {
+      "type": "string"
+    },
+    "overlayName": {
+      "type": "string"
+    },
+    "caseNumber": {
+      "type": "string"
+    },
+    "zoneChange": {
+      "type": "string"
+    },
+    "councilDate": {
+      "type": [
+        "string",
+        "number",
+        "null"
+      ]
+    },
+    "effectiveDate": {
+      "type": [
+        "string",
+        "number",
+        "null"
+      ]
+    },
+    "geometry": {
+      "type": [
+        "object",
+        "null"
+      ]
+    },
+    "bounds": {
+      "$ref": "#/$defs/lngLatBounds"
+    },
+    "centroid": {
+      "$ref": "#/$defs/lngLat"
+    },
+    "searchText": {
+      "type": "string"
+    },
+    "chunkId": {
+      "type": "string"
+    },
+    "sourceFields": {
+      "type": "object",
+      "additionalProperties": true
+    }
+  },
+  "$defs": {
+    "lngLat": {
+      "type": "array",
+      "prefixItems": [
+        {
+          "type": "number",
+          "minimum": -180,
+          "maximum": 180
+        },
+        {
+          "type": "number",
+          "minimum": -90,
+          "maximum": 90
+        }
+      ],
+      "minItems": 2,
+      "maxItems": 2
+    },
+    "lngLatBounds": {
+      "type": "object",
+      "required": [
+        "minLng",
+        "minLat",
+        "maxLng",
+        "maxLat"
+      ],
+      "properties": {
+        "minLng": {
+          "type": "number",
+          "minimum": -180,
+          "maximum": 180
+        },
+        "minLat": {
+          "type": "number",
+          "minimum": -90,
+          "maximum": 90
+        },
+        "maxLng": {
+          "type": "number",
+          "minimum": -180,
+          "maximum": 180
+        },
+        "maxLat": {
+          "type": "number",
+          "minimum": -90,
+          "maximum": 90
+        }
+      },
+      "additionalProperties": false
+    }
+  }
+}

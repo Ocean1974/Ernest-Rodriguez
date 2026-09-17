@@ -1,0 +1,22 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://white-rabbit.local/schemas/staging-activation.schema.json",
+  "title": "White Rabbit Staging Activation and Automatic Rollback",
+  "oneOf": [
+    {
+      "type": "object",
+      "required": ["schemaVersion", "id", "organizationId", "releaseId", "manifestSha256", "environment", "mode", "requestedBy", "startedAt", "completedAt", "status", "gates", "initialStates", "finalStates", "manifestVerification", "evidenceVerification", "blockers", "health", "transactions"],
+      "properties": {
+        "schemaVersion": { "const": "wr-staging-activation-run-v1" },
+        "environment": { "const": "staging" },
+        "mode": { "enum": ["dry-run", "staging"] },
+        "status": { "enum": ["rejected", "validated", "prepared", "enable-failed", "active", "rolled-back", "rollback-failed"] }
+      }
+    },
+    {
+      "type": "object",
+      "required": ["schemaVersion", "idempotencyKey", "changedGates", "resultingStates", "replayed"],
+      "properties": { "schemaVersion": { "const": "wr-staging-gate-transaction-v1" } }
+    }
+  ]
+}

@@ -1,0 +1,57 @@
+{
+  "county_id": "brazos-county-tx",
+  "county_name": "Brazos County",
+  "state": "TX",
+  "fips": "48041",
+  "cad_name": "Brazos County Appraisal District",
+  "source_discovery_status": "official-site-property-search-and-map-discovered",
+  "retrieved_at": "2026-06-29",
+  "ui_constraint": "Do not redesign White Rabbit pages while expanding county parcel intelligence plumbing.",
+  "official_portal": {
+    "label": "Brazos Central Appraisal District official site",
+    "url": "https://brazoscad.org/",
+    "source_type": "appraisal-district-site",
+    "verification_status": "official-site-verified",
+    "notes": "Official site exposes property search, interactive map, certified data downloads, GIS data, appeals portal, and states Brazos CAD appraises real and business personal property within Brazos County."
+  },
+  "property_search": {
+    "label": "Brazos CAD property search",
+    "url": "https://esearch.brazoscad.org/",
+    "source_type": "property-search",
+    "verification_status": "linked-from-official-site"
+  },
+  "interactive_map": {
+    "label": "Brazos CAD interactive map",
+    "url": "https://gis.bisclient.com/",
+    "source_type": "interactive-map",
+    "verification_status": "linked-from-official-site"
+  },
+  "candidate_bulk_or_report_leads": [
+    "Certified Data Downloads",
+    "GIS Data"
+  ],
+  "verified_counts": {
+    "parcel_geometry_features": 0,
+    "appraisal_property_rows": 0,
+    "count_verified_at": null,
+    "status": "not-verified"
+  },
+  "join_keys": {
+    "primary_parcel_account": "unverified",
+    "secondary_gis_id": "unverified",
+    "owner_appraisal": "unverified"
+  },
+  "bulk_source_status": {
+    "parcel_geometry_bulk": "not-verified",
+    "owner_appraisal_bulk": "not-verified",
+    "download_terms": "certified data/GIS files not inspected"
+  },
+  "remaining_blockers": [
+    "certified data/GIS files not inspected",
+    "exact parcel count not verified",
+    "exact geometry-to-appraisal join key not verified",
+    "viewport chunks and search shards not built",
+    "QC report not built"
+  ],
+  "completion_impact": "source-discovery-started"
+}

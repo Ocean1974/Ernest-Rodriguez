@@ -1,0 +1,15 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://whiterabbit.local/schemas/county-demand-intelligence.schema.json",
+  "title": "White Rabbit County Migration and Demand Intelligence Contracts",
+  "oneOf": [{ "$ref": "#/$defs/probe" }, { "$ref": "#/$defs/coverage" }, { "$ref": "#/$defs/observation" }, { "$ref": "#/$defs/definition" }, { "$ref": "#/$defs/vector" }, { "$ref": "#/$defs/audit" }],
+  "$defs": {
+    "sha256": { "type": "string", "pattern": "^[a-f0-9]{64}$" },
+    "probe": { "type": "object", "required": ["schemaVersion", "contentPersisted", "status", "probeSha256"], "properties": { "schemaVersion": { "const": "wr-county-demand-source-probe-v1" }, "contentPersisted": { "const": false }, "probeSha256": { "$ref": "#/$defs/sha256" } } },
+    "coverage": { "type": "object", "required": ["schemaVersion", "rules", "status", "coverageSha256"], "properties": { "schemaVersion": { "const": "wr-county-demand-coverage-v1" }, "coverageSha256": { "$ref": "#/$defs/sha256" } } },
+    "observation": { "type": "object", "required": ["schemaVersion", "metricId", "value", "unit", "geographyId", "periodStart", "periodEnd", "releasedAt", "sourceSnapshotSha256", "observationSha256"], "properties": { "schemaVersion": { "const": "wr-county-demand-observation-v1" }, "observationSha256": { "$ref": "#/$defs/sha256" } } },
+    "definition": { "type": "object", "required": ["schemaVersion", "sourceMetricIds", "formula", "localization", "modelGenerated", "status", "definitionSha256"], "properties": { "schemaVersion": { "const": "wr-county-demand-feature-definition-v1" }, "modelGenerated": { "const": false }, "definitionSha256": { "$ref": "#/$defs/sha256" } } },
+    "vector": { "type": "object", "required": ["schemaVersion", "asOf", "futureObservationCount", "checks", "status", "vectorSha256"], "properties": { "schemaVersion": { "const": "wr-county-demand-point-in-time-vector-v1" }, "vectorSha256": { "$ref": "#/$defs/sha256" } } },
+    "audit": { "type": "object", "required": ["schemaVersion", "counts", "parcelOverclaimCount", "checks", "status", "auditSha256"], "properties": { "schemaVersion": { "const": "wr-county-demand-audit-v1" }, "auditSha256": { "$ref": "#/$defs/sha256" } } }
+  }
+}

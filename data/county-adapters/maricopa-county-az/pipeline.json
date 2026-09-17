@@ -1,0 +1,101 @@
+{
+  "id": "maricopa-county-az-ingestion",
+  "countyAdapter": "data/county-adapters/maricopa-county-az/adapter.json",
+  "universalParcelSchema": "data/schemas/universal-parcel.schema.json",
+  "defaultMode": "plan",
+  "steps": [
+    {
+      "id": "verify-official-sources",
+      "label": "Verify official parcel, assessor/appraisal, permit, zoning, floodplain, and demand sources",
+      "command": "echo Verify official sources for maricopa-county-az before ingesting large files.",
+      "requiredOutputs": [
+        "output/maricopa-county-az/schema-report.md",
+        "output/maricopa-county-az/schema-report.json"
+      ]
+    },
+    {
+      "id": "verify-join-keys",
+      "label": "Document exact parcel/account/GIS join keys",
+      "command": "echo Replace source-needed join keys for maricopa-county-az.",
+      "requiredOutputs": [
+        "output/maricopa-county-az/join-key-report.md"
+      ]
+    },
+    {
+      "id": "build-parcel-geojson",
+      "label": "Build county universal parcel GeoJSON",
+      "command": "echo Build maricopa-county-az universal parcel GeoJSON after source verification.",
+      "requiredOutputs": [
+        "output/maricopa-county-az/maricopa-county-az-parcels.geojson",
+        "output/maricopa-county-az/full-parcel-access-report.md"
+      ]
+    },
+    {
+      "id": "build-parcel-service",
+      "label": "Build viewport parcel chunks and search shards",
+      "command": "npm.cmd run maricopa:service:sample",
+      "requiredOutputs": [
+        "public/data/counties/maricopa-county-az/parcels/manifest.json"
+      ]
+    },
+    {
+      "id": "build-owner-matches",
+      "label": "Build owner/appraisal parcel intelligence",
+      "command": "echo Build maricopa-county-az owner/appraisal index after official assessor/appraisal source is verified.",
+      "requiredOutputs": [
+        "output/maricopa-county-az/maricopa-county-az-owner-appraisal-index.json",
+        "output/maricopa-county-az/join-key-report.md"
+      ]
+    },
+    {
+      "id": "build-permit-service",
+      "label": "Normalize and publish permits and certificates of occupancy",
+      "command": "echo Build maricopa-county-az permits/CO after official source verification.",
+      "requiredOutputs": [
+        "public/data/counties/maricopa-county-az/permits/manifest.json"
+      ]
+    },
+    {
+      "id": "build-zoning-index",
+      "label": "Build zoning and overlay parcel index",
+      "command": "echo Build maricopa-county-az zoning after official source verification.",
+      "requiredOutputs": [
+        "public/data/counties/maricopa-county-az/zoning/manifest.json",
+        "output/maricopa-county-az/zoning-source-report.md"
+      ]
+    },
+    {
+      "id": "build-floodplain-index",
+      "label": "Build floodplain parcel index",
+      "command": "echo Build maricopa-county-az floodplain after FEMA/local source verification.",
+      "requiredOutputs": [
+        "public/data/counties/maricopa-county-az/floodplain/manifest.json",
+        "output/maricopa-county-az/floodplain-source-report.md"
+      ]
+    },
+    {
+      "id": "build-migration-demand",
+      "label": "Build aggregate migration and demand parcel index",
+      "command": "echo Build maricopa-county-az aggregate migration/demand after approved geography sources are verified.",
+      "requiredOutputs": [
+        "public/data/counties/maricopa-county-az/demand/manifest.json"
+      ]
+    },
+    {
+      "id": "validate",
+      "label": "Run county QC",
+      "command": "npm.cmd run county:qc",
+      "requiredOutputs": [
+        "output/county-qc/maricopa-county-az.json",
+        "output/county-qc/maricopa-county-az.md"
+      ]
+    }
+  ],
+  "productionTileStep": {
+    "id": "build-pmtiles",
+    "label": "Build PMTiles/vector tiles after the parcel GeoJSON exists",
+    "handoff": "output/maricopa-county-az/vector-tiles/README.md",
+    "expectedOutput": "output/maricopa-county-az/maricopa-county-az-parcels.pmtiles"
+  },
+  "uiConstraint": "Do not redesign or restyle any White Rabbit pages while running this pilot county ingestion pipeline."
+}

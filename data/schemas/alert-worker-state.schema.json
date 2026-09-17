@@ -1,0 +1,52 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://white-rabbit.local/schemas/alert-worker-state.schema.json",
+  "title": "White Rabbit Alert Delivery Worker State",
+  "type": "object",
+  "required": ["schemaVersion", "organizationId", "revision", "jobs", "dispatches", "deadLetters", "updatedAt"],
+  "properties": {
+    "schemaVersion": { "const": "wr-alert-worker-state-v1" },
+    "organizationId": { "type": "string", "minLength": 1 },
+    "revision": { "type": "integer", "minimum": 1 },
+    "jobs": { "type": "array", "items": { "$ref": "#/$defs/job" } },
+    "dispatches": { "type": "array", "items": { "$ref": "#/$defs/dispatch" } },
+    "deadLetters": { "type": "array", "items": { "$ref": "#/$defs/deadLetter" } },
+    "updatedAt": { "type": "string", "format": "date-time" }
+  },
+  "$defs": {
+    "lease": {
+      "type": ["object", "null"],
+      "required": ["token", "workerId", "leasedAt", "expiresAt"],
+      "properties": {
+        "token": { "type": "string", "minLength": 1 },
+        "workerId": { "type": "string", "minLength": 1 },
+        "leasedAt": { "type": "string", "format": "date-time" },
+        "expiresAt": { "type": "string", "format": "date-time" }
+      }
+    },
+    "job": {
+      "type": "object",
+      "required": ["schemaVersion", "id", "organizationId", "deliveryAttemptId", "alertEnvelopeId", "subscriptionId", "channelType", "providerId", "endpointRef", "payloadRef", "providerIdempotencyKey", "status", "attemptNumber", "maxAttempts", "nextAttemptAt", "lease", "createdAt", "updatedAt"],
+      "properties": {
+        "schemaVersion": { "const": "wr-alert-delivery-job-v1" },
+        "channelType": { "enum": ["in-app", "email", "webhook"] },
+        "status": { "enum": ["queued", "leased", "retry-scheduled", "delivered", "dead-lettered"] },
+        "attemptNumber": { "type": "integer", "minimum": 0 },
+        "maxAttempts": { "type": "integer", "minimum": 1 },
+        "endpointRef": { "type": "string" },
+        "payloadRef": { "type": "string", "pattern": "^payload-ref:" },
+        "lease": { "$ref": "#/$defs/lease" }
+      }
+    },
+    "dispatch": {
+      "type": "object",
+      "required": ["jobId", "channelType", "dispatchedAt"],
+      "properties": { "channelType": { "enum": ["in-app", "email", "webhook"] }, "dispatchedAt": { "type": "string", "format": "date-time" } }
+    },
+    "deadLetter": {
+      "type": "object",
+      "required": ["schemaVersion", "id", "organizationId", "jobId", "deliveryAttemptId", "channelType", "attemptNumber", "errorCode", "errorMessage", "deadLetteredAt"],
+      "properties": { "schemaVersion": { "const": "wr-alert-dead-letter-v1" } }
+    }
+  }
+}

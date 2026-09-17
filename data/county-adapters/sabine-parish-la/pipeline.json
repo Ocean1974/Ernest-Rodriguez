@@ -1,0 +1,107 @@
+{
+  "id": "sabine-parish-la-ingestion",
+  "countyAdapter": "data/county-adapters/sabine-parish-la/adapter.json",
+  "universalParcelSchema": "data/schemas/universal-parcel.schema.json",
+  "defaultMode": "plan",
+  "enabledForProduction": false,
+  "scaffoldOnly": true,
+  "steps": [
+    {
+      "id": "verify-official-sources",
+      "label": "Verify official parcel and assessor/appraiser sources",
+      "command": "echo Verify official sources for sabine-parish-la.",
+      "requiredOutputs": [
+        "output/sabine-parish-la/schema-report.md",
+        "output/sabine-parish-la/schema-report.json"
+      ]
+    },
+    {
+      "id": "verify-join-keys",
+      "label": "Document exact parcel/account/GIS join keys",
+      "command": "echo Document exact join keys for sabine-parish-la.",
+      "requiredOutputs": [
+        "output/sabine-parish-la/join-key-report.md"
+      ]
+    },
+    {
+      "id": "build-parcel-geojson",
+      "label": "Build universal county parcel GeoJSON",
+      "command": "echo Build sabine-parish-la universal parcel GeoJSON after source verification.",
+      "requiredOutputs": [
+        "output/sabine-parish-la/sabine-parish-la-parcels.geojson",
+        "output/sabine-parish-la/full-parcel-access-report.md"
+      ]
+    },
+    {
+      "id": "build-parcel-service",
+      "label": "Build viewport chunks and search shards",
+      "command": "echo Build viewport-safe parcel service for sabine-parish-la.",
+      "requiredOutputs": [
+        "public/data/counties/sabine-parish-la/parcels/manifest.json"
+      ]
+    },
+    {
+      "id": "build-owner-matches",
+      "label": "Build owner/appraisal parcel joins",
+      "command": "echo Build owner and appraisal joins for sabine-parish-la.",
+      "requiredOutputs": [
+        "output/sabine-parish-la/sabine-parish-la-owner-appraisal-index.json"
+      ]
+    },
+    {
+      "id": "build-permit-service",
+      "label": "Normalize permits and certificates of occupancy",
+      "command": "echo Build permits and CO pipeline for sabine-parish-la.",
+      "requiredOutputs": [
+        "public/data/counties/sabine-parish-la/permits/manifest.json"
+      ]
+    },
+    {
+      "id": "build-zoning-index",
+      "label": "Build zoning parcel index",
+      "command": "echo Build zoning joins for sabine-parish-la.",
+      "requiredOutputs": [
+        "public/data/counties/sabine-parish-la/zoning/manifest.json"
+      ]
+    },
+    {
+      "id": "build-floodplain-index",
+      "label": "Build floodplain parcel index",
+      "command": "echo Build floodplain joins for sabine-parish-la.",
+      "requiredOutputs": [
+        "public/data/counties/sabine-parish-la/floodplain/manifest.json"
+      ]
+    },
+    {
+      "id": "build-development-index",
+      "label": "Build development-signal parcel index",
+      "command": "echo Build development index for sabine-parish-la.",
+      "requiredOutputs": [
+        "public/data/counties/sabine-parish-la/developments/parcel-development-index.json"
+      ]
+    },
+    {
+      "id": "build-migration-demand",
+      "label": "Build aggregate migration and demand index",
+      "command": "echo Build aggregate demand joins for sabine-parish-la.",
+      "requiredOutputs": [
+        "public/data/counties/sabine-parish-la/demand/manifest.json"
+      ]
+    },
+    {
+      "id": "validate",
+      "label": "Run county QC",
+      "command": "npm.cmd run county:qc",
+      "requiredOutputs": [
+        "output/county-qc/sabine-parish-la.json",
+        "output/county-qc/sabine-parish-la.md"
+      ]
+    }
+  ],
+  "productionTileStep": {
+    "id": "build-pmtiles",
+    "label": "Build PMTiles/vector tiles after verified parcel GeoJSON exists",
+    "expectedOutput": "output/sabine-parish-la/sabine-parish-la-parcels.pmtiles"
+  },
+  "uiConstraint": "Do not redesign or activate White Rabbit pages while this county remains a pipeline scaffold."
+}

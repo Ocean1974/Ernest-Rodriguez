@@ -1,0 +1,333 @@
+{
+  "id": "jefferson-ky",
+  "countyId": "jefferson-ky",
+  "countyName": "Jefferson County",
+  "marketName": "Louisville",
+  "cadName": "Jefferson County PVA",
+  "appraisalDistrictName": "Jefferson County PVA",
+  "appraisalDistrictAcronym": "PVA",
+  "gisSource": "LOJIC Jefferson County KY Parcels",
+  "uniqueGisKey": "LRSN",
+  "parcelIdField": "PARCELID",
+  "geometryType": "polygon",
+  "sourceSpatialReference": "EPSG:2246 / NAD 1983 StatePlane Kentucky North FIPS 1601 Feet",
+  "status": "pilot",
+  "map": {
+    "locationId": 4,
+    "locationName": "Louisville KY / Jefferson County Pilot",
+    "locationType": "Jefferson County PVA",
+    "status": "pilot adapter - parcel foundation identified",
+    "coordinates": [-85.7585, 38.2527],
+    "camera": { "x": 52, "y": 48, "zoom": 1.5, "pitch": 48, "bearing": 0 },
+    "geoBounds": {
+      "minLng": -85.95,
+      "minLat": 38.0,
+      "maxLng": -85.4,
+      "maxLat": 38.38
+    }
+  },
+  "universalParcelSchema": {
+    "version": "wr-universal-parcel-v1",
+    "schemaPath": "data/schemas/universal-parcel.schema.json",
+    "documentationPath": "data/schemas/universal-parcel.md",
+    "parcelServiceBuilder": "scripts/build-app-parcel-service.cjs",
+    "fieldMapPath": "data/county-adapters/louisville/lojic-universal-field-map.json",
+    "sourceManifestPath": "data/county-adapters/louisville/lojic-parcel-source-manifest.json"
+  },
+  "sourceFiles": {
+    "parcelGeometry": "https://gis.lojic.org/maps/rest/services/LojicSolutions/OpenDataPVA/MapServer/1",
+    "parcelGeometryGeojson": "data/raw/jefferson-ky/Jefferson_County_KY_Parcels.geojson",
+    "parcelGeometryKml": "data/raw/jefferson-ky/Jefferson_County_KY_Parcels.kml",
+    "parcelGeometryZip": "data/raw/jefferson-ky/Jefferson_County_KY_Parcels.zip",
+    "parcelGeometryShp": "data/extracted/jefferson-ky/Jefferson_County_KY_Parcels/Jefferson_County_KY_Parcels.shp",
+    "parcelGeometryDbf": "data/extracted/jefferson-ky/Jefferson_County_KY_Parcels/Jefferson_County_KY_Parcels.dbf",
+    "parcelGeometryPrj": "data/extracted/jefferson-ky/Jefferson_County_KY_Parcels/Jefferson_County_KY_Parcels.prj",
+    "parcelAttributesCsv": "data/raw/jefferson-ky/Jefferson_County_KY_Parcels.csv",
+    "appraisalDistrictExtract": "data/raw/jefferson-ky/Jefferson_County_KY_PVA_Owner_Appraisal.csv",
+    "pvaOwnerAppraisalCsv": "data/raw/jefferson-ky/Jefferson_County_KY_PVA_Owner_Appraisal.csv",
+    "blockLabels": "optional",
+    "parcelDimensions": "optional",
+    "permitsRaw": "https://services1.arcgis.com/79kfd2K6fskCAkyg/arcgis/rest/services/active_construction_permits/FeatureServer/0",
+    "permitsProcessed": "data/permits/processed/jefferson-ky",
+    "zoningRaw": "https://gis.lojic.org/maps/rest/services/LojicSolutions/OpenDataDevelopment/MapServer/15",
+    "zoningProcessed": "public/data/counties/jefferson-ky/zoning/",
+    "floodplainRaw": "https://gis.lojic.org/maps/rest/services/PvaGis/CamaFloodContour/MapServer/2",
+    "floodplainProcessed": "public/data/counties/jefferson-ky/floodplain/"
+  },
+  "publicDataRoots": {
+    "parcels": "/data/counties/jefferson-ky/parcels/",
+    "permits": "/data/counties/jefferson-ky/permits/",
+    "developments": "/data/counties/jefferson-ky/developments/",
+    "zoning": "/data/counties/jefferson-ky/zoning/",
+    "floodplain": "/data/counties/jefferson-ky/floodplain/"
+  },
+  "productionOutputs": {
+    "parcelGeojson": "output/jefferson-ky/jefferson-county-ky-parcels.geojson",
+    "parcelPmtiles": "output/jefferson-ky/jefferson-county-ky-parcels.pmtiles",
+    "vectorTilesDirectory": "output/jefferson-ky/vector-tiles/"
+  },
+  "optionalLayers": [
+    {
+      "id": "lojic-parcels",
+      "label": "County parcels",
+      "source": "County parcel geometry service",
+      "status": "pilot",
+      "joinBehavior": "LRSN is the unique GIS parcel key; PARCELID is the parcel identification number; PVA owner/appraisal join is wired through the Jefferson County PVA owner/appraisal index when source data is present",
+      "defaultVisible": false,
+      "sourceUrls": [
+        "https://gis.lojic.org/maps/rest/services/LojicSolutions/OpenDataPVA/MapServer/1"
+      ],
+      "renderStrategy": "build-time ArcGIS fetch, universal parcel mapping, viewport chunks, capped runtime loader",
+      "maxFeaturesPerViewport": 750
+    },
+    {
+      "id": "permits",
+      "label": "Permits and certificates of occupancy",
+      "source": "Louisville Metro active construction permits, planning applications, and occupancy case sources",
+      "status": "source-identified-parcel-join-pending",
+      "joinBehavior": "active permits use LATITUDE/LONGITUDE spatial join to county parcel polygon first; normalized ADDRESS fallback after PVA situs addresses are loaded; CO remains source-needed until official bulk source is verified",
+      "defaultVisible": false,
+      "manifestPath": "data/county-adapters/louisville/permit-co-source-manifest.json",
+      "sourceUrls": [
+        "https://services1.arcgis.com/79kfd2K6fskCAkyg/arcgis/rest/services/active_construction_permits/FeatureServer/0",
+        "https://services1.arcgis.com/79kfd2K6fskCAkyg/arcgis/rest/services/pm_occupancy/FeatureServer/0",
+        "https://gis.lojic.org/maps/rest/services/LojicSolutions/OpenDataDevelopment/MapServer/26",
+        "https://gis.lojic.org/maps/rest/services/LojicSolutions/OpenDataDevelopment/MapServer/11"
+      ],
+      "renderStrategy": "build-time ArcGIS fetch, address/spatial parcel join, then viewport-safe chunks"
+    },
+    {
+      "id": "pva-owner-appraisal",
+      "label": "PVA owner/appraisal",
+      "source": "Jefferson County PVA owner/appraisal export",
+      "status": "join-ready-source-needed",
+      "joinBehavior": "PARCELID to county accountNum first; LRSN to county gisParcelId when present; PIN is candidate-only until verified",
+      "defaultVisible": false,
+      "manifestPath": "data/county-adapters/louisville/pva-owner-appraisal-source-manifest.json",
+      "parcelIndexPath": "output/jefferson-ky/jefferson-county-ky-pva-owner-appraisal-index.json",
+      "reportPath": "output/jefferson-ky/pva-owner-appraisal-report.md",
+      "sourceUrls": [
+        "https://jeffersonpva.ky.gov/property-search/",
+        "https://jeffersonpva.ky.gov/faq/why-do-i-need-to-subscribe-to-the-pva/",
+        "https://jeffersonpva.ky.gov/wp-content/uploads/2019/04/Request-for-reproduction2018-and-Menu.pdf"
+      ],
+      "renderStrategy": "official PVA export normalized at build time, joined offline into universal parcel records, then served through existing viewport chunks",
+      "maxFeaturesPerViewport": 750
+    },
+    {
+      "id": "zoning-intelligence",
+      "label": "Zoning intelligence",
+      "source": "Jefferson County KY Zoning",
+      "status": "parcel-index-ready",
+      "joinBehavior": "parcel centroid spatial join from county parcel polygons to Jefferson County KY zoning polygons; keyed back to countyParcelId, PARCELID/accountNum, and LRSN/gisParcelId",
+      "defaultVisible": false,
+      "manifestPath": "data/county-adapters/louisville/lojic-zoning-source-manifest.json",
+      "publicManifestPath": "public/data/counties/jefferson-ky/zoning/manifest.json",
+      "parcelIndexPath": "public/data/counties/jefferson-ky/zoning/parcel-zoning-index.json",
+      "reportPath": "output/jefferson-ky/zoning-source-report.md",
+      "sourceUrls": [
+        "https://gis.lojic.org/maps/rest/services/LojicSolutions/OpenDataDevelopment/MapServer/15"
+      ],
+      "renderStrategy": "build-time ArcGIS fetch, offline parcel centroid spatial join, viewport-safe sharded parcel lookup"
+    },
+    {
+      "id": "floodplain-intelligence",
+      "label": "Floodplain intelligence",
+      "source": "Current FEMA Flood Zones",
+      "status": "parcel-index-ready",
+      "joinBehavior": "parcel centroid spatial join from county parcel polygons to current FEMA flood zone polygons; keyed back to countyParcelId, PARCELID/accountNum, and LRSN/gisParcelId",
+      "defaultVisible": false,
+      "manifestPath": "data/county-adapters/louisville/fema-floodplain-source-manifest.json",
+      "publicManifestPath": "public/data/counties/jefferson-ky/floodplain/manifest.json",
+      "parcelIndexPath": "public/data/counties/jefferson-ky/floodplain/parcel-floodplain-index.json",
+      "reportPath": "output/jefferson-ky/floodplain-source-report.md",
+      "sourceUrls": [
+        "https://gis.lojic.org/maps/rest/services/PvaGis/CamaFloodContour/MapServer/2"
+      ],
+      "renderStrategy": "build-time official floodplain fetch, offline parcel centroid spatial join, viewport-safe sharded parcel lookup"
+    }
+  ],
+  "publicSourceDiscovery": {
+    "lastReviewed": "2026-06-10",
+    "sources": [
+      {
+        "id": "lojic-parcels",
+        "status": "loaded",
+        "sourceUrl": "https://gis.lojic.org/maps/rest/services/LojicSolutions/OpenDataPVA/MapServer/1",
+        "fields": ["PARCELID", "LRSN", "PARCEL_TYPE", "PIN", "SHAPE.AREA", "SHAPE.LEN"],
+        "uiUse": "Parcel ID, GIS ID, parcel polygon, area, perimeter, centroid"
+      },
+      {
+        "id": "jefferson-pva-public-search",
+        "status": "source-identified-export-needed",
+        "sourceUrl": "https://jeffersonpva.ky.gov/property-search/",
+        "fields": ["owner", "parcel ID", "assessed value", "acreage", "neighborhood"],
+        "uiUse": "Owner, value, acreage, neighborhood after public lookup/export join"
+      },
+      {
+        "id": "jefferson-pva-records-request",
+        "status": "source-identified-export-needed",
+        "sourceUrl": "https://jeffersonpva.ky.gov/wp-content/uploads/2019/04/Request-for-reproduction2018-and-Menu.pdf",
+        "fields": ["ownership record", "assessment roll", "assessment roll plus", "digital parcel with owner info"],
+        "uiUse": "Official bulk source for DCAD-level owner/appraisal fields"
+      },
+      {
+        "id": "jefferson-county-clerk-land-records",
+        "status": "source-identified-join-pending",
+        "sourceUrl": "https://jeffersoncountyclerk.org/on-line-land-records/",
+        "fields": ["deeds", "mortgages", "liens", "releases"],
+        "uiUse": "Deed/lien source link and future name/book/page join"
+      },
+      {
+        "id": "kentucky-sos-business-search",
+        "status": "source-identified-owner-name-needed",
+        "sourceUrl": "https://sosbes.sos.ky.gov/BusSearchNProfile/search.aspx",
+        "fields": ["business entity documents", "registered agent search"],
+        "uiUse": "Business entity and registered-agent link when a business owner is loaded"
+      },
+      {
+        "id": "lojic-zoning",
+        "status": "parcel-index-ready",
+        "sourceUrl": "https://gis.lojic.org/maps/rest/services/LojicSolutions/OpenDataDevelopment/MapServer/15",
+        "fields": ["ZONING_CODE", "ZONING_NAME", "ZONING_TYPE"],
+        "verifiedRecordCount": 4883,
+        "indexedPolygonCount": 4881,
+        "parcelZoningRecordCount": 284226,
+        "countVerifiedAt": "2026-06-10",
+        "uiUse": "Zoning summary in the existing parcel intelligence window after parcel centroid spatial join"
+      },
+      {
+        "id": "current-fema-flood-zones",
+        "status": "parcel-index-ready",
+        "sourceUrl": "https://gis.lojic.org/maps/rest/services/PvaGis/CamaFloodContour/MapServer/2",
+        "fields": ["FLD_ZONE", "FLOODWAY", "SFHA_TF", "STATIC_BFE", "V_DATUM", "DEPTH", "VELOCITY", "SOURCE_CIT", "ZONE_SUBTY", "EFF_DATE"],
+        "verifiedRecordCount": 10087,
+        "indexedPolygonCount": 10087,
+        "parcelFloodplainRecordCount": 284229,
+        "parcelsInSfha": 9312,
+        "parcelsInFloodway": 1223,
+        "countVerifiedAt": "2026-06-15",
+        "uiUse": "Floodplain summary in the existing parcel intelligence window after parcel centroid spatial join"
+      },
+      {
+        "id": "louisville-active-construction-permits",
+        "status": "official-open-data-source-verified-parcel-join-pending",
+        "sourceUrl": "https://services1.arcgis.com/79kfd2K6fskCAkyg/arcgis/rest/services/active_construction_permits/FeatureServer/0",
+        "fields": ["PERMIT_NUMBER", "PERMIT_TYPE", "PERMIT_STATUS", "CONTRACTOR", "CATEGORY_NAME", "WORK_TYPE", "ZONING", "SQFT", "PERMIT_FEE", "PROJECT_COSTS", "ADDRESS", "LATITUDE", "LONGITUDE", "ISSUE_DATE"],
+        "verifiedRecordCount": 23543,
+        "countVerifiedAt": "2026-06-10",
+        "uiUse": "Active permit activity in parcel intelligence after spatial/address join"
+      },
+      {
+        "id": "louisville-property-maintenance-case-occupancy",
+        "status": "official-open-data-source-identified-parcel-join-pending",
+        "sourceUrl": "https://services1.arcgis.com/79kfd2K6fskCAkyg/arcgis/rest/services/pm_occupancy/FeatureServer/0",
+        "fields": ["Case Inspection ID", "Address", "Occupancy", "Inspection Date", "Status", "Owner", "Owner Address"],
+        "uiUse": "Occupancy inspection context only; not a formal Certificate of Occupancy"
+      },
+      {
+        "id": "jefferson-certificate-of-occupancy",
+        "status": "bulk-source-not-confirmed",
+        "sourceUrl": "",
+        "fields": [],
+        "uiUse": "Keep CO source-needed until Accela export, official bulk data, or open records response is verified"
+      },
+      {
+        "id": "lojic-planning-applications",
+        "status": "source-identified-parcel-join-pending",
+        "sourceUrl": "https://gis.lojic.org/maps/rest/services/LojicSolutions/OpenDataDevelopment/MapServer/26",
+        "fields": ["RECORD_NUMBER", "RECORD_STATUS", "RECORD_TYPE", "RECORD_TYPE_SUBTYPE", "SOURCE"],
+        "uiUse": "Planning/development activity after spatial parcel join"
+      },
+      {
+        "id": "floodplain-permit-context",
+        "status": "source-identified-future-context",
+        "sourceUrl": "https://louisvillemsd.org/floodplain",
+        "fields": ["floodplain permits", "FIRM/FIS context"],
+        "uiUse": "Future floodplain permit context only; parcel flood zone status now uses the current FEMA flood zone parcel index"
+      }
+    ]
+  },
+  "ownerEnrichment": {
+    "sourceLabel": "Jefferson County PVA owner/appraisal export",
+    "propertyRecordSource": "Official Jefferson County PVA Address/Parcel search, subscription search, or records-request export. Bulk file expected at data/raw/jefferson-ky/Jefferson_County_KY_PVA_Owner_Appraisal.csv.",
+    "officialJoinKey": "PVA PARCELID -> LOJIC PARCELID -> White Rabbit accountNum; PVA LRSN -> LOJIC LRSN -> White Rabbit gisParcelId if included in the export",
+    "noOfficialEmailFieldNote": "Do not infer owner email. Only map ownerEmail if an official PVA or approved owner/appraisal export explicitly includes it.",
+    "fields": {
+      "parcelId": "PARCELID",
+      "gisParcelId": "LRSN",
+      "ownerName": "OWNER_NAME / OWNER NAME / OWNER",
+      "ownerName2": "OWNER_NAME_2 / OWNER NAME 2 / CARE_OF",
+      "businessName": "BUSINESS_NAME / BUSINESS NAME / COMPANY",
+      "ownerMailingAddress": "MAILING_ADDRESS / OWNER_ADDRESS / MAIL_ADDR1",
+      "ownerMailingAddress2": "MAILING_ADDRESS_2 / OWNER_ADDRESS_2 / MAIL_ADDR2",
+      "ownerCity": "MAILING_CITY / OWNER_CITY / MAIL_CITY",
+      "ownerState": "MAILING_STATE / OWNER_STATE / MAIL_STATE",
+      "ownerZip": "MAILING_ZIP / OWNER_ZIP / MAIL_ZIP",
+      "ownerPhone": "OWNER_PHONE / PHONE if officially present",
+      "ownerEmail": "OWNER_EMAIL / EMAIL if officially present"
+    }
+  },
+  "joinKeys": {
+    "primaryParcelAccount": "PVA PARCELID -> county parcel PARCELID -> White Rabbit accountNum; LRSN remains the unique GIS parcel key for countyParcelId",
+    "appraisal": "PVA owner/appraisal export PARCELID -> county parcel PARCELID; value fields map to landValue, improvementValue, totalValue when present",
+    "land": "PVA owner/appraisal export PARCELID -> county parcel PARCELID; acreage/square-foot fields map to landAreaSize, landAreaSqFt, landAreaUnit when present",
+    "secondaryParcelGisId": "PVA LRSN -> county parcel LRSN -> White Rabbit gisParcelId when the PVA export includes LRSN; PIN remains fallback candidate only",
+    "blockLabels": "pilot: direct key, spatial join, or unavailable",
+    "dimensions": "pilot: direct key, spatial join, or unavailable",
+    "permits": "Louisville Metro active permit LATITUDE/LONGITUDE spatial join to county parcel polygon first; normalized ADDRESS fallback after PVA situs address export; CO source remains pending",
+    "zoning": "Jefferson County KY zoning parcel centroid spatial join keyed back to countyParcelId, PARCELID/accountNum, and LRSN/gisParcelId",
+    "floodplain": "Current FEMA flood zone parcel centroid spatial join keyed back to countyParcelId, PARCELID/accountNum, and LRSN/gisParcelId"
+  },
+  "verifiedCounts": {
+    "parcelGeometryFeatures": 284553,
+    "appraisalAccountRows": 0,
+    "appraisalRows": 0,
+    "landRows": 0,
+    "appParcelChunks": 1208,
+    "parcelSearchShards": 104,
+    "sourcePermitRecords": 23543,
+    "permitRowsJoined": 0,
+    "permitRowsUnmatched": 0,
+    "parcelsWithDevelopmentSignals": 0,
+    "sourceZoningRecords": 4883,
+    "zoningPolygonsIndexed": 4881,
+    "parcelsWithZoning": 284226,
+    "sourceFloodplainRecords": 10087,
+    "floodplainPolygonsIndexed": 10087,
+    "parcelsWithFloodZone": 284229,
+    "parcelsInSfha": 9312,
+    "parcelsInFloodway": 1223
+  },
+  "requiredOutputs": [
+    "output/jefferson-ky/schema-report.md",
+    "output/jefferson-ky/schema-report.json",
+    "output/jefferson-ky/join-key-report.md",
+    "output/jefferson-ky/pva-owner-appraisal-report.md",
+    "output/jefferson-ky/pva-owner-appraisal-report.json",
+    "output/jefferson-ky/jefferson-county-ky-pva-owner-appraisal-index.json",
+    "output/jefferson-ky/full-parcel-access-report.md",
+    "output/jefferson-ky/qa-report.md",
+    "output/jefferson-ky/qa-report.json",
+    "output/jefferson-ky/jefferson-county-ky-parcel-search-index.json",
+    "output/jefferson-ky/jefferson-county-ky-parcel-search-index.csv",
+    "output/jefferson-ky/jefferson-county-ky-parcels.geojson",
+    "output/jefferson-ky/jefferson-county-ky-parcels.pmtiles or output/jefferson-ky/vector-tiles/",
+    "public/data/counties/jefferson-ky/parcels/manifest.json",
+    "public/data/counties/jefferson-ky/permits/manifest.json",
+    "data/county-adapters/louisville/permit-co-source-manifest.json",
+    "public/data/counties/jefferson-ky/developments/parcel-development-index.json",
+    "data/county-adapters/louisville/lojic-zoning-source-manifest.json",
+    "public/data/counties/jefferson-ky/zoning/manifest.json",
+    "public/data/counties/jefferson-ky/zoning/parcel-zoning-index.json",
+    "output/jefferson-ky/zoning-source-report.md",
+    "output/jefferson-ky/zoning-source-report.json",
+    "data/county-adapters/louisville/fema-floodplain-source-manifest.json",
+    "public/data/counties/jefferson-ky/floodplain/manifest.json",
+    "public/data/counties/jefferson-ky/floodplain/parcel-floodplain-index.json",
+    "output/jefferson-ky/floodplain-source-report.md",
+    "output/jefferson-ky/floodplain-source-report.json"
+  ],
+  "productionGap": "Pilot adapter only. County parcel geometry, viewport chunks, parcel search shards, zoning parcel index, and floodplain parcel index are built. PVA owner/appraisal plumbing is join-ready but source-needed; active construction permit source is verified but parcel join is not built; formal CO bulk source is not confirmed; development index and PMTiles are not built yet.",
+  "pilotNotes": "Do not activate this county in the app until source files are loaded or fetched, schema inspection is complete, exact join keys are verified, and QC warnings are resolved."
+}

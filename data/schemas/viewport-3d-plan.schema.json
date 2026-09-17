@@ -1,0 +1,16 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://white-rabbit.local/schemas/viewport-3d-plan.schema.json",
+  "title": "White Rabbit 3D Viewport Loading Plan",
+  "type": "object",
+  "required": ["schemaVersion", "request", "levelOfDetail", "overloaded", "limits", "layers", "requiredServerBehavior", "clientRules"],
+  "properties": {
+    "schemaVersion": { "const": "wr-3d-viewport-plan-v1" },
+    "levelOfDetail": { "enum": ["regional", "parcel", "building", "detailed"] },
+    "overloaded": { "type": "boolean" },
+    "limits": { "type": "object", "required": ["maxFeatures", "geometryToleranceMeters", "abortPreviousViewportRequest"] },
+    "layers": { "type": "array", "items": { "type": "object", "required": ["id", "enabled", "transport", "cacheKeyFields"] } },
+    "requiredServerBehavior": { "type": "array", "items": { "type": "string" } },
+    "clientRules": { "type": "array", "items": { "type": "string" } }
+  }
+}

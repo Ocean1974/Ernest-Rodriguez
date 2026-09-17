@@ -1,0 +1,66 @@
+{
+  "id": "current-fema-flood-zones",
+  "county_id": "jefferson-ky",
+  "county_name": "Jefferson County",
+  "market_name": "Louisville",
+  "source_name": "Current FEMA Flood Zones",
+  "source_url": "https://gis.lojic.org/maps/rest/services/PvaGis/CamaFloodContour/MapServer/2",
+  "service_type": "ArcGIS REST Feature Layer",
+  "geometry_type": "polygon",
+  "source_spatial_reference": "EPSG:2246 / NAD 1983 StatePlane Kentucky North FIPS 1601 Feet",
+  "output_spatial_reference": "EPSG:4326 / WGS 84",
+  "status": "parcel-index-ready",
+  "verified_record_count": 10087,
+  "count_verified_at": "2026-06-15T12:56:56.009Z",
+  "fields": [
+    "OBJECTID",
+    "FLD_AR_ID",
+    "FLD_ZONE",
+    "FLOODWAY",
+    "SFHA_TF",
+    "STATIC_BFE",
+    "V_DATUM",
+    "DEPTH",
+    "LEN_UNIT",
+    "VELOCITY",
+    "VEL_UNIT",
+    "SOURCE_CIT",
+    "PLOTCODE",
+    "DFIRM_ID",
+    "VERSION_ID",
+    "STUDY_TYP",
+    "ZONE_SUBTY",
+    "EFF_DATE"
+  ],
+  "white_rabbit_field_map": {
+    "floodZone": "FLD_ZONE",
+    "zoneSubtype": "ZONE_SUBTY / FLOODWAY / PLOTCODE",
+    "sfha": "SFHA_TF",
+    "staticBfe": "STATIC_BFE",
+    "verticalDatum": "V_DATUM",
+    "depth": "DEPTH",
+    "velocity": "VELOCITY",
+    "sourceCitation": "SOURCE_CIT",
+    "geometry": "SHAPE"
+  },
+  "join_strategy": {
+    "method": "offline parcel centroid spatial join to current FEMA flood zone polygons",
+    "parcel_keys": [
+      "countyParcelId",
+      "PARCELID/accountNum",
+      "LRSN/gisParcelId"
+    ],
+    "output_manifest": "public/data/counties/jefferson-ky/floodplain/manifest.json",
+    "output_index": "public/data/counties/jefferson-ky/floodplain/parcel-floodplain-index.json"
+  },
+  "qa": {
+    "source_polygon_count": 10087,
+    "indexed_polygon_count": 10087,
+    "parcel_count_scanned": 284428,
+    "parcel_floodplain_record_count": 284229,
+    "parcels_in_sfha": 9312,
+    "parcels_in_floodway": 1223,
+    "missing_centroid_count": 0,
+    "page_design_changed": false
+  }
+}

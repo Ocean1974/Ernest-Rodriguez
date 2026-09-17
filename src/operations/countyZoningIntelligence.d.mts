@@ -1,0 +1,13 @@
+export const COUNTY_ZONING_SOURCE_PROBE_VERSION: string;
+export const COUNTY_ZONING_COVERAGE_RECONCILIATION_VERSION: string;
+export const COUNTY_ZONING_SNAPSHOT_POLICY_VERSION: string;
+export const COUNTY_ZONING_DISTRICT_DEFINITION_VERSION: string;
+export const COUNTY_PARCEL_ZONING_ASSIGNMENT_VERSION: string;
+export const COUNTY_ZONING_ASSIGNMENT_AUDIT_VERSION: string;
+export function countyZoningSha256(value: unknown): string;
+export function createCountyZoningSourceProbe(input?: Record<string, unknown>): Readonly<Record<string, unknown>>;
+export function reconcileCountyZoningCoverage(input?: Record<string, unknown>): Readonly<Record<string, unknown>>;
+export function createCountyZoningSnapshotPolicy(input?: Record<string, unknown>): Readonly<Record<string, unknown>>;
+export function createCountyZoningDistrictDefinition(input?: Record<string, unknown>): Readonly<Record<string, unknown>>;
+export function assignParcelZoning(input?: Record<string, unknown>): Readonly<Record<string, unknown>>;
+export function createCountyZoningAssignmentAudit(input?: Record<string, unknown>): Readonly<Record<string, unknown>>;

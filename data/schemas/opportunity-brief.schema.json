@@ -1,0 +1,40 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://white-rabbit.local/schemas/opportunity-brief.schema.json",
+  "title": "White Rabbit Opportunity Brief",
+  "type": "object",
+  "required": ["schemaVersion", "status", "generatedAt", "whiteRabbitPropertyId", "sections", "evidenceSummary", "warnings", "exportModel"],
+  "properties": {
+    "schemaVersion": { "const": "wr-opportunity-brief-v1" },
+    "status": { "enum": ["complete", "partial", "insufficient-evidence"] },
+    "generatedAt": { "type": "string" },
+    "whiteRabbitPropertyId": { "type": "string" },
+    "profileSchemaVersion": { "type": "string" },
+    "sections": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["id", "title", "status", "facts"],
+        "properties": {
+          "id": { "type": "string" },
+          "title": { "type": "string" },
+          "status": { "enum": ["complete", "partial", "insufficient-evidence"] },
+          "facts": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "required": ["id", "label", "value", "status", "source", "sourceField", "asOf", "confidence"],
+              "properties": {
+                "status": { "enum": ["observed", "unknown"] },
+                "confidence": { "type": "number", "minimum": 0, "maximum": 1 }
+              }
+            }
+          }
+        }
+      }
+    },
+    "evidenceSummary": { "type": "object" },
+    "warnings": { "type": "array", "items": { "type": "string" } },
+    "exportModel": { "type": "object" }
+  }
+}

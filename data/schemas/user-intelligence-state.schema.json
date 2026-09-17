@@ -1,0 +1,33 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://white-rabbit.local/schemas/user-intelligence-state.schema.json",
+  "title": "White Rabbit Saved Search and Watchlist State",
+  "type": "object",
+  "required": ["schemaVersion", "revision", "savedSearches", "watchlists", "updatedAt"],
+  "properties": {
+    "schemaVersion": { "const": "wr-user-intelligence-state-v1" },
+    "organizationId": { "type": "string" },
+    "ownerUserId": { "type": "string" },
+    "revision": { "type": "integer", "minimum": 1 },
+    "savedSearches": { "type": "array", "items": { "$ref": "#/$defs/savedSearch" } },
+    "watchlists": { "type": "array", "items": { "$ref": "#/$defs/watchlist" } },
+    "updatedAt": { "type": "string", "format": "date-time" }
+  },
+  "$defs": {
+    "alertPolicy": {
+      "type": "object",
+      "required": ["enabled", "cadence", "materialChangesOnly"],
+      "properties": { "enabled": { "type": "boolean" }, "cadence": { "type": "string" }, "materialChangesOnly": { "type": "boolean" } }
+    },
+    "savedSearch": {
+      "type": "object",
+      "required": ["schemaVersion", "id", "name", "queryPlan", "countyIds", "bounds", "alertPolicy", "lastEvaluation", "revision", "createdAt", "updatedAt"],
+      "properties": { "schemaVersion": { "const": "wr-saved-search-v1" }, "id": { "type": "string" }, "name": { "type": "string", "maxLength": 120 }, "queryPlan": { "type": ["object", "null"] }, "countyIds": { "type": "array", "maxItems": 10, "items": { "type": "string" } }, "bounds": { "type": ["object", "null"] }, "alertPolicy": { "$ref": "#/$defs/alertPolicy" }, "lastEvaluation": { "type": ["object", "null"] }, "revision": { "type": "integer", "minimum": 1 }, "createdAt": { "type": "string" }, "updatedAt": { "type": "string" } }
+    },
+    "watchlist": {
+      "type": "object",
+      "required": ["schemaVersion", "id", "name", "propertyIds", "alertPolicy", "revision", "createdAt", "updatedAt"],
+      "properties": { "schemaVersion": { "const": "wr-watchlist-v1" }, "id": { "type": "string" }, "name": { "type": "string", "maxLength": 120 }, "propertyIds": { "type": "array", "maxItems": 10000, "items": { "type": "string", "pattern": "^wrp:v1:[^:]+:.+$" } }, "alertPolicy": { "$ref": "#/$defs/alertPolicy" }, "revision": { "type": "integer", "minimum": 1 }, "createdAt": { "type": "string" }, "updatedAt": { "type": "string" } }
+    }
+  }
+}

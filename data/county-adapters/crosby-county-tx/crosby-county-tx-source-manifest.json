@@ -1,0 +1,28 @@
+﻿{
+    "county_id":  "crosby-county-tx",
+    "county_name":  "Crosby County",
+    "state":  "TX",
+    "fips":  "48107",
+    "cad_name":  "Crosby County Appraisal District",
+    "source_discovery_status":  "official-source-not-verified",
+    "retrieved_at":  "2026-06-30",
+    "verified_counts":  {
+                            "parcel_geometry_features":  0,
+                            "appraisal_property_rows":  0,
+                            "count_verified_at":  null,
+                            "status":  "not-verified"
+                        },
+    "join_keys":  {
+                      "primary_parcel_account":  "unverified",
+                      "secondary_gis_id":  "unverified",
+                      "owner_appraisal":  "unverified"
+                  },
+    "remaining_blockers":  [
+                               "official appraisal district site not verified",
+                               "exact parcel count not verified",
+                               "exact geometry-to-appraisal join key not verified",
+                               "viewport chunks and search shards not built",
+                               "QC report not built"
+                           ],
+    "completion_impact":  "source-discovery-started"
+}

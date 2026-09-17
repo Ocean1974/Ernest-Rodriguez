@@ -1,0 +1,97 @@
+{
+  "version": "wr-tx-batch-007-official-portals-v1",
+  "retrievedAt": "2026-07-03",
+  "scope": "Texas verification queue batch 7, official portal and parcel-source discovery in progress",
+  "rule": "Official portals are evidence for source discovery only. They do not make a county core-complete until exact counts, join keys, bulk/source provenance, viewport chunks, search shards, and QC are verified.",
+  "counties": [
+    {
+      "countyId": "lubbock-county-tx",
+      "countyName": "Lubbock County",
+      "state": "TX",
+      "officialPortals": [
+        {
+          "label": "Lubbock Central Appraisal District official site",
+          "url": "https://lubbockcad.org/",
+          "sourceType": "appraisal-district-site",
+          "verificationStatus": "official-site-verified",
+          "notes": "Official site exposes Property and Tax Information, Property Search, Advanced Search, GIS Maps, and Reports. The site says property owners can locate property by using property search. Treat as source discovery until parcel ID fields, exact counts, GIS source files, and join keys are verified."
+        },
+        {
+          "label": "Lubbock CAD property search",
+          "url": "https://lubbockcad.org/",
+          "sourceType": "property-search",
+          "verificationStatus": "linked-from-official-site",
+          "notes": "Official landing page exposes Property Search and Advanced Search. Search payload fields still need inspection before any parcel key is accepted."
+        },
+        {
+          "label": "Lubbock CAD GIS maps",
+          "url": "https://gis.bisclient.com/",
+          "sourceType": "interactive-map",
+          "verificationStatus": "linked-from-official-site",
+          "notes": "Official navigation links to GIS Maps. Treat as map/GIS discovery until bulk/API-safe geometry, exact count, and geometry-to-appraisal key are verified."
+        }
+      ],
+      "completionImpact": "source-discovery-started",
+      "remainingBlockers": [
+        "GIS map source files not inspected",
+        "property search parcel ID field names not verified",
+        "exact parcel count not verified",
+        "exact geometry-to-appraisal join key not verified",
+        "viewport/search outputs not built"
+      ]
+    },
+    {
+      "countyId": "midland-county-tx",
+      "countyName": "Midland County",
+      "state": "TX",
+      "officialPortals": [
+        {
+          "label": "Midland Central Appraisal District official site",
+          "url": "https://midcad.org/",
+          "sourceType": "appraisal-district-site",
+          "verificationStatus": "official-site-verified",
+          "notes": "Official site exposes Property Search & Pay Taxes Online, Interactive Map, Mapping/GIS navigation, publications/reports, and open records. These are source leads only until schemas, counts, and join keys are verified."
+        },
+        {
+          "label": "Midland CAD property search and tax portal",
+          "url": "https://www.southwestdatasolution.com/",
+          "sourceType": "property-search-and-tax-portal",
+          "verificationStatus": "linked-from-official-site",
+          "notes": "Linked from the official Midland CAD site. Parcel/account ID field names and payload shape still need inspection before joining."
+        },
+        {
+          "label": "Midland CAD interactive map",
+          "url": "https://gis.bisclient.com/",
+          "sourceType": "interactive-map",
+          "verificationStatus": "linked-from-official-site",
+          "notes": "Linked from the official Midland CAD site. Treat as geometry-source discovery until bulk/API-safe geometry, exact count, and join key are verified."
+        },
+        {
+          "label": "Midland CAD mapping page",
+          "url": "https://midcad.org/",
+          "sourceType": "mapping-gis-lead",
+          "verificationStatus": "linked-from-official-site",
+          "notes": "Official navigation includes Mapping under GIS. Mapping page and any export/download terms still need inspection."
+        }
+      ],
+      "completionImpact": "source-discovery-started",
+      "remainingBlockers": [
+        "mapping/GIS export terms not inspected",
+        "property search parcel ID field names not verified",
+        "exact parcel count not verified",
+        "exact geometry-to-appraisal join key not verified",
+        "viewport/search outputs not built"
+      ]
+    }
+  ],
+  "generatedAt": "2026-07-03T00:00:00.000Z",
+  "completionRule": "Official portals are evidence for source discovery only. They do not make a county core-complete until exact counts, join keys, bulk/source provenance, viewport chunks, search shards, and QC are verified.",
+  "summary": {
+    "countyCount": 2,
+    "officialSiteVerified": 2,
+    "linkedPropertySearch": 2,
+    "linkedInteractiveMap": 2,
+    "bulkOrExportLead": 1,
+    "promotedToCoreComplete": 0
+  }
+}

@@ -1,0 +1,282 @@
+{
+  "id": "fort-bend-county-tx",
+  "countyId": "fort-bend-county-tx",
+  "countyName": "Fort Bend County",
+  "state": "TX",
+  "fips": "48157",
+  "marketName": "Houston",
+  "appraisalDistrictName": "Fort Bend Central Appraisal District",
+  "appraisalDistrictAcronym": "FBCAD",
+  "gisSource": "Fort Bend County GIS Parcels_Public FeatureServer layer 1",
+  "uniqueGisKey": "GlobalID",
+  "parcelIdField": "GlobalID",
+  "accountIdField": "Property_Number",
+  "geometryType": "polygon",
+  "sourceSpatialReference": "EPSG:6588 (NAD83(2011) Texas South Central US Feet); importer requests EPSG:4326",
+  "status": "pilot",
+  "map": {
+    "locationId": 1021,
+    "locationName": "Fort Bend County TX / Houston Pilot",
+    "locationType": "Fort Bend Central Appraisal District",
+    "status": "full parcel map/search built - intelligence and activation gated",
+    "coordinates": [
+      -95.81,
+      29.57
+    ],
+    "camera": {
+      "x": 50,
+      "y": 50,
+      "zoom": 1.2,
+      "pitch": 48,
+      "bearing": 0
+    },
+    "geoBounds": {
+      "minLng": -96.15,
+      "minLat": 29.25,
+      "maxLng": -95.25,
+      "maxLat": 29.9
+    },
+    "boundsStatus": "county approximate bounds only; replace with verified parcel extent during source inspection"
+  },
+  "universalParcelSchema": {
+    "version": "wr-universal-parcel-v1",
+    "schemaPath": "data/schemas/universal-parcel.schema.json",
+    "documentationPath": "data/schemas/universal-parcel.md",
+    "parcelServiceBuilder": "scripts/build-app-parcel-service.cjs",
+    "fieldMapPath": "data/county-adapters/fort-bend-county-tx/fort-bend-county-tx-universal-field-map.json",
+    "sourceManifestPath": "data/county-adapters/fort-bend-county-tx/fort-bend-county-tx-source-manifest.json"
+  },
+  "sourceFiles": {
+    "parcelGeometry": "https://gisportal.fortbendcountytx.gov/arcgis/rest/services/InteractiveMap/Parcels_Public/FeatureServer/1",
+    "appraisalDistrictExtract": "https://www.fbcad.org/gis-data/",
+    "ownerAppraisal": "https://gisportal.fortbendcountytx.gov/arcgis/rest/services/InteractiveMap/Parcels_Public/FeatureServer/1",
+    "permitsRaw": "source-needed",
+    "permitsProcessed": "data/permits/processed/fort-bend-county-tx",
+    "developmentRaw": "source-needed",
+    "zoningRaw": "source-needed",
+    "floodplainRaw": "source-needed",
+    "migrationDemandRaw": "source-needed"
+  },
+  "publicDataRoots": {
+    "parcels": "/data/counties/fort-bend-county-tx/parcels/",
+    "permits": "/data/counties/fort-bend-county-tx/permits/",
+    "developments": "/data/counties/fort-bend-county-tx/developments/",
+    "zoning": "/data/counties/fort-bend-county-tx/zoning/",
+    "floodplain": "/data/counties/fort-bend-county-tx/floodplain/",
+    "demand": "/data/counties/fort-bend-county-tx/demand/"
+  },
+  "productionOutputs": {
+    "parcelGeojson": "output/fort-bend-county-tx/fort-bend-county-tx-parcels.geojson",
+    "parcelPmtiles": "output/fort-bend-county-tx/fort-bend-county-tx-parcels.pmtiles",
+    "vectorTilesDirectory": "output/fort-bend-county-tx/vector-tiles/"
+  },
+  "optionalLayers": [
+    {
+      "id": "county-parcels",
+      "label": "County parcels",
+      "source": "Fort Bend County GIS Parcels_Public FeatureServer layer 1",
+      "status": "official-source-verified-service-built",
+      "joinBehavior": "GlobalID is the unique feature identity; Property_Number is searchable but has 8 duplicate excess occurrences",
+      "defaultVisible": false,
+      "renderStrategy": "build-time official source fetch, offline universal mapping, viewport chunks, capped runtime loader",
+      "maxFeaturesPerViewport": 750
+    },
+    {
+      "id": "owner-appraisal",
+      "label": "Owner/appraisal",
+      "source": "Fort Bend County GIS / FBCAD parcel attributes",
+      "status": "official-source-verified-service-built",
+      "joinBehavior": "Owner, mailing, situs, value, land/building, and legal fields are carried on the parcel feature",
+      "defaultVisible": false,
+      "renderStrategy": "build-time official source fetch, offline owner/appraisal normalization, viewport chunks, capped runtime loader",
+      "maxFeaturesPerViewport": 750
+    },
+    {
+      "id": "parcel-dimensions",
+      "label": "Parcel dimensions",
+      "source": "source-needed",
+      "status": "source-needed",
+      "joinBehavior": "source-needed: direct dimension fields, label layer, or generated measurement fallback",
+      "defaultVisible": false,
+      "renderStrategy": "build-time official source inspection, offline mapping, viewport chunks",
+      "maxFeaturesPerViewport": 750
+    },
+    {
+      "id": "block-grid",
+      "label": "Block, subdivision, and map-grid context",
+      "source": "source-needed",
+      "status": "source-needed",
+      "joinBehavior": "source-needed: direct parcel fields or spatial join to subdivision/block/grid sources",
+      "defaultVisible": false,
+      "renderStrategy": "build-time official source inspection, offline joins, viewport chunks",
+      "maxFeaturesPerViewport": 750
+    },
+    {
+      "id": "permits",
+      "label": "Permits and certificates of occupancy",
+      "source": "source-needed",
+      "status": "source-needed",
+      "joinBehavior": "source-needed: parcel/account, normalized address, or spatial point-in-parcel join",
+      "defaultVisible": false,
+      "publicDataRoot": "/data/counties/fort-bend-county-tx/permits/",
+      "manifestPath": "public/data/counties/fort-bend-county-tx/permits/manifest.json",
+      "renderStrategy": "build-time official source verification, offline permit normalization, viewport-safe chunks",
+      "maxFeaturesPerViewport": 750
+    },
+    {
+      "id": "zoning-intelligence",
+      "label": "Zoning intelligence",
+      "source": "source-needed",
+      "status": "source-needed",
+      "joinBehavior": "source-needed: parcel/account ID bridge first; spatial join for zoning polygons and case areas",
+      "defaultVisible": false,
+      "publicDataRoot": "/data/counties/fort-bend-county-tx/zoning/",
+      "manifestPath": "public/data/counties/fort-bend-county-tx/zoning/manifest.json",
+      "schemaPath": "data/schemas/dallas-zoning-layer.schema.json",
+      "reportPath": "output/fort-bend-county-tx/zoning-source-report.md",
+      "renderStrategy": "build-time official source verification, offline joins, viewport chunks, capped runtime loader",
+      "maxFeaturesPerViewport": 750
+    },
+    {
+      "id": "development-signals",
+      "label": "Development signals",
+      "source": "source-needed",
+      "status": "source-needed",
+      "joinBehavior": "source-needed: normalized permit, certificate, demolition, plat, and project evidence joined to parcel IDs",
+      "defaultVisible": false,
+      "publicDataRoot": "/data/counties/fort-bend-county-tx/developments/",
+      "manifestPath": "public/data/counties/fort-bend-county-tx/developments/parcel-development-index.json",
+      "renderStrategy": "build-time evidence normalization, parcel/address/spatial joins, viewport-safe parcel index lookup",
+      "maxFeaturesPerViewport": 750
+    },
+    {
+      "id": "floodplain-intelligence",
+      "label": "Floodplain intelligence",
+      "source": "source-needed",
+      "status": "source-needed",
+      "joinBehavior": "source-needed: FEMA/local floodplain spatial join keyed back to parcel/account IDs",
+      "defaultVisible": false,
+      "publicDataRoot": "/data/counties/fort-bend-county-tx/floodplain/",
+      "manifestPath": "public/data/counties/fort-bend-county-tx/floodplain/manifest.json",
+      "parcelIndexPath": "public/data/counties/fort-bend-county-tx/floodplain/parcel-floodplain-index.json",
+      "schemaPath": "data/schemas/parcel-floodplain-index.schema.json",
+      "parcelIndexSchemaPath": "data/schemas/parcel-floodplain-index.schema.json",
+      "reportPath": "output/fort-bend-county-tx/floodplain-source-report.md",
+      "renderStrategy": "build-time official source verification, offline parcel centroid spatial join, viewport-safe sharded parcel ID lookup",
+      "maxFeaturesPerViewport": 750
+    },
+    {
+      "id": "migration-demand",
+      "label": "Migration and demand",
+      "source": "source-needed",
+      "status": "source-needed",
+      "joinBehavior": "source-needed: aggregate Census/ACS/IRS or approved demand geography joined by tract/block group/market, not individual people",
+      "defaultVisible": false,
+      "publicDataRoot": "/data/counties/fort-bend-county-tx/demand/",
+      "manifestPath": "public/data/counties/fort-bend-county-tx/demand/manifest.json",
+      "renderStrategy": "build-time aggregate demand scoring, offline geography-to-parcel join, viewport-safe parcel index lookup",
+      "maxFeaturesPerViewport": 750
+    }
+  ],
+  "publicSourceDiscovery": {
+    "status": "official-parcel-source-verified-importer-ready",
+    "priorityReason": "Houston-area growth county for residential, rental, and land demand.",
+    "sourceSearchQueries": [
+      "Fort Bend Central Appraisal District parcel data",
+      "Fort Bend County GIS parcels",
+      "Fort Bend permits open data"
+    ],
+    "sourceRules": [
+      "Use official county, assessor/appraiser, GIS, municipal, state, or federal sources first.",
+      "Do not activate this county until exact parcel counts and join keys are verified.",
+      "Do not infer owner phone/email from permits, contractors, applicants, or scraped pages."
+    ],
+    "problemSolvingLoop": [
+      "Discover official sources and preserve source dataset identifiers.",
+      "Audit schema, exact counts, geometry validity, nulls, and duplicate candidate keys.",
+      "Select a complete duplicate-safe feature identity and document secondary business identifiers.",
+      "Build a bounded-memory sample before attempting the full county snapshot.",
+      "Publish viewport chunks and search shards, then reconcile source, emitted, skipped, and joined counts.",
+      "Run county QC and keep visible activation disabled until every individual gate passes."
+    ]
+  },
+  "ownerEnrichment": {
+    "sourceLabel": "Fort Bend County GIS / FBCAD Parcels_Public",
+    "propertyRecordSource": "official parcel FeatureServer attributes",
+    "officialJoinKey": "GlobalID unique feature identity; Property_Number business identifier is non-unique",
+    "noOfficialEmailFieldNote": "No official owner phone/email source is verified. Do not infer owner contact fields.",
+    "fields": {
+      "parcelId": "GlobalID",
+      "gisParcelId": "GlobalID",
+      "ownerName": "Owner_Name",
+      "ownerName2": "source-needed",
+      "businessName": "source-needed",
+      "ownerMailingAddress": "Owner_Address_1",
+      "ownerMailingAddress2": "Owner_Address_2 + Owner_Address_3",
+      "ownerCity": "Owner_City",
+      "ownerState": "Owner_State",
+      "ownerZip": "Owner_Zip",
+      "ownerPhone": "No official owner phone field verified",
+      "ownerEmail": "No official owner email field verified"
+    }
+  },
+  "joinKeys": {
+    "primaryParcelAccount": "Property_Number is complete but has 8 duplicate excess occurrences; never use as sole feature identity",
+    "appraisal": "parcel attributes are co-located; Property_Number is the business identifier",
+    "land": "co-located parcel fields Land_Size_FT, Land_Size_AC, values, Year_Built, and Total_Living_Area_SqFT",
+    "secondaryParcelGisId": "GlobalID is complete and unique across 385,212 audited features",
+    "blockLabels": "source-needed: direct key, spatial join, or unavailable",
+    "dimensions": "source-needed: direct key, spatial join, generated measurement fallback, or unavailable",
+    "permits": "source-needed: parcel/account ID, address match, spatial join, or combination",
+    "zoning": "source-needed: parcel/account ID bridge first; spatial join for zoning polygons and case areas",
+    "floodplain": "source-needed: FEMA/local floodplain parcel centroid spatial join keyed to parcel/account IDs",
+    "developmentSignals": "source-needed: verified permit, plat, demolition, certificate, project, address, or spatial join evidence",
+    "migrationDemand": "source-needed: aggregate geography join, not individual people"
+  },
+  "verifiedCounts": {
+    "parcelGeometryFeatures": 385212,
+    "missingGeometry": 0,
+    "appraisalAccountRows": 385212,
+    "appraisalRows": 385212,
+    "landRows": 385212,
+    "appParcelChunks": 888,
+    "parcelSearchShards": 1045,
+    "sourcePermitRecords": 0,
+    "permitRowsJoined": 0,
+    "permitRowsUnmatched": 0,
+    "parcelsWithDevelopmentSignals": 0,
+    "migrationDemandGeographies": 0
+  },
+  "requiredOutputs": [
+    "output/fort-bend-county-tx/schema-report.md",
+    "output/fort-bend-county-tx/schema-report.json",
+    "output/fort-bend-county-tx/join-key-report.md",
+    "output/fort-bend-county-tx/full-parcel-access-report.md",
+    "output/fort-bend-county-tx/qa-report.md",
+    "output/fort-bend-county-tx/qa-report.json",
+    "output/fort-bend-county-tx/fort-bend-county-tx-parcels.geojson",
+    "output/fort-bend-county-tx/fort-bend-county-tx-parcels.pmtiles or output/fort-bend-county-tx/vector-tiles/",
+    "public/data/counties/fort-bend-county-tx/parcels/manifest.json",
+    "public/data/counties/fort-bend-county-tx/permits/manifest.json",
+    "public/data/counties/fort-bend-county-tx/developments/parcel-development-index.json",
+    "public/data/counties/fort-bend-county-tx/zoning/manifest.json",
+    "public/data/counties/fort-bend-county-tx/floodplain/manifest.json",
+    "public/data/counties/fort-bend-county-tx/demand/manifest.json"
+  ],
+  "productionGap": "Official parcel/appraisal source, exact count, snapshot identity, 888 viewport chunks, and 1,045 search shards are built. Rights review, refresh-stability audit, permits/CO, zoning, floodplain, development, demand, PMTiles, and final activation remain gated.",
+  "pilotNotes": "Do not activate this county in the app. Do not redesign any pages. Fill official sources and exact join keys before any visible behavior changes.",
+  "verifiedDiscovery": {
+    "status": "official-parcel-source-verified-importer-ready",
+    "officialSite": "https://www.fbcad.org/",
+    "propertySearch": "https://www.fbcad.org/gis-data/",
+    "interactiveMap": "https://gisportal.fortbendcountytx.gov/arcgis/rest/services/InteractiveMap/Parcels_Public/FeatureServer/1",
+    "candidateBulkOrExportLeads": [
+      "FBCAD 2026 Certified and Preliminary Parcel & Shape downloads"
+    ],
+    "remainingBlockers": [
+      "formal reuse and derived-output rights review incomplete",
+      "GlobalID refresh stability not yet re-observed",
+      "viewport/search outputs not built"
+    ]
+  }
+}

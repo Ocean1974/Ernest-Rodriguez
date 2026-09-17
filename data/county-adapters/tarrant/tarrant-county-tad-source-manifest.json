@@ -1,0 +1,60 @@
+{
+  "county_id": "tarrant-county-tad",
+  "county_name": "Tarrant County",
+  "state": "TX",
+  "fips": "48439",
+  "cad_name": "Tarrant Appraisal District",
+  "source_discovery_status": "official-live-parcel-service-schema-count-and-key-verified",
+  "retrieved_at": "2026-08-06",
+  "official_sources": {
+    "parcel_map_service": "https://mapit.tarrantcounty.com/arcgis/rest/services/Dynamic/TADParcels/MapServer/0",
+    "service_owner": "Tarrant Appraisal District",
+    "geometry_type": "esriGeometryPolygon",
+    "source_spatial_reference": "EPSG:2276 (NAD83 / Texas North Central ftUS)",
+    "max_record_count": 10000
+  },
+  "verified_counts": {
+    "parcel_geometry_features": 758633,
+    "account_non_null_features": 758633,
+    "taxpin_non_null_features": 758633,
+    "gislink_non_null_features": 758633,
+    "account_max_observed_multiplicity": 1,
+    "count_verified_at": "2026-08-06",
+    "status": "live-service-feature-count-and-key-completeness-verified"
+  },
+  "join_keys": {
+    "primary_parcel_account": "ACCOUNT",
+    "secondary_gis_id": "TAXPIN",
+    "service_link_id": "GISLINK",
+    "owner_appraisal": "direct fields on the same parcel feature keyed by ACCOUNT"
+  },
+  "verified_field_groups": {
+    "identity": ["ACCOUNT", "TAXPIN", "GISLINK", "OBJECTID"],
+    "owner": ["OWNER_NAME", "OWNER_ADDR", "OWNER_CITY", "OWNER_ZIP", "OWNER_ZIP_"],
+    "situs": ["SITUS_ADDR", "STREET_NO", "PREDIR", "STREET_NAM", "STREET_TYP", "POSTDIR", "CITY", "STATE", "ZIPCODE"],
+    "land": ["LAND_ACRES", "LAND_SQFT"],
+    "improvement": ["YEAR_BUILT", "LIVING_ARE", "BEDROOMS", "BATHROOMS", "GARAGE_CAP", "SW_POOL"],
+    "value": ["APPRAISEDV", "LAND_VALUE", "IMPR_VALUE", "TOTAL_VALU"],
+    "legal": ["LEGAL_1", "LEGAL_2", "LEGAL_3", "LEGAL_4", "SubdivisionName"]
+  },
+  "query": {
+    "primary_where": "ACCOUNT IS NOT NULL",
+    "order_by": "OBJECTID",
+    "max_record_count": 10000,
+    "geometry_out_sr": 4326,
+    "out_fields": [
+      "OBJECTID", "ACCOUNT", "TAXPIN", "GISLINK", "OWNER_NAME", "OWNER_ADDR", "OWNER_CITY", "OWNER_ZIP", "OWNER_ZIP_",
+      "SITUS_ADDR", "CITY", "STATE", "ZIPCODE", "TAD_MAP", "MAPSCO", "LEGAL_1", "LEGAL_2", "LEGAL_3", "LEGAL_4",
+      "SubdivisionName", "LAND_ACRES", "LAND_SQFT", "APPRAISEDV", "LAND_VALUE", "IMPR_VALUE", "TOTAL_VALU", "YEAR_BUILT",
+      "LIVING_ARE", "PARCELTYPE", "DESCR"
+    ]
+  },
+  "remaining_blockers": [
+    "snapshot the live service at build time and record a source version/date",
+    "build universal parcel GeoJSON, viewport chunks, and search shards",
+    "build county QC and production tile handoff",
+    "verify and join permits, zoning, floodplain, development, and demand sources"
+  ],
+  "completion_impact": "source-verified-build-needed",
+  "activation": "do-not-activate"
+}

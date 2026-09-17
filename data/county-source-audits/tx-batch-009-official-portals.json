@@ -1,0 +1,110 @@
+{
+  "version": "wr-tx-batch-009-official-portals-v1",
+  "retrievedAt": "2026-07-03",
+  "scope": "Texas verification queue batch 9, official portal and parcel-source discovery in progress",
+  "rule": "Official portals are evidence for source discovery only. They do not make a county core-complete until exact counts, join keys, bulk/source provenance, viewport chunks, search shards, and QC are verified.",
+  "counties": [
+    {
+      "countyId": "smith-county-tx",
+      "countyName": "Smith County",
+      "state": "TX",
+      "officialPortals": [
+        {
+          "label": "Smith County Appraisal District official-site candidate",
+          "url": "https://www.smithcad.org/",
+          "sourceType": "appraisal-district-site-candidate",
+          "verificationStatus": "official-site-candidate-needs-verification",
+          "notes": "Local adapter still marks official parcel/GIS source not verified. High-priority Tyler-area county; verify official property search, map/GIS source, parcel ID fields, exact parcel count, and join key before promotion."
+        }
+      ],
+      "completionImpact": "source-discovery-started",
+      "remainingBlockers": [
+        "official appraisal district site not verified",
+        "property search not inspected",
+        "parcel ID field names not verified",
+        "exact parcel count not verified",
+        "exact geometry-to-appraisal join key not verified",
+        "viewport/search outputs not built"
+      ]
+    },
+    {
+      "countyId": "tarrant-county-tx",
+      "countyName": "Tarrant County",
+      "state": "TX",
+      "officialPortals": [
+        {
+          "label": "Tarrant Appraisal District official-site candidate",
+          "url": "https://www.tad.org/",
+          "sourceType": "appraisal-district-site-candidate",
+          "verificationStatus": "official-site-candidate-fetch-blocked",
+          "notes": "Known Tarrant Appraisal District domain was not fetchable in this environment. Do not treat as verified until official site access, data products, parcel search fields, exact parcel count, and geometry-to-appraisal join keys are inspected."
+        }
+      ],
+      "completionImpact": "source-discovery-started",
+      "remainingBlockers": [
+        "official appraisal district site fetch blocked",
+        "property search not inspected",
+        "data products not inspected",
+        "parcel ID field names not verified",
+        "exact parcel count not verified",
+        "exact geometry-to-appraisal join key not verified",
+        "viewport/search outputs not built"
+      ]
+    },
+    {
+      "countyId": "taylor-county-tx",
+      "countyName": "Taylor County",
+      "state": "TX",
+      "officialPortals": [
+        {
+          "label": "Taylor Central Appraisal District official-site candidate",
+          "url": "https://www.taylor-cad.org/",
+          "sourceType": "appraisal-district-site-candidate",
+          "verificationStatus": "official-site-candidate-needs-verification",
+          "notes": "Local adapter still marks official parcel/GIS source not verified. Verify official property search, map/GIS source, parcel ID fields, exact parcel count, and join key before promotion."
+        }
+      ],
+      "completionImpact": "source-discovery-started",
+      "remainingBlockers": [
+        "official appraisal district site not verified",
+        "property search not inspected",
+        "parcel ID field names not verified",
+        "exact parcel count not verified",
+        "exact geometry-to-appraisal join key not verified",
+        "viewport/search outputs not built"
+      ]
+    },
+    {
+      "countyId": "tom-green-county-tx",
+      "countyName": "Tom Green County",
+      "state": "TX",
+      "officialPortals": [
+        {
+          "label": "Tom Green County Appraisal District official-site candidate",
+          "url": "https://www.tomgreencad.com/",
+          "sourceType": "appraisal-district-site-candidate",
+          "verificationStatus": "official-site-candidate-needs-verification",
+          "notes": "Local adapter still marks official parcel/GIS source not verified. Verify official property search, map/GIS source, parcel ID fields, exact parcel count, and join key before promotion."
+        }
+      ],
+      "completionImpact": "source-discovery-started",
+      "remainingBlockers": [
+        "official appraisal district site not verified",
+        "property search not inspected",
+        "parcel ID field names not verified",
+        "exact parcel count not verified",
+        "exact geometry-to-appraisal join key not verified",
+        "viewport/search outputs not built"
+      ]
+    }
+  ],
+  "generatedAt": "2026-07-03T00:00:00.000Z",
+  "completionRule": "Official portals are evidence for source discovery only. They do not make a county core-complete until exact counts, join keys, bulk/source provenance, viewport chunks, search shards, and QC are verified.",
+  "summary": {
+    "countyCount": 4,
+    "officialSiteCandidateNeedsVerification": 3,
+    "officialSiteCandidateFetchBlocked": 1,
+    "officialSiteVerified": 0,
+    "promotedToCoreComplete": 0
+  }
+}

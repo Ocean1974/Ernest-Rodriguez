@@ -1,0 +1,752 @@
+{
+  "version": "wr-tx-batch-002-official-portals-v1",
+  "retrievedAt": "2026-06-29",
+  "scope": "Texas verification queue batch 2, initial official portal discovery",
+  "rule": "Official portals are evidence for source discovery only. They do not make a county core-complete until exact counts, join keys, bulk/source provenance, viewport chunks, search shards, and QC are verified.",
+  "counties": [
+    {
+      "countyId": "burleson-county-tx",
+      "countyName": "Burleson County",
+      "state": "TX",
+      "officialPortals": [
+        {
+          "label": "Burleson County Appraisal District official site",
+          "url": "https://burlesonappraisal.com/",
+          "sourceType": "appraisal-district-site",
+          "verificationStatus": "official-site-verified"
+        },
+        {
+          "label": "Burleson CAD property search",
+          "url": "https://esearch.burlesonappraisal.com/",
+          "sourceType": "property-search",
+          "verificationStatus": "linked-from-official-site"
+        },
+        {
+          "label": "Burleson CAD GIS map",
+          "url": "https://gis.bisclient.com/burlesoncad/",
+          "sourceType": "interactive-map",
+          "verificationStatus": "linked-from-official-site"
+        }
+      ],
+      "completionImpact": "source-discovery-started",
+      "remainingBlockers": [
+        "data download/report files not inspected",
+        "exact parcel count not verified",
+        "exact geometry-to-appraisal join key not verified",
+        "viewport/search outputs not built"
+      ]
+    },
+    {
+      "countyId": "burnet-county-tx",
+      "countyName": "Burnet County",
+      "state": "TX",
+      "officialPortals": [
+        {
+          "label": "Burnet Central Appraisal District official site",
+          "url": "https://burnet-cad.org/",
+          "sourceType": "appraisal-district-site",
+          "verificationStatus": "official-site-verified"
+        },
+        {
+          "label": "Burnet CAD property search",
+          "url": "https://esearch.burnet-cad.org/",
+          "sourceType": "property-search",
+          "verificationStatus": "linked-from-official-site"
+        },
+        {
+          "label": "Burnet CAD interactive map",
+          "url": "https://gis.bisclient.com/",
+          "sourceType": "interactive-map",
+          "verificationStatus": "linked-from-official-site"
+        }
+      ],
+      "completionImpact": "source-discovery-started",
+      "remainingBlockers": [
+        "data download/report files not inspected",
+        "exact parcel count not verified",
+        "exact geometry-to-appraisal join key not verified",
+        "viewport/search outputs not built"
+      ]
+    },
+    {
+      "countyId": "caldwell-county-tx",
+      "countyName": "Caldwell County",
+      "state": "TX",
+      "officialPortals": [
+        {
+          "label": "Caldwell County Appraisal District official site",
+          "url": "https://caldwellcad.org/",
+          "sourceType": "appraisal-district-site",
+          "verificationStatus": "official-site-verified"
+        },
+        {
+          "label": "Caldwell CAD property search",
+          "url": "https://esearch.caldwellcad.org/",
+          "sourceType": "property-search",
+          "verificationStatus": "linked-from-official-site"
+        },
+        {
+          "label": "Caldwell CAD interactive map",
+          "url": "https://gis.bisclient.com/",
+          "sourceType": "interactive-map",
+          "verificationStatus": "linked-from-official-site"
+        }
+      ],
+      "completionImpact": "source-discovery-started",
+      "remainingBlockers": [
+        "public report/source files not inspected",
+        "exact parcel count not verified",
+        "exact geometry-to-appraisal join key not verified",
+        "viewport/search outputs not built"
+      ]
+    },
+    {
+      "countyId": "calhoun-county-tx",
+      "countyName": "Calhoun County",
+      "state": "TX",
+      "officialPortals": [
+        {
+          "label": "Calhoun County Appraisal District official site",
+          "url": "https://www.calhouncad.org/",
+          "sourceType": "appraisal-district-site",
+          "verificationStatus": "official-site-verified"
+        },
+        {
+          "label": "Calhoun CAD property search",
+          "url": "https://esearch.calhouncad.org/",
+          "sourceType": "property-search",
+          "verificationStatus": "linked-from-official-site"
+        },
+        {
+          "label": "Calhoun CAD interactive map",
+          "url": "https://gis.bisclient.com/",
+          "sourceType": "interactive-map",
+          "verificationStatus": "linked-from-official-site"
+        }
+      ],
+      "completionImpact": "source-discovery-started",
+      "remainingBlockers": [
+        "public report/source files not inspected",
+        "exact parcel count not verified",
+        "exact geometry-to-appraisal join key not verified",
+        "viewport/search outputs not built"
+      ]
+    },
+    {
+      "countyId": "callahan-county-tx",
+      "countyName": "Callahan County",
+      "state": "TX",
+      "officialPortals": [
+        {
+          "label": "Callahan County Appraisal District official site",
+          "url": "https://callahancad.org/",
+          "sourceType": "appraisal-district-site",
+          "verificationStatus": "official-site-verified"
+        },
+        {
+          "label": "Callahan CAD property search",
+          "url": "https://esearch.callahancad.org/",
+          "sourceType": "property-search",
+          "verificationStatus": "linked-from-official-site"
+        },
+        {
+          "label": "Callahan CAD interactive map",
+          "url": "https://gis.bisclient.com/",
+          "sourceType": "interactive-map",
+          "verificationStatus": "linked-from-official-site"
+        }
+      ],
+      "completionImpact": "source-discovery-started",
+      "remainingBlockers": [
+        "public report/source files not inspected",
+        "exact parcel count not verified",
+        "exact geometry-to-appraisal join key not verified",
+        "viewport/search outputs not built"
+      ]
+    },
+    {
+      "countyId": "cameron-county-tx",
+      "countyName": "Cameron County",
+      "state": "TX",
+      "officialPortals": [
+        {
+          "label": "Cameron County Appraisal District official site",
+          "url": "https://www.cameroncad.org/",
+          "sourceType": "appraisal-district-site",
+          "verificationStatus": "official-site-verified"
+        },
+        {
+          "label": "Cameron CAD property search",
+          "url": "https://esearch.cameroncad.org/",
+          "sourceType": "property-search",
+          "verificationStatus": "linked-from-official-site"
+        },
+        {
+          "label": "Cameron CAD interactive map",
+          "url": "https://gis.bisclient.com/",
+          "sourceType": "interactive-map",
+          "verificationStatus": "linked-from-official-site"
+        }
+      ],
+      "completionImpact": "source-discovery-started",
+      "remainingBlockers": [
+        "GIS/report files not inspected",
+        "exact parcel count not verified",
+        "exact geometry-to-appraisal join key not verified",
+        "viewport/search outputs not built"
+      ]
+    },
+    {
+      "countyId": "camp-county-tx",
+      "countyName": "Camp County",
+      "state": "TX",
+      "officialPortals": [
+        {
+          "label": "Camp County Appraisal District official site",
+          "url": "https://campcad.org/",
+          "sourceType": "appraisal-district-site",
+          "verificationStatus": "official-site-verified"
+        },
+        {
+          "label": "Camp CAD property search",
+          "url": "https://esearch.campcad.org/",
+          "sourceType": "property-search",
+          "verificationStatus": "linked-from-official-site"
+        },
+        {
+          "label": "Camp CAD interactive map",
+          "url": "https://gis.bisclient.com/",
+          "sourceType": "interactive-map",
+          "verificationStatus": "linked-from-official-site"
+        }
+      ],
+      "completionImpact": "source-discovery-started",
+      "remainingBlockers": [
+        "public report/source files not inspected",
+        "exact parcel count not verified",
+        "exact geometry-to-appraisal join key not verified",
+        "viewport/search outputs not built"
+      ]
+    },
+    {
+      "countyId": "carson-county-tx",
+      "countyName": "Carson County",
+      "state": "TX",
+      "officialPortals": [
+        {
+          "label": "Carson County Appraisal District property search portal",
+          "url": "https://carsoncad.org/",
+          "sourceType": "property-search-and-appraisal-portal",
+          "verificationStatus": "official-site-verified"
+        }
+      ],
+      "completionImpact": "source-discovery-started",
+      "remainingBlockers": [
+        "records/data/reports files not inspected",
+        "exact parcel count not verified",
+        "exact geometry-to-appraisal join key not verified",
+        "viewport/search outputs not built"
+      ]
+    },
+    {
+      "countyId": "cass-county-tx",
+      "countyName": "Cass County",
+      "state": "TX",
+      "officialPortals": [
+        {
+          "label": "Cass County Appraisal District official site",
+          "url": "https://casscad.org/",
+          "sourceType": "appraisal-district-site",
+          "verificationStatus": "official-site-verified"
+        },
+        {
+          "label": "Cass CAD property search",
+          "url": "https://esearch.casscad.org/",
+          "sourceType": "property-search",
+          "verificationStatus": "linked-from-official-site"
+        },
+        {
+          "label": "Cass CAD interactive map",
+          "url": "https://gis.bisclient.com/",
+          "sourceType": "interactive-map",
+          "verificationStatus": "linked-from-official-site"
+        }
+      ],
+      "completionImpact": "source-discovery-started",
+      "remainingBlockers": [
+        "public report/source files not inspected",
+        "exact parcel count not verified",
+        "exact geometry-to-appraisal join key not verified",
+        "viewport/search outputs not built"
+      ]
+    },
+    {
+      "countyId": "castro-county-tx",
+      "countyName": "Castro County",
+      "state": "TX",
+      "officialPortals": [
+        {
+          "label": "Castro County Appraisal District official site",
+          "url": "https://castrocad.org/",
+          "sourceType": "appraisal-district-site",
+          "verificationStatus": "official-site-verified"
+        },
+        {
+          "label": "Castro CAD property search",
+          "url": "https://esearch.castrocad.org/",
+          "sourceType": "property-search",
+          "verificationStatus": "linked-from-official-site"
+        },
+        {
+          "label": "Castro CAD interactive map",
+          "url": "https://gis.bisclient.com/",
+          "sourceType": "interactive-map",
+          "verificationStatus": "linked-from-official-site"
+        }
+      ],
+      "completionImpact": "source-discovery-started",
+      "remainingBlockers": [
+        "public report/source files not inspected",
+        "exact parcel count not verified",
+        "exact geometry-to-appraisal join key not verified",
+        "viewport/search outputs not built"
+      ]
+    },
+    {
+      "countyId": "chambers-county-tx",
+      "countyName": "Chambers County",
+      "state": "TX",
+      "officialPortals": [
+        {
+          "label": "Chambers County Appraisal District property search portal",
+          "url": "https://chamberscad.org/",
+          "sourceType": "property-search-and-appraisal-portal",
+          "verificationStatus": "official-site-verified"
+        }
+      ],
+      "completionImpact": "source-discovery-started",
+      "remainingBlockers": [
+        "records/data/reports files not inspected",
+        "exact parcel count not verified",
+        "exact geometry-to-appraisal join key not verified",
+        "viewport/search outputs not built"
+      ]
+    },
+    {
+      "countyId": "cherokee-county-tx",
+      "countyName": "Cherokee County",
+      "state": "TX",
+      "officialPortals": [
+        {
+          "label": "Cherokee County Appraisal District official site",
+          "url": "https://cherokeecad.com/",
+          "sourceType": "appraisal-district-site",
+          "verificationStatus": "official-site-verified"
+        },
+        {
+          "label": "Cherokee CAD property search",
+          "url": "https://esearch.cherokeecad.com/",
+          "sourceType": "property-search",
+          "verificationStatus": "linked-from-official-site"
+        },
+        {
+          "label": "Cherokee CAD interactive map",
+          "url": "https://gis.bisclient.com/",
+          "sourceType": "interactive-map",
+          "verificationStatus": "linked-from-official-site"
+        }
+      ],
+      "completionImpact": "source-discovery-started",
+      "remainingBlockers": [
+        "public report/source files not inspected",
+        "exact parcel count not verified",
+        "exact geometry-to-appraisal join key not verified",
+        "viewport/search outputs not built"
+      ]
+    },
+    {
+      "countyId": "childress-county-tx",
+      "countyName": "Childress County",
+      "state": "TX",
+      "officialPortals": [
+        {
+          "label": "Childress County Appraisal District property search portal",
+          "url": "https://childresscad.org/",
+          "sourceType": "property-search-and-appraisal-portal",
+          "verificationStatus": "official-site-verified",
+          "notes": "Official portal exposes Records | Data | Reports, Property Search, Interactive Map, and tax-year search. Observed parcel-id candidate fields include Property ID, Geo ID, Owner Id, legal description, abstract, subdivision, lease number, and address fields. Treat Property ID/Geo ID as candidate join keys only until exact geometry-to-appraisal joins and bulk files are verified."
+        },
+        {
+          "label": "Childress CAD property search",
+          "url": "https://esearch.childresscad.org/",
+          "sourceType": "property-search",
+          "verificationStatus": "linked-from-official-site",
+          "notes": "Linked from the official Childress CAD portal. Direct text fetch returned a transient internal-error page, so use the official portal-rendered search fields as discovery evidence only."
+        },
+        {
+          "label": "Childress CAD interactive map",
+          "url": "https://gis.bisclient.com/",
+          "sourceType": "interactive-map",
+          "verificationStatus": "linked-from-official-site",
+          "notes": "Interactive map is linked from the official portal and is geometry-source discovery evidence only until a bulk/API-safe parcel geometry source, exact parcel count, and join key are verified."
+        }
+      ],
+      "completionImpact": "source-discovery-started",
+      "remainingBlockers": [
+        "records/data/reports files not inspected",
+        "exact parcel count not verified",
+        "exact geometry-to-appraisal join key not verified",
+        "Property ID and Geo ID candidate join keys not validated against geometry",
+        "viewport/search outputs not built"
+      ]
+    },
+    {
+      "countyId": "clay-county-tx",
+      "countyName": "Clay County",
+      "state": "TX",
+      "officialPortals": [
+        {
+          "label": "Clay County Appraisal District property search portal",
+          "url": "https://claycad.org/",
+          "sourceType": "property-search-and-appraisal-portal",
+          "verificationStatus": "official-site-verified",
+          "notes": "Official portal exposes property search, interactive map, and appraisal district content. Observed search criteria include Property ID, Geo ID, Owner Id, owner name, legal description, abstract, subdivision, lease fields, and address fields. Treat Property ID/Geo ID as candidate join keys only until exact geometry-to-appraisal joins and bulk files are verified."
+        },
+        {
+          "label": "Clay CAD property search",
+          "url": "https://esearch.claycad.org/",
+          "sourceType": "property-search",
+          "verificationStatus": "linked-from-official-site",
+          "notes": "Linked from the official Clay CAD portal. Direct text fetch returned a transient internal-error page, so use the official portal-rendered search fields as discovery evidence only."
+        },
+        {
+          "label": "Clay CAD interactive map",
+          "url": "https://gis.bisclient.com/",
+          "sourceType": "interactive-map",
+          "verificationStatus": "linked-from-official-site",
+          "notes": "Interactive map is linked from the official portal and is geometry-source discovery evidence only until a bulk/API-safe parcel geometry source, exact parcel count, and join key are verified."
+        }
+      ],
+      "completionImpact": "source-discovery-started",
+      "remainingBlockers": [
+        "records/data/reports files not inspected",
+        "exact parcel count not verified",
+        "exact geometry-to-appraisal join key not verified",
+        "Property ID and Geo ID candidate join keys not validated against geometry",
+        "viewport/search outputs not built"
+      ]
+    },
+    {
+      "countyId": "coke-county-tx",
+      "countyName": "Coke County",
+      "state": "TX",
+      "officialPortals": [
+        {
+          "label": "Coke Central Appraisal District official site",
+          "url": "https://cokecad.org/",
+          "sourceType": "appraisal-district-site",
+          "verificationStatus": "official-site-verified",
+          "notes": "Official Coke CAD site links to Property Search, Interactive Map, Reports, and Open Records Downloads. The site states the district is responsible for appraising all real and business personal property within Coke County."
+        },
+        {
+          "label": "Coke CAD property search",
+          "url": "https://esearch.cokecad.org/",
+          "sourceType": "property-search",
+          "verificationStatus": "linked-from-official-site",
+          "notes": "Linked from the official Coke CAD site. Parcel ID field names and tax-year payload shape still need direct inspection before any join key is accepted."
+        },
+        {
+          "label": "Coke CAD interactive map",
+          "url": "https://gis.bisclient.com/",
+          "sourceType": "interactive-map",
+          "verificationStatus": "linked-from-official-site",
+          "notes": "Interactive map is linked from the official site and is geometry-source discovery evidence only until a bulk/API-safe parcel geometry source, exact parcel count, and join key are verified."
+        }
+      ],
+      "completionImpact": "source-discovery-started",
+      "remainingBlockers": [
+        "open records downloads not inspected",
+        "reports not inspected",
+        "property search parcel ID field names not verified",
+        "exact parcel count not verified",
+        "exact geometry-to-appraisal join key not verified",
+        "viewport/search outputs not built"
+      ]
+    },
+    {
+      "countyId": "collin-county-tx",
+      "countyName": "Collin County",
+      "state": "TX",
+      "officialPortals": [
+        {
+          "label": "Collin Central Appraisal District official site",
+          "url": "https://collincad.org/",
+          "sourceType": "appraisal-district-site",
+          "verificationStatus": "official-site-verified",
+          "notes": "Official CCAD site links to Property Search, Interactive Map, Downloads & Open Data, Reports, and open records. It states the district appraises all property in Collin County at market value."
+        },
+        {
+          "label": "Collin CAD property search",
+          "url": "https://esearch.collincad.org/",
+          "sourceType": "property-search",
+          "verificationStatus": "linked-from-official-site",
+          "notes": "Observed search tabs include owner, address, ID, ARB, and advanced. Observed parcel-id candidate fields include Property ID, Owner ID, Geographic ID, legal description, subdivision, neighborhood, and tax year. Treat Property ID/Geographic ID as candidate join keys only until exact geometry-to-appraisal joins are verified."
+        },
+        {
+          "label": "Collin CAD interactive map",
+          "url": "https://gis.bisclient.com/",
+          "sourceType": "interactive-map",
+          "verificationStatus": "linked-from-official-site",
+          "notes": "Official site describes the map as CCAD GIS property maps. Treat as geometry discovery only until shapefile/open-data downloads are inspected and exact counts/join keys are verified."
+        },
+        {
+          "label": "Collin CAD downloads and open data",
+          "url": "https://collincad.org/",
+          "sourceType": "downloads-and-open-data",
+          "verificationStatus": "linked-from-official-site",
+          "notes": "Official site advertises CCAD appraisal data exports, GIS shapefiles, appraisal reports, and other public information. The specific files, schemas, counts, and license/provenance still need inspection."
+        }
+      ],
+      "completionImpact": "source-discovery-started",
+      "remainingBlockers": [
+        "downloads and open data files not inspected",
+        "GIS shapefile schema not inspected",
+        "exact parcel count not verified",
+        "exact geometry-to-appraisal join key not verified",
+        "Property ID and Geographic ID candidate join keys not validated against geometry",
+        "viewport/search outputs not built"
+      ]
+    },
+    {
+      "countyId": "cochran-county-tx",
+      "countyName": "Cochran County",
+      "state": "TX",
+      "officialPortals": [
+        {
+          "label": "Cochran County private property-search candidate",
+          "url": "https://www.taxnetusa.com/",
+          "sourceType": "private-property-search-candidate",
+          "verificationStatus": "private-not-official",
+          "notes": "Existing adapter shell identifies a private TaxNetUSA property-search candidate only. This is not official CAD bulk provenance and cannot be used for DCAD parity until an official county appraisal/GIS source is verified."
+        }
+      ],
+      "completionImpact": "source-discovery-started",
+      "remainingBlockers": [
+        "official appraisal district site not verified",
+        "official parcel geometry bulk source not verified",
+        "bulk appraisal/owner source not verified",
+        "exact parcel count not verified",
+        "exact geometry-to-appraisal join key not verified",
+        "viewport/search outputs not built"
+      ]
+    },
+    {
+      "countyId": "coleman-county-tx",
+      "countyName": "Coleman County",
+      "state": "TX",
+      "officialPortals": [
+        {
+          "label": "Coleman County Appraisal District official-site candidate",
+          "url": "https://colemancad.org/",
+          "sourceType": "appraisal-district-site-candidate",
+          "verificationStatus": "official-site-candidate-needs-verification",
+          "notes": "Adapter shell still marks official county parcel/GIS source not verified. Keep this as a candidate until official site ownership, property-search links, parcel ID fields, and any bulk/report downloads are inspected."
+        }
+      ],
+      "completionImpact": "source-discovery-started",
+      "remainingBlockers": [
+        "official appraisal district site not verified",
+        "property search not inspected",
+        "parcel ID field names not verified",
+        "exact parcel count not verified",
+        "exact geometry-to-appraisal join key not verified",
+        "viewport/search outputs not built"
+      ]
+    },
+    {
+      "countyId": "collingsworth-county-tx",
+      "countyName": "Collingsworth County",
+      "state": "TX",
+      "officialPortals": [
+        {
+          "label": "Collingsworth County Appraisal District official-site candidate",
+          "url": "https://collingsworthcad.org/",
+          "sourceType": "appraisal-district-site-candidate",
+          "verificationStatus": "official-site-candidate-needs-verification",
+          "notes": "Official source still needs verification. Do not promote the county until the appraisal district site, property search, map/GIS source, parcel ID fields, counts, and join keys are inspected."
+        }
+      ],
+      "completionImpact": "source-discovery-started",
+      "remainingBlockers": [
+        "official appraisal district site not verified",
+        "property search not inspected",
+        "parcel ID field names not verified",
+        "exact parcel count not verified",
+        "exact geometry-to-appraisal join key not verified",
+        "viewport/search outputs not built"
+      ]
+    },
+    {
+      "countyId": "colorado-county-tx",
+      "countyName": "Colorado County",
+      "state": "TX",
+      "officialPortals": [
+        {
+          "label": "Colorado County Appraisal District official source lead",
+          "url": "https://coloradocad.org/",
+          "sourceType": "appraisal-district-site",
+          "verificationStatus": "official-site-verified",
+          "notes": "Existing adapter shell identifies Colorado County Appraisal District official site/source leads. Source files, property-search parcel ID fields, exact counts, and join keys still need inspection."
+        }
+      ],
+      "completionImpact": "source-discovery-started",
+      "remainingBlockers": [
+        "source files not inspected",
+        "property search parcel ID field names not verified",
+        "exact parcel count not verified",
+        "exact geometry-to-appraisal join key not verified",
+        "viewport/search outputs not built"
+      ]
+    },
+    {
+      "countyId": "comal-county-tx",
+      "countyName": "Comal County",
+      "state": "TX",
+      "officialPortals": [
+        {
+          "label": "Comal Appraisal District official site",
+          "url": "https://comalad.org/",
+          "sourceType": "appraisal-district-site",
+          "verificationStatus": "official-site-verified",
+          "notes": "Existing adapter shell identifies the Comal Appraisal District official site, property search, and map as discovered. Source files, parcel ID fields, exact counts, and join keys still need inspection."
+        },
+        {
+          "label": "Comal CAD property search",
+          "url": "https://esearch.comalad.org/",
+          "sourceType": "property-search",
+          "verificationStatus": "linked-from-official-site",
+          "notes": "Property search is discovery evidence only until parcel ID fields and join keys are documented."
+        }
+      ],
+      "completionImpact": "source-discovery-started",
+      "remainingBlockers": [
+        "source files not inspected",
+        "property search parcel ID field names not verified",
+        "exact parcel count not verified",
+        "exact geometry-to-appraisal join key not verified",
+        "viewport/search outputs not built"
+      ]
+    },
+    {
+      "countyId": "comanche-county-tx",
+      "countyName": "Comanche County",
+      "state": "TX",
+      "officialPortals": [
+        {
+          "label": "Comanche County Appraisal District official source lead",
+          "url": "https://comanchecad.org/",
+          "sourceType": "appraisal-district-site",
+          "verificationStatus": "official-site-verified",
+          "notes": "Existing adapter shell identifies the Comanche County Appraisal District official site, property search, and map as discovered. Source files, parcel ID fields, exact counts, and join keys still need inspection."
+        },
+        {
+          "label": "Comanche CAD property search",
+          "url": "https://esearch.comanchecad.org/",
+          "sourceType": "property-search",
+          "verificationStatus": "linked-from-official-site",
+          "notes": "Property search is discovery evidence only until parcel ID fields and join keys are documented."
+        }
+      ],
+      "completionImpact": "source-discovery-started",
+      "remainingBlockers": [
+        "source files not inspected",
+        "property search parcel ID field names not verified",
+        "exact parcel count not verified",
+        "exact geometry-to-appraisal join key not verified",
+        "viewport/search outputs not built"
+      ]
+    },
+    {
+      "countyId": "concho-county-tx",
+      "countyName": "Concho County",
+      "state": "TX",
+      "officialPortals": [
+        {
+          "label": "Concho Central Appraisal District official source lead",
+          "url": "https://conchocad.org/",
+          "sourceType": "appraisal-district-site",
+          "verificationStatus": "official-site-verified",
+          "notes": "Existing adapter shell identifies the Concho Central Appraisal District official site, property search, and map as discovered. Source files, parcel ID fields, exact counts, and join keys still need inspection."
+        },
+        {
+          "label": "Concho CAD property search",
+          "url": "https://esearch.conchocad.org/",
+          "sourceType": "property-search",
+          "verificationStatus": "linked-from-official-site",
+          "notes": "Property search is discovery evidence only until parcel ID fields and join keys are documented."
+        }
+      ],
+      "completionImpact": "source-discovery-started",
+      "remainingBlockers": [
+        "source files not inspected",
+        "property search parcel ID field names not verified",
+        "exact parcel count not verified",
+        "exact geometry-to-appraisal join key not verified",
+        "viewport/search outputs not built"
+      ]
+    },
+    {
+      "countyId": "cooke-county-tx",
+      "countyName": "Cooke County",
+      "state": "TX",
+      "officialPortals": [
+        {
+          "label": "Cooke County Appraisal District public portal",
+          "url": "https://cookecad.org/",
+          "sourceType": "property-search-and-appraisal-portal",
+          "verificationStatus": "official-site-verified",
+          "notes": "Existing adapter shell identifies the Cooke County Appraisal District public portal as discovered. Portal payloads/source files, parcel ID fields, exact counts, and join keys still need inspection."
+        }
+      ],
+      "completionImpact": "source-discovery-started",
+      "remainingBlockers": [
+        "portal payload/source files not inspected",
+        "property search parcel ID field names not verified",
+        "exact parcel count not verified",
+        "exact geometry-to-appraisal join key not verified",
+        "viewport/search outputs not built"
+      ]
+    },
+    {
+      "countyId": "coryell-county-tx",
+      "countyName": "Coryell County",
+      "state": "TX",
+      "officialPortals": [
+        {
+          "label": "Coryell County Appraisal District official-site candidate",
+          "url": "https://coryellcad.org/",
+          "sourceType": "appraisal-district-site-candidate",
+          "verificationStatus": "official-site-candidate-needs-verification",
+          "notes": "Adapter shell still marks official county parcel/GIS source not verified. Keep this as a candidate until official site ownership, property-search links, parcel ID fields, and any bulk/report downloads are inspected."
+        }
+      ],
+      "completionImpact": "source-discovery-started",
+      "remainingBlockers": [
+        "official appraisal district site not verified",
+        "property search not inspected",
+        "parcel ID field names not verified",
+        "exact parcel count not verified",
+        "exact geometry-to-appraisal join key not verified",
+        "viewport/search outputs not built"
+      ]
+    }
+  ],
+  "generatedAt": "2026-06-29T00:00:00.000Z",
+  "completionRule": "Official portals are evidence for source discovery only. They do not make a county core-complete until exact counts, join keys, bulk/source provenance, viewport chunks, search shards, and QC are verified.",
+  "summary": {
+    "countyCount": 25,
+    "officialSiteVerified": 21,
+    "privateNotOfficial": 1,
+    "promotedToCoreComplete": 0
+  }
+}

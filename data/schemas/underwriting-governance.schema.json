@@ -1,0 +1,39 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://white-rabbit.local/schemas/underwriting-governance.schema.json",
+  "title": "White Rabbit Underwriting Governance",
+  "type": "object",
+  "required": ["schemaVersion", "organizationId", "revision", "scenarios", "reviews", "approvals", "activity", "updatedAt"],
+  "properties": {
+    "schemaVersion": { "const": "wr-underwriting-governance-state-v1" },
+    "organizationId": { "type": "string", "minLength": 1 },
+    "revision": { "type": "integer", "minimum": 1 },
+    "scenarios": { "type": "array", "items": { "$ref": "#/$defs/scenario" } },
+    "reviews": { "type": "array", "items": { "$ref": "#/$defs/review" } },
+    "approvals": { "type": "array", "items": { "$ref": "#/$defs/approval" } },
+    "activity": { "type": "array", "items": { "type": "object" } },
+    "updatedAt": { "type": "string", "format": "date-time" }
+  },
+  "$defs": {
+    "scenario": {
+      "type": "object",
+      "required": ["schemaVersion", "id", "organizationId", "whiteRabbitPropertyId", "name", "status", "assumptionInput", "model", "result", "comparableAnalyses", "requiredComparableTypes", "evidenceDigest", "generatedAt", "revision", "createdBy", "updatedBy", "createdAt", "updatedAt"],
+      "properties": {
+        "schemaVersion": { "const": "wr-underwriting-scenario-v1" },
+        "whiteRabbitPropertyId": { "type": "string", "pattern": "^wrp:v1:[^:]+:.+$" },
+        "status": { "enum": ["draft", "in-review", "changes-requested", "approved", "rejected", "superseded"] },
+        "evidenceDigest": { "type": "string", "pattern": "^[a-f0-9]{64}$" }
+      }
+    },
+    "review": {
+      "type": "object",
+      "required": ["schemaVersion", "id", "organizationId", "scenarioId", "scenarioRevision", "evidenceDigest", "reviewerUserId", "decision", "comment", "createdAt"],
+      "properties": { "schemaVersion": { "const": "wr-underwriting-review-v1" }, "decision": { "enum": ["recommended", "changes-requested"] } }
+    },
+    "approval": {
+      "type": "object",
+      "required": ["schemaVersion", "id", "organizationId", "scenarioId", "reviewedScenarioRevision", "approvedScenarioRevision", "evidenceDigest", "reviewId", "approverUserId", "decision", "comment", "decidedAt"],
+      "properties": { "schemaVersion": { "const": "wr-underwriting-approval-v1" }, "decision": { "enum": ["approved", "rejected"] } }
+    }
+  }
+}

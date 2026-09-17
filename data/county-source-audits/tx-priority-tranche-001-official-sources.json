@@ -1,0 +1,129 @@
+{
+  "schemaVersion": "wr-county-source-discovery-v1",
+  "recordedAt": "2026-09-05T00:00:00.000Z",
+  "policy": "Official-source discovery evidence only. A discovered portal, service, field, or observed count does not certify reuse rights, join-key uniqueness, source completeness, or production activation.",
+  "counties": [
+    {
+      "countyId": "el-paso-county-tx",
+      "countyName": "El Paso County",
+      "state": "TX",
+      "fips": "48141",
+      "discoveryStatus": "official-sources-identified",
+      "sources": [
+        {
+          "sourceId": "epcad-open-government",
+          "authority": "El Paso Central Appraisal District",
+          "url": "https://epcad.org/OpenGovernment",
+          "sourceRoles": ["certified-appraisal-export", "current-appraisal-roll", "real-estate-records", "parcel-gis-shapefiles", "property-search-api"],
+          "observations": [
+            "2026 certified export files and current-year appraisal roll/real-estate downloads are published.",
+            "The portal describes development-oriented schemas for appraisal exports.",
+            "The latest listed parcel shapefile is 2025 and is described as parcel attributes plus TIF codes without value information.",
+            "The GIS section states that its published information is considered public domain but is distributed without warranty."
+          ]
+        }
+      ],
+      "observedParcelCount": null,
+      "observedCountCertified": false,
+      "rightsVerified": false,
+      "joinKeysVerified": false,
+      "nextActions": ["capture the official schema layouts", "download bounded appraisal and GIS samples", "identify geometry-to-appraisal keys", "record exact source counts and duplicate/null audits", "complete explicit commercial-reuse review"]
+    },
+    {
+      "countyId": "montgomery-county-tx",
+      "countyName": "Montgomery County",
+      "state": "TX",
+      "fips": "48339",
+      "discoveryStatus": "official-publishing-service-identified-rights-review-required",
+      "sources": [
+        {
+          "sourceId": "conroe-mcad-tax-parcels",
+          "authority": "City of Conroe GIS publishing Montgomery Central Appraisal District parcel data",
+          "url": "https://maps.cityofconroe.org/cvharcgis/rest/services/ENG/MANAGE_KML_TAX_PARCELS_1051_WGS84/MapServer/0",
+          "sourceRoles": ["parcel-geometry", "parcel-address", "owner-name", "owner-address", "parcel-identifiers", "land-area"],
+          "observations": [
+            "Polygon Feature Layer with query support, pagination, statistics, JSON, GeoJSON, and PBF formats.",
+            "Candidate identifiers include PIN, PropertyNumber, and OBJECTID.",
+            "The layer exposes PropertyAddress, PartyName, PartyAddress, Acres, legal-description, block, lot, and EditDate fields.",
+            "Source spatial reference is EPSG:2277 and the public service view is EPSG:3857.",
+            "The service metadata attributes copyright to MCAD but does not provide a reusable license statement."
+          ]
+        },
+        {
+          "sourceId": "mcad-public-portal",
+          "authority": "Montgomery Central Appraisal District",
+          "url": "https://mcad-tx.org/",
+          "sourceRoles": ["appraisal-authority", "property-search"],
+          "observations": ["Official appraisal-district portal identified; bulk appraisal export and reuse terms still require verification."]
+        }
+      ],
+      "observedParcelCount": 276557,
+      "observedCountAsOf": "2026-09-05",
+      "observedCountCertified": false,
+      "rightsVerified": false,
+      "joinKeysVerified": false,
+      "keyAuditStatus": "completed-no-production-key-found",
+      "keyAuditObservedAt": "2026-09-05",
+      "keyAuditSummary": {
+        "serviceFeatures": 276557,
+        "missingGeometry": 0,
+        "pinNull": 1455,
+        "pinDuplicateExcess": 4175,
+        "propertyNumberNull": 3481,
+        "propertyNumberDuplicateExcess": 4003,
+        "pinPropertyNumberPairUnique": false,
+        "objectIdSnapshotUnique": true,
+        "objectIdRefreshStable": false
+      },
+      "nextActions": ["obtain explicit commercial and redistribution rights", "identify a stable feature identity or documented one-to-many business-key model", "identify an official bulk appraisal source", "verify whether the City of Conroe layer is county-complete", "resolve the uniform 2021 EditDate freshness ambiguity", "capture a bounded immutable sample only after rights review"]
+    },
+    {
+      "countyId": "williamson-county-tx",
+      "countyName": "Williamson County",
+      "state": "TX",
+      "fips": "48491",
+      "discoveryStatus": "official-sources-identified",
+      "sources": [
+        {
+          "sourceId": "wcad-open-data",
+          "authority": "Williamson Central Appraisal District",
+          "url": "https://data.wcad.org/",
+          "sourceRoles": ["parcel-gis", "subdivisions", "owner-appraisal", "certified-property-export", "preliminary-property-data", "historical-property-data"],
+          "observations": [
+            "The official portal publishes GIS data for parcels and subdivision boundaries.",
+            "Owner data includes exemption and mailing-address information.",
+            "Certified property exports, preliminary data, additional data, and historical datasets are separately categorized."
+          ]
+        },
+        {
+          "sourceId": "williamson-county-gis",
+          "authority": "Williamson County GIS",
+          "url": "https://www.wilcotx.gov/425/Geographic-Information-Systems-GIS",
+          "sourceRoles": ["county-gis-clearinghouse", "addresses", "departmental-geospatial-data"],
+          "observations": ["The county describes cleared public GIS data as public domain and free of charge, while noting that individual departments maintain their own datasets."]
+        }
+      ],
+      "observedParcelCount": null,
+      "observedCountCertified": false,
+      "rightsVerified": false,
+      "joinKeysVerified": false,
+      "keyAuditStatus": "completed-no-production-feature-key-found",
+      "keyAuditObservedAt": "2026-09-05",
+      "keyAuditSummary": {
+        "parcelDatasetId": "an3x-cnmw",
+        "ownerDatasetId": "bbia-wsxs",
+        "parcelRows": 290912,
+        "ownerRows": 323955,
+        "missingGeometry": 0,
+        "parcelIdNull": 134,
+        "parcelIdDuplicateExcess": 289,
+        "propertyIdNull": 143,
+        "propertyIdDuplicateExcess": 289,
+        "parcelIdPropertyIdPairUnique": false,
+        "ownerPropertyIdDistinct": 323236,
+        "ownerPropertyIdDuplicateExcess": 719
+      },
+      "nextActions": ["confirm storage, derivation, commercial-use, and redistribution terms for each WCAD dataset", "identify a stable geometry-part identity for repeated PARCELID/PropertyID features", "verify the official shapefile CRS", "audit PropertyID parcel-to-owner overlap and orphan counts", "capture bounded immutable samples only after rights review"]
+    }
+  ]
+}

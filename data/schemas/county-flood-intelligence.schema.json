@@ -1,0 +1,13 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://whiterabbit.local/schemas/county-flood-intelligence.schema.json",
+  "title": "White Rabbit County Flood Intelligence Contracts",
+  "oneOf": [{ "$ref": "#/$defs/probe" }, { "$ref": "#/$defs/reconciliation" }, { "$ref": "#/$defs/policy" }, { "$ref": "#/$defs/classification" }],
+  "$defs": {
+    "sha256": { "type": "string", "pattern": "^[a-f0-9]{64}$" },
+    "probe": { "type": "object", "required": ["schemaVersion", "countyId", "sourceId", "role", "featureCount", "nonNullSourceIdCount", "sourceIdUniqueness", "zoneTuples", "capturesGeometry", "captureAuthorized", "probeSha256"], "properties": { "schemaVersion": { "const": "wr-county-flood-source-probe-v1" }, "capturesGeometry": { "const": false }, "captureAuthorized": { "const": false }, "probeSha256": { "$ref": "#/$defs/sha256" } } },
+    "reconciliation": { "type": "object", "required": ["schemaVersion", "countyId", "probeSha256s", "rules", "blockers", "status", "reconciliationSha256"], "properties": { "schemaVersion": { "const": "wr-county-flood-source-reconciliation-v1" }, "status": { "enum": ["blocked", "selected"] }, "reconciliationSha256": { "$ref": "#/$defs/sha256" } } },
+    "policy": { "type": "object", "required": ["schemaVersion", "countyId", "effectiveAt", "requiredGeometryChecks", "checks", "status", "policySha256"], "properties": { "schemaVersion": { "const": "wr-county-flood-snapshot-policy-v1" }, "status": { "enum": ["blocked", "capture-authorized"] }, "policySha256": { "$ref": "#/$defs/sha256" } } },
+    "classification": { "type": "object", "required": ["schemaVersion", "countyId", "countyParcelId", "sourceSnapshotSha256", "effectiveAt", "zones", "primaryZone", "primaryRiskTier", "sfha", "floodway", "ambiguous", "disclaimer", "classificationSha256"], "properties": { "schemaVersion": { "const": "wr-county-parcel-flood-classification-v1" }, "classificationSha256": { "$ref": "#/$defs/sha256" } } }
+  }
+}

@@ -1,0 +1,69 @@
+{
+  "county_id": "briscoe-county-tx",
+  "county_name": "Briscoe County",
+  "state": "TX",
+  "fips": "48045",
+  "cad_name": "Briscoe County Appraisal District",
+  "source_discovery_status": "official-property-search-portal-discovered",
+  "retrieved_at": "2026-06-29",
+  "ui_constraint": "Do not redesign White Rabbit pages while expanding county parcel intelligence plumbing.",
+  "official_portal": {
+    "label": "Briscoe CAD property search portal",
+    "url": "https://briscoecad.org/",
+    "source_type": "property-search-and-appraisal-portal",
+    "verification_status": "official-site-verified",
+    "notes": "Reachable CAD portal exposes property search, property ID, Geo ID, owner, address, legal, records/data/reports, interactive map, and online protest links. Treat as discovery evidence only until source files, exact counts, and join keys are verified."
+  },
+  "observed_search_fields": [
+    "Owner ID",
+    "Owner Name",
+    "Property ID",
+    "Geo ID",
+    "Legal Description",
+    "Abstract",
+    "Subdivision",
+    "Lease Number",
+    "Lease Name",
+    "Tax Year",
+    "Property Type"
+  ],
+  "observed_tax_years": [
+    2026,
+    2025,
+    2024,
+    2023,
+    2022,
+    2021,
+    2020,
+    2019,
+    2018,
+    2017
+  ],
+  "candidate_bulk_or_report_leads": [
+    "Records | Data | Reports portal link"
+  ],
+  "verified_counts": {
+    "parcel_geometry_features": 0,
+    "appraisal_property_rows": 0,
+    "count_verified_at": null,
+    "status": "not-verified"
+  },
+  "join_keys": {
+    "primary_parcel_account": "unverified: property ID, Geo ID, and Owner ID are observed search fields, but exact source join key is not verified",
+    "secondary_gis_id": "unverified",
+    "owner_appraisal": "unverified"
+  },
+  "bulk_source_status": {
+    "parcel_geometry_bulk": "not-verified",
+    "owner_appraisal_bulk": "not-verified",
+    "download_terms": "records/data/reports files not inspected"
+  },
+  "remaining_blockers": [
+    "records/data/reports files not inspected",
+    "exact parcel count not verified",
+    "exact geometry-to-appraisal join key not verified",
+    "viewport chunks and search shards not built",
+    "QC report not built"
+  ],
+  "completion_impact": "source-discovery-started"
+}

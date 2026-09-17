@@ -1,0 +1,19 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://white-rabbit.local/schemas/county-candidate-adapter-certification.schema.json",
+  "type": "object",
+  "required": ["schemaVersion", "generatedAt", "countyId", "status", "manifest", "runtime", "representativeProbe", "checks", "releaseBlockers", "featureGates"],
+  "properties": {
+    "schemaVersion": { "const": "wr-county-candidate-adapter-certification-v1" },
+    "generatedAt": { "type": "string", "format": "date-time" },
+    "countyId": { "type": "string", "minLength": 1 },
+    "status": { "enum": ["contract-ready-release-blocked", "rejected"] },
+    "manifest": { "type": "object", "required": ["sha256", "featureCount", "searchIndexCount", "primaryJoinKey", "freshnessStatus"] },
+    "runtime": { "type": "object", "required": ["adapterContract", "queryRuntimeContract", "serverSideOnly", "uiWired", "activationAuthorized", "tenantScoped"] },
+    "representativeProbe": { "type": "object", "required": ["query", "expectedAccount", "expectedFound", "scannedRecords", "latencyMs"] },
+    "checks": { "type": "array", "minItems": 1, "items": { "type": "object", "required": ["id", "passed"] } },
+    "releaseBlockers": { "type": "array", "minItems": 1, "items": { "type": "string" } },
+    "featureGates": { "type": "object" }
+  },
+  "additionalProperties": false
+}

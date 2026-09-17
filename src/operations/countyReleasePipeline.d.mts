@@ -1,0 +1,15 @@
+export const COUNTY_SOURCE_SNAPSHOT_VERSION: "wr-county-source-snapshot-v1";
+export const COUNTY_ARTIFACT_BUNDLE_VERSION: "wr-county-artifact-bundle-v1";
+export const COUNTY_RELEASE_POLICY_VERSION: "wr-county-release-policy-v1";
+export const COUNTY_RELEASE_DECISION_VERSION: "wr-county-release-decision-v1";
+export const COUNTY_RELEASE_STATE_VERSION: "wr-county-release-state-v1";
+export const COUNTY_RELEASE_RUN_VERSION: "wr-county-release-run-v1";
+export function countyReleaseSha256(value: unknown): string;
+export function createCountySourceSnapshot(input?: Record<string, any>): Readonly<Record<string, any>>;
+export function createCountyArtifactBundle(input?: Record<string, any>): Readonly<Record<string, any>>;
+export function createCountyReleasePolicy(input?: Record<string, any>): Readonly<Record<string, any>>;
+export function evaluateCountyRelease(input?: Record<string, any>): Readonly<Record<string, any>>;
+export function createCountyReleaseState(input?: Record<string, any>): Readonly<Record<string, any>>;
+export function stageCountyRelease(stateInput: Record<string, any>, decision: Record<string, any>, options?: Record<string, any>): Readonly<Record<string, any>>;
+export function activateStagedCountyRelease(stateInput: Record<string, any>, options?: Record<string, any>): Promise<Readonly<Record<string, any>>>;
+export function verifyCountyReleaseState(stateInput: Record<string, any>): Readonly<Record<string, any>>;

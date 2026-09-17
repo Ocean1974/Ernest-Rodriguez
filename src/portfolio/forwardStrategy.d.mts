@@ -1,0 +1,18 @@
+export const FORECAST_ASSUMPTION_VERSION: "wr-forecast-assumption-v1";
+export const LEASE_ROLLOVER_REPORT_VERSION: "wr-lease-rollover-report-v1";
+export const CAPITAL_PROJECT_VERSION: "wr-capital-project-v1";
+export const CASH_FLOW_FORECAST_VERSION: "wr-cash-flow-forecast-v1";
+export const STRESS_SCENARIO_VERSION: "wr-portfolio-stress-scenario-v1";
+export const STRESS_REPORT_VERSION: "wr-portfolio-stress-report-v1";
+export const FORWARD_STRATEGY_STATE_VERSION: "wr-forward-strategy-state-v1";
+export function forwardStrategySha256(value: unknown): string;
+export function createForecastAssumption(input?: Record<string, any>): Readonly<Record<string, any>>;
+export function createCapitalProject(input?: Record<string, any>): Readonly<Record<string, any>>;
+export function createStressScenario(input?: Record<string, any>): Readonly<Record<string, any>>;
+export function createForwardStrategyState(input?: Record<string, any>): Record<string, any>;
+export function buildLeaseRolloverReport(operations: Record<string, any>, strategy: Record<string, any>, input?: Record<string, any>): Readonly<Record<string, any>>;
+export function buildCashFlowForecast(operations: Record<string, any>, strategy: Record<string, any>, input?: Record<string, any>): Readonly<Record<string, any>>;
+export function runStressScenario(operations: Record<string, any>, strategy: Record<string, any>, scenario: Record<string, any>, input?: Record<string, any>): Readonly<Record<string, any>>;
+export function addForecastAssumption(state: Record<string, any>, input: Record<string, any>, context?: Record<string, any>): Record<string, any>;
+export function addCapitalProject(state: Record<string, any>, input: Record<string, any>, context?: Record<string, any>): Record<string, any>;
+export function addStressScenario(state: Record<string, any>, input: Record<string, any>, context?: Record<string, any>): Record<string, any>;

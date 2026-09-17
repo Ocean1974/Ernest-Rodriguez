@@ -1,0 +1,94 @@
+{
+  "county_id": "angelina-county-tx",
+  "county_name": "Angelina County",
+  "state": "TX",
+  "fips": "48005",
+  "cad_name": "Angelina County Appraisal District",
+  "source_discovery_status": "official-bulk-appraisal-parcel-owner-and-flood-downloads-found",
+  "retrieved_at": "2026-09-11",
+  "ui_constraint": "Do not redesign White Rabbit pages while expanding county parcel intelligence plumbing.",
+  "official_sources": [
+    {
+      "label": "Angelina County Appraisal District official site",
+      "url": "https://www.angelinacad.org/",
+      "source_type": "appraisal-district-site",
+      "observed_evidence": [
+        "official site links to Property Search and Maps",
+        "site says the district values residential, commercial, and business personal property throughout Angelina County",
+        "site says the district maintains ownership records, assigns market value, administers exemptions and special appraisal, and determines taxable situs"
+      ]
+    },
+    {
+      "label": "Angelina CAD Property Search",
+      "url": "https://esearch.angelinacad.org/",
+      "source_type": "property-search-and-maps",
+      "observed_evidence": [
+        "search modes include owner, address, ID, ARB, and advanced search",
+        "fields include Property ID, Owner ID, Geographic ID, tax year, subdivision, neighborhood, and property type",
+        "available tax years observed: 2026, 2025, and 2024"
+      ]
+    },
+    {
+      "label": "Angelina CAD Interactive Map",
+      "url": "https://gis.bisclient.com/",
+      "source_type": "interactive-map",
+      "observed_evidence": [
+        "linked from the official Angelina CAD property search header"
+      ]
+    },
+    {
+      "label": "Angelina CAD Open Records",
+      "url": "https://www.angelinacad.org/open-records",
+      "source_type": "official-bulk-download-index",
+      "observed_evidence": [
+        "2026 Certified Roll Export - ALL is published",
+        "Data Export Layout Files 8.0.33 is published",
+        "Parcels SHP dated 2026-05-20 is published",
+        "Parcels with Owner SHP dated 2026-05-20 is published",
+        "FIRM Flood SHP is published",
+        "the page states that downloading accepts the posted as-is disclaimer"
+      ]
+    }
+  ],
+  "official_downloads": {
+    "appraisal_roll_2026": "https://www.angelinacad.org/media-records/2026_Certified_Roll_Export.zip",
+    "appraisal_export_layout": "https://www.angelinacad.org/media-records/Appraisal_Export_Layout_-_8.0.33.zip",
+    "parcel_geometry_shapefile": "https://www.angelinacad.org/media-records/parcels052026_SHP.zip",
+    "parcel_with_owner_shapefile": "https://www.angelinacad.org/media-records/POD052026_SHP.zip",
+    "flood_shapefile": "https://www.angelinacad.org/media-records/FIRMFlood.zip",
+    "inspection_status": "captured and schema-inspected 2026-09-11",
+    "capture_manifest": "data/raw/angelina-county-tx/official-2026-09-11/capture-manifest.json"
+  },
+  "verified_counts": {
+    "parcel_geometry_features": 60935,
+    "missing_geometry": 0,
+    "distinct_parcel_property_ids": 54423,
+    "appraisal_property_rows": 70427,
+    "land_rows": 69406,
+    "improvement_info_rows": 71566,
+    "improvement_detail_rows": 174663,
+    "flood_polygon_features": 523,
+    "count_verified_at": "2026-09-11",
+    "status": "verified-from-captured-official-archives"
+  },
+  "join_keys": {
+    "primary_parcel_account": "POD052026.prop_id -> APPRAISAL_INFO positions 1-12 prop_id; 59,655/60,935 feature rows matched; 1,280 unmatched",
+    "unique_geometry_feature": "unresolved: prop_id is complete but has 6,512 duplicate feature occurrences across 54,423 distinct values",
+    "secondary_gis_id": "PACSGEO is incomplete and non-unique: 60,414 non-null, 521 null, 54,429 distinct",
+    "owner_appraisal": "POD052026 owner attributes are same-feature; certified APPRAISAL_INFO uses prop_id as the candidate cross-file business key"
+  },
+  "bulk_source_status": {
+    "parcel_geometry_bulk": "captured-and-inspected",
+    "owner_appraisal_bulk": "captured-and-inspected",
+    "floodplain_bulk": "captured-and-inspected",
+    "download_terms": "posted as-is download disclaimer observed; independent capture, reuse, and redistribution review pending"
+  },
+  "remaining_blockers": [
+    "capture, reuse, and redistribution rights review not completed",
+    "unique stable geometry-feature key or multipart consolidation rule not proven",
+    "1,280 parcel features remain unmatched to APPRAISAL_INFO",
+    "viewport chunks and search shards not built",
+    "QC report not built"
+  ],
+  "completion_impact": "official-snapshot-captured-schema-and-join-audited"
+}

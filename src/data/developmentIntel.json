@@ -1,0 +1,63 @@
+{
+  "sources": [
+    {
+      "id": "dallas-zoning-cases",
+      "type": "zoning_cases",
+      "name": "City of Dallas Zoning Cases",
+      "status": "public_source",
+      "url": "https://developmentweb.dallascityhall.com/zoningcases/",
+      "description": "Public zoning case map and case status source for Dallas planning activity."
+    },
+    {
+      "id": "dallas-commercial-permits",
+      "type": "commercial_permits",
+      "name": "Commercial Permit Activity",
+      "status": "public_source",
+      "url": "https://dallas.gov/departments/sustainabledevelopment/Pages/permits-inspections.aspx",
+      "description": "City permit activity dashboard for commercial construction permits."
+    },
+    {
+      "id": "dallas-current-planning",
+      "type": "planning",
+      "name": "Current Planning / DallasNow",
+      "status": "public_source",
+      "url": "https://dallas.gov/departments/pnv/Pages/current-planning.aspx",
+      "description": "Current planning, zoning changes, development plans, and DallasNow application source."
+    }
+  ],
+  "records": [
+    {
+      "id": "dev-watch-greenville",
+      "title": "Lower Greenville Commercial Redevelopment Watch",
+      "linkedAccount": "00000155887000000",
+      "address": "1616 GREENVILLE AVE",
+      "type": "development_watch",
+      "stage": "monitor",
+      "summary": "Watch commercial permits, zoning activity, and corridor redevelopment signals around Lower Greenville.",
+      "keywords": ["GREENVILLE", "retail", "commercial", "redevelopment", "AMERCO", "U HAUL"],
+      "sourceIds": ["dallas-commercial-permits", "dallas-current-planning", "dallas-zoning-cases"]
+    },
+    {
+      "id": "dev-watch-skillman",
+      "title": "Skillman / Lakewood Corner Development Watch",
+      "linkedAccount": "00000182602000000",
+      "address": "1701 SKILLMAN ST",
+      "type": "development_watch",
+      "stage": "monitor",
+      "summary": "Watch planning, permits, ownership movement, and zoning cases for neighborhood commercial reuse or redevelopment.",
+      "keywords": ["SKILLMAN", "LAKEWOOD", "convenience", "retail", "zoning"],
+      "sourceIds": ["dallas-commercial-permits", "dallas-zoning-cases"]
+    },
+    {
+      "id": "dev-watch-henderson",
+      "title": "Henderson Avenue Mixed-Use Development Watch",
+      "linkedAccount": "00000156442000000",
+      "address": "1901 N HENDERSON AVE",
+      "type": "development_watch",
+      "stage": "monitor",
+      "summary": "Watch zoning cases, planned development activity, permits, and ownership changes along the Henderson corridor.",
+      "keywords": ["HENDERSON", "mixed-use", "retail", "planned development", "BONOBOS"],
+      "sourceIds": ["dallas-current-planning", "dallas-commercial-permits", "dallas-zoning-cases"]
+    }
+  ]
+}

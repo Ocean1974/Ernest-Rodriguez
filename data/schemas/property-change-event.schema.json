@@ -1,0 +1,19 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://white-rabbit.local/schemas/property-change-event.schema.json",
+  "title": "White Rabbit Property Change Event",
+  "type": "object",
+  "required": ["schemaVersion", "eventType", "category", "severity", "whiteRabbitPropertyId", "field", "before", "after", "observedAt", "evidence"],
+  "properties": {
+    "schemaVersion": { "const": "wr-property-change-event-v1" },
+    "eventType": { "enum": ["field-changed", "permit-added"] },
+    "category": { "type": "string" },
+    "severity": { "enum": ["low", "medium", "high"] },
+    "whiteRabbitPropertyId": { "type": "string" },
+    "field": { "type": "string" },
+    "before": {},
+    "after": {},
+    "observedAt": { "type": "string" },
+    "evidence": { "type": "object" }
+  }
+}

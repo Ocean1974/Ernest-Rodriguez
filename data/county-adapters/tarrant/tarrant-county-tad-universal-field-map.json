@@ -1,0 +1,32 @@
+{
+  "sourceCountyId": "tarrant-county-tad",
+  "sourceLayer": "Dynamic/TADParcels/MapServer/0",
+  "schemaVersion": "wr-universal-parcel-v1",
+  "verifiedAt": "2026-08-06",
+  "identityPolicy": {
+    "parcelId": "ACCOUNT",
+    "gisParcelId": "TAXPIN",
+    "accountCompleteness": "758633 of 758633",
+    "maxObservedMultiplicity": 1
+  },
+  "fields": {
+    "parcelId": "ACCOUNT",
+    "gisParcelId": "TAXPIN",
+    "ownerName": "OWNER_NAME",
+    "ownerMailingAddress": "OWNER_ADDR",
+    "ownerCity": "OWNER_CITY",
+    "ownerState": "STATE",
+    "ownerZip": ["OWNER_ZIP", "OWNER_ZIP_"],
+    "situsAddress": "SITUS_ADDR",
+    "legalDescription": ["LEGAL_1", "LEGAL_2", "LEGAL_3", "LEGAL_4"],
+    "subdivision": "SubdivisionName",
+    "landAcres": "LAND_ACRES",
+    "landSquareFeet": "LAND_SQFT",
+    "landValue": "LAND_VALUE",
+    "improvementValue": "IMPR_VALUE",
+    "marketValue": "TOTAL_VALU",
+    "appraisedValue": "APPRAISEDV",
+    "yearBuilt": "YEAR_BUILT",
+    "buildingArea": "LIVING_ARE"
+  }
+}

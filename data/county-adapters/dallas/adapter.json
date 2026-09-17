@@ -1,0 +1,265 @@
+{
+  "id": "dallas-county-dcad",
+  "countyName": "Dallas County",
+  "state": "TX",
+  "appraisalDistrictName": "Dallas County Appraisal District",
+  "appraisalDistrictAcronym": "DCAD",
+  "status": "active",
+  "map": {
+    "locationId": 2,
+    "locationName": "Dallas County DCAD Zone",
+    "locationType": "Dallas County Appraisal District",
+    "status": "2026 current extract loaded",
+    "coordinates": [-96.797, 32.7767],
+    "camera": { "x": 46.6, "y": 54.7, "zoom": 1.64, "pitch": 48, "bearing": 0 },
+    "geoBounds": {
+      "minLng": -97.1,
+      "minLat": 32.55,
+      "maxLng": -96.45,
+      "maxLat": 33.05
+    }
+  },
+  "universalParcelSchema": {
+    "version": "wr-universal-parcel-v1",
+    "schemaPath": "data/schemas/universal-parcel.schema.json",
+    "documentationPath": "data/schemas/universal-parcel.md",
+    "parcelServiceBuilder": "scripts/build-app-parcel-service.cjs"
+  },
+  "propertyIdentity": {
+    "version": "wr-property-id-v1",
+    "field": "whiteRabbitPropertyId",
+    "sourceKeyPriority": ["accountNum", "gisParcelId"],
+    "format": "wrp:v1:<sourceCountyId>:<encodedSourceParcelId>"
+  },
+  "freshnessPolicy": {
+    "maxAgeDays": 120,
+    "missingTimestampStatus": "unknown"
+  },
+  "sourceFiles": {
+    "parcelGeometry": "data/raw/PARCEL_GEOM.zip",
+    "appraisalDistrictExtract": "data/raw/DCAD2026_CURRENT.ZIP",
+    "blockLabels": "data/raw/BLKID.zip",
+    "parcelDimensions": "data/raw/ParcelDimension.zip",
+    "permitsRaw": "data/permits/raw",
+    "permitsProcessed": "data/permits/processed",
+    "migrationInflowRaw": "data/raw/dallas-county-dcad/demand/irs-soi-countyinflow2223.csv",
+    "migrationOutflowRaw": "data/raw/dallas-county-dcad/demand/irs-soi-countyoutflow2223.csv",
+    "demandRawRoot": "data/raw/dallas-county-dcad/demand/",
+    "countyIssuedPermitReportsRaw": "data/raw/dallas-county-dcad/demand/supply/",
+    "cityDallasNowBuildingRaw": "data/raw/dallas-county-dcad/demand/supply/city-of-dallas-dallasnow/"
+  },
+  "publicDataRoots": {
+    "parcels": "/data/parcels/",
+    "permits": "/data/permits/",
+    "developments": "/data/developments/",
+    "zoning": "/data/zoning/",
+    "floodplain": "/data/floodplain/"
+  },
+  "productionOutputs": {
+    "parcelGeojson": "output/white-rabbit-dallas-parcels.geojson",
+    "parcelPmtiles": "output/white-rabbit-dallas-parcels.pmtiles",
+    "vectorTilesDirectory": "output/vector-tiles/"
+  },
+  "optionalLayers": [
+    {
+      "id": "block-labels",
+      "label": "Block labels",
+      "source": "BLKID",
+      "status": "available",
+      "joinBehavior": "spatial/nearest-label",
+      "defaultVisible": true
+    },
+    {
+      "id": "parcel-dimensions",
+      "label": "Parcel dimensions",
+      "source": "ParcelDimension",
+      "status": "available",
+      "joinBehavior": "spatial/nearest-label",
+      "defaultVisible": false
+    },
+    {
+      "id": "permits",
+      "label": "Permits and certificates of occupancy",
+      "source": "City of Dallas OpenData",
+      "status": "available",
+      "joinBehavior": "address match to county parcel/account identifiers",
+      "defaultVisible": false
+    },
+    {
+      "id": "development-signals",
+      "label": "Development signals",
+      "source": "White Rabbit development intelligence",
+      "status": "available",
+      "joinBehavior": "county parcel/account identifier",
+      "defaultVisible": false
+    },
+    {
+      "id": "dallas-zoning-intelligence",
+      "label": "Dallas zoning intelligence",
+      "source": "City of Dallas Public Zoning ArcGIS services",
+      "status": "metadata-ready",
+      "joinBehavior": "ACCT/GIS_ACCT to accountNum/gisParcelId first; spatial join for zoning polygons and case areas",
+      "defaultVisible": false,
+      "publicDataRoot": "/data/zoning/",
+      "manifestPath": "public/data/zoning/manifest.json",
+      "parcelIndexPath": "public/data/zoning/parcel-zoning-index.json",
+      "schemaPath": "data/schemas/dallas-zoning-layer.schema.json",
+      "parcelIndexSchemaPath": "data/schemas/parcel-zoning-index.schema.json",
+      "reportPath": "output/dallas-zoning-source-report.md",
+      "sourceUrls": [
+        "https://developmentweb.dallascityhall.com/publiczoningweb/",
+        "https://developmentweb.dallascityhall.com/publiczoningweb/cdn/2/config.json",
+        "https://dallasgis.maps.arcgis.com/sharing/rest/content/items/ab03f7a62af4431aa19659b66154d5f3/data?f=json",
+        "https://services2.arcgis.com/rwnOSbfKSwyTBcwN/arcgis/rest/services/CRMHostedLayers/FeatureServer/13",
+        "https://services2.arcgis.com/rwnOSbfKSwyTBcwN/arcgis/rest/services/Dallas_Zoning/FeatureServer/4",
+        "https://services2.arcgis.com/rwnOSbfKSwyTBcwN/arcgis/rest/services/Dallas_Zoning/FeatureServer/9",
+        "https://services2.arcgis.com/rwnOSbfKSwyTBcwN/arcgis/rest/services/Dallas_Zoning/FeatureServer/11",
+        "https://services2.arcgis.com/rwnOSbfKSwyTBcwN/arcgis/rest/services/Dallas_Zoning/FeatureServer/15",
+        "https://services2.arcgis.com/rwnOSbfKSwyTBcwN/arcgis/rest/services/AreasOfRequest/FeatureServer/10"
+      ],
+      "renderStrategy": "build-time ArcGIS metadata/count inspection, offline join, viewport chunks, capped runtime loader",
+      "maxFeaturesPerViewport": 750
+    },
+    {
+      "id": "dallas-floodplain-intelligence",
+      "label": "Dallas floodplain intelligence",
+      "source": "City of Dallas Current Floodplain ArcGIS service",
+      "status": "parcel-index-ready",
+      "joinBehavior": "parcel centroid spatial join to official Dallas floodplain polygons; keyed back to countyParcelId/accountNum",
+      "defaultVisible": false,
+      "publicDataRoot": "/data/floodplain/",
+      "manifestPath": "public/data/floodplain/manifest.json",
+      "parcelIndexPath": "public/data/floodplain/parcel-floodplain-index.json",
+      "schemaPath": "data/schemas/parcel-floodplain-index.schema.json",
+      "parcelIndexSchemaPath": "data/schemas/parcel-floodplain-index.schema.json",
+      "reportPath": "output/dallas-parcel-floodplain-index-report.md",
+      "sourceUrls": [
+        "https://services2.arcgis.com/rwnOSbfKSwyTBcwN/ArcGIS/rest/services/Current_Floodplain/FeatureServer",
+        "https://services2.arcgis.com/rwnOSbfKSwyTBcwN/ArcGIS/rest/services/Current_Floodplain/FeatureServer/0"
+      ],
+      "renderStrategy": "build-time ArcGIS fetch, offline parcel centroid spatial join, viewport-safe sharded parcel ID lookup, capped runtime loader",
+      "maxFeaturesPerViewport": 750
+    },
+    {
+      "id": "dallas-migration-demand-intelligence",
+      "label": "Dallas County migration and demand intelligence",
+      "source": "IRS SOI 2022-2023 migration, Census ACS 2024 demographic/housing, BLS QCEW 2025 labor, Dallas County January-July 2026 issued-permit reports, and selected City of Dallas DallasNow Building records for August 1-24 2026",
+      "status": "source-captured-certification-blocked",
+      "geographyLevel": "county",
+      "geographyId": "05000US48113",
+      "joinBehavior": "county FIPS 48113 context plus City of Dallas place geography 16000US4819000; Dallas County-issued reports and selected DallasNow record dates retain distinct semantics; no parcel attribution without a certified address/spatial join",
+      "defaultVisible": false,
+      "reportPath": "output/dallas-demand-intelligence.md",
+      "sourceUrls": [
+        "https://www.irs.gov/pub/irs-soi/countyinflow2223.csv",
+        "https://www.irs.gov/pub/irs-soi/countyoutflow2223.csv",
+        "https://www2.census.gov/programs-surveys/acs/summary_file/2024/table-based-SF/data/1YRData/",
+        "https://data.bls.gov/cew/data/api/2025/a/area/48113.csv",
+        "https://www.dallascounty.org/departments/duas/permit-reports.php",
+        "https://aca-prod.accela.com/DALLASTX/Cap/CapHome.aspx?TabName=Home&module=Building"
+      ],
+      "activationBlockers": [
+        "reuse-rights-review-pending",
+        "complete-municipal-supply-coverage-not-captured",
+        "dallasnow-selected-record-types-only",
+        "dallasnow-record-dates-not-issuance-dates",
+        "captured-demand-domains-not-independently-certified",
+        "feature-definitions-not-independently-approved"
+      ]
+    }
+  ],
+  "ownerEnrichment": {
+    "sourceLabel": "Dallas County Appraisal District ACCOUNT_INFO.CSV",
+    "propertyRecordSource": "DCAD ACCOUNT_INFO.CSV fields already joined into public parcel chunks",
+    "officialJoinKey": "PARCEL_GEOM.Acct -> DCAD ACCOUNT_INFO.ACCOUNT_NUM",
+    "noOfficialEmailFieldNote": "No official email field was identified in the inspected DCAD ACCOUNT_INFO.CSV schema.",
+    "fields": {
+      "parcelId": "PARCEL_GEOM.Acct / ACCOUNT_INFO.ACCOUNT_NUM",
+      "gisParcelId": "ACCOUNT_INFO.GIS_PARCEL_ID",
+      "ownerName": "ACCOUNT_INFO.OWNER_NAME1 / ACCOUNT_INFO.BIZ_NAME",
+      "ownerName2": "ACCOUNT_INFO.OWNER_NAME2",
+      "businessName": "ACCOUNT_INFO.BIZ_NAME",
+      "ownerMailingAddress": "ACCOUNT_INFO.OWNER_ADDRESS_LINE1 / OWNER_ADDRESS_LINE2",
+      "ownerMailingAddress2": "ACCOUNT_INFO.OWNER_ADDRESS_LINE3 / OWNER_ADDRESS_LINE4",
+      "ownerCity": "ACCOUNT_INFO.OWNER_CITY",
+      "ownerState": "ACCOUNT_INFO.OWNER_STATE",
+      "ownerZip": "ACCOUNT_INFO.OWNER_ZIPCODE",
+      "ownerPhone": "ACCOUNT_INFO.PHONE_NUM",
+      "ownerEmail": "No official email field identified in inspected DCAD ACCOUNT_INFO schema"
+    }
+  },
+  "joinKeys": {
+    "primaryParcelAccount": "PARCEL_GEOM.Acct -> DCAD ACCOUNT_INFO.ACCOUNT_NUM",
+    "appraisal": "PARCEL_GEOM.Acct -> DCAD ACCOUNT_APPRL_YEAR.ACCOUNT_NUM",
+    "land": "PARCEL_GEOM.Acct -> DCAD LAND.ACCOUNT_NUM",
+    "secondaryParcelGisId": "PARCEL_GEOM.Acct -> DCAD GIS_PARCEL_ID",
+    "blockLabels": "spatial/nearest-label join; BLKID exposes TEXT labels, not parcel account IDs",
+    "dimensions": "spatial/nearest-label join; ParcelDimension exposes TEXT measurements, not parcel account IDs",
+    "permits": "normalized City of Dallas permit and CO address matches joined back to DCAD parcel/account identifiers",
+    "zoning": "City of Dallas Public Zoning ACCT/GIS_ACCT bridge to DCAD accountNum/gisParcelId first; spatial join fallback for zoning polygons, overlays, and zoning case areas",
+    "floodplain": "City of Dallas Current Floodplain parcel centroid spatial join keyed back to DCAD countyParcelId/accountNum",
+    "migrationDemand": "IRS SOI county migration state/county FIPS 48/113 plus Dallas County-issued permit-report context at 05000US48113 and selected DallasNow Building records at City of Dallas place 16000US4819000; sources retain their own date semantics and are not joined as parcel facts"
+  },
+  "verifiedCounts": {
+    "parcelGeometryFeatures": 696601,
+    "parcelGeomDbfRows": 696601,
+    "dcadAccountRows": 861357,
+    "dcadAppraisalRows": 861348,
+    "dcadLandRows": 749625,
+    "dcadCommercialDetailRows": 92153,
+    "blkidFeatures": 96945,
+    "parcelDimensionFeatures": 4560138,
+    "appParcelChunks": 1614,
+    "parcelSearchShards": 1224,
+    "sourcePermitRecords": 150571,
+    "permitRowsJoined": 97300,
+    "permitRowsUnmatched": 53271,
+    "developmentSignals": 35525,
+    "parcelsWithDevelopmentSignals": 24950,
+    "unmatchedDevelopmentSignals": 27814,
+    "migrationInflowRows": 376,
+    "migrationOutflowRows": 335,
+    "migrationObservationCount": 6,
+    "countyIssuedPermitEvents2026Ytd": 191,
+    "countyIssuedPermitEventDuplicates": 0,
+    "cityDallasNowSelectedBuildingRecords": 1746,
+    "cityDallasNowUniqueRecordNumbers": 1746,
+    "cityDallasNowSourcePages": 193,
+    "cityDallasNowSelectedRecordTypes": 19,
+    "cityDallasNowPlaceAttributionCount": 1746,
+    "cityDallasNowParcelAttributionCount": 0,
+    "demandObservationCount": 29,
+    "demandObservedDomainCount": 5,
+    "migrationParcelAttributionCount": 0
+  },
+  "requiredOutputs": [
+    "output/schema-report.md",
+    "output/schema-report.json",
+    "output/join-key-report.md",
+    "output/full-parcel-access-report.md",
+    "output/white-rabbit-dallas-parcels.geojson",
+    "output/white-rabbit-dallas-parcels.pmtiles or output/vector-tiles/",
+    "public/data/parcels/manifest.json",
+    "public/data/permits/manifest.json",
+    "public/data/developments/parcel-development-index.json",
+    "output/dallas-zoning-source-report.md",
+    "output/dallas-zoning-source-report.json",
+    "output/dallas-parcel-zoning-index-report.md",
+    "output/dallas-parcel-zoning-index-report.json",
+    "public/data/zoning/manifest.json",
+    "public/data/zoning/parcel-zoning-index.json",
+    "output/dallas-parcel-floodplain-index-report.md",
+    "output/dallas-parcel-floodplain-index-report.json",
+    "output/dallas-parcel-intelligence-report.md",
+    "output/dallas-parcel-intelligence-report.json",
+    "public/data/floodplain/manifest.json",
+    "public/data/floodplain/parcel-floodplain-index.json",
+    "output/dallas-demand-intelligence.md",
+    "output/dallas-demand-intelligence.json",
+    "output/dallas-county-supply-intelligence.md",
+    "output/dallas-county-supply-intelligence.json",
+    "output/dallas-city-building-supply-intelligence.md",
+    "output/dallas-city-building-supply-intelligence.json"
+  ],
+  "productionGap": "PMTiles/vector tiles still require tippecanoe, pmtiles, or Docker on a machine that can process the 1.0 GB joined parcel GeoJSON."
+}

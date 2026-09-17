@@ -1,0 +1,56 @@
+{
+  "county_id": "bailey-county-tx",
+  "county_name": "Bailey County",
+  "state": "TX",
+  "fips": "48017",
+  "cad_name": "Bailey County Appraisal District",
+  "source_discovery_status": "private-candidate-found-official-source-not-verified",
+  "retrieved_at": "2026-06-28",
+  "ui_constraint": "Do not redesign White Rabbit pages while expanding county parcel intelligence plumbing.",
+  "candidate_sources": [
+    {
+      "label": "Bailey CAD TaxNetUSA property search candidate",
+      "url": "https://www.baileycad.com/",
+      "source_type": "private-property-search-candidate",
+      "observed_evidence": [
+        "search page says users can enter owner name, address, or appraisal district account number",
+        "page says it can show ownership information and legal descriptions",
+        "page states it is a private website paid for by sponsorships and is not affiliated with any government agency"
+      ],
+      "official_status": "private-not-official"
+    }
+  ],
+  "observed_search_fields": [
+    "Owner Name",
+    "Address",
+    "Appraisal District Account Number"
+  ],
+  "observed_tax_years": [],
+  "candidate_bulk_or_report_leads": [],
+  "verified_counts": {
+    "parcel_geometry_features": 0,
+    "appraisal_property_rows": 0,
+    "count_verified_at": null,
+    "status": "not-verified"
+  },
+  "join_keys": {
+    "primary_parcel_account": "unverified: private candidate references appraisal district account number, but official join key is not verified",
+    "secondary_gis_id": "unverified",
+    "owner_appraisal": "unverified"
+  },
+  "bulk_source_status": {
+    "parcel_geometry_bulk": "not-verified",
+    "owner_appraisal_bulk": "official source not verified",
+    "download_terms": "not-verified"
+  },
+  "remaining_blockers": [
+    "official appraisal district site not verified",
+    "official parcel geometry source not verified",
+    "bulk appraisal/owner source not verified",
+    "exact parcel count not verified",
+    "exact geometry-to-appraisal join key not verified",
+    "viewport chunks and search shards not built",
+    "QC report not built"
+  ],
+  "completion_impact": "source-discovery-started"
+}

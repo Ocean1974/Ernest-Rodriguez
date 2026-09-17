@@ -1,0 +1,29 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://white-rabbit.local/schemas/property-profile.schema.json",
+  "title": "White Rabbit Property Profile",
+  "type": "object",
+  "required": ["schemaVersion", "status", "whiteRabbitPropertyId", "sourceCountyId", "countyParcelId", "accountNum", "gisParcelId", "parcel", "intelligence", "permits", "lineage", "evidence"],
+  "properties": {
+    "schemaVersion": { "const": "wr-property-profile-v1" },
+    "status": { "enum": ["complete", "partial", "not-found"] },
+    "whiteRabbitPropertyId": { "type": "string" },
+    "sourceCountyId": { "type": "string" },
+    "countyParcelId": { "type": "string" },
+    "accountNum": { "type": "string" },
+    "gisParcelId": { "type": "string" },
+    "parcel": { "type": ["object", "null"] },
+    "intelligence": { "type": ["object", "null"] },
+    "permits": { "type": "array", "items": { "type": "object" } },
+    "lineage": { "type": ["object", "null"] },
+    "evidence": {
+      "type": "object",
+      "required": ["layerStatus", "permitCount", "errors"],
+      "properties": {
+        "layerStatus": { "type": "object" },
+        "permitCount": { "type": "integer", "minimum": 0 },
+        "errors": { "type": "array", "items": { "type": "string" } }
+      }
+    }
+  }
+}

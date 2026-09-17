@@ -1,0 +1,23 @@
+export const ORGANIZATION_VERSION: "wr-organization-v1";
+export const MEMBERSHIP_VERSION: "wr-organization-membership-v1";
+export const DEAL_VERSION: "wr-deal-v1";
+export const DEAL_NOTE_VERSION: "wr-deal-note-v1";
+export const DEAL_TASK_VERSION: "wr-deal-task-v1";
+export const ACTIVITY_EVENT_VERSION: "wr-collaboration-activity-v1";
+export const COLLABORATION_STATE_VERSION: "wr-collaboration-state-v1";
+export const DEAL_STAGES: readonly string[];
+export const ORGANIZATION_ROLES: readonly string[];
+export class RevisionConflictError extends Error { code: "WR_REVISION_CONFLICT"; entityType: string; entityId: string; expectedRevision: number; actualRevision: number; }
+export function createOrganization(input?: Record<string, any>): Record<string, any>;
+export function createMembership(input?: Record<string, any>): Record<string, any>;
+export function hasOrganizationPermission(membership: Record<string, any>, permission: string): boolean;
+export function createDeal(input?: Record<string, any>): Record<string, any>;
+export function createDealNote(input?: Record<string, any>): Record<string, any>;
+export function createDealTask(input?: Record<string, any>): Record<string, any>;
+export function createActivityEvent(input?: Record<string, any>): Readonly<Record<string, any>>;
+export function createCollaborationState(input?: Record<string, any>): Record<string, any>;
+export function upsertDeal(state: Record<string, any>, deal: Record<string, any>, context?: Record<string, any>): Record<string, any>;
+export function upsertMembership(state: Record<string, any>, membership: Record<string, any>, context?: Record<string, any>): Record<string, any>;
+export function addDealNote(state: Record<string, any>, note: Record<string, any>, context?: Record<string, any>): Record<string, any>;
+export function visibleDealNotes(state: Record<string, any>, query?: Record<string, any>): Array<Record<string, any>>;
+export function upsertDealTask(state: Record<string, any>, task: Record<string, any>, context?: Record<string, any>): Record<string, any>;

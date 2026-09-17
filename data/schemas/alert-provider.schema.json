@@ -1,0 +1,41 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://white-rabbit.local/schemas/alert-provider.schema.json",
+  "title": "White Rabbit Alert Provider Contracts",
+  "oneOf": [
+    { "$ref": "#/$defs/destinationPolicy" },
+    { "$ref": "#/$defs/circuitState" },
+    { "$ref": "#/$defs/schedulerRun" }
+  ],
+  "$defs": {
+    "destinationPolicy": {
+      "type": "object",
+      "required": ["schemaVersion", "allowedEmailDomains", "allowedWebhookOrigins", "requireHttps"],
+      "properties": {
+        "schemaVersion": { "const": "wr-alert-destination-policy-v1" },
+        "allowedEmailDomains": { "type": "array", "items": { "type": "string" } },
+        "allowedWebhookOrigins": { "type": "array", "items": { "type": "string", "format": "uri" } },
+        "requireHttps": { "type": "boolean" }
+      }
+    },
+    "circuitState": {
+      "type": "object",
+      "required": ["schemaVersion", "status", "consecutiveFailures", "openedAt", "lastOutcomeAt"],
+      "properties": {
+        "schemaVersion": { "const": "wr-provider-circuit-state-v1" },
+        "status": { "enum": ["closed", "open", "half-open"] },
+        "consecutiveFailures": { "type": "integer", "minimum": 0 }
+      }
+    },
+    "schedulerRun": {
+      "type": "object",
+      "required": ["schemaVersion", "organizationId", "workerId", "startedAt", "completedAt", "leasedJobIds", "deliveredJobIds", "retryScheduledJobIds", "deadLetteredJobIds", "rateLimitedJobIds", "recoveredLeaseJobIds", "leaseReceipt", "completionReceipt"],
+      "properties": {
+        "schemaVersion": { "const": "wr-alert-scheduler-run-v1" },
+        "leasedJobIds": { "type": "array", "items": { "type": "string" } },
+        "leaseReceipt": { "type": ["object", "null"] },
+        "completionReceipt": { "type": ["object", "null"] }
+      }
+    }
+  }
+}

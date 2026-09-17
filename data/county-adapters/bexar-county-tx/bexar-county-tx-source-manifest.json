@@ -1,0 +1,76 @@
+{
+  "version": "wr-county-source-manifest-v1",
+  "generatedAt": "2026-09-12T00:00:00.000Z",
+  "county_id": "bexar-county-tx",
+  "county_name": "Bexar County",
+  "state": "TX",
+  "fips": "48029",
+  "status": "official-parcel-service-verified-freshness-blocked",
+  "officialSourceStatus": "verified-with-freshness-blocker",
+  "official_sources": {
+    "appraisal_district": "https://bcad.org/",
+    "public_information_request": "https://help.bcad.org/hc/en-us/articles/55264219130899-What-is-a-Public-Information-Act-Request",
+    "parcel_map_service": "https://maps.bexar.org/arcgis/rest/services/Parcels/MapServer/0",
+    "parcel_service_root": "https://maps.bexar.org/arcgis/rest/services/Parcels/MapServer",
+    "classic_property_search": "https://bexar.trueautomation.com/"
+  },
+  "service_lineage": {
+    "publisher": "Bexar County GIS",
+    "source_attribution": "Bexar Appraisal District",
+    "layer": "Parcels MapServer layer 0",
+    "freshness_status": "blocked: publisher description exposes an old update date and no current authoritative refresh timestamp was verified"
+  },
+  "verified_counts": {
+    "parcel_geometry_features": 710772,
+    "geometry_null_features": 1,
+    "geometry_unusable_features": 2,
+    "geometry_empty_or_unbounded_features": 1,
+    "object_id_non_null_features": 710772,
+    "object_id_distinct_values": 710772,
+    "prop_id_non_null_features": 705311,
+    "prop_id_distinct_values": 705200,
+    "prop_id_duplicate_excess": 111,
+    "account_number_non_null_features": 705311,
+    "account_number_distinct_values": 705123,
+    "account_number_duplicate_excess": 188,
+    "count_verified_at": "2026-09-12",
+    "status": "live-service-count-geometry-and-key-audit-verified"
+  },
+  "join_keys": {
+    "snapshot_feature_identity": "OBJECTID is non-null and unique for all 710,772 audited features",
+    "primary_parcel_account": "AcctNumb is the preferred searchable business identifier but is missing on 5,461 features and has 188 duplicate excess occurrences",
+    "secondary_property_id": "PropID is missing on 5,461 features and has 111 duplicate excess occurrences",
+    "owner_appraisal": "Owner, mailing, situs, legal, value, acreage, use, and building fields are attributes on the same parcel feature when the business identifier is populated",
+    "refresh_warning": "OBJECTID stability and source freshness across later refreshes are not verified"
+  },
+  "query": {
+    "primary_where": "1=1",
+    "order_by": "OBJECTID",
+    "max_record_count": 1000,
+    "geometry_out_sr": 4326,
+    "out_fields": ["OBJECTID", "PropID", "AcctNumb", "Situs", "Owner", "AddrLn1", "AddrLn2", "AddrLn3", "AddrCity", "AddrSt", "Country", "Zip", "Zip4", "DBA", "LglDesc", "LandVal", "ImprVal", "TotVal", "Nbhd", "GBA", "TOT_GBA", "YrBlt", "Stories", "State_cd", "LglAcres", "Acres", "PropUse", "Shape.STArea()", "Shape.STLength()"]
+  },
+  "verified_field_groups": {
+    "identity": ["OBJECTID", "PropID", "AcctNumb"],
+    "owner": ["Owner", "DBA", "AddrLn1", "AddrLn2", "AddrLn3", "AddrCity", "AddrSt", "Zip", "Zip4"],
+    "situs": ["Situs"],
+    "value": ["LandVal", "ImprVal", "TotVal"],
+    "land_building": ["LglAcres", "Acres", "GBA", "TOT_GBA", "YrBlt", "Stories", "Shape.STArea()", "Shape.STLength()"],
+    "legal": ["LglDesc", "Nbhd", "State_cd", "PropUse"]
+  },
+  "download_tests": {
+    "arcgis_rest_query": { "supported": true, "format": "JSON, geoJSON, PBF" },
+    "pagination": { "supported": true, "max_record_count": 1000 },
+    "browser_rendering": { "supported": false, "notes": "Use build-time preprocessing and viewport-safe outputs; never load the full service in the browser." }
+  },
+  "rights_status": "official public service and BCAD public-information path verified; exact redistribution/derived-output terms still require release review",
+  "remaining_blockers": [
+    "obtain or verify a current BCAD parcel/appraisal snapshot and authoritative refresh date",
+    "complete formal rights and redistribution review",
+    "establish refresh-stable identity beyond snapshot OBJECTID",
+    "run full service build, county QC, and production tile handoff",
+    "verify permits, zoning, floodplain, development, and demand sources"
+  ],
+  "completion_impact": "sample-importer-ready-full-release-freshness-gated",
+  "activation": "do-not-activate"
+}

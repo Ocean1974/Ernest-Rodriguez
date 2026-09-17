@@ -1,0 +1,117 @@
+{
+  "version": "wr-dcad-parcel-window-profile-v1",
+  "modelCountyId": "dallas-county-dcad",
+  "purpose": "Standard parcel intelligence window contract every county must fill before White Rabbit presents DCAD-like parcel cards outside Dallas.",
+  "uiConstraint": "Do not redesign parcel windows. Add data behind the existing focused parcel card behavior.",
+  "parityRule": "A non-Dallas county is not DCAD-parity until it has the same parcel intelligence feature groups as the Dallas DCAD model, or a field group is explicitly documented as verified unavailable with an approved county-specific equivalent. Source-needed placeholders are not parity.",
+  "texasRolloutRule": "Every Texas county must move through this same contract before visible activation. Generic county shells may be queued, but they must remain do-not-activate until official sources, counts, join keys, viewport chunks, search shards, and QA are complete.",
+  "fieldGroups": [
+    {
+      "id": "identity",
+      "label": "Parcel Identity",
+      "dcadSourceExample": "PARCEL_GEOM.Acct, ACCOUNT_INFO.ACCOUNT_NUM, ACCOUNT_INFO.GIS_PARCEL_ID",
+      "requiredForDcadLikeWindow": true,
+      "fields": ["sourceCountyId", "countyParcelId", "accountNum", "accountNumber", "gisParcelId", "sourceParcelId"]
+    },
+    {
+      "id": "address",
+      "label": "Address",
+      "dcadSourceExample": "ACCOUNT_INFO situs/property address fields",
+      "requiredForDcadLikeWindow": true,
+      "fields": ["address", "propertyAddress", "city", "propertyZip"]
+    },
+    {
+      "id": "owner-contact",
+      "label": "Owner Contact",
+      "dcadSourceExample": "ACCOUNT_INFO OWNER_NAME1, OWNER_NAME2, BIZ_NAME, OWNER_ADDRESS_LINE*, OWNER_CITY, OWNER_STATE, OWNER_ZIPCODE, PHONE_NUM",
+      "requiredForDcadLikeWindow": true,
+      "privacyRule": "Never infer owner phone or email from permits, contractors, applicants, scraped pages, or non-owner public records.",
+      "fields": ["ownerName", "ownerName2", "businessName", "ownerMailingAddress", "ownerMailingAddress2", "ownerCity", "ownerState", "ownerZip", "ownerCountry", "ownerPhone", "ownerEmail"]
+    },
+    {
+      "id": "appraisal-values",
+      "label": "Appraisal Values",
+      "dcadSourceExample": "ACCOUNT_APPRL_YEAR, LAND, COM_DETAIL, RES_DETAIL",
+      "requiredForDcadLikeWindow": true,
+      "fields": ["landValue", "improvementValue", "totalValue", "landValuationAmount", "landPricingMethod", "landCostPerUnit", "landMarketAdjustmentPct"]
+    },
+    {
+      "id": "land-building",
+      "label": "Land and Building",
+      "dcadSourceExample": "LAND, COM_DETAIL, RES_DETAIL",
+      "requiredForDcadLikeWindow": true,
+      "fields": ["landUseCode", "landUseDescription", "landSection", "landAreaSize", "landAreaUnit", "landAreaSqFt", "buildingClass", "yearBuilt", "grossBuildingArea", "quality", "condition"]
+    },
+    {
+      "id": "geometry",
+      "label": "Geometry",
+      "dcadSourceExample": "PARCEL_GEOM.zip transformed into realGeometry, liveGeometry, centroid, points, viewport chunks",
+      "requiredForDcadLikeWindow": true,
+      "fields": ["realGeometry", "liveGeometry", "centroid", "points", "areaLabel"]
+    },
+    {
+      "id": "parcel-dimensions",
+      "label": "Parcel Dimensions",
+      "dcadSourceExample": "ParcelDimension.zip spatial nearest-label join",
+      "requiredForDcadLikeWindow": false,
+      "fields": ["dimensions", "frontage", "depth", "perimeter"]
+    },
+    {
+      "id": "block-grid",
+      "label": "Block and Grid Context",
+      "dcadSourceExample": "BLKID.zip spatial nearest-label join",
+      "requiredForDcadLikeWindow": false,
+      "fields": ["blockId"]
+    },
+    {
+      "id": "zoning",
+      "label": "Zoning",
+      "dcadSourceExample": "City of Dallas Public Zoning services joined by ACCT/GIS_ACCT first and spatial fallback second",
+      "requiredForDcadLikeWindow": false,
+      "fields": ["zoning", "plannedDevelopment", "pd", "sup", "subdistricts", "overlays", "zoningCases"]
+    },
+    {
+      "id": "floodplain",
+      "label": "Floodplain",
+      "dcadSourceExample": "City of Dallas Current Floodplain parcel centroid spatial join",
+      "requiredForDcadLikeWindow": false,
+      "fields": ["floodplain", "floodZone", "sfha", "floodway", "baseFloodElevation", "femaPanel"]
+    },
+    {
+      "id": "permits-certificates",
+      "label": "Permits and Certificates",
+      "dcadSourceExample": "City of Dallas permits/CO normalized address match to DCAD parcels",
+      "requiredForDcadLikeWindow": false,
+      "fields": ["permitRecords", "certificateOfOccupancyRecords", "permitCount", "latestPermitDate", "permitJoinMethod"]
+    },
+    {
+      "id": "development-signals",
+      "label": "Development Signals",
+      "dcadSourceExample": "White Rabbit development parcel index",
+      "requiredForDcadLikeWindow": false,
+      "fields": ["developmentSignalCount", "developmentScore", "developmentLatestActivity", "greenDemandHighlight"]
+    },
+    {
+      "id": "migration-demand",
+      "label": "Migration and Demand",
+      "dcadSourceExample": "Not loaded in DCAD yet; national migration/demand layer remains a cross-county source-needed layer",
+      "requiredForDcadLikeWindow": false,
+      "fields": ["populationGrowth", "householdGrowth", "netMigration", "rentGrowth", "saleVelocity", "demandScore"]
+    },
+    {
+      "id": "source-lineage",
+      "label": "Source Lineage and QA",
+      "dcadSourceExample": "DCAD reports in output/ lock counts, join keys, missing geometry, duplicate keys, and unmatched joins",
+      "requiredForDcadLikeWindow": true,
+      "fields": ["joins", "sourceReferences", "qaStatus", "joinKeyReport", "schemaReport"]
+    }
+  ],
+  "activationGate": [
+    "Required field groups must have official county source paths.",
+    "Parcel geometry count and parcel/account row counts must be exact.",
+    "Primary join key must be documented and tested.",
+    "Owner/contact data must come from owner/appraisal sources, not permits or contractor records.",
+    "Viewport chunks and search shards must exist before browser activation.",
+    "County QC must pass before the county is enabled in the app."
+  ]
+}

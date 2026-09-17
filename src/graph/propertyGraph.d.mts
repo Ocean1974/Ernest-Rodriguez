@@ -1,0 +1,18 @@
+export const OWNERSHIP_ENTITY_VERSION: "wr-ownership-entity-v1";
+export const PROPERTY_TRANSACTION_VERSION: "wr-property-transaction-v1";
+export const PROPERTY_LISTING_VERSION: "wr-property-listing-v1";
+export const PROPERTY_GRAPH_EDGE_VERSION: "wr-property-graph-edge-v1";
+export const PROPERTY_GRAPH_STATE_VERSION: "wr-property-graph-state-v1";
+export const PROPERTY_FACT_RECONCILIATION_VERSION: "wr-property-fact-reconciliation-v1";
+export const ENTITY_RECONCILIATION_VERSION: "wr-entity-reconciliation-v1";
+export const PROPERTY_GRAPH_QUERY_VERSION: "wr-property-graph-query-result-v1";
+export function createOwnershipEntity(input?: Record<string, any>): Record<string, any>;
+export function createPropertyTransaction(input?: Record<string, any>): Record<string, any>;
+export function createPropertyListing(input?: Record<string, any>): Record<string, any>;
+export function createPropertyGraphEdge(input?: Record<string, any>): Record<string, any>;
+export function isEdgeActiveAt(edge: Record<string, any>, at: string): boolean;
+export function reconcileOwnershipEntities(inputs?: Array<Record<string, any>>): Record<string, any>;
+export function reconcilePropertyFacts(assertions?: Array<Record<string, any>>, options?: Record<string, any>): Record<string, any>;
+export function createPropertyGraphState(input?: Record<string, any>): Record<string, any>;
+export function buildPropertyGraphState(input?: Record<string, any>): Record<string, any>;
+export function queryPropertyGraph(state: Record<string, any>, input?: Record<string, any>): Record<string, any>;

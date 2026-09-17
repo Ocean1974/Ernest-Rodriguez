@@ -1,0 +1,10 @@
+export const COUNTY_FLOOD_SOURCE_PROBE_VERSION: string;
+export const COUNTY_FLOOD_SOURCE_RECONCILIATION_VERSION: string;
+export const COUNTY_FLOOD_SNAPSHOT_POLICY_VERSION: string;
+export const COUNTY_PARCEL_FLOOD_CLASSIFICATION_VERSION: string;
+export function countyFloodSha256(value: unknown): string;
+export function normalizeFloodZone(value: unknown, sfhaFlag?: unknown): Readonly<Record<string, unknown>>;
+export function createCountyFloodSourceProbe(input?: Record<string, unknown>): Readonly<Record<string, unknown>>;
+export function reconcileCountyFloodSources(input?: Record<string, unknown>): Readonly<Record<string, unknown>>;
+export function createCountyFloodSnapshotPolicy(input?: Record<string, unknown>): Readonly<Record<string, unknown>>;
+export function classifyParcelFloodRisk(input?: Record<string, unknown>): Readonly<Record<string, unknown>>;

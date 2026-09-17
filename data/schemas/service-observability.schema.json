@@ -1,0 +1,39 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://white-rabbit.local/schemas/service-observability.schema.json",
+  "title": "White Rabbit Service Observability",
+  "oneOf": [
+    { "$ref": "#/$defs/event" },
+    { "$ref": "#/$defs/snapshot" },
+    { "$ref": "#/$defs/policy" },
+    { "$ref": "#/$defs/report" }
+  ],
+  "$defs": {
+    "event": {
+      "type": "object",
+      "required": ["schemaVersion", "organizationId", "serviceName", "operation", "traceId", "spanId", "parentSpanId", "startedAt", "endedAt", "status", "errorCode", "measurements", "attributes"],
+      "properties": {
+        "schemaVersion": { "const": "wr-service-telemetry-event-v1" },
+        "status": { "enum": ["success", "partial", "error", "timeout", "rejected"] }
+      }
+    },
+    "snapshot": {
+      "type": "object",
+      "required": ["schemaVersion", "organizationId", "capturedAt", "serviceName", "operation", "retainedCapacity", "droppedEventCount", "events"],
+      "properties": { "schemaVersion": { "const": "wr-service-telemetry-snapshot-v1" } }
+    },
+    "policy": {
+      "type": "object",
+      "required": ["schemaVersion", "serviceName", "operation", "windowMinutes", "minimumSampleCount", "availabilityTargetPct", "latencyP95Ms", "maxSaturationPct", "maxSourceLagMs", "partialCountsAsFailure"],
+      "properties": { "schemaVersion": { "const": "wr-service-slo-policy-v1" } }
+    },
+    "report": {
+      "type": "object",
+      "required": ["schemaVersion", "organizationId", "serviceName", "operation", "evaluatedAt", "windowStart", "status", "sampleCount", "metrics", "checks", "policy"],
+      "properties": {
+        "schemaVersion": { "const": "wr-service-slo-report-v1" },
+        "status": { "enum": ["passed", "failed", "insufficient-evidence"] }
+      }
+    }
+  }
+}

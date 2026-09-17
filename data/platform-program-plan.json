@@ -1,0 +1,40 @@
+{
+  "schemaVersion": "wr-platform-program-plan-v1",
+  "objective": "Advance nationwide parcel intelligence and advanced real-estate decision features as independent workstreams that converge through canonical property identity, evidence lineage, and fail-closed release gates.",
+  "workstreams": [
+    {
+      "id": "advanced-platform-features",
+      "name": "Advanced platform features",
+      "statusFlow": ["idea", "designed", "built", "tested", "gated", "live"]
+    },
+    {
+      "id": "nationwide-parcel-intelligence",
+      "name": "Nationwide parcel intelligence",
+      "statusFlow": ["scaffolded", "source-found", "rights-verified", "schema-mapped", "join-keys-verified", "captured", "normalized", "search-built", "viewport-built", "enriched", "qa", "live"]
+    }
+  ],
+  "featurePriorities": [
+    "production-geospatial-delivery",
+    "canonical-property-intelligence",
+    "explainable-ai-acquisition-analyst",
+    "opportunity-briefs",
+    "scenario-underwriting",
+    "explainable-predictive-signals",
+    "real-time-monitoring-alerts",
+    "optional-3d-development-analysis",
+    "deal-workflow-collaboration",
+    "county-expansion"
+  ],
+  "integrationMatrix": [
+    { "feature": "Universal property search", "capabilityId": "explainable-ai-acquisition-analyst", "requiredCountyData": ["parcel-geometry", "address", "canonical-parcel-id", "search-index"] },
+    { "feature": "Unified property profile", "capabilityId": "canonical-property-intelligence", "requiredCountyData": ["parcel-geometry", "address", "canonical-parcel-id", "owner-appraisal", "source-lineage"] },
+    { "feature": "Comparable valuation", "capabilityId": "scenario-underwriting", "requiredCountyData": ["property-characteristics", "assessed-values", "licensed-sales", "source-lineage"] },
+    { "feature": "Opportunity and risk scoring", "capabilityId": "explainable-predictive-signals", "requiredCountyData": ["parcel-profile", "zoning", "permits", "flood", "market-observations"] },
+    { "feature": "Development feasibility", "capabilityId": "optional-3d-development-analysis", "requiredCountyData": ["parcel-geometry", "dimensions", "zoning", "terrain", "building-context"] },
+    { "feature": "Ownership intelligence", "capabilityId": "canonical-property-intelligence", "requiredCountyData": ["owner-appraisal", "deeds", "licensed-entity-records", "canonical-parcel-id"] },
+    { "feature": "Monitoring and alerts", "capabilityId": "real-time-monitoring-alerts", "requiredCountyData": ["versioned-sources", "freshness-policy", "change-events", "canonical-parcel-id"] },
+    { "feature": "Map and parcel selection", "capabilityId": "production-geospatial-delivery", "requiredCountyData": ["parcel-geometry", "viewport-index", "pmtiles-or-vector-tiles", "canonical-parcel-id"] }
+  ],
+  "immediateCountyTranche": ["el-paso-county-tx", "montgomery-county-tx", "williamson-county-tx"],
+  "releaseRule": "No feature or county becomes visible merely because its foundation or scaffold exists. Every required data, quality, rights, security, performance, freshness, and signed release gate must pass independently."
+}

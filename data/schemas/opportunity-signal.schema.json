@@ -1,0 +1,19 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://white-rabbit.local/schemas/opportunity-signal.schema.json",
+  "title": "White Rabbit Explainable Opportunity Signal",
+  "type": "object",
+  "required": ["schemaVersion", "whiteRabbitPropertyId", "observedAt", "score", "tier", "factors", "missingEvidence", "explanation", "scoringRule", "sourceLineage"],
+  "properties": {
+    "schemaVersion": { "const": "wr-opportunity-signal-v1" },
+    "whiteRabbitPropertyId": { "type": "string" },
+    "observedAt": { "type": "string" },
+    "score": { "type": "number", "minimum": 0, "maximum": 100 },
+    "tier": { "enum": ["high", "medium", "emerging", "insufficient-evidence"] },
+    "factors": { "type": "array", "items": { "type": "object", "required": ["id", "label", "points", "confidence", "evidence", "sourceFields"] } },
+    "missingEvidence": { "type": "array", "items": { "type": "string" } },
+    "explanation": { "type": "array", "items": { "type": "string" } },
+    "scoringRule": { "type": "string" },
+    "sourceLineage": { "type": ["object", "null"] }
+  }
+}

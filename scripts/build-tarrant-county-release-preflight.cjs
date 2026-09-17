@@ -1,0 +1,448 @@
+const fs = require("fs");
+const path = require("path");
+const crypto = require("crypto");
+
+const projectRoot = path.resolve(__dirname, "..");
+const outputDirectory = path.join(projectRoot, "output", "tarrant", "release-preflight");
+const jsonOutput = path.join(outputDirectory, "tarrant-county-release-preflight.json");
+const markdownOutput = path.join(outputDirectory, "tarrant-county-release-preflight.md");
+
+function readJson(relativePath) {
+  return JSON.parse(fs.readFileSync(path.join(projectRoot, relativePath), "utf8"));
+}
+
+function fileEvidence(relativePath, type) {
+  const absolutePath = path.join(projectRoot, relativePath);
+  const bytes = fs.readFileSync(absolutePath);
+  return {
+    type,
+    relativePath: relativePath.replace(/\\/g, "/"),
+    bytes: bytes.length,
+    sha256: crypto.createHash("sha256").update(bytes).digest("hex"),
+    exists: true,
+  };
+}
+
+function tableRow(label, value) {
+  return `| ${label} | ${String(value).replace(/\|/g, "\\|")} |`;
+}
+
+(async () => {
+  const pipeline = await import("../src/operations/countyReleasePipeline.mjs");
+  const adapter = readJson("data/county-adapters/tarrant/adapter.json");
+  const sourceAudit = readJson("data/county-adapters/tarrant/tarrant-county-tad-source-manifest.json");
+  const parcelManifest = readJson("public/data/counties/tarrant/parcels/manifest.json");
+  const parcelServiceReport = readJson("output/tarrant/parcel-service-report.json");
+  const qc = readJson("output/county-qc/tarrant-county-tad.json");
+  const lineageReport = readJson("output/tarrant/lineage-audit/tarrant-output-lineage-audit.json");
+  const boundaryReadiness = readJson("output/tarrant/boundary-readiness/tarrant-boundary-readiness.json");
+  const floodReadiness = readJson("output/tarrant/flood-readiness/tarrant-flood-readiness.json");
+  const permitReadiness = readJson("output/tarrant/permit-readiness/tarrant-permit-readiness.json");
+  const zoningReadiness = readJson("output/tarrant/zoning-readiness/tarrant-zoning-readiness.json");
+  const developmentReadiness = readJson("output/tarrant/development-readiness/tarrant-development-readiness.json");
+  const demandReadiness = readJson("output/tarrant/demand-readiness/tarrant-demand-readiness.json");
+  const tileReadiness = readJson("output/tarrant/tile-delivery-readiness/tarrant-tile-delivery-readiness.json");
+  const activationManifest = readJson("output/county-activation-manifest.json");
+  const activation = activationManifest.counties.find((item) => item.countyId === adapter.id);
+  if (!activation) throw new Error("Tarrant activation evidence is missing");
+
+  const observedEvidence = [
+    fileEvidence("data/county-adapters/tarrant/tarrant-county-tad-source-manifest.json", "source-audit"),
+    fileEvidence("public/data/counties/tarrant/parcels/manifest.json", "parcel-manifest"),
+    fileEvidence("public/data/counties/tarrant/parcels/search-index.json", "search-index"),
+    fileEvidence("output/county-qc/tarrant-county-tad.json", "qc-report"),
+    fileEvidence("output/tarrant/schema-report.json", "schema-report"),
+    fileEvidence("output/tarrant/join-key-report.md", "join-key-report"),
+    fileEvidence("output/tarrant/full-parcel-access-report.md", "full-access-report"),
+    fileEvidence("output/tarrant/lineage-audit/tarrant-output-lineage-audit.json", "output-lineage-audit"),
+    fileEvidence("output/tarrant/boundary-readiness/tarrant-boundary-readiness.json", "boundary-readiness"),
+    fileEvidence("output/tarrant/flood-readiness/tarrant-flood-readiness.json", "flood-readiness"),
+    fileEvidence("output/tarrant/permit-readiness/tarrant-permit-readiness.json", "permit-readiness"),
+    fileEvidence("output/tarrant/zoning-readiness/tarrant-zoning-readiness.json", "zoning-readiness"),
+    fileEvidence("output/tarrant/development-readiness/tarrant-development-readiness.json", "development-readiness"),
+    fileEvidence("output/tarrant/demand-readiness/tarrant-demand-readiness.json", "demand-readiness"),
+    fileEvidence("output/tarrant/tile-delivery-readiness/tarrant-tile-delivery-readiness.json", "tile-delivery-readiness"),
+  ];
+  const evidenceByType = Object.fromEntries(observedEvidence.map((item) => [item.type, item]));
+  const viewportFeatureCount = parcelManifest.chunks.reduce((sum, chunk) => sum + Number(chunk.count || 0), 0);
+  const sourceFeatureCount = Number(sourceAudit.verified_counts.parcel_geometry_features);
+  const emittedFeatureCount = Number(parcelServiceReport.builtFeatureCount);
+  const sourceAuditEvidence = evidenceByType["source-audit"];
+
+  const sourceSnapshotCandidate = pipeline.createCountySourceSnapshot({
+    organizationId: "white-rabbit-platform",
+    countyId: adapter.id,
+    countyFips: adapter.fips,
+    datasetId: "tad-live-parcel-service-audit",
+    sourceRevision: sourceAudit.retrieved_at,
+    contentKind: "source-audit",
+    officialSourceUrl: sourceAudit.official_sources.parcel_map_service,
+    officialSource: true,
+    license: "public-records-license-verification-required",
+    sourcePublishedAt: `${sourceAudit.retrieved_at}T00:00:00.000Z`,
+    capturedAt: `${sourceAudit.retrieved_at}T00:00:00.000Z`,
+    sourceFeatureCount,
+    sourceBytes: sourceAuditEvidence.bytes,
+    sourceSha256: sourceAuditEvidence.sha256,
+    joinKeys: [{ canonicalField: "sourceParcelId", sourceField: sourceAudit.join_keys.primary_parcel_account, normalization: "trim-preserve", verified: sourceAudit.verified_counts.account_max_observed_multiplicity === 1 && sourceAudit.verified_counts.account_non_null_features === sourceFeatureCount }],
+  });
+
+  const artifactMapping = [
+    ["parcel-manifest", evidenceByType["parcel-manifest"]],
+    ["viewport-index", evidenceByType["parcel-manifest"]],
+    ["search-index", evidenceByType["search-index"]],
+    ["qc-report", evidenceByType["qc-report"]],
+    ["schema-report", evidenceByType["schema-report"]],
+    ["join-key-report", evidenceByType["join-key-report"]],
+    ["full-access-report", evidenceByType["full-access-report"]],
+  ];
+  const artifactBundleCandidate = pipeline.createCountyArtifactBundle({
+    organizationId: "white-rabbit-platform",
+    countyId: adapter.id,
+    releaseId: `tarrant-preflight-${parcelManifest.generatedAt.slice(0, 10)}`,
+    sourceSnapshotSha256: sourceSnapshotCandidate.snapshotSha256,
+    generatedAt: qc.generatedAt,
+    builderActorId: "white-rabbit-build-pipeline",
+    buildRevision: crypto.createHash("sha256").update(JSON.stringify(observedEvidence)).digest("hex"),
+    counts: {
+      emittedFeatureCount,
+      geometryFeatureCount: emittedFeatureCount,
+      uniquePrimaryIdCount: Number(sourceAudit.verified_counts.account_non_null_features),
+      searchIndexCount: Number(parcelServiceReport.searchIndexCount),
+      viewportIndexedFeatureCount: viewportFeatureCount,
+      duplicatePrimaryIdCount: sourceAudit.verified_counts.account_max_observed_multiplicity === 1 ? 0 : 1,
+      missingGeometryCount: sourceFeatureCount - emittedFeatureCount,
+      sourceLineageCount: lineageReport.audit.outputLineageCertified ? Number(lineageReport.audit.completeSourceReferenceCount) : 0,
+      placeholderPathCount: Number(activation.evidence.placeholderPathCount),
+      qcFailureCount: Number(qc.failCount),
+      qcWarningCount: Number(qc.warningCount),
+    },
+    exclusions: [],
+    artifacts: artifactMapping.map(([type, evidence]) => ({ type, ref: `artifact://local-preflight/${evidence.relativePath}`, sha256: evidence.sha256, bytes: evidence.bytes, immutable: false })),
+  });
+
+  const policy = pipeline.createCountyReleasePolicy({
+    id: "tarrant-county-production-v1",
+    policyVersion: "1",
+    organizationId: "white-rabbit-platform",
+    countyId: adapter.id,
+    maximumSourceAgeHours: 24 * 45,
+    maximumArtifactAgeHours: 72,
+    maximumExcludedFeatures: 0,
+    maximumQcWarnings: 0,
+  });
+  const evaluatedAt = new Date(new Date(qc.generatedAt).getTime() + 60_000).toISOString();
+  const decision = pipeline.evaluateCountyRelease({ policy, sourceSnapshot: sourceSnapshotCandidate, artifactBundle: artifactBundleCandidate, approvals: [], platformReleaseAuthorization: null, asOf: evaluatedAt });
+  if (decision.activationAuthorized) throw new Error("Tarrant preflight must remain fail-closed while production evidence is incomplete");
+
+  const passedCheckIds = decision.checks.filter((item) => item.passed).map((item) => item.id);
+  const failedCheckIds = decision.checks.filter((item) => !item.passed).map((item) => item.id);
+  const preflight = {
+    schemaVersion: "wr-tarrant-county-release-preflight-v1",
+    generatedAt: qc.generatedAt,
+    evaluatedAt,
+    countyId: adapter.id,
+    countyFips: adapter.fips,
+    mode: "non-visible-dry-run",
+    pageDesignChanged: false,
+    productionActivationAttempted: false,
+    productionActivationAuthorized: false,
+    sourceStatement: "The current evidence is a dated live-service audit, not a content-addressed raw source snapshot. It cannot authorize production release.",
+    observedEvidence,
+    exactCounts: {
+      officialAuditFeatureCount: sourceFeatureCount,
+      emittedFeatureCount,
+      viewportIndexedFeatureCount: viewportFeatureCount,
+      searchIndexCount: Number(parcelServiceReport.searchIndexCount),
+      primaryJoinKeyNonNullCount: Number(sourceAudit.verified_counts.account_non_null_features),
+      primaryJoinKeyMaxMultiplicity: Number(sourceAudit.verified_counts.account_max_observed_multiplicity),
+      parcelCountParity: sourceFeatureCount === emittedFeatureCount && emittedFeatureCount === viewportFeatureCount && viewportFeatureCount === Number(parcelServiceReport.searchIndexCount),
+    },
+    deliveryArtifacts: { viewportChunkCount: parcelManifest.chunkCount, searchShardCount: parcelServiceReport.searchShardCount, locallyPresentButImmutablePublicationUnverified: true },
+    quality: { status: qc.status, passCount: qc.passCount, warningCount: qc.warningCount, failureCount: qc.failCount, warningLabels: qc.checks.filter((item) => item.status === "warning").map((item) => item.label) },
+    lineage: { outputLineageCertified: lineageReport.audit.outputLineageCertified, sourceToOutputCertified: lineageReport.audit.sourceToOutputCertified, chunkInventorySha256: lineageReport.chunkInventorySha256, lineageLedgerRootSha256: lineageReport.lineageLedgerRootSha256 },
+    intelligenceParity: { missingGroups: activation.evidence.missingDcadLikeGroups },
+    jurisdictionBoundaries: {
+      cityFeatureCount: boundaryReadiness.cityProbe.featureCount,
+      cityDistinctNameCount: boundaryReadiness.cityProbe.distinctNameCount,
+      etjFeatureCount: boundaryReadiness.etjProbe.featureCount,
+      etjDistinctNameCount: boundaryReadiness.etjProbe.distinctNameCount,
+      etjReconciliationStatus: boundaryReadiness.reconciliation.status,
+      guidanceNamesMissingFromService: boundaryReadiness.reconciliation.missingFromService,
+      serviceNamesMissingFromGuidance: boundaryReadiness.reconciliation.serviceOnly,
+      geometryCaptured: boundaryReadiness.cityProbe.capturesGeometry,
+      snapshotPolicyStatus: boundaryReadiness.snapshotPolicy.status,
+      parcelAssignmentAuthorized: false,
+    },
+    floodIntelligence: {
+      regulatoryCandidateFeatureCount: floodReadiness.probes.find((item) => item.role === "regulatory-candidate").featureCount,
+      regulatoryCandidateNonNullSourceIdCount: floodReadiness.probes.find((item) => item.role === "regulatory-candidate").nonNullSourceIdCount,
+      regulatoryCandidateSourceIdUniqueness: floodReadiness.probes.find((item) => item.role === "regulatory-candidate").sourceIdUniqueness,
+      regulatoryCandidateZoneTupleCount: floodReadiness.probes.find((item) => item.role === "regulatory-candidate").zoneTuples.length,
+      planningEstimateFeatureCount: floodReadiness.probes.find((item) => item.role === "planning-estimate-only").featureCount,
+      historicalFeatureCount: floodReadiness.probes.filter((item) => item.role === "historical-only").reduce((sum, item) => sum + item.featureCount, 0),
+      sourceReconciliationStatus: floodReadiness.reconciliation.status,
+      sourceReconciliationBlockers: floodReadiness.reconciliation.blockers,
+      snapshotPolicyStatus: floodReadiness.snapshotPolicy.status,
+      geometryCaptured: floodReadiness.geometryCaptured,
+      parcelClassificationAuthorized: floodReadiness.parcelClassificationAuthorized,
+    },
+    permitIntelligence: {
+      tarrantUtilityPermitCount: permitReadiness.probes.find((item) => item.sourceId === "tarrant-transportation-utility-permits").featureCount,
+      fortWorthPermitCount: permitReadiness.probes.find((item) => item.sourceId === "fort-worth-accela-permits").featureCount,
+      fortWorthCompleteAddressCount: permitReadiness.probes.find((item) => item.sourceId === "fort-worth-accela-permits").nonNullCounts.Address,
+      fortWorthCompleteCoordinateCount: permitReadiness.probes.find((item) => item.sourceId === "fort-worth-accela-permits").nonNullCounts.Latitude,
+      arlingtonRollingThreeYearPermitCount: permitReadiness.probes.find((item) => item.sourceId === "arlington-issued-permits-three-year").featureCount,
+      arlingtonCompletePropertyGisIdCount: permitReadiness.probes.find((item) => item.sourceId === "arlington-issued-permits-three-year").nonNullCounts.PROPGISID1,
+      discoveredBuildingJurisdictionIds: permitReadiness.reconciliation.discoveredBuildingJurisdictionIds,
+      certifiedBuildingJurisdictionCount: permitReadiness.reconciliation.certifiedBuildingJurisdictionIds.length,
+      uncoveredBuildingJurisdictionCount: permitReadiness.reconciliation.uncoveredBuildingJurisdictionIds.length,
+      normalizationPolicyStatuses: permitReadiness.normalizationPolicies.map((item) => item.status),
+      recordsCaptured: permitReadiness.recordsCaptured,
+      parcelLinksBuilt: permitReadiness.parcelLinksBuilt,
+    },
+    zoningIntelligence: {
+      fortWorthCurrentZoningFeatureCount: zoningReadiness.probes.find((item) => item.sourceId === "fort-worth-current-zoning").featureCount,
+      fortWorthCompleteDistrictCount: zoningReadiness.probes.find((item) => item.sourceId === "fort-worth-current-zoning").nonNullCounts.ZONING,
+      fortWorthCompleteBaseDistrictCount: zoningReadiness.probes.find((item) => item.sourceId === "fort-worth-current-zoning").nonNullCounts.BASE_ZONING,
+      fortWorthCompleteEffectiveDateCount: zoningReadiness.probes.find((item) => item.sourceId === "fort-worth-current-zoning").nonNullCounts.ORD_EFF_DATE,
+      fortWorthOverlayFeatureCount: zoningReadiness.probes.find((item) => item.sourceId === "fort-worth-zoning-overlays").featureCount,
+      fortWorthCaseFeatureCount: zoningReadiness.probes.find((item) => item.sourceId === "fort-worth-zoning-cases").featureCount,
+      arlingtonCurrentZoningFeatureCount: zoningReadiness.probes.find((item) => item.sourceId === "arlington-current-zoning").featureCount,
+      arlingtonCompleteDistrictCount: zoningReadiness.probes.find((item) => item.sourceId === "arlington-current-zoning").nonNullCounts.ZONINGDETAIL,
+      arlingtonCompleteEffectiveDateCount: zoningReadiness.probes.find((item) => item.sourceId === "arlington-current-zoning").nonNullCounts.EFFECTIVEDATE,
+      arlingtonOverlayFeatureCount: zoningReadiness.probes.find((item) => item.sourceId === "arlington-planning-overlays").featureCount,
+      arlingtonRollingThreeYearCaseCount: zoningReadiness.probes.find((item) => item.sourceId === "arlington-zoning-cases-three-year").featureCount,
+      discoveredCurrentZoningJurisdictionIds: zoningReadiness.reconciliation.discoveredCurrentZoningJurisdictionIds,
+      certifiedCurrentZoningJurisdictionCount: zoningReadiness.reconciliation.certifiedCurrentZoningJurisdictionIds.length,
+      uncoveredCurrentZoningJurisdictionCount: zoningReadiness.reconciliation.uncoveredCurrentZoningJurisdictionIds.length,
+      snapshotPolicyStatuses: zoningReadiness.snapshotPolicies.map((item) => item.status),
+      geometryCaptured: zoningReadiness.geometryCaptured,
+      parcelAssignmentsBuilt: zoningReadiness.parcelAssignmentsBuilt,
+    },
+    developmentIntelligence: {
+      candidateRecordCount: developmentReadiness.coverage.candidateRecordCount,
+      fortWorthPermitCandidateCount: developmentReadiness.bindings.find((item) => item.sourceId === "fort-worth-accela-permits").candidateRecordCount,
+      arlingtonPermitCandidateCount: developmentReadiness.bindings.find((item) => item.sourceId === "arlington-issued-permits-three-year").candidateRecordCount,
+      fortWorthZoningCaseCandidateCount: developmentReadiness.bindings.find((item) => item.sourceId === "fort-worth-zoning-cases").candidateRecordCount,
+      arlingtonZoningCaseCandidateCount: developmentReadiness.bindings.find((item) => item.sourceId === "arlington-zoning-cases-three-year").candidateRecordCount,
+      discoveredJurisdictionIds: developmentReadiness.coverage.discoveredJurisdictionIds,
+      certifiedJurisdictionCount: developmentReadiness.coverage.certifiedJurisdictionIds.length,
+      uncoveredOrUncertifiedJurisdictionCount: developmentReadiness.coverage.uncoveredOrUncertifiedJurisdictionIds.length,
+      draftClassificationRuleCount: developmentReadiness.classificationRules.filter((item) => item.status === "draft").length,
+      normalizedEventCount: developmentReadiness.signalAudit.counts.normalizedEvents,
+      emittedSignalCount: developmentReadiness.signalAudit.counts.emittedSignals,
+      signalAuditStatus: developmentReadiness.signalAudit.status,
+      activationAuthorized: developmentReadiness.activationAuthorized,
+    },
+    demandIntelligence: {
+      sourceRowCount: demandReadiness.audit.counts.sourceRows,
+      inflowRowCount: demandReadiness.probes.find((item) => item.sourceId === "irs-soi-county-inflow-2022-2023").recordCount,
+      outflowRowCount: demandReadiness.probes.find((item) => item.sourceId === "irs-soi-county-outflow-2022-2023").recordCount,
+      aggregateRowCount: demandReadiness.audit.counts.aggregateRows,
+      detailRowCount: demandReadiness.audit.counts.detailRows,
+      invalidRowCount: demandReadiness.audit.counts.invalidRows,
+      duplicateRowCount: demandReadiness.audit.counts.duplicateRows,
+      ...demandReadiness.exactMigrationSummary,
+      discoveredDomains: demandReadiness.coverage.discoveredDomains,
+      observedDomains: demandReadiness.coverage.observedDomains,
+      certifiedDomainCount: demandReadiness.coverage.certifiedDomains.length,
+      missingOrUncertifiedDomains: demandReadiness.coverage.missingOrUncertifiedDomains,
+      censusApiKeyRequired: demandReadiness.probes.filter((item) => item.publisher === "U.S. Census Bureau").every((item) => item.blockers.includes("census-api-key-required")),
+      auditStatus: demandReadiness.audit.status,
+      pointInTimeVectorBuilt: demandReadiness.pointInTimeVectorBuilt,
+      parcelDemandScoresBuilt: demandReadiness.parcelDemandScoresBuilt,
+      activationAuthorized: demandReadiness.activationAuthorized,
+    },
+    tileDelivery: {
+      officialFeatureCount: tileReadiness.sourceBundle.counts.official,
+      manifestFeatureCount: tileReadiness.sourceBundle.counts.manifest,
+      chunkFeatureCount: tileReadiness.sourceBundle.counts.chunks,
+      searchFeatureCount: tileReadiness.sourceBundle.counts.search,
+      chunkCount: tileReadiness.sourceBundle.chunkCount,
+      searchShardCount: tileReadiness.sourceBundle.searchShardCount,
+      chunkInventorySha256: tileReadiness.sourceBundle.chunkInventorySha256,
+      outputLineageCertified: tileReadiness.sourceBundle.checks.find((item) => item.id === "output-lineage").passed,
+      sourceToOutputCertified: tileReadiness.sourceBundle.checks.find((item) => item.id === "source-to-output-lineage").passed,
+      propertyPolicyStatus: tileReadiness.propertyPolicy.status,
+      forbiddenIncludedFieldCount: tileReadiness.propertyPolicy.forbiddenIncluded.length,
+      tippecanoeVerified: tileReadiness.tooling.tippecanoeVerified,
+      sourceGeoJsonPresent: tileReadiness.sourceGeoJsonPresent,
+      chunkStreamAvailable: tileReadiness.chunkStreamAvailable,
+      buildPlanStatus: tileReadiness.buildPlan.status,
+      pmtilesArtifactPresent: tileReadiness.pmtilesArtifactPresent,
+      artifactAuditStatus: tileReadiness.artifactAudit.status,
+      httpRangeDeliveryCertified: tileReadiness.httpRangeDeliveryCertified,
+      viewportFallbackPreserved: tileReadiness.viewportFallbackPreserved,
+      publicationStatus: tileReadiness.publicationDecision.status,
+      activationAuthorized: tileReadiness.activationAuthorized,
+    },
+    sourceSnapshotCandidate,
+    artifactBundleCandidate,
+    policy,
+    decision,
+    dryRunSummary: { status: decision.status, passedCheckCount: passedCheckIds.length, failedCheckCount: failedCheckIds.length, passedCheckIds, failedCheckIds, blockers: decision.blockers },
+    nextRequiredActions: [
+      "Capture and hash the raw official TAD source payload, not only its audit manifest.",
+      "Verify the source publication date, license terms, and current feature count against the captured payload.",
+      "Publish the seven required artifacts to immutable production storage and record their final hashes.",
+      "Bind the certified 758633-record output lineage ledger to the future raw source capture manifest.",
+      `Resolve or independently disposition all ${qc.warningCount} QC warnings under an approved county policy.`,
+      "Close the zoning, floodplain, permits/certificates, development-signal, and migration-demand parity gaps.",
+      "Resolve the ETJ guidance/service discrepancy, capture licensed effective-dated boundary geometry, and certify parcel jurisdiction assignments.",
+      "Verify flood source ID uniqueness, license and capture current flood geometry, certify county clipping and zone overlays, then publish exact parcel classification counts.",
+      "Verify permit source identities and rights, certify jurisdiction/parcel bridges, normalize records, and publish exact linked, unmatched, ambiguous, conflict, and invalid counts.",
+      "Verify zoning source identities and rights, resolve missing current districts, certify jurisdiction clipping, and publish exact assigned, split, ambiguous, unmatched, invalid, and missing-definition counts.",
+      "Capture and normalize the 781809 development-event candidates, approve explicit classification rules, deduplicate lifecycle events, certify parcel links, and publish exact candidate, excluded, duplicate, invalid, linked, unresolved, suppressed, and emitted counts.",
+      "Persist the IRS migration files, provide managed Census API credentials, capture ACS and QCEW observations, align vintages, certify explainable demand features, and prohibit parcel attribution without parcel-specific evidence.",
+      "Certify raw-source lineage and tile-field policy, install and pin Tippecanoe, stream the 1608 parcel chunks into PMTiles, verify exact decoded counts and artifact integrity, then certify immutable HTTP byte-range delivery while retaining viewport fallback.",
+      "Obtain distinct county-data, quality, and release-manager approvals bound to the final bundle.",
+      "Obtain a current signed platform release authorization for county:tarrant-county-tad.",
+      "Run staging health checks and rollback drill before any visible production activation.",
+    ],
+  };
+
+  const lines = [
+    "# Tarrant County Production Release Preflight",
+    "",
+    "Status: **rejected as expected**. This is a non-visible dry run; no production pointer or White Rabbit page was changed.",
+    "",
+    "## Exact evidence",
+    "",
+    "| Measure | Value |",
+    "| --- | ---: |",
+    tableRow("Official live-service audit feature count", preflight.exactCounts.officialAuditFeatureCount),
+    tableRow("Emitted parcel count", preflight.exactCounts.emittedFeatureCount),
+    tableRow("Viewport-indexed parcel count", preflight.exactCounts.viewportIndexedFeatureCount),
+    tableRow("Search-indexed parcel count", preflight.exactCounts.searchIndexCount),
+    tableRow("ACCOUNT non-null count", preflight.exactCounts.primaryJoinKeyNonNullCount),
+    tableRow("ACCOUNT maximum multiplicity", preflight.exactCounts.primaryJoinKeyMaxMultiplicity),
+    tableRow("Viewport chunks", preflight.deliveryArtifacts.viewportChunkCount),
+    tableRow("Search shards", preflight.deliveryArtifacts.searchShardCount),
+    tableRow("QC warnings", preflight.quality.warningCount),
+    tableRow("QC failures", preflight.quality.failureCount),
+    "",
+    "Parcel, viewport, search, and verified ACCOUNT counts reconcile at **758,633**. This proves local count parity, not production readiness.",
+    "",
+    "## Why activation remains blocked",
+    "",
+    ...decision.blockers.map((item) => `- \`${item.checkId}\`: ${item.reason}`),
+    "",
+    "The critical source blocker is explicit: the repository contains a dated live-service audit, not a content-addressed raw source snapshot. All current local artifact hashes are recorded, but immutable production publication is unverified.",
+    "",
+    "## Missing intelligence parity",
+    "",
+    ...preflight.intelligenceParity.missingGroups.map((item) => `- ${item}`),
+    "",
+    "## Jurisdiction boundary readiness",
+    "",
+    "| Measure | Value |",
+    "| --- | --- |",
+    tableRow("City boundary features", preflight.jurisdictionBoundaries.cityFeatureCount),
+    tableRow("City boundary distinct labels", preflight.jurisdictionBoundaries.cityDistinctNameCount),
+    tableRow("ETJ features", preflight.jurisdictionBoundaries.etjFeatureCount),
+    tableRow("ETJ distinct labels", preflight.jurisdictionBoundaries.etjDistinctNameCount),
+    tableRow("ETJ reconciliation", preflight.jurisdictionBoundaries.etjReconciliationStatus),
+    tableRow("Boundary snapshot policy", preflight.jurisdictionBoundaries.snapshotPolicyStatus),
+    "",
+    "## Flood intelligence readiness",
+    "",
+    "| Measure | Value |",
+    "| --- | --- |",
+    tableRow("2025 regulatory-candidate features", preflight.floodIntelligence.regulatoryCandidateFeatureCount),
+    tableRow("2025 regulatory-candidate non-null IDs", preflight.floodIntelligence.regulatoryCandidateNonNullSourceIdCount),
+    tableRow("Regulatory-candidate ID uniqueness", preflight.floodIntelligence.regulatoryCandidateSourceIdUniqueness),
+    tableRow("2025 planning-estimate features", preflight.floodIntelligence.planningEstimateFeatureCount),
+    tableRow("2009 historical features", preflight.floodIntelligence.historicalFeatureCount),
+    tableRow("Flood source reconciliation", preflight.floodIntelligence.sourceReconciliationStatus),
+    tableRow("Flood snapshot policy", preflight.floodIntelligence.snapshotPolicyStatus),
+    "",
+    "## Permit federation readiness",
+    "",
+    "| Measure | Value |",
+    "| --- | --- |",
+    tableRow("Tarrant utility permits", preflight.permitIntelligence.tarrantUtilityPermitCount),
+    tableRow("Fort Worth municipal permits", preflight.permitIntelligence.fortWorthPermitCount),
+    tableRow("Fort Worth records with coordinates", preflight.permitIntelligence.fortWorthCompleteCoordinateCount),
+    tableRow("Arlington rolling-three-year permits", preflight.permitIntelligence.arlingtonRollingThreeYearPermitCount),
+    tableRow("Discovered building jurisdictions", preflight.permitIntelligence.discoveredBuildingJurisdictionIds.join(", ")),
+    tableRow("Certified building jurisdictions", preflight.permitIntelligence.certifiedBuildingJurisdictionCount),
+    tableRow("Uncovered or uncertified scopes", preflight.permitIntelligence.uncoveredBuildingJurisdictionCount),
+    "",
+    "## Zoning federation readiness",
+    "",
+    "| Measure | Value |",
+    "| --- | --- |",
+    tableRow("Fort Worth current zoning polygons", preflight.zoningIntelligence.fortWorthCurrentZoningFeatureCount),
+    tableRow("Fort Worth polygons with district", preflight.zoningIntelligence.fortWorthCompleteDistrictCount),
+    tableRow("Fort Worth polygons with effective date", preflight.zoningIntelligence.fortWorthCompleteEffectiveDateCount),
+    tableRow("Arlington current zoning polygons", preflight.zoningIntelligence.arlingtonCurrentZoningFeatureCount),
+    tableRow("Arlington polygons with effective date", preflight.zoningIntelligence.arlingtonCompleteEffectiveDateCount),
+    tableRow("Discovered current-zoning jurisdictions", preflight.zoningIntelligence.discoveredCurrentZoningJurisdictionIds.join(", ")),
+    tableRow("Certified current-zoning jurisdictions", preflight.zoningIntelligence.certifiedCurrentZoningJurisdictionCount),
+    tableRow("Uncovered or uncertified scopes", preflight.zoningIntelligence.uncoveredCurrentZoningJurisdictionCount),
+    "",
+    "## Development-event federation readiness",
+    "",
+    "| Measure | Value |",
+    "| --- | --- |",
+    tableRow("Official upstream candidate records", preflight.developmentIntelligence.candidateRecordCount),
+    tableRow("Discovered jurisdictions", preflight.developmentIntelligence.discoveredJurisdictionIds.join(", ")),
+    tableRow("Certified jurisdictions", preflight.developmentIntelligence.certifiedJurisdictionCount),
+    tableRow("Uncovered or uncertified scopes", preflight.developmentIntelligence.uncoveredOrUncertifiedJurisdictionCount),
+    tableRow("Draft explicit classification rules", preflight.developmentIntelligence.draftClassificationRuleCount),
+    tableRow("Normalized development events", preflight.developmentIntelligence.normalizedEventCount),
+    tableRow("Emitted parcel signals", preflight.developmentIntelligence.emittedSignalCount),
+    tableRow("Signal audit", preflight.developmentIntelligence.signalAuditStatus),
+    "",
+    "## Migration and demand readiness",
+    "",
+    "| Measure | Value |",
+    "| --- | --- |",
+    tableRow("Tarrant migration source rows", preflight.demandIntelligence.sourceRowCount),
+    tableRow("IRS inflow returns", preflight.demandIntelligence.inflowReturns),
+    tableRow("IRS outflow returns", preflight.demandIntelligence.outflowReturns),
+    tableRow("Net matched returns", preflight.demandIntelligence.netReturns),
+    tableRow("Net matched exemptions", preflight.demandIntelligence.netExemptions),
+    tableRow("Net aggregate AGI (USD thousands)", preflight.demandIntelligence.netAgiThousands),
+    tableRow("Observed domains", preflight.demandIntelligence.observedDomains.join(", ")),
+    tableRow("Certified domains", preflight.demandIntelligence.certifiedDomainCount),
+    tableRow("Census API key required", preflight.demandIntelligence.censusApiKeyRequired),
+    tableRow("Demand audit", preflight.demandIntelligence.auditStatus),
+    tableRow("Parcel demand scores built", preflight.demandIntelligence.parcelDemandScoresBuilt),
+    "",
+    "## Production tile delivery readiness",
+    "",
+    "| Measure | Value |",
+    "| --- | --- |",
+    tableRow("Official/manifest/chunk/search feature parity", `${preflight.tileDelivery.officialFeatureCount}/${preflight.tileDelivery.manifestFeatureCount}/${preflight.tileDelivery.chunkFeatureCount}/${preflight.tileDelivery.searchFeatureCount}`),
+    tableRow("Viewport chunks", preflight.tileDelivery.chunkCount),
+    tableRow("Search shards", preflight.tileDelivery.searchShardCount),
+    tableRow("Output lineage certified", preflight.tileDelivery.outputLineageCertified),
+    tableRow("Source-to-output certified", preflight.tileDelivery.sourceToOutputCertified),
+    tableRow("Privacy-forbidden fields included", preflight.tileDelivery.forbiddenIncludedFieldCount),
+    tableRow("Chunk stream available", preflight.tileDelivery.chunkStreamAvailable),
+    tableRow("Tippecanoe verified", preflight.tileDelivery.tippecanoeVerified),
+    tableRow("PMTiles artifact present", preflight.tileDelivery.pmtilesArtifactPresent),
+    tableRow("HTTP byte ranges certified", preflight.tileDelivery.httpRangeDeliveryCertified),
+    tableRow("Viewport fallback preserved", preflight.tileDelivery.viewportFallbackPreserved),
+    tableRow("Publication decision", preflight.tileDelivery.publicationStatus),
+    "",
+    "## Next required actions",
+    "",
+    ...preflight.nextRequiredActions.map((item) => `- ${item}`),
+    "",
+    "## Safety controls",
+    "",
+    "- Production activation attempted: no.",
+    "- Production activation authorized: no.",
+    "- Tarrant frontend gate enabled: no.",
+    "- Locked page design changed: no.",
+    "",
+  ];
+  fs.mkdirSync(outputDirectory, { recursive: true });
+  fs.writeFileSync(jsonOutput, `${JSON.stringify(preflight, null, 2)}\n`);
+  fs.writeFileSync(markdownOutput, lines.join("\n"));
+  console.log(`Built ${path.relative(projectRoot, jsonOutput)} and ${path.relative(projectRoot, markdownOutput)}.`);
+  console.log(`Dry run: ${decision.status}; ${failedCheckIds.length} failed checks; activation authorized: ${decision.activationAuthorized}.`);
+})().catch((error) => { console.error(error); process.exit(1); });

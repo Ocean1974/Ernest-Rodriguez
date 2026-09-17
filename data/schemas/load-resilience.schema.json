@@ -1,0 +1,17 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://white-rabbit.local/schemas/load-resilience.schema.json",
+  "title": "White Rabbit Load and Resilience Gates",
+  "oneOf": [
+    {
+      "type": "object",
+      "required": ["schemaVersion", "id", "serviceName", "requests", "concurrency", "timeoutMs", "faultSchedule", "thresholds"],
+      "properties": { "schemaVersion": { "const": "wr-load-scenario-v1" }, "concurrency": { "type": "integer", "minimum": 1, "maximum": 64 } }
+    },
+    {
+      "type": "object",
+      "required": ["schemaVersion", "scenarioId", "serviceName", "generatedAt", "status", "metrics", "checks", "results", "scenario"],
+      "properties": { "schemaVersion": { "const": "wr-load-resilience-report-v1" }, "status": { "enum": ["passed", "failed", "insufficient-evidence"] } }
+    }
+  ]
+}

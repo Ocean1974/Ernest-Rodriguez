@@ -1,0 +1,177 @@
+{
+  "county_id": "king-county-wa",
+  "county_name": "King County",
+  "market_name": "Seattle",
+  "cad_name": "King County Department of Assessments",
+  "gis_source": "King County GIS Property/KingCo_Parcels and Property/KingCo_PropertyInfo",
+  "source_status": "official-source-verified-current-services",
+  "source_lineage": [
+    {
+      "label": "Official King County GIS REST services root",
+      "url": "https://gismaps.kingcounty.gov/arcgis/rest/services?f=json"
+    },
+    {
+      "label": "Official Property folder",
+      "url": "https://gismaps.kingcounty.gov/arcgis/rest/services/Property?f=json"
+    },
+    {
+      "label": "Countywide parcel geometry service",
+      "url": "https://gismaps.kingcounty.gov/arcgis/rest/services/Property/KingCo_Parcels/MapServer/0"
+    },
+    {
+      "label": "Property info parcels service",
+      "url": "https://gismaps.kingcounty.gov/arcgis/rest/services/Property/KingCo_PropertyInfo/MapServer/2"
+    },
+    {
+      "label": "Recent property sales service",
+      "url": "https://gismaps.kingcounty.gov/arcgis/rest/services/Property/KingCo_PropertyInfo/MapServer/3"
+    }
+  ],
+  "service_owner": "King County GIS",
+  "arcgis_rest_url": "https://gismaps.kingcounty.gov/arcgis/rest/services/Property/KingCo_Parcels/MapServer/0",
+  "property_info_rest_url": "https://gismaps.kingcounty.gov/arcgis/rest/services/Property/KingCo_PropertyInfo/MapServer/2",
+  "recent_sales_rest_url": "https://gismaps.kingcounty.gov/arcgis/rest/services/Property/KingCo_PropertyInfo/MapServer/3",
+  "layer_id": 0,
+  "layer_name": "King County parcels",
+  "property_info_layer_id": 2,
+  "property_info_layer_name": "Parcels",
+  "recent_sales_layer_id": 3,
+  "recent_sales_layer_name": "Property sales in the last 3 years",
+  "geometry_type": "esriGeometryPolygon",
+  "unique_gis_key": "OBJECTID",
+  "parcel_id_field": "PIN",
+  "account_id_field": "PIN",
+  "source_spatial_reference": {
+    "wkid": 102100,
+    "latestWkid": 3857,
+    "label": "EPSG:3857 / WGS 1984 Web Mercator Auxiliary Sphere"
+  },
+  "output_spatial_reference": {
+    "wkid": 4326,
+    "label": "EPSG:4326 / WGS 84"
+  },
+  "source_extent_wgs84": {
+    "minLng": -122.5503964,
+    "minLat": 47.0720599,
+    "maxLng": -121.0843837,
+    "maxLat": 47.7884468
+  },
+  "verified_counts": {
+    "parcel_geometry_features": 638648,
+    "geometry_missing_pin": 0,
+    "geometry_missing_shape": 0,
+    "geometry_distinct_pin": 636067,
+    "geometry_duplicate_pin": 2581,
+    "property_info_features": 636076,
+    "property_info_missing_pin": 0,
+    "property_info_distinct_pin": 636070,
+    "property_info_duplicate_pin": 6,
+    "geometry_only_delta": 2572,
+    "recent_sales_last_3_years": 110857
+  },
+  "schema_fields": [
+    "OBJECTID",
+    "MAJOR",
+    "MINOR",
+    "PIN",
+    "Shape.STArea()",
+    "Shape.STLength()"
+  ],
+  "property_info_fields": [
+    "PIN",
+    "MINOR",
+    "OBJECTID",
+    "MAJOR",
+    "ADDR_HN",
+    "ADDR_FULL",
+    "ZIP5",
+    "CTYNAME",
+    "POSTALCTYNAME",
+    "PROP_NAME",
+    "PLAT_NAME",
+    "LOTSQFT",
+    "APPRLNDVAL",
+    "APPR_IMPR",
+    "ANNEXING_CITY",
+    "PAAUNIQUENAME",
+    "PROPTYPE",
+    "KCA_ZONING",
+    "KCA_ACRES",
+    "PREUSE_CODE",
+    "PREUSE_DESC",
+    "Shape.STArea()",
+    "Shape.STLength()",
+    "STATE_ABBR"
+  ],
+  "recent_sales_fields": [
+    "PIN",
+    "address",
+    "ExciseTaxNum",
+    "SaleDate",
+    "SalePrice",
+    "RecNumber",
+    "Sellername",
+    "buyername",
+    "Property_Type",
+    "Principal_Use",
+    "Property_Class"
+  ],
+  "query": {
+    "sample_rest_url": "https://gismaps.kingcounty.gov/arcgis/rest/services/Property/KingCo_PropertyInfo/MapServer/2",
+    "primary_where": "1=1",
+    "out_fields": [
+      "PIN",
+      "MINOR",
+      "OBJECTID",
+      "MAJOR",
+      "ADDR_HN",
+      "ADDR_FULL",
+      "ZIP5",
+      "CTYNAME",
+      "POSTALCTYNAME",
+      "PROP_NAME",
+      "PLAT_NAME",
+      "LOTSQFT",
+      "APPRLNDVAL",
+      "APPR_IMPR",
+      "ANNEXING_CITY",
+      "PAAUNIQUENAME",
+      "PROPTYPE",
+      "KCA_ZONING",
+      "KCA_ACRES",
+      "PREUSE_CODE",
+      "PREUSE_DESC",
+      "Shape.STArea()",
+      "Shape.STLength()",
+      "STATE_ABBR"
+    ],
+    "geometry_out_sr": 4326,
+    "order_by": "OBJECTID",
+    "max_record_count": 1000
+  },
+  "download_tests": {
+    "arcgis_rest_query": {
+      "supported": true,
+      "verified": true,
+      "notes": "Count, metadata, sample rows, and GeoJSON queries verified against official King County MapServer layers."
+    },
+    "geojson": {
+      "supported": true,
+      "verified": true,
+      "notes": "PropertyInfo layer query with f=geojson and outSR=4326 returned parcel polygons."
+    },
+    "csv": {
+      "supported": false,
+      "verified": false,
+      "notes": "Direct CSV export was not verified on these MapServer layers. Use ArcGIS REST JSON and build-time normalization."
+    },
+    "shapefile_zip": {
+      "supported": false,
+      "verified": false,
+      "notes": "Direct Shapefile ZIP export was not verified on these MapServer layers. Do not assume a bulk shapefile endpoint."
+    }
+  },
+  "join_key_note": "PIN is the parcel/account key, but the raw geometry service contains duplicate PIN values. Use OBJECTID as the unique GIS feature key and allow PIN one-to-many geometry joins.",
+  "owner_appraisal_note": "The verified PropertyInfo parcel layer exposes address, land/improvement values, zoning text, lot size, property type, present use, and plat/property names. It does not expose current owner name, owner mailing address, owner phone, or owner email fields.",
+  "production_activation_note": "This source is verified for pilot plumbing only. Build viewport chunks, search shards, QA gates, production tiles, and remaining owner/permit/floodplain/demand joins before enabling any visible app behavior."
+}

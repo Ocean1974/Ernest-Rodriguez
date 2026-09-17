@@ -1,0 +1,101 @@
+{
+  "id": "king-county-wa-ingestion",
+  "countyAdapter": "data/county-adapters/king-county-wa/adapter.json",
+  "universalParcelSchema": "data/schemas/universal-parcel.schema.json",
+  "defaultMode": "plan",
+  "steps": [
+    {
+      "id": "verify-official-sources",
+      "label": "Verify official parcel, assessor/appraisal, permit, zoning, floodplain, and demand sources",
+      "command": "echo Verify official sources for king-county-wa before ingesting large files.",
+      "requiredOutputs": [
+        "output/king-county-wa/schema-report.md",
+        "output/king-county-wa/schema-report.json"
+      ]
+    },
+    {
+      "id": "verify-join-keys",
+      "label": "Document exact parcel/account/GIS join keys",
+      "command": "echo Replace source-needed join keys for king-county-wa.",
+      "requiredOutputs": [
+        "output/king-county-wa/join-key-report.md"
+      ]
+    },
+    {
+      "id": "build-parcel-geojson",
+      "label": "Build county universal parcel GeoJSON",
+      "command": "echo Build king-county-wa universal parcel GeoJSON after source verification.",
+      "requiredOutputs": [
+        "output/king-county-wa/king-county-wa-parcels.geojson",
+        "output/king-county-wa/full-parcel-access-report.md"
+      ]
+    },
+    {
+      "id": "build-parcel-service",
+      "label": "Build viewport parcel chunks and search shards",
+      "command": "npm.cmd run king:service:sample",
+      "requiredOutputs": [
+        "public/data/counties/king-county-wa/parcels/manifest.json"
+      ]
+    },
+    {
+      "id": "build-owner-matches",
+      "label": "Build owner/appraisal parcel intelligence",
+      "command": "echo Build king-county-wa owner/appraisal index after official assessor/appraisal source is verified.",
+      "requiredOutputs": [
+        "output/king-county-wa/king-county-wa-owner-appraisal-index.json",
+        "output/king-county-wa/join-key-report.md"
+      ]
+    },
+    {
+      "id": "build-permit-service",
+      "label": "Normalize and publish permits and certificates of occupancy",
+      "command": "echo Build king-county-wa permits/CO after official source verification.",
+      "requiredOutputs": [
+        "public/data/counties/king-county-wa/permits/manifest.json"
+      ]
+    },
+    {
+      "id": "build-zoning-index",
+      "label": "Build zoning and overlay parcel index",
+      "command": "echo Build king-county-wa zoning after official source verification.",
+      "requiredOutputs": [
+        "public/data/counties/king-county-wa/zoning/manifest.json",
+        "output/king-county-wa/zoning-source-report.md"
+      ]
+    },
+    {
+      "id": "build-floodplain-index",
+      "label": "Build floodplain parcel index",
+      "command": "echo Build king-county-wa floodplain after FEMA/local source verification.",
+      "requiredOutputs": [
+        "public/data/counties/king-county-wa/floodplain/manifest.json",
+        "output/king-county-wa/floodplain-source-report.md"
+      ]
+    },
+    {
+      "id": "build-migration-demand",
+      "label": "Build aggregate migration and demand parcel index",
+      "command": "echo Build king-county-wa aggregate migration/demand after approved geography sources are verified.",
+      "requiredOutputs": [
+        "public/data/counties/king-county-wa/demand/manifest.json"
+      ]
+    },
+    {
+      "id": "validate",
+      "label": "Run county QC",
+      "command": "npm.cmd run county:qc",
+      "requiredOutputs": [
+        "output/county-qc/king-county-wa.json",
+        "output/county-qc/king-county-wa.md"
+      ]
+    }
+  ],
+  "productionTileStep": {
+    "id": "build-pmtiles",
+    "label": "Build PMTiles/vector tiles after the parcel GeoJSON exists",
+    "handoff": "output/king-county-wa/vector-tiles/README.md",
+    "expectedOutput": "output/king-county-wa/king-county-wa-parcels.pmtiles"
+  },
+  "uiConstraint": "Do not redesign or restyle any White Rabbit pages while running this pilot county ingestion pipeline."
+}

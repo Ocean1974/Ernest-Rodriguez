@@ -1,0 +1,74 @@
+{
+  "version": "wr-county-source-manifest-v1",
+  "generatedAt": "2026-09-12T00:00:00.000Z",
+  "county_id": "fort-bend-county-tx",
+  "county_name": "Fort Bend County",
+  "state": "TX",
+  "fips": "48157",
+  "status": "official-parcel-appraisal-service-verified-importer-ready",
+  "officialSourceStatus": "verified",
+  "official_sources": {
+    "county_gis": "https://www.fortbendcountytx.gov/government/departments/county-services/engineering/gis-data",
+    "appraisal_district_gis": "https://www.fbcad.org/gis-data/",
+    "parcel_feature_service": "https://gisportal.fortbendcountytx.gov/arcgis/rest/services/InteractiveMap/Parcels_Public/FeatureServer/1",
+    "parcel_service_root": "https://gisportal.fortbendcountytx.gov/arcgis/rest/services/InteractiveMap/Parcels_Public/FeatureServer",
+    "legacy_parcel_service": "https://gisweb.fortbendcountytx.gov/arcgis/rest/services/InteractiveMap/Parcels/FeatureServer/1"
+  },
+  "service_lineage": {
+    "publisher": "Fort Bend County GIS / Fort Bend Central Appraisal District",
+    "layer": "Parcels_Public FeatureServer layer 1",
+    "service_description": "NAD83(2011) StatePlane Texas South Central FIPS 4204 US Feet; updates biannually",
+    "legacy_endpoint_status": "HTTP 522 observed during 2026-09-12 verification; retained only as lineage/fallback evidence"
+  },
+  "verified_counts": {
+    "parcel_geometry_features": 385212,
+    "geometry_missing_features": 0,
+    "object_id_non_null_features": 385212,
+    "object_id_distinct_values": 385212,
+    "global_id_non_null_features": 385212,
+    "global_id_distinct_values": 385212,
+    "property_number_non_null_features": 385212,
+    "property_number_distinct_values": 385204,
+    "property_number_duplicate_excess": 8,
+    "uid_non_null_features": 385212,
+    "uid_distinct_values": 385204,
+    "count_verified_at": "2026-09-12",
+    "status": "live-service-count-geometry-and-key-audit-verified"
+  },
+  "join_keys": {
+    "snapshot_feature_identity": "GlobalID is non-null and unique for all 385,212 audited parcel features; OBJECTID is also complete and snapshot-unique",
+    "primary_parcel_account": "Property_Number is the searchable appraisal business identifier but has 8 duplicate excess occurrences and cannot be the sole feature identity",
+    "secondary_business_ids": "CAD_Reference_Number and UID are complete but each also has 8 duplicate excess occurrences",
+    "owner_appraisal": "Owner, mailing, situs, value, legal, land, and building fields are attributes on the same parcel feature",
+    "refresh_warning": "GlobalID persistence across a later biannual refresh has not yet been re-observed, so activation remains gated"
+  },
+  "query": {
+    "primary_where": "1=1",
+    "order_by": "OBJECTID",
+    "max_record_count": 2000,
+    "geometry_out_sr": 4326,
+    "out_fields": ["OBJECTID", "GlobalID", "UID", "CAD_Reference_Number", "Property_Number", "X_Reference_Of_Section", "Map_Number", "Owner_Name", "Owner_Address_1", "Owner_Address_2", "Owner_Address_3", "Owner_City", "Owner_State", "Owner_Zip", "Total_Value", "Land_Value", "Improvement_Value", "Situs", "Legal", "Legal_Location", "Year_Built", "Total_Living_Area_SqFT", "Land_Size_FT", "Land_Size_AC", "Land_State_Code", "Land_Type", "Land_AG_Code", "Building_Class", "Neighborhood_Code", "Common_Land_Use_Type", "Shape__Area", "Shape__Length"]
+  },
+  "verified_field_groups": {
+    "identity": ["OBJECTID", "GlobalID", "UID", "CAD_Reference_Number", "Property_Number"],
+    "owner": ["Owner_Name", "Owner_Address_1", "Owner_Address_2", "Owner_Address_3", "Owner_City", "Owner_State", "Owner_Zip"],
+    "situs": ["Situs", "Situs_Street_Number", "Situs_Street_Name", "Situs_Street_Type", "Situs_APT"],
+    "value": ["Total_Value", "Land_Value", "Improvement_Value"],
+    "land_building": ["Year_Built", "Total_Living_Area_SqFT", "Land_Size_FT", "Land_Size_AC", "Building_Class", "Shape__Area", "Shape__Length"],
+    "legal": ["Legal", "Legal_Location", "Map_Number", "X_Reference_Of_Section"]
+  },
+  "download_tests": {
+    "arcgis_rest_query": { "supported": true, "format": "JSON, geoJSON, PBF" },
+    "pagination": { "supported": true, "max_record_count": 2000 },
+    "browser_rendering": { "supported": false, "notes": "Use build-time preprocessing and viewport-safe outputs; never load the full service in the browser." }
+  },
+  "rights_status": "official public GIS and FBCAD download pages verified; exact redistribution/derived-output terms still require release review",
+  "remaining_blockers": [
+    "complete formal rights and redistribution review",
+    "verify GlobalID persistence across a later biannual refresh",
+    "run full service build, county QC, and production tile handoff",
+    "verify permits, zoning, floodplain, development, and demand sources"
+  ],
+  "completion_impact": "sample-and-full-importer-ready-activation-gated",
+  "activation": "do-not-activate"
+}

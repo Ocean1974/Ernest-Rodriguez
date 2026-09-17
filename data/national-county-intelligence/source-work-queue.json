@@ -1,0 +1,433 @@
+{
+  "version": "wr-national-county-intel-v1",
+  "coverageGoal": "All United States counties and county-equivalent jurisdictions",
+  "uiConstraint": "Do not redesign any White Rabbit pages while expanding parcel intelligence plumbing.",
+  "dcadModelAdapterId": "dallas-county-dcad",
+  "countyIntelligenceChecklist": [
+    {
+      "id": "parcel-geometry",
+      "label": "Parcel boundary polygons",
+      "dcadExample": "PARCEL_GEOM.zip",
+      "requiredForCountyActivation": true
+    },
+    {
+      "id": "parcel-ids",
+      "label": "Parcel ID and stable county parcel key",
+      "dcadExample": "PARCEL_GEOM.Acct -> ACCOUNT_INFO.ACCOUNT_NUM",
+      "requiredForCountyActivation": true
+    },
+    {
+      "id": "owner-appraisal",
+      "label": "Owner, mailing, land, improvement, value, building, and land-use fields",
+      "dcadExample": "DCAD2026_CURRENT.ZIP ACCOUNT_INFO, ACCOUNT_APPRL_YEAR, LAND, COM_DETAIL, RES_DETAIL",
+      "requiredForCountyActivation": true
+    },
+    {
+      "id": "parcel-dimensions",
+      "label": "Frontage, depth, area, perimeter, dimension labels, or spatial measurement fallback",
+      "dcadExample": "ParcelDimension.zip joined by spatial nearest-label behavior",
+      "requiredForCountyActivation": false
+    },
+    {
+      "id": "block-grid",
+      "label": "Block, subdivision, tract, or map-grid context",
+      "dcadExample": "BLKID.zip joined by spatial nearest-label behavior",
+      "requiredForCountyActivation": false
+    },
+    {
+      "id": "zoning",
+      "label": "Zoning district, planned development, overlays, cases, and subdistricts",
+      "dcadExample": "City of Dallas Public Zoning ArcGIS sources joined by ACCT/GIS_ACCT first, spatial fallback second",
+      "requiredForCountyActivation": false
+    },
+    {
+      "id": "floodplain",
+      "label": "Flood zone, SFHA, floodplain, and current FEMA/local flood layers",
+      "dcadExample": "City of Dallas Current Floodplain centroid spatial join",
+      "requiredForCountyActivation": false
+    },
+    {
+      "id": "permits-co",
+      "label": "Permits and Certificates of Occupancy",
+      "dcadExample": "City of Dallas permits/CO normalized address match to DCAD parcels",
+      "requiredForCountyActivation": false
+    },
+    {
+      "id": "development-signals",
+      "label": "Development, construction, rezoning, permit, and market activity signals",
+      "dcadExample": "White Rabbit development intelligence parcel index",
+      "requiredForCountyActivation": false
+    },
+    {
+      "id": "migration-demand",
+      "label": "Migration, population, household, rent, sales, and demand signals",
+      "dcadExample": "National demand layer placeholder; parcel demand joins remain county/market specific",
+      "requiredForCountyActivation": false
+    },
+    {
+      "id": "viewport-search",
+      "label": "Viewport chunks and search shards",
+      "dcadExample": "public/data/parcels/manifest.json with chunks and searchIndexShards",
+      "requiredForCountyActivation": true
+    },
+    {
+      "id": "qa",
+      "label": "QA counts: parcel count, missing geometry, duplicate keys, join counts, unmatched rows",
+      "dcadExample": "DCAD reports in output/ lock exact counts and join keys",
+      "requiredForCountyActivation": true
+    }
+  ],
+  "sourceDiscoveryRules": [
+    "Use official county, appraisal district, assessor, GIS, open data, or municipal sources first.",
+    "Do not treat permit contractor/applicant fields as parcel owner fields.",
+    "Preserve source dataset identifiers, pull dates, join keys, and count checks.",
+    "Mark owner/appraisal sources as source-needed until an official bulk export, API, or legally usable source is verified.",
+    "Do not load huge shapefiles directly in the browser; build viewport chunks, search shards, and vector tiles.",
+    "Keep the app disabled for a county until QA reports have exact counts and no blocking join-key uncertainty."
+  ],
+  "activeExamples": [
+    {
+      "countyId": "dallas-county-dcad",
+      "fips": "48113",
+      "countyName": "Dallas County",
+      "state": "TX",
+      "market": "Dallas",
+      "status": "active-dcad-model",
+      "adapterPath": "data/county-adapters/dallas/adapter.json",
+      "whyItMatters": "This is the model county. It has parcel geometry, DCAD owner/appraisal tables, permit joins, zoning/floodplain plumbing, development signals, viewport chunks, search shards, and locked QA counts."
+    },
+    {
+      "countyId": "jefferson-ky",
+      "fips": "21111",
+      "countyName": "Jefferson County",
+      "state": "KY",
+      "market": "Louisville",
+      "status": "pilot-source-identified",
+      "adapterPath": "data/county-adapters/louisville/adapter.json",
+      "whyItMatters": "This proves the adapter can move beyond Texas. Parcel geometry, LRSN, PARCELID, zoning, floodplain, and PVA owner/appraisal hooks are documented."
+    },
+    {
+      "countyId": "tarrant-county-tad",
+      "fips": "48439",
+      "countyName": "Tarrant County",
+      "state": "TX",
+      "market": "Fort Worth",
+      "status": "pilot-queued",
+      "adapterPath": "data/county-adapters/tarrant/adapter.json",
+      "whyItMatters": "This is the next North Texas adapter candidate after DCAD."
+    }
+  ],
+  "priorityCountyQueue": [
+    {
+      "countyId": "harris-county-tx",
+      "fips": "48201",
+      "countyName": "Harris County",
+      "state": "TX",
+      "market": "Houston",
+      "status": "source-verified-adapter-created",
+      "adapterPath": "data/county-adapters/harris-county-tx/adapter.json",
+      "priorityReason": "Major Texas market; first one-by-one national rollout county with official parcel/property FeatureServer verified and adapter plumbing created.",
+      "sourceSearchQueries": [
+        "Harris Central Appraisal District parcel data download",
+        "Harris County GIS parcel boundaries",
+        "Houston permits open data parcel"
+      ]
+    },
+    {
+      "countyId": "los-angeles-county-ca",
+      "fips": "06037",
+      "countyName": "Los Angeles County",
+      "state": "CA",
+      "market": "Los Angeles",
+      "status": "source-discovery-queued",
+      "priorityReason": "Large national benchmark county with assessor, parcel, zoning, flood, and permit source discovery needed.",
+      "sourceSearchQueries": [
+        "Los Angeles County assessor parcel data shapefile",
+        "Los Angeles County GIS parcels open data",
+        "Los Angeles County permits open data"
+      ]
+    },
+    {
+      "countyId": "cook-county-il",
+      "fips": "17031",
+      "countyName": "Cook County",
+      "state": "IL",
+      "market": "Chicago",
+      "status": "source-discovery-queued",
+      "priorityReason": "Core Midwest county for parcel and assessor intelligence.",
+      "sourceSearchQueries": [
+        "Cook County assessor parcel data download",
+        "Cook County GIS parcel boundaries",
+        "Chicago permits open data parcel"
+      ]
+    },
+    {
+      "countyId": "maricopa-county-az",
+      "fips": "04013",
+      "countyName": "Maricopa County",
+      "state": "AZ",
+      "market": "Phoenix",
+      "status": "source-verified-adapter-created",
+      "adapterPath": "data/county-adapters/maricopa-county-az/adapter.json",
+      "priorityReason": "Large Sun Belt market; official Maricopa Assessor Parcel Viewer Parcels_view FeatureServer verified and adapter plumbing created.",
+      "sourceSearchQueries": [
+        "Maricopa County assessor parcel data GIS",
+        "Maricopa County parcel shapefile download",
+        "Phoenix permits open data"
+      ]
+    },
+    {
+      "countyId": "san-diego-county-ca",
+      "fips": "06073",
+      "countyName": "San Diego County",
+      "state": "CA",
+      "market": "San Diego",
+      "status": "source-discovery-queued",
+      "priorityReason": "High-value coastal market for residential, CRE, rental, and zoning intelligence.",
+      "sourceSearchQueries": [
+        "San Diego County assessor parcel GIS",
+        "San Diego County parcels open data",
+        "San Diego permits open data"
+      ]
+    },
+    {
+      "countyId": "orange-county-ca",
+      "fips": "06059",
+      "countyName": "Orange County",
+      "state": "CA",
+      "market": "Orange County CA",
+      "status": "source-discovery-queued",
+      "priorityReason": "High-value Southern California county for parcel and owner/appraisal source discovery.",
+      "sourceSearchQueries": [
+        "Orange County California assessor parcel data",
+        "Orange County CA GIS parcel boundaries",
+        "Orange County permits open data"
+      ]
+    },
+    {
+      "countyId": "miami-dade-county-fl",
+      "fips": "12086",
+      "countyName": "Miami-Dade County",
+      "state": "FL",
+      "market": "Miami",
+      "status": "source-discovery-queued",
+      "priorityReason": "High-demand Florida market with strong floodplain, zoning, and rental importance.",
+      "sourceSearchQueries": [
+        "Miami-Dade property appraiser parcel GIS",
+        "Miami-Dade open data parcels",
+        "Miami-Dade permits certificates of occupancy"
+      ]
+    },
+    {
+      "countyId": "kings-county-ny",
+      "fips": "36047",
+      "countyName": "Kings County",
+      "state": "NY",
+      "market": "Brooklyn",
+      "status": "source-discovery-queued",
+      "priorityReason": "Dense urban county-equivalent where parcel intelligence may rely on citywide NYC sources.",
+      "sourceSearchQueries": [
+        "NYC PLUTO parcel data Brooklyn",
+        "NYC Department of Finance property data Brooklyn",
+        "NYC DOB permits open data parcel"
+      ]
+    },
+    {
+      "countyId": "queens-county-ny",
+      "fips": "36081",
+      "countyName": "Queens County",
+      "state": "NY",
+      "market": "Queens",
+      "status": "source-discovery-queued",
+      "priorityReason": "Dense NYC county-equivalent with citywide parcel, permits, and zoning sources.",
+      "sourceSearchQueries": [
+        "NYC PLUTO parcel data Queens",
+        "NYC Department of Finance property data Queens",
+        "NYC zoning data Queens"
+      ]
+    },
+    {
+      "countyId": "riverside-county-ca",
+      "fips": "06065",
+      "countyName": "Riverside County",
+      "state": "CA",
+      "market": "Inland Empire",
+      "status": "source-discovery-queued",
+      "priorityReason": "Growth market for industrial, rental, migration, and land intelligence.",
+      "sourceSearchQueries": [
+        "Riverside County assessor parcel data GIS",
+        "Riverside County parcel boundaries open data",
+        "Riverside County permits open data"
+      ]
+    },
+    {
+      "countyId": "clark-county-nv",
+      "fips": "32003",
+      "countyName": "Clark County",
+      "state": "NV",
+      "market": "Las Vegas",
+      "status": "source-discovery-queued",
+      "priorityReason": "High-growth Sun Belt county with CRE, rentals, and hospitality demand.",
+      "sourceSearchQueries": [
+        "Clark County Nevada assessor parcel data",
+        "Clark County NV GIS parcels",
+        "Las Vegas permits open data"
+      ]
+    },
+    {
+      "countyId": "king-county-wa",
+      "fips": "53033",
+      "countyName": "King County",
+      "state": "WA",
+      "market": "Seattle",
+      "status": "source-verified-adapter-created",
+      "adapterPath": "data/county-adapters/king-county-wa/adapter.json",
+      "priorityReason": "Major West Coast market; official King County GIS parcel geometry, property info, and recent sales services verified with duplicate-PIN caveat documented.",
+      "sourceSearchQueries": [
+        "King County assessor parcel GIS",
+        "King County parcel data download",
+        "Seattle permits open data"
+      ]
+    },
+    {
+      "countyId": "bexar-county-tx",
+      "fips": "48029",
+      "countyName": "Bexar County",
+      "state": "TX",
+      "market": "San Antonio",
+      "status": "source-discovery-queued",
+      "priorityReason": "Texas market that can follow the DCAD county-adapter pattern.",
+      "sourceSearchQueries": [
+        "Bexar Appraisal District parcel data",
+        "Bexar County GIS parcel boundaries",
+        "San Antonio permits open data"
+      ]
+    },
+    {
+      "countyId": "broward-county-fl",
+      "fips": "12011",
+      "countyName": "Broward County",
+      "state": "FL",
+      "market": "Fort Lauderdale",
+      "status": "source-discovery-queued",
+      "priorityReason": "South Florida county for coastal, floodplain, rental, and ownership intelligence.",
+      "sourceSearchQueries": [
+        "Broward County property appraiser parcel data",
+        "Broward County GIS parcels",
+        "Broward permits open data"
+      ]
+    },
+    {
+      "countyId": "santa-clara-county-ca",
+      "fips": "06085",
+      "countyName": "Santa Clara County",
+      "state": "CA",
+      "market": "San Jose",
+      "status": "source-discovery-queued",
+      "priorityReason": "High-value Bay Area market for CRE, residential, and ownership intelligence.",
+      "sourceSearchQueries": [
+        "Santa Clara County assessor parcel GIS",
+        "Santa Clara County parcel data download",
+        "San Jose permits open data"
+      ]
+    },
+    {
+      "countyId": "wayne-county-mi",
+      "fips": "26163",
+      "countyName": "Wayne County",
+      "state": "MI",
+      "market": "Detroit",
+      "status": "source-discovery-queued",
+      "priorityReason": "Large Midwest county with redevelopment, permits, and parcel demand signals.",
+      "sourceSearchQueries": [
+        "Wayne County Michigan parcel GIS",
+        "Wayne County property assessment data",
+        "Detroit permits open data"
+      ]
+    },
+    {
+      "countyId": "alameda-county-ca",
+      "fips": "06001",
+      "countyName": "Alameda County",
+      "state": "CA",
+      "market": "East Bay",
+      "status": "source-discovery-queued",
+      "priorityReason": "Bay Area county for residential, CRE, rental, and zoning intelligence.",
+      "sourceSearchQueries": [
+        "Alameda County assessor parcel data",
+        "Alameda County GIS parcel boundaries",
+        "Oakland permits open data"
+      ]
+    },
+    {
+      "countyId": "philadelphia-county-pa",
+      "fips": "42101",
+      "countyName": "Philadelphia County",
+      "state": "PA",
+      "market": "Philadelphia",
+      "status": "source-discovery-queued",
+      "priorityReason": "Dense city-county market with citywide parcels, zoning, and permits.",
+      "sourceSearchQueries": [
+        "Philadelphia parcel data OPA",
+        "Philadelphia property assessment open data",
+        "Philadelphia permits open data"
+      ]
+    },
+    {
+      "countyId": "travis-county-tx",
+      "fips": "48453",
+      "countyName": "Travis County",
+      "state": "TX",
+      "market": "Austin",
+      "status": "source-discovery-queued",
+      "priorityReason": "Texas growth market; strong candidate after DCAD/Tarrant/Bexar/Harris.",
+      "sourceSearchQueries": [
+        "Travis Central Appraisal District parcel data",
+        "Travis County GIS parcels",
+        "Austin permits open data"
+      ]
+    },
+    {
+      "countyId": "collin-county-tx",
+      "fips": "48085",
+      "countyName": "Collin County",
+      "state": "TX",
+      "market": "North Dallas",
+      "status": "source-discovery-queued",
+      "priorityReason": "North Texas growth county near the active DCAD market.",
+      "sourceSearchQueries": [
+        "Collin Central Appraisal District parcel data",
+        "Collin County GIS parcels",
+        "Plano permits open data"
+      ]
+    },
+    {
+      "countyId": "denton-county-tx",
+      "fips": "48121",
+      "countyName": "Denton County",
+      "state": "TX",
+      "market": "North Dallas",
+      "status": "source-discovery-queued",
+      "priorityReason": "North Texas growth county adjacent to DCAD and Tarrant.",
+      "sourceSearchQueries": [
+        "Denton Central Appraisal District parcel data",
+        "Denton County GIS parcels",
+        "Denton permits open data"
+      ]
+    },
+    {
+      "countyId": "fort-bend-county-tx",
+      "fips": "48157",
+      "countyName": "Fort Bend County",
+      "state": "TX",
+      "market": "Houston",
+      "status": "source-discovery-queued",
+      "priorityReason": "Houston-area growth county for residential, rental, and land demand.",
+      "sourceSearchQueries": [
+        "Fort Bend Central Appraisal District parcel data",
+        "Fort Bend County GIS parcels",
+        "Fort Bend permits open data"
+      ]
+    }
+  ]
+}

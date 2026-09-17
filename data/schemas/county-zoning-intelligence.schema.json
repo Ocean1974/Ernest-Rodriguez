@@ -1,0 +1,13 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema", "$id": "https://whiterabbit.local/schemas/county-zoning-intelligence.schema.json", "title": "White Rabbit County Zoning Intelligence Contracts",
+  "oneOf": [{ "$ref": "#/$defs/probe" }, { "$ref": "#/$defs/coverage" }, { "$ref": "#/$defs/policy" }, { "$ref": "#/$defs/definition" }, { "$ref": "#/$defs/assignment" }, { "$ref": "#/$defs/audit" }],
+  "$defs": {
+    "sha256": { "type": "string", "pattern": "^[a-f0-9]{64}$" },
+    "probe": { "type": "object", "required": ["schemaVersion", "countyId", "sourceId", "sourceRole", "featureCount", "nonNullCounts", "capturesGeometry", "captureAuthorized", "probeSha256"], "properties": { "schemaVersion": { "const": "wr-county-zoning-source-probe-v1" }, "capturesGeometry": { "const": false }, "captureAuthorized": { "const": false }, "probeSha256": { "$ref": "#/$defs/sha256" } } },
+    "coverage": { "type": "object", "required": ["schemaVersion", "countyId", "discoveredCurrentZoningJurisdictionIds", "certifiedCurrentZoningJurisdictionIds", "uncoveredCurrentZoningJurisdictionIds", "rules", "status", "reconciliationSha256"], "properties": { "schemaVersion": { "const": "wr-county-zoning-coverage-reconciliation-v1" }, "status": { "enum": ["blocked", "certified"] }, "reconciliationSha256": { "$ref": "#/$defs/sha256" } } },
+    "policy": { "type": "object", "required": ["schemaVersion", "countyId", "effectiveAt", "requiredGeometryChecks", "checks", "status", "policySha256"], "properties": { "schemaVersion": { "const": "wr-county-zoning-snapshot-policy-v1" }, "status": { "enum": ["blocked", "capture-authorized"] }, "policySha256": { "$ref": "#/$defs/sha256" } } },
+    "definition": { "type": "object", "required": ["schemaVersion", "jurisdictionId", "districtCode", "districtLabel", "broadUseCategory", "officialDefinitionRef", "sourceSnapshotSha256", "definitionSha256"], "properties": { "schemaVersion": { "const": "wr-county-zoning-district-definition-v1" }, "definitionSha256": { "$ref": "#/$defs/sha256" } } },
+    "assignment": { "type": "object", "required": ["schemaVersion", "countyId", "countyParcelId", "jurisdictionId", "districts", "primaryDistrictCode", "splitParcel", "ambiguous", "overlays", "pendingCaseIds", "disclaimer", "assignmentSha256"], "properties": { "schemaVersion": { "const": "wr-county-parcel-zoning-assignment-v1" }, "assignmentSha256": { "$ref": "#/$defs/sha256" } } },
+    "audit": { "type": "object", "required": ["schemaVersion", "countyId", "jurisdictionId", "counts", "checks", "status", "auditSha256"], "properties": { "schemaVersion": { "const": "wr-county-zoning-assignment-audit-v1" }, "status": { "enum": ["rejected", "certified"] }, "auditSha256": { "$ref": "#/$defs/sha256" } } }
+  }
+}

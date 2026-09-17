@@ -1,0 +1,107 @@
+{
+  "id": "charlevoix-county-mi-ingestion",
+  "countyAdapter": "data/county-adapters/charlevoix-county-mi/adapter.json",
+  "universalParcelSchema": "data/schemas/universal-parcel.schema.json",
+  "defaultMode": "plan",
+  "enabledForProduction": false,
+  "scaffoldOnly": true,
+  "steps": [
+    {
+      "id": "verify-official-sources",
+      "label": "Verify official parcel and assessor/appraiser sources",
+      "command": "echo Verify official sources for charlevoix-county-mi.",
+      "requiredOutputs": [
+        "output/charlevoix-county-mi/schema-report.md",
+        "output/charlevoix-county-mi/schema-report.json"
+      ]
+    },
+    {
+      "id": "verify-join-keys",
+      "label": "Document exact parcel/account/GIS join keys",
+      "command": "echo Document exact join keys for charlevoix-county-mi.",
+      "requiredOutputs": [
+        "output/charlevoix-county-mi/join-key-report.md"
+      ]
+    },
+    {
+      "id": "build-parcel-geojson",
+      "label": "Build universal county parcel GeoJSON",
+      "command": "echo Build charlevoix-county-mi universal parcel GeoJSON after source verification.",
+      "requiredOutputs": [
+        "output/charlevoix-county-mi/charlevoix-county-mi-parcels.geojson",
+        "output/charlevoix-county-mi/full-parcel-access-report.md"
+      ]
+    },
+    {
+      "id": "build-parcel-service",
+      "label": "Build viewport chunks and search shards",
+      "command": "echo Build viewport-safe parcel service for charlevoix-county-mi.",
+      "requiredOutputs": [
+        "public/data/counties/charlevoix-county-mi/parcels/manifest.json"
+      ]
+    },
+    {
+      "id": "build-owner-matches",
+      "label": "Build owner/appraisal parcel joins",
+      "command": "echo Build owner and appraisal joins for charlevoix-county-mi.",
+      "requiredOutputs": [
+        "output/charlevoix-county-mi/charlevoix-county-mi-owner-appraisal-index.json"
+      ]
+    },
+    {
+      "id": "build-permit-service",
+      "label": "Normalize permits and certificates of occupancy",
+      "command": "echo Build permits and CO pipeline for charlevoix-county-mi.",
+      "requiredOutputs": [
+        "public/data/counties/charlevoix-county-mi/permits/manifest.json"
+      ]
+    },
+    {
+      "id": "build-zoning-index",
+      "label": "Build zoning parcel index",
+      "command": "echo Build zoning joins for charlevoix-county-mi.",
+      "requiredOutputs": [
+        "public/data/counties/charlevoix-county-mi/zoning/manifest.json"
+      ]
+    },
+    {
+      "id": "build-floodplain-index",
+      "label": "Build floodplain parcel index",
+      "command": "echo Build floodplain joins for charlevoix-county-mi.",
+      "requiredOutputs": [
+        "public/data/counties/charlevoix-county-mi/floodplain/manifest.json"
+      ]
+    },
+    {
+      "id": "build-development-index",
+      "label": "Build development-signal parcel index",
+      "command": "echo Build development index for charlevoix-county-mi.",
+      "requiredOutputs": [
+        "public/data/counties/charlevoix-county-mi/developments/parcel-development-index.json"
+      ]
+    },
+    {
+      "id": "build-migration-demand",
+      "label": "Build aggregate migration and demand index",
+      "command": "echo Build aggregate demand joins for charlevoix-county-mi.",
+      "requiredOutputs": [
+        "public/data/counties/charlevoix-county-mi/demand/manifest.json"
+      ]
+    },
+    {
+      "id": "validate",
+      "label": "Run county QC",
+      "command": "npm.cmd run county:qc",
+      "requiredOutputs": [
+        "output/county-qc/charlevoix-county-mi.json",
+        "output/county-qc/charlevoix-county-mi.md"
+      ]
+    }
+  ],
+  "productionTileStep": {
+    "id": "build-pmtiles",
+    "label": "Build PMTiles/vector tiles after verified parcel GeoJSON exists",
+    "expectedOutput": "output/charlevoix-county-mi/charlevoix-county-mi-parcels.pmtiles"
+  },
+  "uiConstraint": "Do not redesign or activate White Rabbit pages while this county remains a pipeline scaffold."
+}

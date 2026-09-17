@@ -1,0 +1,14 @@
+export const DOCUMENT_CITATION_VERSION: "wr-document-citation-v1";
+export const DOCUMENT_CITATION_VERIFICATION_VERSION: "wr-document-citation-verification-v1";
+export const DOCUMENT_EVIDENCE_CLAIM_VERSION: "wr-document-evidence-claim-v1";
+export const DOCUMENT_EXTRACTION_RUN_VERSION: "wr-document-extraction-run-v1";
+export const DOCUMENT_EXTRACTION_REVIEW_VERSION: "wr-document-extraction-review-v1";
+export const REVIEWED_FACT_PROMOTION_VERSION: "wr-reviewed-fact-promotion-v1";
+export function createDocumentCitation(input?: Record<string, any>): Readonly<Record<string, any>>;
+export function verifyDocumentCitation(citation: Record<string, any>, options?: Record<string, any>): Readonly<Record<string, any>>;
+export function normalizeDocumentCitationVerification(input?: Record<string, any>): Readonly<Record<string, any>>;
+export function createDocumentEvidenceClaim(input?: Record<string, any>): Readonly<Record<string, any>>;
+export function createDocumentExtractionRun(input?: Record<string, any>): Readonly<Record<string, any>>;
+export function createDocumentExtractionReview(run: Record<string, any>, input?: Record<string, any>): Readonly<Record<string, any>>;
+export function createReviewedFactPromotion(input?: Record<string, any>): Readonly<Record<string, any>>;
+export function normalizeReviewedFactPromotion(input?: Record<string, any>): Readonly<Record<string, any>>;

@@ -1,0 +1,33 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://white-rabbit.local/schemas/portfolio-operations.schema.json",
+  "title": "White Rabbit Portfolio Operations Intelligence",
+  "oneOf": [
+    { "$ref": "#/$defs/source" }, { "$ref": "#/$defs/asset" }, { "$ref": "#/$defs/lease" },
+    { "$ref": "#/$defs/amendment" }, { "$ref": "#/$defs/statement" }, { "$ref": "#/$defs/budget" },
+    { "$ref": "#/$defs/covenant" }, { "$ref": "#/$defs/plan" }, { "$ref": "#/$defs/state" },
+    { "$ref": "#/$defs/rentRoll" }, { "$ref": "#/$defs/metrics" }, { "$ref": "#/$defs/variance" },
+    { "$ref": "#/$defs/covenantReport" }, { "$ref": "#/$defs/anomalyReport" }, { "$ref": "#/$defs/fx" },
+    { "$ref": "#/$defs/portfolioSnapshot" }, { "$ref": "#/$defs/planProgress" }
+  ],
+  "$defs": {
+    "digest": { "type": "string", "pattern": "^[a-f0-9]{64}$" },
+    "source": { "type": "object", "required": ["schemaVersion", "datasetId", "recordId", "sourceRef", "licenseId", "licenseStatus", "observedAt", "availableAt", "expiresAt", "sourceVersion", "fieldMap", "contentSha256", "sourceSha256"], "properties": { "schemaVersion": { "const": "wr-operating-evidence-source-v1" }, "licenseStatus": { "enum": ["authorized", "restricted", "expired", "unknown"] }, "sourceSha256": { "$ref": "#/$defs/digest" } } },
+    "asset": { "type": "object", "required": ["schemaVersion", "id", "organizationId", "whiteRabbitPropertyId", "currency", "portfolioMemberships", "source", "assetSha256"], "properties": { "schemaVersion": { "const": "wr-asset-record-v1" }, "assetSha256": { "$ref": "#/$defs/digest" } } },
+    "lease": { "type": "object", "required": ["schemaVersion", "id", "organizationId", "assetId", "leaseId", "unitIds", "baseRentSchedule", "source", "leaseSha256"], "properties": { "schemaVersion": { "const": "wr-lease-record-v1" }, "leaseSha256": { "$ref": "#/$defs/digest" } } },
+    "amendment": { "type": "object", "required": ["schemaVersion", "id", "organizationId", "assetId", "leaseId", "sequence", "effectiveDate", "previousTermsSha256", "changes", "source", "amendmentSha256"], "properties": { "schemaVersion": { "const": "wr-lease-amendment-v1" }, "amendmentSha256": { "$ref": "#/$defs/digest" } } },
+    "statement": { "type": "object", "required": ["schemaVersion", "id", "organizationId", "assetId", "periodStart", "periodEnd", "entries", "expectedAccountCodes", "completeness", "source", "statementSha256"], "properties": { "schemaVersion": { "const": "wr-operating-statement-v1" }, "statementSha256": { "$ref": "#/$defs/digest" } } },
+    "budget": { "type": "object", "required": ["schemaVersion", "id", "organizationId", "assetId", "periodStart", "periodEnd", "entries", "expectedAccountCodes", "completeness", "source", "budgetSha256"], "properties": { "schemaVersion": { "const": "wr-asset-budget-v1" }, "budgetSha256": { "$ref": "#/$defs/digest" } } },
+    "covenant": { "type": "object", "required": ["schemaVersion", "id", "organizationId", "assetId", "metric", "comparator", "threshold", "source", "covenantSha256"], "properties": { "schemaVersion": { "const": "wr-debt-covenant-v1" }, "covenantSha256": { "$ref": "#/$defs/digest" } } },
+    "plan": { "type": "object", "required": ["schemaVersion", "id", "organizationId", "assetId", "planYear", "actions", "status", "planSha256"], "properties": { "schemaVersion": { "const": "wr-asset-plan-v1" }, "planSha256": { "$ref": "#/$defs/digest" } } },
+    "state": { "type": "object", "required": ["schemaVersion", "organizationId", "revision", "assets", "leases", "amendments", "statements", "budgets", "covenants", "assetPlans", "updatedAt"], "properties": { "schemaVersion": { "const": "wr-asset-operations-state-v1" } } },
+    "rentRoll": { "type": "object", "required": ["schemaVersion", "organizationId", "assetId", "asOf", "evaluatedAt", "metrics", "coverage", "findings", "snapshotSha256"], "properties": { "schemaVersion": { "const": "wr-rent-roll-snapshot-v1" }, "snapshotSha256": { "$ref": "#/$defs/digest" } } },
+    "metrics": { "type": "object", "required": ["schemaVersion", "organizationId", "assetId", "metrics", "missingAccountCodes", "findings", "metricsSha256"], "properties": { "schemaVersion": { "const": "wr-operating-metrics-v1" }, "metricsSha256": { "$ref": "#/$defs/digest" } } },
+    "variance": { "type": "object", "required": ["schemaVersion", "organizationId", "assetId", "lines", "coverage", "findings", "varianceSha256"], "properties": { "schemaVersion": { "const": "wr-budget-variance-v1" }, "varianceSha256": { "$ref": "#/$defs/digest" } } },
+    "covenantReport": { "type": "object", "required": ["schemaVersion", "organizationId", "assetId", "results", "status", "reportSha256"], "properties": { "schemaVersion": { "const": "wr-debt-covenant-report-v1" }, "reportSha256": { "$ref": "#/$defs/digest" } } },
+    "anomalyReport": { "type": "object", "required": ["schemaVersion", "organizationId", "assetId", "method", "statisticalConfidenceInterval", "anomalies", "findings", "reportSha256"], "properties": { "schemaVersion": { "const": "wr-operating-anomaly-report-v1" }, "reportSha256": { "$ref": "#/$defs/digest" } } },
+    "fx": { "type": "object", "required": ["schemaVersion", "fromCurrency", "toCurrency", "rate", "asOf", "source", "fxRateSha256"], "properties": { "schemaVersion": { "const": "wr-fx-rate-evidence-v1" }, "fxRateSha256": { "$ref": "#/$defs/digest" } } },
+    "portfolioSnapshot": { "type": "object", "required": ["schemaVersion", "organizationId", "portfolioId", "assets", "metrics", "coverage", "snapshotSha256"], "properties": { "schemaVersion": { "const": "wr-portfolio-snapshot-v1" }, "snapshotSha256": { "$ref": "#/$defs/digest" } } },
+    "planProgress": { "type": "object", "required": ["schemaVersion", "organizationId", "assetId", "planId", "actions", "status", "progressSha256"], "properties": { "schemaVersion": { "const": "wr-asset-plan-progress-v1" }, "progressSha256": { "$ref": "#/$defs/digest" } } }
+  }
+}

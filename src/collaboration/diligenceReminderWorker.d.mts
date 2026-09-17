@@ -1,0 +1,14 @@
+export const DILIGENCE_REMINDER_JOB_VERSION: "wr-diligence-reminder-job-v1";
+export const DILIGENCE_REMINDER_WORKER_STATE_VERSION: "wr-diligence-reminder-worker-state-v1";
+export const DILIGENCE_REMINDER_WORKER_CYCLE_VERSION: "wr-diligence-reminder-worker-cycle-v1";
+export const DILIGENCE_REMINDER_DEAD_LETTER_VERSION: "wr-diligence-reminder-dead-letter-v1";
+export const DILIGENCE_REMINDER_RUN_VERSION: "wr-diligence-reminder-run-v1";
+export function createDiligenceReminderJob(input?: Record<string, any>): Record<string, any>;
+export function createDiligenceReminderWorkerState(input?: Record<string, any>): Record<string, any>;
+export function buildDiligenceReminderJobs(workflow: Record<string, any>, options?: Record<string, any>): ReadonlyArray<Record<string, any>>;
+export function enqueueDiligenceReminderJobs(state: Record<string, any>, jobs?: Array<Record<string, any>>, options?: Record<string, any>): Record<string, any>;
+export function cancelStaleDiligenceReminders(state: Record<string, any>, workflow: Record<string, any>, options?: Record<string, any>): Record<string, any>;
+export function leaseDiligenceReminderJobs(state: Record<string, any>, options?: Record<string, any>): Readonly<Record<string, any>>;
+export function emitDiligenceReminder(job: Record<string, any>, adapter: Record<string, any>): Promise<Readonly<Record<string, any>>>;
+export function completeDiligenceReminderJob(state: Record<string, any>, input?: Record<string, any>, options?: Record<string, any>): Record<string, any>;
+export function runDiligenceReminderWorkerCycle(options?: Record<string, any>): Promise<Readonly<Record<string, any>>>;

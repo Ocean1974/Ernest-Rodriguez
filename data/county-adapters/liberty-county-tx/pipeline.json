@@ -1,0 +1,158 @@
+{
+  "id": "liberty-county-tx-ingestion",
+  "countyAdapter": "data/county-adapters/liberty-county-tx/adapter.json",
+  "universalParcelSchema": "data/schemas/universal-parcel.schema.json",
+  "defaultMode": "plan",
+  "enabledForProduction": false,
+  "scaffoldOnly": true,
+  "pipelineContract": {
+    "mode": "evidence-gated",
+    "sourcePriority": "official assessor/appraiser, county GIS, municipal, state, or federal sources first",
+    "identityRule": "Do not emit countyParcelId until a complete duplicate-safe source key or documented composite key is proven.",
+    "geometryRule": "Preprocess county geometry at build time and publish viewport chunks, search shards, or PMTiles.",
+    "failurePolicy": "Preserve exact source, emitted, skipped, unmatched, duplicate, and null counts; never hide a discrepancy.",
+    "activationRule": "Keep the county disabled until its individual map/search, owner/appraisal, QC, and activation gates pass."
+  },
+  "steps": [
+    {
+      "id": "verify-official-sources",
+      "label": "Verify official parcel, assessor/appraisal, permit, zoning, floodplain, and demand sources",
+      "command": "echo Verify official sources for liberty-county-tx before ingesting large files.",
+      "dependsOn": [],
+      "requiredOutputs": [
+        "output/liberty-county-tx/schema-report.md",
+        "output/liberty-county-tx/schema-report.json"
+      ]
+    },
+    {
+      "id": "verify-join-keys",
+      "label": "Document exact parcel/account/GIS join keys",
+      "command": "echo Replace source-needed join keys for liberty-county-tx.",
+      "dependsOn": [
+        "verify-official-sources"
+      ],
+      "requiredOutputs": [
+        "output/liberty-county-tx/join-key-report.md"
+      ]
+    },
+    {
+      "id": "build-parcel-geojson",
+      "label": "Build universal county parcel GeoJSON",
+      "command": "echo Build liberty-county-tx universal parcel GeoJSON after source verification.",
+      "dependsOn": [
+        "verify-official-sources",
+        "verify-join-keys"
+      ],
+      "requiredOutputs": [
+        "output/liberty-county-tx/liberty-county-tx-parcels.geojson",
+        "output/liberty-county-tx/full-parcel-access-report.md"
+      ]
+    },
+    {
+      "id": "build-parcel-service",
+      "label": "Build viewport parcel chunks and search shards",
+      "command": "echo Build liberty-county-tx viewport parcel chunks and search shards after universal GeoJSON exists.",
+      "dependsOn": [
+        "build-parcel-geojson"
+      ],
+      "requiredOutputs": [
+        "public/data/counties/liberty-county-tx/parcels/manifest.json"
+      ]
+    },
+    {
+      "id": "build-owner-matches",
+      "label": "Build owner/appraisal parcel intelligence",
+      "command": "echo Build liberty-county-tx owner/appraisal index after official assessor/appraisal source is verified.",
+      "dependsOn": [
+        "verify-join-keys",
+        "build-parcel-service"
+      ],
+      "requiredOutputs": [
+        "output/liberty-county-tx/liberty-county-tx-owner-appraisal-index.json",
+        "output/liberty-county-tx/join-key-report.md"
+      ]
+    },
+    {
+      "id": "build-permit-service",
+      "label": "Normalize and publish permits and certificates of occupancy",
+      "command": "echo Build liberty-county-tx permits/CO after official source verification.",
+      "dependsOn": [
+        "build-parcel-service"
+      ],
+      "requiredOutputs": [
+        "public/data/counties/liberty-county-tx/permits/manifest.json"
+      ]
+    },
+    {
+      "id": "build-zoning-index",
+      "label": "Build zoning and overlay parcel index",
+      "command": "echo Build liberty-county-tx zoning after official source verification.",
+      "dependsOn": [
+        "build-parcel-service"
+      ],
+      "requiredOutputs": [
+        "public/data/counties/liberty-county-tx/zoning/manifest.json",
+        "output/liberty-county-tx/zoning-source-report.md"
+      ]
+    },
+    {
+      "id": "build-floodplain-index",
+      "label": "Build floodplain parcel index",
+      "command": "echo Build liberty-county-tx floodplain after FEMA or local source verification.",
+      "dependsOn": [
+        "build-parcel-service"
+      ],
+      "requiredOutputs": [
+        "public/data/counties/liberty-county-tx/floodplain/manifest.json",
+        "output/liberty-county-tx/floodplain-source-report.md"
+      ]
+    },
+    {
+      "id": "build-development-index",
+      "label": "Build parcel development-signal index",
+      "command": "echo Build liberty-county-tx development signals from verified permits and parcel joins.",
+      "dependsOn": [
+        "build-parcel-service",
+        "build-permit-service"
+      ],
+      "requiredOutputs": [
+        "public/data/counties/liberty-county-tx/developments/parcel-development-index.json"
+      ]
+    },
+    {
+      "id": "build-migration-demand",
+      "label": "Build aggregate migration and demand index",
+      "command": "echo Build liberty-county-tx aggregate migration and demand after approved geography source verification.",
+      "dependsOn": [
+        "build-parcel-service"
+      ],
+      "requiredOutputs": [
+        "public/data/counties/liberty-county-tx/demand/manifest.json"
+      ]
+    },
+    {
+      "id": "validate",
+      "label": "Run county QC",
+      "command": "npm.cmd run county:qc",
+      "dependsOn": [
+        "build-parcel-service",
+        "build-owner-matches"
+      ],
+      "requiredOutputs": [
+        "output/county-qc/liberty-county-tx.json",
+        "output/county-qc/liberty-county-tx.md"
+      ]
+    }
+  ],
+  "productionTileStep": {
+    "id": "build-pmtiles",
+    "label": "Build PMTiles/vector tiles after verified parcel GeoJSON exists",
+    "dependsOn": [
+      "build-parcel-geojson",
+      "validate"
+    ],
+    "handoff": "output/liberty-county-tx/vector-tiles/README.md",
+    "expectedOutput": "output/liberty-county-tx/liberty-county-tx-parcels.pmtiles"
+  },
+  "uiConstraint": "Do not redesign or restyle any White Rabbit pages while running this pilot county ingestion pipeline."
+}

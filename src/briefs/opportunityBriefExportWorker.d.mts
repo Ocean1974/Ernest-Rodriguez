@@ -1,0 +1,13 @@
+export const OPPORTUNITY_BRIEF_EXPORT_JOB_VERSION: "wr-opportunity-brief-export-job-v1";
+export const OPPORTUNITY_BRIEF_EXPORT_WORKER_STATE_VERSION: "wr-opportunity-brief-export-worker-state-v1";
+export const OPPORTUNITY_BRIEF_EXPORT_WORKER_CYCLE_VERSION: "wr-opportunity-brief-export-worker-cycle-v1";
+export const OPPORTUNITY_BRIEF_EXPORT_DEAD_LETTER_VERSION: "wr-opportunity-brief-export-dead-letter-v1";
+export const OPPORTUNITY_BRIEF_EXPORT_RUN_VERSION: "wr-opportunity-brief-export-run-v1";
+export const BRIEF_EXPORT_JOB_STATUSES: readonly string[];
+export function createOpportunityBriefExportJob(input?: Record<string, any>): Record<string, any>;
+export function createOpportunityBriefExportWorkerState(input?: Record<string, any>): Record<string, any>;
+export function enqueueOpportunityBriefExport(state: Record<string, any>, job: Record<string, any>): Record<string, any>;
+export function leaseOpportunityBriefExportJobs(state: Record<string, any>, options?: Record<string, any>): Readonly<Record<string, any>>;
+export function executeOpportunityBriefExport(job: Record<string, any>, adapters?: Record<string, any>, options?: Record<string, any>): Promise<Readonly<Record<string, any>>>;
+export function completeOpportunityBriefExportJob(state: Record<string, any>, input?: Record<string, any>, options?: Record<string, any>): Record<string, any>;
+export function runOpportunityBriefExportWorkerCycle(options?: Record<string, any>): Promise<Readonly<Record<string, any>>>;

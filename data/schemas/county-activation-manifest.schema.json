@@ -1,0 +1,44 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://white-rabbit.local/schemas/county-activation-manifest.schema.json",
+  "title": "White Rabbit County Activation Manifest",
+  "type": "object",
+  "required": ["schemaVersion", "generatedAt", "pageDesignChanged", "activationPolicy", "baseline", "mandatoryTechnicalGates", "visibilityControls", "summary", "counties"],
+  "properties": {
+    "schemaVersion": { "const": "wr-county-activation-manifest-v1" },
+    "generatedAt": { "type": "string", "format": "date-time" },
+    "pageDesignChanged": { "const": false },
+    "activationPolicy": { "type": "string", "minLength": 1 },
+    "baseline": {
+      "type": "object",
+      "required": ["countyId", "disposition", "visibleCountyIds", "exactParcelFeatureCount", "exactSearchShardCount", "dcadLikeWindowReady", "freshnessDebt"],
+      "properties": {
+        "countyId": { "const": "dallas-county-dcad" },
+        "visibleCountyIds": { "const": ["dallas-county-dcad"] },
+        "exactParcelFeatureCount": { "const": 696601 },
+        "exactSearchShardCount": { "const": 1224 },
+        "dcadLikeWindowReady": { "const": true }
+      }
+    },
+    "summary": {
+      "type": "object",
+      "required": ["candidateCount", "technicalEligibleCount", "visibleActivationCount", "blockedCount", "mapSearchCapableButBlockedCount", "unknownParcelFreshnessCount"]
+    },
+    "counties": {
+      "type": "array",
+      "minItems": 10,
+      "maxItems": 10,
+      "items": {
+        "type": "object",
+        "required": ["countyId", "countyName", "activationDecision", "technicalEligibility", "visibilityAuthorized", "gates", "controls", "evidence", "failedGateIds", "blockers"],
+        "properties": {
+          "activationDecision": { "enum": ["activate", "do-not-activate"] },
+          "technicalEligibility": { "type": "boolean" },
+          "visibilityAuthorized": { "type": "boolean" },
+          "failedGateIds": { "type": "array", "items": { "type": "string" } },
+          "blockers": { "type": "array", "items": { "type": "string" } }
+        }
+      }
+    }
+  }
+}

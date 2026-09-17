@@ -1,0 +1,381 @@
+{
+  "id": "harris-county-tx",
+  "countyId": "harris-county-tx",
+  "countyName": "Harris County",
+  "state": "TX",
+  "fips": "48201",
+  "marketName": "Houston",
+  "appraisalDistrictName": "Harris Central Appraisal District",
+  "appraisalDistrictAcronym": "HCAD",
+  "gisSource": "Harris County Parcels FeatureServer",
+  "uniqueGisKey": "GlobalID",
+  "parcelIdField": "HCAD_NUM",
+  "accountIdField": "acct_num",
+  "geometryType": "polygon",
+  "sourceSpatialReference": "EPSG:2278 / NAD 1983 StatePlane Texas South Central FIPS 4204 Feet",
+  "status": "pilot",
+  "map": {
+    "locationId": 5,
+    "locationName": "Harris County TX / Houston Pilot",
+    "locationType": "Harris Central Appraisal District",
+    "status": "pilot adapter - official parcel/property layer verified",
+    "coordinates": [
+      -95.3698,
+      29.7604
+    ],
+    "camera": {
+      "x": 50,
+      "y": 50,
+      "zoom": 1.45,
+      "pitch": 48,
+      "bearing": 0
+    },
+    "geoBounds": {
+      "minLng": -95.95,
+      "minLat": 29.45,
+      "maxLng": -94.9,
+      "maxLat": 30.2
+    }
+  },
+  "universalParcelSchema": {
+    "version": "wr-universal-parcel-v1",
+    "schemaPath": "data/schemas/universal-parcel.schema.json",
+    "documentationPath": "data/schemas/universal-parcel.md",
+    "parcelServiceBuilder": "scripts/build-app-parcel-service.cjs",
+    "fieldMapPath": "data/county-adapters/harris-county-tx/harris-universal-field-map.json",
+    "sourceManifestPath": "data/county-adapters/harris-county-tx/harris-county-parcel-source-manifest.json"
+  },
+  "sourceFiles": {
+    "parcelGeometry": "https://services.arcgis.com/su8ic9KbA7PYVxPS/arcgis/rest/services/Harris_County_Parcels/FeatureServer/1",
+    "appraisalDistrictExtract": "https://pdata.hcad.org/download/",
+    "ownerAppraisal": "source-needed",
+    "permitsRaw": "source-needed",
+    "permitsProcessed": "data/permits/processed/harris-county-tx",
+    "developmentRaw": "source-needed",
+    "zoningRaw": "source-needed",
+    "floodplainRaw": "source-needed",
+    "migrationDemandRaw": "source-needed",
+    "hcadPublicData": "https://hcad.org/hcad-online-services/pdata/",
+    "hcadPropertyDownloads": "https://hcad.org/pdata/pdata-property-downloads.html",
+    "hcadGisDownloads": "https://hcad.org/pdata/pdata-gis-downloads.html",
+    "hcadGisReadme": "https://hcad.org/assets/uploads/pdf/resources/2026/GIS-ReadMeV2-2.pdf",
+    "blockLabels": "optional",
+    "parcelDimensions": "optional"
+  },
+  "publicDataRoots": {
+    "parcels": "/data/counties/harris-county-tx/parcels/",
+    "permits": "/data/counties/harris-county-tx/permits/",
+    "developments": "/data/counties/harris-county-tx/developments/",
+    "zoning": "/data/counties/harris-county-tx/zoning/",
+    "floodplain": "/data/counties/harris-county-tx/floodplain/",
+    "demand": "/data/counties/harris-county-tx/demand/"
+  },
+  "productionOutputs": {
+    "parcelGeojson": "output/harris-county-tx/harris-county-tx-parcels.geojson",
+    "parcelPmtiles": "output/harris-county-tx/harris-county-tx-parcels.pmtiles",
+    "vectorTilesDirectory": "output/harris-county-tx/vector-tiles/"
+  },
+  "optionalLayers": [
+    {
+      "id": "county-parcels",
+      "label": "County parcels",
+      "source": "source-needed",
+      "status": "source-needed",
+      "joinBehavior": "source-needed: official parcel/account and GIS keys must be verified before activation",
+      "defaultVisible": false,
+      "renderStrategy": "build-time official source fetch, offline universal mapping, viewport chunks, capped runtime loader",
+      "maxFeaturesPerViewport": 750
+    },
+    {
+      "id": "owner-appraisal",
+      "label": "Owner/appraisal",
+      "source": "source-needed",
+      "status": "source-needed",
+      "joinBehavior": "source-needed: official assessor/appraisal bulk source must provide owner, mailing, situs, value, land/building, and legal fields",
+      "defaultVisible": false,
+      "renderStrategy": "build-time official source fetch, offline owner/appraisal normalization, viewport chunks, capped runtime loader",
+      "maxFeaturesPerViewport": 750
+    },
+    {
+      "id": "parcel-dimensions",
+      "label": "Parcel dimensions",
+      "source": "Harris County parcel Shape__Area, Shape__Length, StatedArea, Acreage, acreage_1, and land_sqft fields",
+      "status": "ready",
+      "joinBehavior": "direct field mapping for area/perimeter; frontage/depth remains source-needed until a dimension label source is verified",
+      "defaultVisible": false,
+      "renderStrategy": "build-time direct field mapping, generated centroid/measurement fallback, viewport chunks",
+      "maxFeaturesPerViewport": 750
+    },
+    {
+      "id": "block-grid",
+      "label": "Block, subdivision, and map-grid context",
+      "source": "source-needed",
+      "status": "source-needed",
+      "joinBehavior": "source-needed: direct parcel fields or spatial join to subdivision, block, or grid sources",
+      "defaultVisible": false,
+      "renderStrategy": "build-time official source inspection, offline joins, viewport chunks",
+      "maxFeaturesPerViewport": 750
+    },
+    {
+      "id": "permits",
+      "label": "Permits and certificates of occupancy",
+      "source": "Houston/Harris permit source discovery",
+      "status": "source-needed",
+      "joinBehavior": "source-needed: official permit and CO bulk source must be verified, then joined by parcel/account, normalized address, or spatial point-in-parcel",
+      "defaultVisible": false,
+      "publicDataRoot": "/data/counties/harris-county-tx/permits/",
+      "manifestPath": "public/data/counties/harris-county-tx/permits/manifest.json",
+      "renderStrategy": "build-time source discovery and offline parcel join before viewport-safe permit chunks",
+      "maxFeaturesPerViewport": 750
+    },
+    {
+      "id": "zoning-intelligence",
+      "label": "Zoning intelligence",
+      "source": "Countywide zoning is fragmented across municipalities; City of Houston has no conventional zoning layer",
+      "status": "source-needed-fragmented",
+      "joinBehavior": "source-needed: municipal zoning, land-use controls, deed restrictions, special districts, and overlays must be verified separately before parcel joins",
+      "defaultVisible": false,
+      "publicDataRoot": "/data/counties/harris-county-tx/zoning/",
+      "manifestPath": "public/data/counties/harris-county-tx/zoning/manifest.json",
+      "schemaPath": "data/schemas/dallas-zoning-layer.schema.json",
+      "reportPath": "output/harris-county-tx/zoning-source-report.md",
+      "renderStrategy": "build-time official source verification, offline spatial joins, viewport chunks, capped runtime loader",
+      "maxFeaturesPerViewport": 750
+    },
+    {
+      "id": "development-signals",
+      "label": "Development signals",
+      "source": "Permit, ownership, appraisal, sale/transfer, and market activity joins after source verification",
+      "status": "source-needed",
+      "joinBehavior": "source-needed: build after permit, appraisal, migration/demand, and parcel search indexes exist",
+      "defaultVisible": false,
+      "publicDataRoot": "/data/counties/harris-county-tx/developments/",
+      "manifestPath": "public/data/counties/harris-county-tx/developments/parcel-development-index.json",
+      "renderStrategy": "build-time market signal normalization, offline parcel join, viewport-safe parcel index lookup",
+      "maxFeaturesPerViewport": 750
+    },
+    {
+      "id": "floodplain-intelligence",
+      "label": "Floodplain intelligence",
+      "source": "FEMA NFHL and Harris County flood source discovery",
+      "status": "source-needed",
+      "joinBehavior": "source-needed: parcel centroid spatial join to FEMA/local flood polygons, keyed back to HCAD_NUM/acct_num",
+      "defaultVisible": false,
+      "publicDataRoot": "/data/counties/harris-county-tx/floodplain/",
+      "manifestPath": "public/data/counties/harris-county-tx/floodplain/manifest.json",
+      "parcelIndexPath": "public/data/counties/harris-county-tx/floodplain/parcel-floodplain-index.json",
+      "schemaPath": "data/schemas/parcel-floodplain-index.schema.json",
+      "parcelIndexSchemaPath": "data/schemas/parcel-floodplain-index.schema.json",
+      "reportPath": "output/harris-county-tx/floodplain-index-report.md",
+      "renderStrategy": "build-time official source fetch, offline parcel centroid spatial join, viewport-safe sharded parcel ID lookup, capped runtime loader",
+      "maxFeaturesPerViewport": 750
+    },
+    {
+      "id": "migration-demand",
+      "label": "Migration and demand",
+      "source": "National migration/demand layer placeholder",
+      "status": "source-needed",
+      "joinBehavior": "source-needed: census/ACS/IRS or approved market demand geography joined to parcel by tract/block group/market geography, not individual people",
+      "defaultVisible": false,
+      "publicDataRoot": "/data/counties/harris-county-tx/demand/",
+      "manifestPath": "public/data/counties/harris-county-tx/demand/manifest.json",
+      "renderStrategy": "build-time aggregate demand scoring, offline geography-to-parcel join, viewport-safe parcel index lookup",
+      "maxFeaturesPerViewport": 750
+    },
+    {
+      "id": "harris-parcels",
+      "label": "County parcels",
+      "source": "Harris County parcel/property FeatureServer",
+      "status": "ready",
+      "joinBehavior": "HCAD_NUM and acct_num identify the parcel/account; GlobalID is the unique GIS feature key; parcel geometry is polygon",
+      "defaultVisible": false,
+      "manifestPath": "data/county-adapters/harris-county-tx/harris-county-parcel-source-manifest.json",
+      "sourceUrls": [
+        "https://services.arcgis.com/su8ic9KbA7PYVxPS/arcgis/rest/services/Harris_County_Parcels/FeatureServer/1"
+      ],
+      "renderStrategy": "build-time ArcGIS fetch, universal parcel mapping, viewport chunks, capped runtime loader",
+      "maxFeaturesPerViewport": 750
+    },
+    {
+      "id": "hcad-owner-appraisal",
+      "label": "HCAD owner/appraisal",
+      "source": "Harris County parcel/property FeatureServer plus HCAD public data downloads",
+      "status": "ready",
+      "joinBehavior": "HCAD_NUM/acct_num -> White Rabbit accountNum; owner, mailing, situs, land, building, value, legal description, and land-use fields are already present in the verified parcel layer",
+      "defaultVisible": false,
+      "manifestPath": "data/county-adapters/harris-county-tx/harris-county-parcel-source-manifest.json",
+      "sourceUrls": [
+        "https://services.arcgis.com/su8ic9KbA7PYVxPS/arcgis/rest/services/Harris_County_Parcels/FeatureServer/1",
+        "https://pdata.hcad.org/download/",
+        "https://hcad.org/hcad-online-services/pdata/"
+      ],
+      "renderStrategy": "build-time official source fetch, offline owner/appraisal normalization, viewport chunks, capped runtime loader",
+      "maxFeaturesPerViewport": 750
+    },
+    {
+      "id": "block-labels",
+      "label": "Block and legal description context",
+      "source": "HCAD parcel/property fields",
+      "status": "ready",
+      "joinBehavior": "BLK_NUM, LOT_NUM, legal_dscr_*, and map_facet map directly from the parcel/property layer",
+      "defaultVisible": false,
+      "renderStrategy": "build-time direct field mapping into parcel cards and search shards, viewport-safe runtime lookup",
+      "maxFeaturesPerViewport": 750
+    }
+  ],
+  "publicSourceDiscovery": {
+    "status": "queued",
+    "priorityReason": "TX full-state county coverage shell; source verification required before ingest.",
+    "sourceSearchQueries": [
+      "Harris County Appraisal District parcel data official",
+      "Harris County Texas GIS parcel boundaries official",
+      "Harris County Texas permits open data parcel address"
+    ],
+    "sourceRules": [
+      "Use official county, assessor/appraiser, GIS, municipal, state, or federal sources first.",
+      "Do not activate this county until exact parcel counts and join keys are verified.",
+      "Do not infer owner phone/email from permits, contractors, applicants, or scraped pages."
+    ],
+    "problemSolvingLoop": [
+      "Discover official sources and preserve source dataset identifiers.",
+      "Audit schema, exact counts, geometry validity, nulls, and duplicate candidate keys.",
+      "Select a complete duplicate-safe feature identity and document secondary business identifiers.",
+      "Build a bounded-memory sample before attempting the full county snapshot.",
+      "Publish viewport chunks and search shards, then reconcile source, emitted, skipped, and joined counts.",
+      "Run county QC and keep visible activation disabled until every individual gate passes."
+    ],
+    "lastReviewed": "2026-06-16",
+    "sources": [
+      {
+        "id": "harris-county-parcels-feature-server",
+        "status": "official-source-verified",
+        "sourceUrl": "https://services.arcgis.com/su8ic9KbA7PYVxPS/arcgis/rest/services/Harris_County_Parcels/FeatureServer/1",
+        "owner": "HarrisCountyGIS",
+        "fields": [
+          "HCAD_NUM",
+          "acct_num",
+          "LOWPARCELID",
+          "GlobalID",
+          "owner_name_1",
+          "mail_addr_1",
+          "site_str_name",
+          "land_value",
+          "bld_value",
+          "impr_value",
+          "total_appraised_val",
+          "total_market_val",
+          "land_use",
+          "land_sqft",
+          "Shape__Area",
+          "Shape__Length"
+        ],
+        "verifiedRecordCount": 1535525,
+        "countVerifiedAt": "2026-06-16",
+        "uiUse": "Parcel identity, owner/appraisal, address, land/building, geometry, area, perimeter, legal description, and search foundation"
+      },
+      {
+        "id": "hcad-public-data",
+        "status": "official-source-identified",
+        "sourceUrl": "https://pdata.hcad.org/download/",
+        "fields": [
+          "public data downloads",
+          "property downloads",
+          "GIS downloads"
+        ],
+        "uiUse": "Bulk-file confirmation source for production ingestion after source package selection"
+      },
+      {
+        "id": "hcad-gis-downloads",
+        "status": "official-source-identified",
+        "sourceUrl": "https://hcad.org/pdata/pdata-gis-downloads.html",
+        "fields": [
+          "GIS public data downloads",
+          "GIS readme"
+        ],
+        "uiUse": "Source lineage and production download package reference"
+      },
+      {
+        "id": "hcad-property-downloads",
+        "status": "official-source-identified",
+        "sourceUrl": "https://hcad.org/pdata/pdata-property-downloads.html",
+        "fields": [
+          "property public data downloads"
+        ],
+        "uiUse": "Owner/appraisal bulk-file reference after package selection"
+      }
+    ]
+  },
+  "ownerEnrichment": {
+    "sourceLabel": "Harris County parcel/property FeatureServer and HCAD public data downloads",
+    "propertyRecordSource": "Official Harris County/Harris Central Appraisal District parcel/property attributes. The verified FeatureServer exposes owner, mailing, situs, legal, land, building, and value fields; HCAD public downloads remain the preferred production bulk handoff once selected.",
+    "officialJoinKey": "HCAD_NUM/acct_num -> White Rabbit accountNum; GlobalID is the unique GIS feature key",
+    "noOfficialEmailFieldNote": "No official owner email field was identified in the inspected Harris parcel/property layer. Do not infer owner email.",
+    "fields": {
+      "parcelId": "HCAD_NUM",
+      "gisParcelId": "GlobalID",
+      "ownerName": "owner_name_1",
+      "ownerName2": "owner_name_2 / owner_name_3",
+      "businessName": "owner_name_1 when the owner is an entity; do not infer entity type",
+      "ownerMailingAddress": "mail_addr_1",
+      "ownerMailingAddress2": "mail_addr_2",
+      "ownerCity": "mail_city",
+      "ownerState": "mail_state",
+      "ownerZip": "mail_zip",
+      "ownerPhone": "No official owner phone field identified in inspected Harris parcel/property layer",
+      "ownerEmail": "No official owner email field identified in inspected Harris parcel/property layer"
+    }
+  },
+  "joinKeys": {
+    "primaryParcelAccount": "HCAD_NUM/acct_num -> White Rabbit accountNum; 5-row sample shows HCAD_NUM and acct_num matching for standard parcels",
+    "appraisal": "HCAD_NUM/acct_num -> land_value, bld_value, impr_value, productivity_value, total_appraised_val, total_market_val, tax_value",
+    "land": "HCAD_NUM/acct_num -> StatedArea, Acreage, acreage_1, land_sqft, land_use, state_class",
+    "secondaryParcelGisId": "GlobalID is the unique GIS feature key; OBJECTID is service-local only",
+    "blockLabels": "direct fields: BLK_NUM, LOT_NUM, legal_dscr_*, map_facet",
+    "dimensions": "direct area/perimeter fields: Shape__Area, Shape__Length, land_sqft, Acreage; frontage/depth source-needed",
+    "permits": "source-needed: official permit/CO source must be verified before address or spatial parcel join",
+    "zoning": "source-needed: countywide zoning is fragmented; municipal zoning/overlays must be verified separately",
+    "floodplain": "source-needed: FEMA/local floodplain parcel centroid spatial join keyed back to HCAD_NUM/acct_num",
+    "developmentSignals": "source-needed: verified permit, plat, demolition, certificate, project, address, or spatial join evidence",
+    "migrationDemand": "source-needed: aggregate geography join, not individual people"
+  },
+  "verifiedCounts": {
+    "parcelGeometryFeatures": 1535525,
+    "missingGeometry": 3,
+    "appraisalAccountRows": 1535525,
+    "appraisalRows": 1535525,
+    "landRows": 1535525,
+    "appParcelChunks": 1345,
+    "parcelSearchShards": 1210,
+    "sourcePermitRecords": 0,
+    "permitRowsJoined": 0,
+    "permitRowsUnmatched": 0,
+    "parcelsWithDevelopmentSignals": 0,
+    "migrationDemandGeographies": 0,
+    "hcadNumDistinctValues": 1535521,
+    "hcadNumMissing": 1,
+    "acctNumDistinctValues": 1523063,
+    "acctNumMissing": 12461,
+    "globalIdDistinctValues": 1535525,
+    "globalIdMissing": 0
+  },
+  "requiredOutputs": [
+    "output/harris-county-tx/schema-report.md",
+    "output/harris-county-tx/schema-report.json",
+    "output/harris-county-tx/join-key-report.md",
+    "output/harris-county-tx/full-parcel-access-report.md",
+    "output/harris-county-tx/qa-report.md",
+    "output/harris-county-tx/qa-report.json",
+    "output/harris-county-tx/harris-county-tx-parcels.geojson",
+    "output/harris-county-tx/harris-county-tx-parcels.pmtiles or output/harris-county-tx/vector-tiles/",
+    "public/data/counties/harris-county-tx/parcels/manifest.json",
+    "public/data/counties/harris-county-tx/permits/manifest.json",
+    "public/data/counties/harris-county-tx/developments/parcel-development-index.json",
+    "public/data/counties/harris-county-tx/zoning/manifest.json",
+    "public/data/counties/harris-county-tx/floodplain/manifest.json",
+    "public/data/counties/harris-county-tx/demand/manifest.json",
+    "data/county-adapters/harris-county-tx/harris-county-parcel-source-manifest.json",
+    "data/county-adapters/harris-county-tx/harris-universal-field-map.json"
+  ],
+  "productionGap": "Pilot adapter only. Official Harris parcel/property FeatureServer is verified with 1,535,525 parcel features; full viewport chunks, search shards, owner/appraisal joins, direct block/legal context, and parcel area/perimeter dimensions are built and QC-gated. Remaining DCAD-parity gaps are permit/CO joins, floodplain joins, zoning/overlay joins, development signals, migration demand, activation QA, and PMTiles.",
+  "pilotNotes": "Do not activate this county in the app until exact duplicate key QA, parcel card QA, remaining intelligence joins, source-lineage reports, and activation review pass. Do not redesign any pages."
+}

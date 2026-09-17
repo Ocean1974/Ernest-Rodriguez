@@ -1,0 +1,36 @@
+const assert = require("assert");
+
+(async () => {
+  const { createInMemoryCandidateAdapter } = await import("../src/search/parcelCandidateRetriever.mjs");
+  const { createCountyArtifactQueryRuntime } = await import("../src/search/countyArtifactQueryRuntime.mjs");
+  const countyId = "fixture-county";
+  const organizationId = "org-fixture";
+  const parcels = [{ whiteRabbitPropertyId: `wrp:v1:${countyId}:A1`, sourceCountyId: countyId, accountNum: "A1", landAreaSqFt: 500000 }];
+  const currentAdapter = createInMemoryCandidateAdapter({ parcels, sourceEvidence: [{ sourceCountyId: countyId, datasetId: "fixture", sourceVersion: "v1", sourceUpdatedAt: "2026-08-23", freshnessStatus: "current" }] });
+  const inactive = createCountyArtifactQueryRuntime({ candidateAdapter: currentAdapter, allowedCountyIds: [countyId] });
+  const input = { requestId: "request-1", rawQuery: "parcels over 5 acres", organizationId, countyIds: [countyId], asOf: "2026-08-23T12:00:00.000Z" };
+  const principal = { subject: "user-1", organizationId, permissions: ["property-intelligence:query"] };
+  await assert.rejects(() => inactive.execute(input, { principal }), (error) => error.code === "WR_QUERY_RUNTIME_INACTIVE");
+  const releaseDecision = { schemaVersion: "wr-capability-release-decision-v1", capabilityId: "explainable-ai-acquisition-analyst", activationAuthorized: true };
+  const verifyReleaseDecision = () => ({ valid: true, activationAuthorized: true });
+  const unverified = createCountyArtifactQueryRuntime({ candidateAdapter: currentAdapter, allowedCountyIds: [countyId], releaseDecision });
+  assert.equal(unverified.activationAuthorized, false);
+  await assert.rejects(() => unverified.execute(input, { principal }), (error) => error.code === "WR_QUERY_RUNTIME_INACTIVE");
+  const active = createCountyArtifactQueryRuntime({ candidateAdapter: currentAdapter, allowedCountyIds: [countyId], releaseDecision, verifyReleaseDecision, clock: () => "2026-08-23T12:00:00.000Z" });
+  const response = await active.execute(input, { principal });
+  assert.equal(response.status, "complete");
+  assert.equal(response.candidates.results[0].parcel.accountNum, "A1");
+  assert.equal(response.candidates.results[0].evaluation.filterEvidence[0].actual > 5, true);
+  await assert.rejects(() => active.execute(input, { principal: { ...principal, permissions: [] } }), (error) => error.code === "WR_QUERY_PERMISSION_DENIED");
+  await assert.rejects(() => active.execute({ ...input, organizationId: "org-other" }, { principal }), (error) => error.code === "WR_TENANT_ISOLATION_VIOLATION");
+  await assert.rejects(() => active.execute({ ...input, countyIds: ["other-county"] }, { principal }), (error) => error.code === "WR_QUERY_COUNTY_NOT_ALLOWED");
+  const unknownAdapter = createInMemoryCandidateAdapter({ parcels, sourceEvidence: [{ sourceCountyId: countyId, datasetId: "fixture", sourceVersion: "v1", sourceUpdatedAt: "2026-08-23", freshnessStatus: "unknown" }] });
+  const unknownRuntime = createCountyArtifactQueryRuntime({ candidateAdapter: unknownAdapter, allowedCountyIds: [countyId], releaseDecision, verifyReleaseDecision });
+  const rejected = await unknownRuntime.execute(input, { principal });
+  assert.equal(rejected.status, "partial");
+  assert.equal(rejected.candidates.status, "unknown-source-rejected");
+  assert.equal(rejected.candidates.results.length, 0);
+  assert.equal(rejected.executionEvidence.visibleUiActivated, false);
+  console.log("White Rabbit authenticated, tenant-scoped county artifact query runtime tests passed.");
+  require("./tarrant-candidate-adapter-readiness.test.cjs");
+})().catch((error) => { console.error(error); process.exit(1); });

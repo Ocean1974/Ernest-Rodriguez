@@ -1,0 +1,13 @@
+export const RELEASE_TRUST_STATE_VERSION: "wr-release-trust-state-v1";
+export const RELEASE_TRUST_KEY_VERSION: "wr-release-trust-key-v1";
+export const RELEASE_REGISTRY_ENTRY_VERSION: "wr-release-registry-entry-v1";
+export function createReleaseTrustState(input?: Record<string, unknown>): Readonly<Record<string, unknown>>;
+export function registerReleaseTrustKey(state: Record<string, unknown>, key: Record<string, unknown>, context: Record<string, unknown>, options?: Record<string, unknown>): Readonly<Record<string, unknown>>;
+export function revokeReleaseTrustKey(state: Record<string, unknown>, keyId: string, context: Record<string, unknown>, options?: Record<string, unknown>): Readonly<Record<string, unknown>>;
+export function trustStoreFromReleaseState(state: Record<string, unknown>): Record<string, unknown>;
+export function persistReleaseTrustState(repository: Record<string, unknown>, context: Record<string, unknown>, state: Record<string, unknown>, options?: Record<string, unknown>): Record<string, unknown>;
+export function loadReleaseTrustState(repository: Record<string, unknown>, context: Record<string, unknown>, options?: Record<string, unknown>): Record<string, unknown> | null;
+export function persistReleaseAttestation(repository: Record<string, unknown>, context: Record<string, unknown>, trustState: Record<string, unknown>, attestation: Record<string, unknown>, options?: Record<string, unknown>): Record<string, unknown>;
+export function persistReleaseManifest(repository: Record<string, unknown>, context: Record<string, unknown>, trustState: Record<string, unknown>, manifest: Record<string, unknown>, options?: Record<string, unknown>): Record<string, unknown>;
+export function loadReleaseAttestation(repository: Record<string, unknown>, context: Record<string, unknown>, contentSha256: string, options?: Record<string, unknown>): Record<string, unknown> | null;
+export function listReleaseRegistryEntries(repository: Record<string, unknown>, context: Record<string, unknown>, options?: Record<string, unknown>): Record<string, unknown>;

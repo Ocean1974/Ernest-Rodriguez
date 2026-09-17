@@ -1,0 +1,24 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://white-rabbit.local/schemas/platform-readiness-matrix.schema.json",
+  "title": "White Rabbit Platform Readiness Matrix",
+  "type": "object",
+  "required": ["schemaVersion", "organizationId", "generatedAt", "activationPolicy", "summary", "observedFacts", "capabilities"],
+  "properties": {
+    "schemaVersion": { "const": "wr-platform-readiness-matrix-v1" },
+    "capabilities": {
+      "type": "array",
+      "minItems": 10,
+      "maxItems": 10,
+      "items": {
+        "type": "object",
+        "required": ["stage", "capabilityId", "name", "status", "activationAuthorized", "featureGates", "foundationEvidence", "requiredReleaseEvidence", "externalBlockers", "missingFoundationEvidence", "unknownFeatureGates", "enabledFeatureGates", "verifiedDecisionSha256"],
+        "properties": {
+          "stage": { "type": "integer", "minimum": 1, "maximum": 10 },
+          "status": { "enum": ["foundation-incomplete", "foundation-complete-external-blockers", "release-evidence-needed", "unsafe-configuration", "activation-authorized"] },
+          "activationAuthorized": { "type": "boolean" }
+        }
+      }
+    }
+  }
+}

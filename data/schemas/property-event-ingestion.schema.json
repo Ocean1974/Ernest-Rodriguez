@@ -1,0 +1,65 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://white-rabbit.local/schemas/property-event-ingestion.schema.json",
+  "title": "White Rabbit Licensed Property Event Ingestion",
+  "oneOf": [
+    { "$ref": "#/$defs/event" },
+    { "$ref": "#/$defs/batch" },
+    { "$ref": "#/$defs/checkpoint" }
+  ],
+  "$defs": {
+    "source": {
+      "type": "object",
+      "required": ["providerId", "datasetId", "sourceVersion", "recordId", "sourceType", "licenseId", "licenseStatus", "rights", "observedAt", "availableAt", "expiresAt", "sourceUri", "sourceFieldMap"],
+      "properties": {
+        "licenseStatus": { "enum": ["authorized", "restricted", "expired", "unknown"] },
+        "rights": {
+          "type": "object",
+          "required": ["store", "derive", "query", "display"],
+          "properties": {
+            "store": { "type": "boolean" },
+            "derive": { "type": "boolean" },
+            "query": { "type": "boolean" },
+            "display": { "type": "boolean" }
+          }
+        },
+        "observedAt": { "type": "string", "format": "date-time" },
+        "availableAt": { "type": "string", "format": "date-time" },
+        "expiresAt": { "type": "string" }
+      }
+    },
+    "event": {
+      "type": "object",
+      "required": ["schemaVersion", "id", "organizationId", "whiteRabbitPropertyId", "eventType", "operation", "resourceId", "sequence", "effectiveAt", "payload", "payloadSha256", "source"],
+      "properties": {
+        "schemaVersion": { "const": "wr-property-event-v1" },
+        "whiteRabbitPropertyId": { "type": "string", "pattern": "^wrp:v1:[^:]+:.+$" },
+        "eventType": { "enum": ["transaction", "listing", "ownership-entity", "edge"] },
+        "operation": { "enum": ["upsert", "delete"] },
+        "sequence": { "type": "integer", "minimum": 0 },
+        "effectiveAt": { "type": "string", "format": "date-time" },
+        "payloadSha256": { "type": "string", "pattern": "^[a-f0-9]{64}$" },
+        "source": { "$ref": "#/$defs/source" }
+      }
+    },
+    "checkpoint": {
+      "type": "object",
+      "required": ["schemaVersion", "organizationId", "datasetId", "lastSequence", "lastAvailableAt", "acceptedEventCount", "updatedAt"],
+      "properties": {
+        "schemaVersion": { "const": "wr-property-event-checkpoint-v1" },
+        "lastSequence": { "type": "integer", "minimum": -1 },
+        "acceptedEventCount": { "type": "integer", "minimum": 0 }
+      }
+    },
+    "batch": {
+      "type": "object",
+      "required": ["schemaVersion", "id", "organizationId", "datasetId", "asOf", "acceptedEventIds", "accepted", "quarantined", "replayed", "checkpoint", "stats", "batchSha256"],
+      "properties": {
+        "schemaVersion": { "const": "wr-property-event-batch-v1" },
+        "accepted": { "type": "array", "items": { "$ref": "#/$defs/event" }, "maxItems": 990 },
+        "checkpoint": { "$ref": "#/$defs/checkpoint" },
+        "batchSha256": { "type": "string", "pattern": "^[a-f0-9]{64}$" }
+      }
+    }
+  }
+}

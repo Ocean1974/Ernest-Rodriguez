@@ -1,0 +1,18 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://whiterabbit.local/schemas/county-jurisdiction-coverage.schema.json",
+  "title": "White Rabbit County Jurisdiction Coverage Contracts",
+  "oneOf": [
+    { "$ref": "#/$defs/sourceEvidence" },
+    { "$ref": "#/$defs/universe" },
+    { "$ref": "#/$defs/plan" },
+    { "$ref": "#/$defs/report" }
+  ],
+  "$defs": {
+    "sha256": { "type": "string", "pattern": "^[a-f0-9]{64}$" },
+    "sourceEvidence": { "type": "object", "required": ["schemaVersion", "sourceId", "publisher", "officialPageUrl", "machineEndpointUrl", "layer", "coverageScope", "jurisdictionIds", "captureAuthorized", "status", "evidenceSha256"], "properties": { "schemaVersion": { "const": "wr-county-layer-source-evidence-v1" }, "status": { "enum": ["discovery-only", "capture-authorized"] }, "evidenceSha256": { "$ref": "#/$defs/sha256" } } },
+    "universe": { "type": "object", "required": ["schemaVersion", "countyId", "countyFips", "sourceUrl", "jurisdictions", "universeSha256"], "properties": { "schemaVersion": { "const": "wr-county-jurisdiction-universe-v1" }, "universeSha256": { "$ref": "#/$defs/sha256" } } },
+    "plan": { "type": "object", "required": ["schemaVersion", "countyId", "layer", "coveredJurisdictionIds", "uncoveredJurisdictionIds", "checks", "status", "planSha256"], "properties": { "schemaVersion": { "const": "wr-county-layer-coverage-plan-v1" }, "status": { "enum": ["blocked", "certified"] }, "planSha256": { "$ref": "#/$defs/sha256" } } },
+    "report": { "type": "object", "required": ["schemaVersion", "countyId", "jurisdictionCount", "plans", "complete", "activationAuthorized", "reportSha256"], "properties": { "schemaVersion": { "const": "wr-county-layer-coverage-report-v1" }, "activationAuthorized": { "const": false }, "reportSha256": { "$ref": "#/$defs/sha256" } } }
+  }
+}

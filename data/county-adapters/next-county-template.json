@@ -1,0 +1,112 @@
+{
+  "id": "next-county-id",
+  "countyName": "Next County",
+  "appraisalDistrictName": "Next County Appraisal District",
+  "appraisalDistrictAcronym": "NCAD",
+  "status": "template",
+  "sourceFiles": {
+    "parcelGeometry": "data/raw/<county-parcel-geometry>.zip",
+    "appraisalDistrictExtract": "data/raw/<county-appraisal-extract>.zip",
+    "blockLabels": "optional",
+    "parcelDimensions": "optional",
+    "permitsRaw": "data/permits/raw",
+    "permitsProcessed": "data/permits/processed"
+  },
+  "publicDataRoots": {
+    "parcels": "/data/parcels/",
+    "permits": "/data/permits/",
+    "developments": "/data/developments/",
+    "zoning": "/data/zoning/",
+    "floodplain": "/data/floodplain/"
+  },
+  "productionOutputs": {
+    "parcelGeojson": "output/<county>-parcels.geojson",
+    "parcelPmtiles": "output/<county>-parcels.pmtiles",
+    "vectorTilesDirectory": "output/<county>/vector-tiles/"
+  },
+  "optionalLayers": [
+    {
+      "id": "block-labels",
+      "label": "Block labels",
+      "source": "optional",
+      "status": "template",
+      "joinBehavior": "direct key, spatial join, or unavailable",
+      "defaultVisible": false
+    },
+    {
+      "id": "parcel-dimensions",
+      "label": "Parcel dimensions",
+      "source": "optional",
+      "status": "template",
+      "joinBehavior": "direct key, spatial join, or unavailable",
+      "defaultVisible": false
+    },
+    {
+      "id": "zoning-intelligence",
+      "label": "Zoning intelligence",
+      "source": "optional",
+      "status": "template",
+      "joinBehavior": "parcel/account ID bridge first; spatial join for zoning polygons and case areas",
+      "defaultVisible": false,
+      "publicDataRoot": "/data/zoning/",
+      "manifestPath": "public/data/zoning/manifest.json",
+      "schemaPath": "data/schemas/dallas-zoning-layer.schema.json",
+      "reportPath": "output/<county>-zoning-source-report.md",
+      "renderStrategy": "build-time fetch, offline join, viewport chunks, capped runtime loader",
+      "maxFeaturesPerViewport": 750
+    },
+    {
+      "id": "floodplain-intelligence",
+      "label": "Floodplain intelligence",
+      "source": "optional",
+      "status": "template",
+      "joinBehavior": "parcel/account ID bridge first or parcel centroid spatial join",
+      "defaultVisible": false,
+      "publicDataRoot": "/data/floodplain/",
+      "manifestPath": "public/data/floodplain/manifest.json",
+      "parcelIndexPath": "public/data/floodplain/parcel-floodplain-index.json",
+      "schemaPath": "data/schemas/parcel-floodplain-index.schema.json",
+      "parcelIndexSchemaPath": "data/schemas/parcel-floodplain-index.schema.json",
+      "reportPath": "output/<county>-parcel-floodplain-index-report.md",
+      "renderStrategy": "build-time fetch, offline parcel join, viewport-safe sharded parcel ID lookup, capped runtime loader",
+      "maxFeaturesPerViewport": 750
+    }
+  ],
+  "joinKeys": {
+    "primaryParcelAccount": "document exact geometry parcel key -> appraisal account key",
+    "appraisal": "document exact appraisal-year key",
+    "land": "document exact land table key",
+    "secondaryParcelGisId": "document exact GIS/parcel fallback key or mark unavailable",
+    "blockLabels": "direct key, spatial join, or unavailable",
+    "dimensions": "direct key, spatial join, or unavailable",
+    "permits": "parcel/account ID, address match, spatial join, or combination",
+    "zoning": "parcel/account ID bridge first; spatial join for zoning polygons and case areas",
+    "floodplain": "parcel/account ID bridge first or parcel centroid spatial join"
+  },
+  "verifiedCounts": {
+    "parcelGeometryFeatures": 0,
+    "appraisalAccountRows": 0,
+    "appraisalRows": 0,
+    "landRows": 0,
+    "appParcelChunks": 0,
+    "parcelSearchShards": 0,
+    "sourcePermitRecords": 0,
+    "permitRowsJoined": 0,
+    "permitRowsUnmatched": 0,
+    "parcelsWithDevelopmentSignals": 0
+  },
+  "requiredOutputs": [
+    "output/schema-report.md",
+    "output/schema-report.json",
+    "output/join-key-report.md",
+    "output/full-parcel-access-report.md",
+    "output/<county>-parcels.geojson",
+    "output/<county>-parcels.pmtiles or output/vector-tiles/",
+    "public/data/parcels/manifest.json",
+    "public/data/permits/manifest.json",
+    "public/data/developments/parcel-development-index.json",
+    "public/data/zoning/manifest.json",
+    "public/data/floodplain/manifest.json"
+  ],
+  "notes": "Copy this file for each new county, replace every placeholder, and do not change visible frontend pages until source counts and join keys are verified."
+}

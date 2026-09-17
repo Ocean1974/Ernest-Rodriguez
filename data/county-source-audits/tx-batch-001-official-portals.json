@@ -1,0 +1,770 @@
+{
+  "version": "wr-tx-batch-001-official-portals-v1",
+  "retrievedAt": "2026-06-28",
+  "scope": "Texas verification queue batch 1, initial official portal discovery",
+  "rule": "Official portals are evidence for source discovery only. They do not make a county core-complete until exact counts, join keys, bulk/source provenance, viewport chunks, search shards, and QC are verified.",
+  "counties": [
+    {
+      "countyId": "anderson-county-tx",
+      "countyName": "Anderson County",
+      "state": "TX",
+      "officialPortals": [
+        {
+          "label": "Anderson County Appraisal District public portal",
+          "url": "https://andersoncad.net/",
+          "sourceType": "appraisal-public-portal",
+          "verificationStatus": "official-site-verified",
+          "notes": "Official CAD public portal responds with a React public portal. The portal configuration identifies the office key as Anderson through the official True Prodigy backend office lookup. Treat as source-discovery evidence only until property search authorization, bulk export, exact parcel count, and join keys are verified."
+        },
+        {
+          "label": "Anderson CAD backend office lookup",
+          "url": "https://prod-container.trueprodigyapi.com/trueprodigy/officelookup/andersoncad.net",
+          "sourceType": "public-backend-office-lookup",
+          "verificationStatus": "official-backend-verified",
+          "notes": "GET returned office=Anderson. The public bundle also references cadpublic/publicportal token endpoints and public property/GAMA routes; live property search sampling remains blocked until authorization behavior is fully documented without persisting short-lived tokens."
+        },
+        {
+          "label": "Anderson CAD map/property routes discovered from public bundle",
+          "url": "https://andersoncad.net/static/js/index.153baa68.js",
+          "sourceType": "public-portal-bundle-route-discovery",
+          "verificationStatus": "routes-discovered",
+          "notes": "Observed routes include /property-search, /gama/parcelinfo, /gama/parcelswithinbounds, /gama/lotdimensions, and public property search endpoints. This is not bulk provenance and does not verify counts or join keys."
+        }
+      ],
+      "completionImpact": "source-discovery-started",
+      "remainingBlockers": [
+        "official parcel geometry bulk source not verified",
+        "bulk appraisal/owner source not verified",
+        "property search authorization and payload shape not fully verified",
+        "exact parcel count not verified",
+        "exact geometry-to-appraisal join key not verified",
+        "viewport/search outputs not built"
+      ]
+    },
+    {
+      "countyId": "andrews-county-tx",
+      "countyName": "Andrews County",
+      "state": "TX",
+      "officialPortals": [
+        {
+          "label": "Andrews County Appraisal District official site",
+          "url": "https://andrewscad.org/",
+          "sourceType": "appraisal-district-site",
+          "verificationStatus": "official-site-verified",
+          "notes": "Official site exposes property search, interactive map, online portal, contact details, and states the district appraises real and business personal property in Andrews County."
+        },
+        {
+          "label": "Andrews CAD property search",
+          "url": "https://esearch.andrewscad.org/",
+          "sourceType": "property-search",
+          "verificationStatus": "linked-from-official-site",
+          "notes": "Search modes include owner, address, ID, ARB, and advanced search. Observed fields include Property ID, Owner ID, Geographic ID, tax year, subdivision, neighborhood, and property type. Tax year options observed from 2026 through 2017."
+        },
+        {
+          "label": "Andrews CAD interactive map",
+          "url": "https://gis.bisclient.com/",
+          "sourceType": "interactive-map",
+          "verificationStatus": "linked-from-official-site",
+          "notes": "Linked from the official Andrews CAD site and property-search header. Map is discovery evidence only until a bulk/API-safe geometry source, count, and join key are verified."
+        }
+      ],
+      "completionImpact": "source-discovery-started",
+      "remainingBlockers": [
+        "bulk/export terms not verified",
+        "exact parcel count not verified",
+        "exact geometry-to-appraisal join key not verified",
+        "viewport/search outputs not built"
+      ]
+    },
+    {
+      "countyId": "angelina-county-tx",
+      "countyName": "Angelina County",
+      "state": "TX",
+      "officialPortals": [
+        {
+          "label": "Angelina County Appraisal District",
+          "url": "https://www.angelinacad.org/",
+          "sourceType": "appraisal-district-site",
+          "verificationStatus": "official-site-verified",
+          "notes": "Official site links to Property Search and Maps, says the district values residential, commercial, and business personal property throughout Angelina County, and says it maintains ownership records, assigns market value, administers exemptions and special appraisal, and determines taxable situs."
+        },
+        {
+          "label": "Angelina CAD property search and maps",
+          "url": "https://esearch.angelinacad.org/",
+          "sourceType": "property-search-and-maps",
+          "verificationStatus": "linked-from-official-site",
+          "notes": "Search modes include owner, address, ID, ARB, and advanced search. Observed fields include Property ID, Owner ID, Geographic ID, tax year, subdivision, neighborhood, and property type. Tax year options observed for 2026, 2025, and 2024."
+        },
+    {
+      "label": "Angelina CAD interactive map",
+          "url": "https://gis.bisclient.com/",
+          "sourceType": "interactive-map",
+          "verificationStatus": "linked-from-property-search",
+      "notes": "Linked from the Angelina CAD property-search header. Map is discovery evidence only until an official archive is inspected and its count and join key are verified."
+    },
+    {
+      "label": "Angelina CAD open-records downloads",
+      "url": "https://www.angelinacad.org/open-records",
+      "sourceType": "official-bulk-download-index",
+      "verificationStatus": "official-downloads-found-not-inspected",
+      "notes": "Publishes the 2026 Certified Roll Export - ALL, export layout 8.0.33, parcel SHP dated 2026-05-20, parcel-with-owner SHP dated 2026-05-20, and FIRM flood SHP. Archive schemas, counts, join keys, and reuse suitability remain unverified."
+    }
+  ],
+  "completionImpact": "official-snapshot-captured-schema-and-join-audited",
+  "remainingBlockers": [
+    "capture, reuse, and redistribution rights review not completed",
+    "unique stable geometry-feature key or multipart consolidation rule not proven",
+    "1,280 parcel features remain unmatched to APPRAISAL_INFO",
+        "viewport/search outputs not built"
+      ]
+    },
+    {
+      "countyId": "aransas-county-tx",
+      "countyName": "Aransas County",
+      "state": "TX",
+      "officialPortals": [
+        {
+          "label": "Aransas County Appraisal District",
+          "url": "https://aransascad.org/",
+          "sourceType": "appraisal-district-site",
+          "verificationStatus": "official-site-verified",
+          "notes": "Official site links to property search/pay taxes, tax portal, online forms, and an interactive map. It also exposes candidate appraisal/export leads including 2026 preliminary roll, 2025 owner-agent export, 2025 transfer tape, certified totals, and freeze totals."
+        },
+        {
+          "label": "Aransas CAD property search",
+          "url": "https://esearch.aransascad.org/",
+          "sourceType": "property-search",
+          "verificationStatus": "linked-from-official-site",
+          "notes": "Search modes include owner, address, ID, ARB, and advanced search. Observed fields include Property ID, Owner ID, Geographic ID, tax year, subdivision, neighborhood, and property type. Tax year options observed from 2026 through 2017."
+        },
+        {
+          "label": "Aransas CAD interactive map",
+          "url": "https://gis.bisclient.com/",
+          "sourceType": "interactive-map",
+          "verificationStatus": "linked-from-official-site",
+          "notes": "Linked from the official Aransas CAD site and property-search header. Map is discovery evidence only until a bulk/API-safe geometry source, count, and join key are verified."
+        }
+      ],
+      "completionImpact": "source-discovery-started",
+      "remainingBlockers": [
+        "bulk/export files not inspected",
+        "exact parcel count not verified",
+        "exact geometry-to-appraisal join key not verified",
+        "viewport/search outputs not built"
+      ]
+    },
+    {
+      "countyId": "archer-county-tx",
+      "countyName": "Archer County",
+      "state": "TX",
+      "officialPortals": [
+        {
+          "label": "Archer County Appraisal District property search portal",
+          "url": "https://www.archercad.org/",
+          "sourceType": "property-search-and-appraisal-portal",
+          "verificationStatus": "official-site-verified",
+          "notes": "The reachable CAD portal exposes property search, records/data/reports, and interactive map links. Observed property-search fields include Property ID, Geo ID, Owner ID, owner name, legal, abstract, subdivision, lease fields, tax year, and property type. Treat as discovery evidence only until records/data/reports files, exact counts, and join keys are verified."
+        }
+      ],
+      "completionImpact": "source-discovery-started",
+      "remainingBlockers": [
+        "records/data/reports files not inspected",
+        "exact parcel count not verified",
+        "exact geometry-to-appraisal join key not verified",
+        "viewport/search outputs not built"
+      ]
+    },
+    {
+      "countyId": "armstrong-county-tx",
+      "countyName": "Armstrong County",
+      "state": "TX",
+      "officialPortals": [
+        {
+          "label": "Armstrong County Appraisal District property search portal",
+          "url": "https://www.armstrongcad.org/",
+          "sourceType": "property-search-and-appraisal-portal",
+          "verificationStatus": "official-site-verified",
+          "notes": "The reachable CAD portal exposes property search, records/data/reports, interactive map, and tax payment links. Observed property-search fields include Property ID, Geo ID, Owner ID, owner name, legal, abstract, subdivision, lease fields, tax year, and property type. Treat as discovery evidence only until records/data/reports files, exact counts, and join keys are verified."
+        }
+      ],
+      "completionImpact": "source-discovery-started",
+      "remainingBlockers": [
+        "records/data/reports files not inspected",
+        "exact parcel count not verified",
+        "exact geometry-to-appraisal join key not verified",
+        "viewport/search outputs not built"
+      ]
+    },
+    {
+      "countyId": "atascosa-county-tx",
+      "countyName": "Atascosa County",
+      "state": "TX",
+      "officialPortals": [
+        {
+          "label": "Atascosa Central Appraisal District official site",
+          "url": "https://atascosacad.com/",
+          "sourceType": "appraisal-district-site",
+          "verificationStatus": "official-site-verified",
+          "notes": "Official site exposes property search, interactive map, taxpayer/agent appeals, CAD forms, tax rates, certified totals, reappraisal plan, mass appraisal report, and annual report links."
+        },
+        {
+          "label": "Atascosa CAD property search",
+          "url": "https://esearch.atascosacad.com/",
+          "sourceType": "property-search",
+          "verificationStatus": "linked-from-official-site",
+          "notes": "Search modes include owner, address, ID, ARB, and advanced search. Observed fields include Property ID, Owner ID, Geographic ID, tax year, subdivision, neighborhood, property type, abstract, mobile home park, agent ID, and protest status. Tax year options observed from 2026 through 2017."
+        },
+        {
+          "label": "Atascosa CAD interactive map",
+          "url": "https://gis.bisclient.com/",
+          "sourceType": "interactive-map",
+          "verificationStatus": "linked-from-official-site",
+          "notes": "Linked from the official Atascosa CAD site. Map is discovery evidence only until a bulk/API-safe geometry source, count, and join key are verified."
+        }
+      ],
+      "completionImpact": "source-discovery-started",
+      "remainingBlockers": [
+        "district report/source files not inspected",
+        "exact parcel count not verified",
+        "exact geometry-to-appraisal join key not verified",
+        "viewport/search outputs not built"
+      ]
+    },
+    {
+      "countyId": "austin-county-tx",
+      "countyName": "Austin County",
+      "state": "TX",
+      "officialPortals": [
+        {
+          "label": "Austin County Appraisal District official site",
+          "url": "https://austincad.org/",
+          "sourceType": "appraisal-district-site",
+          "verificationStatus": "official-site-verified",
+          "notes": "Official site exposes property search, interactive map, online forms/protest, appraisal forms, tax rates, annual reports, reappraisal plan, and mass appraisal summary report links."
+        },
+        {
+          "label": "Austin CAD property search",
+          "url": "https://esearch.austincad.org/",
+          "sourceType": "property-search",
+          "verificationStatus": "linked-from-official-site",
+          "notes": "Search modes include owner, address, ID, ARB, and advanced search. Observed fields include Property ID, Owner ID, Geographic ID, tax year, subdivision, neighborhood, property type, abstract, mobile home park, and address fields. Tax year options observed from 2026 through 2020."
+        },
+        {
+          "label": "Austin CAD interactive map",
+          "url": "https://gis.bisclient.com/",
+          "sourceType": "interactive-map",
+          "verificationStatus": "linked-from-official-site",
+          "notes": "Linked from the official Austin CAD site and property-search header. Map is discovery evidence only until a bulk/API-safe geometry source, count, and join key are verified."
+        }
+      ],
+      "completionImpact": "source-discovery-started",
+      "remainingBlockers": [
+        "public report/source files not inspected",
+        "exact parcel count not verified",
+        "exact geometry-to-appraisal join key not verified",
+        "viewport/search outputs not built"
+      ]
+    },
+    {
+      "countyId": "bailey-county-tx",
+      "countyName": "Bailey County",
+      "state": "TX",
+      "officialPortals": [
+        {
+          "label": "Bailey CAD TaxNetUSA property search candidate",
+          "url": "https://www.baileycad.com/",
+          "sourceType": "private-property-search-candidate",
+          "verificationStatus": "private-not-official",
+          "notes": "Reachable property search page says it is paid for by sponsorships and is not affiliated with any government agency. Record only as a non-official discovery lead; do not use as official CAD provenance."
+        }
+      ],
+      "completionImpact": "source-discovery-started",
+      "remainingBlockers": [
+        "official appraisal district site not verified",
+        "official parcel geometry source not verified",
+        "bulk appraisal/owner source not verified",
+        "exact parcel count not verified",
+        "exact geometry-to-appraisal join key not verified",
+        "viewport/search outputs not built"
+      ]
+    },
+    {
+      "countyId": "bandera-county-tx",
+      "countyName": "Bandera County",
+      "state": "TX",
+      "officialPortals": [
+        {
+          "label": "Bandera CAD TaxNetUSA property search candidate",
+          "url": "https://www.banderacad.com/",
+          "sourceType": "private-property-search-candidate",
+          "verificationStatus": "private-not-official",
+          "notes": "Reachable property search page says it is paid for by sponsorships and is not affiliated with any government agency. Record only as a non-official discovery lead; do not use as official CAD provenance."
+        }
+      ],
+      "completionImpact": "source-discovery-started",
+      "remainingBlockers": [
+        "official appraisal district site not verified",
+        "official parcel geometry source not verified",
+        "bulk appraisal/owner source not verified",
+        "exact parcel count not verified",
+        "exact geometry-to-appraisal join key not verified",
+        "viewport/search outputs not built"
+      ]
+    },
+    {
+      "countyId": "bastrop-county-tx",
+      "countyName": "Bastrop County",
+      "state": "TX",
+      "officialPortals": [
+        {
+          "label": "Bastrop Central Appraisal District official site",
+          "url": "https://bastropcad.org/",
+          "sourceType": "appraisal-district-site",
+          "verificationStatus": "official-site-verified",
+          "notes": "Official site links to property search, interactive map, taxpayer/agent protest, data downloads and valuation reports, public reports, and states Bastrop CAD is responsible for local property tax appraisal and exemption administration in Bastrop County."
+        },
+        {
+          "label": "Bastrop CAD property search",
+          "url": "https://esearch.bastropcad.org/",
+          "sourceType": "property-search",
+          "verificationStatus": "linked-from-official-site",
+          "notes": "Search modes include owner, address, ID, ARB, and advanced search. Observed fields include Property ID, Owner ID, Geographic ID, tax year, subdivision, neighborhood, property type, abstract, mobile home park, and address fields. Tax year options observed from 2026 through 2021."
+        },
+        {
+          "label": "Bastrop CAD interactive map",
+          "url": "https://gis.bisclient.com/",
+          "sourceType": "interactive-map",
+          "verificationStatus": "linked-from-official-site",
+          "notes": "Linked from the official Bastrop CAD site and property-search header. Map is discovery evidence only until a bulk/API-safe geometry source, count, and join key are verified."
+        }
+      ],
+      "completionImpact": "source-discovery-started",
+      "remainingBlockers": [
+        "data download/report files not inspected",
+        "exact parcel count not verified",
+        "exact geometry-to-appraisal join key not verified",
+        "viewport/search outputs not built"
+      ]
+    },
+    {
+      "countyId": "baylor-county-tx",
+      "countyName": "Baylor County",
+      "state": "TX",
+      "officialPortals": [
+        {
+          "label": "Baylor CAD TaxNetUSA property search candidate",
+          "url": "https://www.baylorcad.com/",
+          "sourceType": "private-property-search-candidate",
+          "verificationStatus": "private-not-official",
+          "notes": "Reachable property search page says it is paid for by sponsorships and is not affiliated with any government agency. Record only as a non-official discovery lead; do not use as official CAD provenance."
+        }
+      ],
+      "completionImpact": "source-discovery-started",
+      "remainingBlockers": [
+        "official appraisal district site not verified",
+        "official parcel geometry source not verified",
+        "bulk appraisal/owner source not verified",
+        "exact parcel count not verified",
+        "exact geometry-to-appraisal join key not verified",
+        "viewport/search outputs not built"
+      ]
+    },
+    {
+      "countyId": "bee-county-tx",
+      "countyName": "Bee County",
+      "state": "TX",
+      "officialPortals": [
+        {
+          "label": "Bee Central Appraisal District official site",
+          "url": "https://beecad.org/",
+          "sourceType": "appraisal-district-site",
+          "verificationStatus": "official-site-verified",
+          "notes": "Official site exposes property search, interactive map, online forms, taxpayer appeals, truth-in-taxation links, and says Bee CAD appraises property for ad valorem taxation."
+        },
+        {
+          "label": "Bee CAD property search",
+          "url": "https://esearch.beecad.org/",
+          "sourceType": "property-search",
+          "verificationStatus": "linked-from-official-site",
+          "notes": "Search modes include owner, address, ID, ARB, and advanced search. Observed fields include Property ID, Owner ID, Geographic ID, tax year, subdivision, neighborhood, and property type. Exact export/schema fields still need source inspection."
+        },
+        {
+          "label": "Bee CAD interactive map",
+          "url": "https://gis.bisclient.com/",
+          "sourceType": "interactive-map",
+          "verificationStatus": "linked-from-official-site",
+          "notes": "Linked from the official Bee CAD site. Map is discovery evidence only until a bulk/API-safe geometry source, count, and join key are verified."
+        }
+      ],
+      "completionImpact": "source-discovery-started",
+      "remainingBlockers": [
+        "bulk/export files not inspected",
+        "exact parcel count not verified",
+        "exact geometry-to-appraisal join key not verified",
+        "viewport/search outputs not built"
+      ]
+    },
+    {
+      "countyId": "bell-county-tx",
+      "countyName": "Bell County",
+      "state": "TX",
+      "officialPortals": [
+        {
+          "label": "Bell CAD official site",
+          "url": "https://bellcad.org/",
+          "sourceType": "appraisal-district-site",
+          "verificationStatus": "official-site-verified",
+          "notes": "Official site exposes 2026 property search, prior year/tax search, interactive map, online protest, forms, and appraisal information."
+        },
+        {
+          "label": "Bell CAD 2026 property search",
+          "url": "https://esearchgsa.bellcad.org/",
+          "sourceType": "property-search",
+          "verificationStatus": "linked-from-official-site",
+          "notes": "Search modes include owner, address, ID, ARB, and advanced search. Observed fields include Property ID, Owner ID, Geographic ID, tax year, subdivision, neighborhood, and property type. Exact export/schema fields still need source inspection."
+        },
+        {
+          "label": "Bell CAD interactive map",
+          "url": "https://gis.bisclient.com/",
+          "sourceType": "interactive-map",
+          "verificationStatus": "linked-from-official-site",
+          "notes": "Linked from the official Bell CAD site. Map is discovery evidence only until a bulk/API-safe geometry source, count, and join key are verified."
+        }
+      ],
+      "completionImpact": "source-discovery-started",
+      "remainingBlockers": [
+        "bulk/export files not inspected",
+        "exact parcel count not verified",
+        "exact geometry-to-appraisal join key not verified",
+        "viewport/search outputs not built"
+      ]
+    },
+    {
+      "countyId": "bexar-county-tx",
+      "countyName": "Bexar County",
+      "state": "TX",
+      "officialPortals": [
+        {
+          "label": "Bexar Central Appraisal District official site",
+          "url": "https://bcad.org/",
+          "sourceType": "appraisal-district-site",
+          "verificationStatus": "official-site-verified",
+          "notes": "Official site exposes new and classic property search, online services, reports, and map search links; BCAD states it does not accept tax payments."
+        },
+        {
+          "label": "Bexar CAD property search",
+          "url": "https://hgo.harrisgovern.com/",
+          "sourceType": "property-search",
+          "verificationStatus": "linked-from-official-site",
+          "notes": "Linked from the official Bexar CAD site. Exact search payload fields still need direct inspection before schema mapping."
+        },
+        {
+          "label": "Bexar CAD classic property search and map",
+          "url": "https://bexar.trueautomation.com/",
+          "sourceType": "property-search-and-map",
+          "verificationStatus": "linked-from-official-site",
+          "notes": "Linked from the official Bexar CAD site as classic search/map. Exact map/search payload fields and export viability still need direct inspection."
+        }
+      ],
+      "completionImpact": "source-discovery-started",
+      "remainingBlockers": [
+        "new/classic search payload fields not inspected",
+        "report/source files not inspected",
+        "exact parcel count not verified",
+        "exact geometry-to-appraisal join key not verified",
+        "viewport/search outputs not built"
+      ]
+    },
+    {
+      "countyId": "blanco-county-tx",
+      "countyName": "Blanco County",
+      "state": "TX",
+      "officialPortals": [
+        {
+          "label": "Blanco County Appraisal District official site",
+          "url": "https://blancocad.com/",
+          "sourceType": "appraisal-district-site",
+          "verificationStatus": "official-site-verified",
+          "notes": "Official site exposes property search, GIS map search, online portal, forms, truth-in-taxation links, and contact details for Blanco CAD."
+        },
+        {
+          "label": "Blanco CAD property search",
+          "url": "https://esearch.blancocad.com/",
+          "sourceType": "property-search",
+          "verificationStatus": "linked-from-official-site",
+          "notes": "Search modes include owner, address, ID, ARB, and advanced search. Observed fields include Property ID, Owner ID, Geographic ID, tax year, subdivision, neighborhood, and property type. Exact export/schema fields still need source inspection."
+        },
+        {
+          "label": "Blanco CAD GIS map search",
+          "url": "https://gis.bisclient.com/",
+          "sourceType": "interactive-map",
+          "verificationStatus": "linked-from-official-site",
+          "notes": "Linked from the official Blanco CAD site. Map is discovery evidence only until a bulk/API-safe geometry source, count, and join key are verified."
+        }
+      ],
+      "completionImpact": "source-discovery-started",
+      "remainingBlockers": [
+        "bulk/export files not inspected",
+        "exact parcel count not verified",
+        "exact geometry-to-appraisal join key not verified",
+        "viewport/search outputs not built"
+      ]
+    },
+    {
+      "countyId": "borden-county-tx",
+      "countyName": "Borden County",
+      "state": "TX",
+      "officialPortals": [
+        {
+          "label": "Borden County Appraisal District official site",
+          "url": "https://bordencad.org/",
+          "sourceType": "appraisal-district-site",
+          "verificationStatus": "official-site-verified",
+          "notes": "Official site exposes property search, appraisal rolls, interactive map, online protest, online forms, and says real estate and personal property accounts are appraised locally by the district."
+        },
+        {
+          "label": "Borden CAD property search",
+          "url": "https://esearch.bordencad.org/",
+          "sourceType": "property-search",
+          "verificationStatus": "linked-from-official-site",
+          "notes": "Search modes include owner, address, ID, ARB, and advanced search. Observed fields include Property ID, Owner ID, Geographic ID, tax year, subdivision, neighborhood, and property type. Exact export/schema fields still need source inspection."
+        },
+        {
+          "label": "Borden CAD interactive map",
+          "url": "https://gis.bisclient.com/",
+          "sourceType": "interactive-map",
+          "verificationStatus": "linked-from-official-site",
+          "notes": "Linked from the official Borden CAD site. Map is discovery evidence only until a bulk/API-safe geometry source, count, and join key are verified."
+        }
+      ],
+      "completionImpact": "source-discovery-started",
+      "remainingBlockers": [
+        "appraisal roll/source files not inspected",
+        "exact parcel count not verified",
+        "exact geometry-to-appraisal join key not verified",
+        "viewport/search outputs not built"
+      ]
+    },
+    {
+      "countyId": "bosque-county-tx",
+      "countyName": "Bosque County",
+      "state": "TX",
+      "officialPortals": [
+        {
+          "label": "Bosque CAD official site",
+          "url": "https://bosquecad.com/",
+          "sourceType": "appraisal-district-site",
+          "verificationStatus": "official-site-verified",
+          "notes": "Official site exposes appraisal, exemption, forms, public information, property-tax resources, and tax office links; property/map source links still need deeper bulk/source verification."
+        }
+      ],
+      "completionImpact": "source-discovery-started",
+      "remainingBlockers": [
+        "property/map source links not verified",
+        "bulk/export files not inspected",
+        "exact parcel count not verified",
+        "exact geometry-to-appraisal join key not verified",
+        "viewport/search outputs not built"
+      ]
+    },
+    {
+      "countyId": "bowie-county-tx",
+      "countyName": "Bowie County",
+      "state": "TX",
+      "officialPortals": [
+        {
+          "label": "Bowie CAD TaxNetUSA property search candidate",
+          "url": "https://www.bowie-cad.org/",
+          "sourceType": "private-property-search-candidate",
+          "verificationStatus": "private-not-official",
+          "notes": "Reachable property search page says it is paid for by sponsorships and is not affiliated with any government agency. Record only as a non-official discovery lead; do not use as official CAD provenance."
+        }
+      ],
+      "completionImpact": "source-discovery-started",
+      "remainingBlockers": [
+        "official appraisal district site not verified",
+        "official parcel geometry source not verified",
+        "bulk appraisal/owner source not verified",
+        "exact parcel count not verified",
+        "exact geometry-to-appraisal join key not verified",
+        "viewport/search outputs not built"
+      ]
+    },
+    {
+      "countyId": "brazoria-county-tx",
+      "countyName": "Brazoria County",
+      "state": "TX",
+      "officialPortals": [
+        {
+          "label": "Brazoria Central Appraisal District official site",
+          "url": "https://brazoriacad.org/",
+          "sourceType": "appraisal-district-site",
+          "verificationStatus": "official-site-verified",
+          "notes": "Official site exposes property search, interactive map, online portal, mapping department, tax roll and GIS downloads, and says its appraisal roll contains taxable properties within Brazoria County."
+        },
+        {
+          "label": "Brazoria CAD property search",
+          "url": "https://esearch.brazoriacad.org/",
+          "sourceType": "property-search",
+          "verificationStatus": "linked-from-official-site"
+        },
+        {
+          "label": "Brazoria CAD interactive map",
+          "url": "https://gis.bisclient.com/",
+          "sourceType": "interactive-map",
+          "verificationStatus": "linked-from-official-site"
+        }
+      ],
+      "completionImpact": "source-discovery-started",
+      "remainingBlockers": [
+        "tax roll/GIS download files not inspected",
+        "exact parcel count not verified",
+        "exact geometry-to-appraisal join key not verified",
+        "viewport/search outputs not built"
+      ]
+    },
+    {
+      "countyId": "brazos-county-tx",
+      "countyName": "Brazos County",
+      "state": "TX",
+      "officialPortals": [
+        {
+          "label": "Brazos Central Appraisal District official site",
+          "url": "https://brazoscad.org/",
+          "sourceType": "appraisal-district-site",
+          "verificationStatus": "official-site-verified",
+          "notes": "Official site exposes property search, interactive map, certified data downloads, GIS data, appeals portal, and states Brazos CAD appraises real and business personal property within Brazos County."
+        },
+        {
+          "label": "Brazos CAD property search",
+          "url": "https://esearch.brazoscad.org/",
+          "sourceType": "property-search",
+          "verificationStatus": "linked-from-official-site"
+        },
+        {
+          "label": "Brazos CAD interactive map",
+          "url": "https://gis.bisclient.com/",
+          "sourceType": "interactive-map",
+          "verificationStatus": "linked-from-official-site"
+        }
+      ],
+      "completionImpact": "source-discovery-started",
+      "remainingBlockers": [
+        "certified data/GIS files not inspected",
+        "exact parcel count not verified",
+        "exact geometry-to-appraisal join key not verified",
+        "viewport/search outputs not built"
+      ]
+    },
+    {
+      "countyId": "brewster-county-tx",
+      "countyName": "Brewster County",
+      "state": "TX",
+      "officialPortals": [
+        {
+          "label": "Brewster CAD TaxNetUSA property search candidate",
+          "url": "https://www.brewstercad.com/",
+          "sourceType": "private-property-search-candidate",
+          "verificationStatus": "private-not-official",
+          "notes": "Reachable property search page says it is paid for by sponsorships and is not affiliated with any government agency. Record only as a non-official discovery lead; do not use as official CAD provenance."
+        }
+      ],
+      "completionImpact": "source-discovery-started",
+      "remainingBlockers": [
+        "official appraisal district site not verified",
+        "official parcel geometry source not verified",
+        "bulk appraisal/owner source not verified",
+        "exact parcel count not verified",
+        "exact geometry-to-appraisal join key not verified",
+        "viewport/search outputs not built"
+      ]
+    },
+    {
+      "countyId": "briscoe-county-tx",
+      "countyName": "Briscoe County",
+      "state": "TX",
+      "officialPortals": [
+        {
+          "label": "Briscoe CAD property search portal",
+          "url": "https://briscoecad.org/",
+          "sourceType": "property-search-and-appraisal-portal",
+          "verificationStatus": "official-site-verified",
+          "notes": "Reachable CAD portal exposes property search, property ID, Geo ID, owner, address, legal, records/data/reports, interactive map, and online protest links. Treat as discovery evidence only until source files, exact counts, and join keys are verified."
+        }
+      ],
+      "completionImpact": "source-discovery-started",
+      "remainingBlockers": [
+        "records/data/reports files not inspected",
+        "exact parcel count not verified",
+        "exact geometry-to-appraisal join key not verified",
+        "viewport/search outputs not built"
+      ]
+    },
+    {
+      "countyId": "brooks-county-tx",
+      "countyName": "Brooks County",
+      "state": "TX",
+      "officialPortals": [
+        {
+          "label": "Brooks County Appraisal District official site",
+          "url": "https://brookscad.org/",
+          "sourceType": "appraisal-district-site",
+          "verificationStatus": "official-site-verified",
+          "notes": "Official site exposes property search, online appeals, interactive map, tax information, and states Brooks CAD appraises real and business personal property within Brooks County."
+        },
+        {
+          "label": "Brooks CAD property search",
+          "url": "https://esearch.brookscad.org/",
+          "sourceType": "property-search",
+          "verificationStatus": "linked-from-official-site"
+        },
+        {
+          "label": "Brooks CAD interactive map",
+          "url": "https://gis.bisclient.com/",
+          "sourceType": "interactive-map",
+          "verificationStatus": "linked-from-official-site"
+        }
+      ],
+      "completionImpact": "source-discovery-started",
+      "remainingBlockers": [
+        "bulk/export terms not verified",
+        "exact parcel count not verified",
+        "exact geometry-to-appraisal join key not verified",
+        "viewport/search outputs not built"
+      ]
+    },
+    {
+      "countyId": "brown-county-tx",
+      "countyName": "Brown County",
+      "state": "TX",
+      "officialPortals": [
+        {
+          "label": "Brown County Appraisal District official site",
+          "url": "https://brown-cad.org/",
+          "sourceType": "appraisal-district-site",
+          "verificationStatus": "official-site-verified",
+          "notes": "Official site exposes property search, interactive map, taxpayer portal, entity boundary maps, downloads, and says BCAD is responsible for fair market appraisal of properties for Brown County taxing units."
+        },
+        {
+          "label": "Brown CAD property search",
+          "url": "https://esearch.brown-cad.org/",
+          "sourceType": "property-search",
+          "verificationStatus": "linked-from-official-site"
+        },
+        {
+          "label": "Brown CAD interactive map",
+          "url": "https://gis.bisclient.com/",
+          "sourceType": "interactive-map",
+          "verificationStatus": "linked-from-official-site"
+        }
+      ],
+      "completionImpact": "source-discovery-started",
+      "remainingBlockers": [
+        "bulk/export terms not verified",
+        "exact parcel count not verified",
+        "exact geometry-to-appraisal join key not verified",
+        "viewport/search outputs not built"
+      ]
+    }
+  ]
+}

@@ -1,0 +1,106 @@
+{
+  "county_id": "jefferson-ky",
+  "county_name": "Jefferson County",
+  "market_name": "Louisville",
+  "cad_name": "Jefferson County PVA",
+  "source_name": "Jefferson County PVA owner/appraisal export",
+  "status": "join-ready-source-needed",
+  "official_sources": {
+    "property_search_url": "https://jeffersonpva.ky.gov/property-search/",
+    "subscription_faq_url": "https://jeffersonpva.ky.gov/faq/why-do-i-need-to-subscribe-to-the-pva/",
+    "records_request_form_url": "https://jeffersonpva.ky.gov/wp-content/uploads/2019/04/Request-for-reproduction2018-and-Menu.pdf"
+  },
+  "related_public_sources": {
+    "county_clerk_land_records_url": "https://jeffersoncountyclerk.org/on-line-land-records/",
+    "county_clerk_deed_room_url": "https://jeffersoncountyclerk.org/deed-room/",
+    "kentucky_sos_business_search_url": "https://sosbes.sos.ky.gov/BusSearchNProfile/search.aspx",
+    "lojic_zoning_url": "https://gis.lojic.org/maps/rest/services/LojicSolutions/OpenDataDevelopment/MapServer/15",
+    "lojic_planning_applications_url": "https://gis.lojic.org/maps/rest/services/LojicSolutions/OpenDataDevelopment/MapServer/26",
+    "louisville_active_construction_permits_url": "https://services1.arcgis.com/79kfd2K6fskCAkyg/arcgis/rest/services/active_construction_permits/FeatureServer/0",
+    "louisville_property_maintenance_occupancy_url": "https://services1.arcgis.com/79kfd2K6fskCAkyg/arcgis/rest/services/pm_occupancy/FeatureServer/0",
+    "msd_floodplain_url": "https://louisvillemsd.org/floodplain"
+  },
+  "official_source_notes": [
+    "The Jefferson County PVA site supports public Address and Parcel ID searches with limited property information.",
+    "The PVA subscription service documents detailed fields such as mailing address, land value, improvements value, assessment history, property class, tax information, year built, square footage, and building type.",
+    "The PVA records request menu documents standardized database requests, including Ownership Record, Assessment Roll, Assessment Roll Plus, and Digital Parcel with Owner Info.",
+    "Jefferson County Clerk land records, Kentucky SOS business records, LOJIC zoning/planning layers, Louisville active construction permits, property maintenance occupancy records, and MSD floodplain information are source-linked but require their own join logic before parcel-level values are claimed.",
+    "Louisville active construction permits are official open data with permit number, type/status, contractor, occupancy category, work type, zoning, square footage, fee/cost, address, coordinates, and issue date fields; the parcel join remains pending.",
+    "Property maintenance occupancy records are inspection context only and must not be labeled as formal Certificate of Occupancy records.",
+    "Do not infer owner phone/email from the LOJIC parcel layer. Only map phone/email if an official PVA or approved source export explicitly includes those fields."
+  ],
+  "input_files": {
+    "preferred_csv": "data/raw/jefferson-ky/Jefferson_County_KY_PVA_Owner_Appraisal.csv",
+    "alternate_txt": "data/raw/jefferson-ky/Jefferson_County_KY_PVA_Owner_Appraisal.txt"
+  },
+  "output_files": {
+    "owner_appraisal_index": "output/jefferson-ky/jefferson-county-ky-pva-owner-appraisal-index.json",
+    "owner_appraisal_report_json": "output/jefferson-ky/pva-owner-appraisal-report.json",
+    "owner_appraisal_report_md": "output/jefferson-ky/pva-owner-appraisal-report.md",
+    "join_key_report": "output/jefferson-ky/join-key-report.md"
+  },
+  "join_strategy": {
+    "primary": {
+      "source_field": "PARCELID",
+      "white_rabbit_field": "accountNum",
+      "lojic_field": "PARCELID",
+      "status": "join-ready"
+    },
+    "secondary": {
+      "source_field": "LRSN",
+      "white_rabbit_field": "gisParcelId",
+      "lojic_field": "LRSN",
+      "status": "join-ready-if-present"
+    },
+    "fallback": {
+      "source_field": "PIN",
+      "white_rabbit_field": "sourceReferences.lojic.PIN",
+      "status": "candidate-only"
+    }
+  },
+  "field_aliases": {
+    "parcelId": ["PARCELID", "PARCEL_ID", "PARCEL ID", "PARCEL", "MAPID", "MAP ID", "PVA MAP ID"],
+    "lrsn": ["LRSN", "GIS_ID", "GIS ID", "GISPARCELID", "GIS PARCEL ID"],
+    "pin": ["PIN", "PVA PIN"],
+    "address": ["PROPERTY_ADDRESS", "PROPERTY ADDRESS", "SITUS_ADDRESS", "SITUS ADDRESS", "LOCATION_ADDRESS", "LOCATION ADDRESS", "ADDRESS", "PROPERTYADDR"],
+    "city": ["PROPERTY_CITY", "PROPERTY CITY", "SITUS_CITY", "SITUS CITY", "CITY"],
+    "propertyZip": ["PROPERTY_ZIP", "PROPERTY ZIP", "SITUS_ZIP", "SITUS ZIP", "ZIP", "ZIPCODE", "ZIP CODE"],
+    "ownerName": ["OWNER_NAME", "OWNER NAME", "OWNER", "PRIMARY_OWNER", "PRIMARY OWNER", "CURRENT_OWNER", "CURRENT OWNER"],
+    "ownerName2": ["OWNER_NAME_2", "OWNER NAME 2", "OWNER2", "OWNER 2", "CARE_OF", "CARE OF", "C/O"],
+    "businessName": ["BUSINESS_NAME", "BUSINESS NAME", "COMPANY", "ENTITY", "OWNER_BUSINESS", "OWNER BUSINESS"],
+    "ownerMailingAddress": ["MAILING_ADDRESS", "MAILING ADDRESS", "OWNER_ADDRESS", "OWNER ADDRESS", "MAIL_ADDR1", "MAIL ADDRESS 1", "MAIL1"],
+    "ownerMailingAddress2": ["MAILING_ADDRESS_2", "MAILING ADDRESS 2", "OWNER_ADDRESS_2", "OWNER ADDRESS 2", "MAIL_ADDR2", "MAIL ADDRESS 2", "MAIL2"],
+    "ownerCity": ["MAILING_CITY", "MAILING CITY", "OWNER_CITY", "OWNER CITY", "MAIL_CITY", "MAIL CITY"],
+    "ownerState": ["MAILING_STATE", "MAILING STATE", "OWNER_STATE", "OWNER STATE", "MAIL_STATE", "MAIL STATE"],
+    "ownerZip": ["MAILING_ZIP", "MAILING ZIP", "OWNER_ZIP", "OWNER ZIP", "MAIL_ZIP", "MAIL ZIP"],
+    "ownerCountry": ["MAILING_COUNTRY", "MAILING COUNTRY", "OWNER_COUNTRY", "OWNER COUNTRY"],
+    "ownerPhone": ["OWNER_PHONE", "OWNER PHONE", "PHONE"],
+    "ownerEmail": ["OWNER_EMAIL", "OWNER EMAIL", "EMAIL"],
+    "landValue": ["LAND_VALUE", "LAND VALUE", "LAND_ASSESSED_VALUE", "LAND ASSESSED VALUE"],
+    "improvementValue": ["IMPROVEMENT_VALUE", "IMPROVEMENT VALUE", "IMPROVEMENTS_VALUE", "IMPROVEMENTS VALUE", "BUILDING_VALUE", "BUILDING VALUE"],
+    "totalValue": ["TOTAL_VALUE", "TOTAL VALUE", "ASSESSED_VALUE", "ASSESSED VALUE", "PVA_VALUE", "PVA VALUE", "FAIR_CASH_VALUE", "FAIR CASH VALUE"],
+    "landAreaSize": ["ACREAGE", "ACRES", "LAND_ACRES", "LAND ACRES", "LOT_SIZE", "LOT SIZE"],
+    "landAreaSqFt": ["LAND_SQFT", "LAND SQFT", "LAND_SQUARE_FEET", "LAND SQUARE FEET", "LOT_SQFT", "LOT SQFT"],
+    "buildingClass": ["PROPERTY_CLASS", "PROPERTY CLASS", "CLASS", "PROPERTY_TYPE", "PROPERTY TYPE", "BUILDING_CLASS", "BUILDING CLASS"],
+    "landUseCode": ["LAND_USE_CODE", "LAND USE CODE", "USE_CODE", "USE CODE"],
+    "landUseDescription": ["LAND_USE", "LAND USE", "LAND_USE_DESCRIPTION", "LAND USE DESCRIPTION", "USE_DESCRIPTION", "USE DESCRIPTION"],
+    "yearBuilt": ["YEAR_BUILT", "YEAR BUILT", "YR_BUILT", "YR BUILT"],
+    "grossBuildingArea": ["SQUARE_FEET", "SQUARE FEET", "GROSS_BUILDING_AREA", "GROSS BUILDING AREA", "BUILDING_SQFT", "BUILDING SQFT"],
+    "quality": ["QUALITY", "GRADE"],
+    "condition": ["CONDITION"],
+    "neighborhood": ["NEIGHBORHOOD", "NBHD", "PVA_NEIGHBORHOOD", "PVA NEIGHBORHOOD"],
+    "deedBook": ["DEED_BOOK", "DEED BOOK", "DB"],
+    "deedPage": ["DEED_PAGE", "DEED PAGE", "DP"]
+  },
+  "qa_checks": [
+    "source file present",
+    "headers inspected",
+    "PARCELID join field present or documented missing",
+    "LRSN join field present or documented missing",
+    "missing join key rows",
+    "duplicate PARCELID groups",
+    "duplicate LRSN groups",
+    "mapped universal fields"
+  ],
+  "ui_constraint": "Do not redesign or restyle any White Rabbit pages while adding Jefferson County PVA owner/appraisal plumbing."
+}

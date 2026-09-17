@@ -1,0 +1,91 @@
+{
+  "schemaVersion": "wr-williamson-county-source-audit-v1",
+  "county_id": "williamson-county-tx",
+  "county_name": "Williamson County",
+  "state": "TX",
+  "fips": "48491",
+  "cad_name": "Williamson Central Appraisal District",
+  "catalog_url": "https://data.wcad.org/",
+  "parcel_dataset": {
+    "id": "an3x-cnmw",
+    "name": "Parcels",
+    "url": "https://data.wcad.org/d/an3x-cnmw",
+    "api_url": "https://data.wcad.org/resource/an3x-cnmw.json",
+    "description": "Williamson County parcel boundary polygons created and maintained by the WCAD Mapping Department.",
+    "updated_at": "2026-09-05T14:15:35Z",
+    "field_count": 48,
+    "geometry_type": "multipolygon"
+  },
+  "owner_dataset": {
+    "id": "bbia-wsxs",
+    "name": "Owner",
+    "url": "https://data.wcad.org/d/bbia-wsxs",
+    "api_url": "https://data.wcad.org/resource/bbia-wsxs.json",
+    "description": "Property owner information published by WCAD.",
+    "updated_at": "2026-09-05T12:44:22Z",
+    "field_count": 39
+  },
+  "property_export_layout": "https://documents.wcad.org/DataDownloads/PropertyDataExportFileLayout.pdf",
+  "rights": {
+    "catalog_rights": ["read"],
+    "license": null,
+    "status": "unverified-for-production-reuse",
+    "storage": false,
+    "derivation": false,
+    "redistribution": false,
+    "commercial_use": false,
+    "evidence": "WCAD publishes these as open records with an as-is disclaimer, while the Socrata metadata exposes read access but no license. Production storage, derivation, redistribution, and commercial-use terms still require explicit review."
+  },
+  "observed_counts": {
+    "parcel_rows": 290912,
+    "parcelid_non_null": 290778,
+    "parcelid_null": 134,
+    "parcelid_distinct_non_null": 290489,
+    "parcelid_duplicate_excess": 289,
+    "propertyid_non_null": 290769,
+    "propertyid_null": 143,
+    "propertyid_distinct_non_null": 290480,
+    "propertyid_duplicate_excess": 289,
+    "parcelid_propertyid_both_non_null": 290769,
+    "parcelid_propertyid_pair_distinct": 290480,
+    "parcelid_propertyid_pair_duplicate_excess": 289,
+    "geometry_non_null": 290912,
+    "missing_geometry": 0,
+    "owner_rows": 323955,
+    "owner_propertyid_non_null": 323955,
+    "owner_propertyid_distinct": 323236,
+    "owner_propertyid_duplicate_excess": 719,
+    "ownerid_non_null": 323955,
+    "ownerid_distinct": 258774,
+    "primary_owner_rows": 323276,
+    "count_observed_at": "2026-09-05",
+    "county_completeness_certified": false
+  },
+  "identity_findings": {
+    "parcel_business_key_candidates": ["PARCELID", "PropertyID"],
+    "parcelid_status": "not-unique-and-incomplete",
+    "propertyid_status": "not-unique-and-incomplete",
+    "parcelid_propertyid_composite_status": "not-unique-and-incomplete",
+    "owner_join_candidate": "PropertyID",
+    "owner_relationship": "one-property-to-many-owner-rows-observed",
+    "production_feature_identity": "unresolved",
+    "production_owner_join": "candidate-only-not-certified"
+  },
+  "schema_fields": {
+    "parcel": ["PARCELID", "AssessedAcres", "BUILDING", "UNIT", "CVTTXCD", "SCHLTXCD", "USECD", "USEDSCRP", "NGHBRHDCD", "CLASSCD", "CLASSDSCRP", "SITEADDRESS", "CNVYNAME", "OWNERNME1", "OWNERNME2", "PSTLADDRES", "PSTLCITY", "PSTLSTATE", "PSTLZIP5", "PSTLZIP4", "FLOORCOUNT", "BLDGAREA", "RESFLRAREA", "RESYRBLT", "RESSTRTYP", "STRCLASS", "CLASSMOD", "LNDVALUE", "PRVASSDVAL", "CNTASSDVAL", "ASSDVALYRC", "ASSDPCNTCG", "PRVTXBLVAL", "CNTTXBLVAL", "TXBLVALYRC", "TXBLPCNTCH", "PRVWNTTXOD", "PRVSMRTXOD", "TOTPRVTXTO", "CNTWNTTXOD", "CNTSMRTXOD", "TOTCNTTXOD", "TXODYRCHG", "TXODPCNTCH", "WATERSERV", "SEWERSERV", "PropertyID", "the_geom"],
+    "owner": ["QuickRefID", "PropertyID", "AdHocTaxYear", "PartyID", "PrimaryOwner", "PropertyOwnerID", "TaxingUnitGroupDesc", "Address1", "Address2", "Address3", "AddressChgReasonDesc", "AddressTypeKey", "City", "DateAddrChanged", "ExemptionList", "IsUndeliverable", "MailingAddress", "NameFirst", "NameMiddle", "NameLast", "NameTitleKey", "NameSuffixKey", "OwnerID", "FullName", "OwnerPropertyNumber", "OwnerQuickRefID", "PartyFlags", "PercentOwnership", "State", "StreetDirectional", "StreetName", "StreetNumber", "StreetSuffix", "StreetSuffixDirectional", "UnitNumber", "UnitTypeKey", "ZIP", "TxTu_HSCapAdj", "DataDate"]
+  },
+  "activation": {
+    "authorized": false,
+    "status": "blocked",
+    "blockers": [
+      "Production reuse rights are not verified beyond public read access.",
+      "PARCELID, PropertyID, and their composite are incomplete and non-unique at the feature level.",
+      "The PropertyID owner join is a candidate one-to-many relationship but overlap and orphan counts are not yet certified.",
+      "The source CRS must be verified from the official shapefile projection metadata.",
+      "County completeness, bounded capture, normalized artifacts, search shards, viewport delivery, freshness policy, and QA are incomplete."
+    ]
+  },
+  "render_directly_in_browser": false
+}
+

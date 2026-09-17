@@ -1,0 +1,107 @@
+{
+  "id": "dare-county-nc-ingestion",
+  "countyAdapter": "data/county-adapters/dare-county-nc/adapter.json",
+  "universalParcelSchema": "data/schemas/universal-parcel.schema.json",
+  "defaultMode": "plan",
+  "enabledForProduction": false,
+  "scaffoldOnly": true,
+  "steps": [
+    {
+      "id": "verify-official-sources",
+      "label": "Verify official parcel and assessor/appraiser sources",
+      "command": "echo Verify official sources for dare-county-nc.",
+      "requiredOutputs": [
+        "output/dare-county-nc/schema-report.md",
+        "output/dare-county-nc/schema-report.json"
+      ]
+    },
+    {
+      "id": "verify-join-keys",
+      "label": "Document exact parcel/account/GIS join keys",
+      "command": "echo Document exact join keys for dare-county-nc.",
+      "requiredOutputs": [
+        "output/dare-county-nc/join-key-report.md"
+      ]
+    },
+    {
+      "id": "build-parcel-geojson",
+      "label": "Build universal county parcel GeoJSON",
+      "command": "echo Build dare-county-nc universal parcel GeoJSON after source verification.",
+      "requiredOutputs": [
+        "output/dare-county-nc/dare-county-nc-parcels.geojson",
+        "output/dare-county-nc/full-parcel-access-report.md"
+      ]
+    },
+    {
+      "id": "build-parcel-service",
+      "label": "Build viewport chunks and search shards",
+      "command": "echo Build viewport-safe parcel service for dare-county-nc.",
+      "requiredOutputs": [
+        "public/data/counties/dare-county-nc/parcels/manifest.json"
+      ]
+    },
+    {
+      "id": "build-owner-matches",
+      "label": "Build owner/appraisal parcel joins",
+      "command": "echo Build owner and appraisal joins for dare-county-nc.",
+      "requiredOutputs": [
+        "output/dare-county-nc/dare-county-nc-owner-appraisal-index.json"
+      ]
+    },
+    {
+      "id": "build-permit-service",
+      "label": "Normalize permits and certificates of occupancy",
+      "command": "echo Build permits and CO pipeline for dare-county-nc.",
+      "requiredOutputs": [
+        "public/data/counties/dare-county-nc/permits/manifest.json"
+      ]
+    },
+    {
+      "id": "build-zoning-index",
+      "label": "Build zoning parcel index",
+      "command": "echo Build zoning joins for dare-county-nc.",
+      "requiredOutputs": [
+        "public/data/counties/dare-county-nc/zoning/manifest.json"
+      ]
+    },
+    {
+      "id": "build-floodplain-index",
+      "label": "Build floodplain parcel index",
+      "command": "echo Build floodplain joins for dare-county-nc.",
+      "requiredOutputs": [
+        "public/data/counties/dare-county-nc/floodplain/manifest.json"
+      ]
+    },
+    {
+      "id": "build-development-index",
+      "label": "Build development-signal parcel index",
+      "command": "echo Build development index for dare-county-nc.",
+      "requiredOutputs": [
+        "public/data/counties/dare-county-nc/developments/parcel-development-index.json"
+      ]
+    },
+    {
+      "id": "build-migration-demand",
+      "label": "Build aggregate migration and demand index",
+      "command": "echo Build aggregate demand joins for dare-county-nc.",
+      "requiredOutputs": [
+        "public/data/counties/dare-county-nc/demand/manifest.json"
+      ]
+    },
+    {
+      "id": "validate",
+      "label": "Run county QC",
+      "command": "npm.cmd run county:qc",
+      "requiredOutputs": [
+        "output/county-qc/dare-county-nc.json",
+        "output/county-qc/dare-county-nc.md"
+      ]
+    }
+  ],
+  "productionTileStep": {
+    "id": "build-pmtiles",
+    "label": "Build PMTiles/vector tiles after verified parcel GeoJSON exists",
+    "expectedOutput": "output/dare-county-nc/dare-county-nc-parcels.pmtiles"
+  },
+  "uiConstraint": "Do not redesign or activate White Rabbit pages while this county remains a pipeline scaffold."
+}

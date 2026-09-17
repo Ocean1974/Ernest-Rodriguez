@@ -1,0 +1,107 @@
+{
+  "id": "thurston-county-wa-ingestion",
+  "countyAdapter": "data/county-adapters/thurston-county-wa/adapter.json",
+  "universalParcelSchema": "data/schemas/universal-parcel.schema.json",
+  "defaultMode": "plan",
+  "enabledForProduction": false,
+  "scaffoldOnly": true,
+  "steps": [
+    {
+      "id": "verify-official-sources",
+      "label": "Verify official parcel and assessor/appraiser sources",
+      "command": "echo Verify official sources for thurston-county-wa.",
+      "requiredOutputs": [
+        "output/thurston-county-wa/schema-report.md",
+        "output/thurston-county-wa/schema-report.json"
+      ]
+    },
+    {
+      "id": "verify-join-keys",
+      "label": "Document exact parcel/account/GIS join keys",
+      "command": "echo Document exact join keys for thurston-county-wa.",
+      "requiredOutputs": [
+        "output/thurston-county-wa/join-key-report.md"
+      ]
+    },
+    {
+      "id": "build-parcel-geojson",
+      "label": "Build universal county parcel GeoJSON",
+      "command": "echo Build thurston-county-wa universal parcel GeoJSON after source verification.",
+      "requiredOutputs": [
+        "output/thurston-county-wa/thurston-county-wa-parcels.geojson",
+        "output/thurston-county-wa/full-parcel-access-report.md"
+      ]
+    },
+    {
+      "id": "build-parcel-service",
+      "label": "Build viewport chunks and search shards",
+      "command": "echo Build viewport-safe parcel service for thurston-county-wa.",
+      "requiredOutputs": [
+        "public/data/counties/thurston-county-wa/parcels/manifest.json"
+      ]
+    },
+    {
+      "id": "build-owner-matches",
+      "label": "Build owner/appraisal parcel joins",
+      "command": "echo Build owner and appraisal joins for thurston-county-wa.",
+      "requiredOutputs": [
+        "output/thurston-county-wa/thurston-county-wa-owner-appraisal-index.json"
+      ]
+    },
+    {
+      "id": "build-permit-service",
+      "label": "Normalize permits and certificates of occupancy",
+      "command": "echo Build permits and CO pipeline for thurston-county-wa.",
+      "requiredOutputs": [
+        "public/data/counties/thurston-county-wa/permits/manifest.json"
+      ]
+    },
+    {
+      "id": "build-zoning-index",
+      "label": "Build zoning parcel index",
+      "command": "echo Build zoning joins for thurston-county-wa.",
+      "requiredOutputs": [
+        "public/data/counties/thurston-county-wa/zoning/manifest.json"
+      ]
+    },
+    {
+      "id": "build-floodplain-index",
+      "label": "Build floodplain parcel index",
+      "command": "echo Build floodplain joins for thurston-county-wa.",
+      "requiredOutputs": [
+        "public/data/counties/thurston-county-wa/floodplain/manifest.json"
+      ]
+    },
+    {
+      "id": "build-development-index",
+      "label": "Build development-signal parcel index",
+      "command": "echo Build development index for thurston-county-wa.",
+      "requiredOutputs": [
+        "public/data/counties/thurston-county-wa/developments/parcel-development-index.json"
+      ]
+    },
+    {
+      "id": "build-migration-demand",
+      "label": "Build aggregate migration and demand index",
+      "command": "echo Build aggregate demand joins for thurston-county-wa.",
+      "requiredOutputs": [
+        "public/data/counties/thurston-county-wa/demand/manifest.json"
+      ]
+    },
+    {
+      "id": "validate",
+      "label": "Run county QC",
+      "command": "npm.cmd run county:qc",
+      "requiredOutputs": [
+        "output/county-qc/thurston-county-wa.json",
+        "output/county-qc/thurston-county-wa.md"
+      ]
+    }
+  ],
+  "productionTileStep": {
+    "id": "build-pmtiles",
+    "label": "Build PMTiles/vector tiles after verified parcel GeoJSON exists",
+    "expectedOutput": "output/thurston-county-wa/thurston-county-wa-parcels.pmtiles"
+  },
+  "uiConstraint": "Do not redesign or activate White Rabbit pages while this county remains a pipeline scaffold."
+}

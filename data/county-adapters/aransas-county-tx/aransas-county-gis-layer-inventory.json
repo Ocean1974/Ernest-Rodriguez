@@ -1,0 +1,30 @@
+{
+  "schemaVersion": "real-estate-savant-county-gis-layer-inventory-v1",
+  "countyId": "aransas-county-tx",
+  "observedAt": "2026-09-12",
+  "viewer": "https://gis.bisclient.com/aransascad/",
+  "activationAuthorized": false,
+  "viewerRightsObservation": "The viewer states that its GIS and ownership data belongs to the respective company or agency and requires consent for use.",
+  "layers": [
+    { "name": "Parcels", "class": "cad-hosted", "captureStatus": "consent-required" },
+    { "name": "Abstracts", "class": "cad-hosted", "captureStatus": "consent-required" },
+    { "name": "Subdivisions", "class": "cad-hosted", "captureStatus": "consent-required" },
+    { "name": "Schools", "class": "public-alternative", "captureStatus": "census-envelope-captured" },
+    { "name": "City Limits", "class": "public-alternative", "captureStatus": "census-places-captured" },
+    { "name": "Lot Lines", "class": "cad-hosted", "captureStatus": "consent-required" },
+    { "name": "Neighborhood Code", "class": "cad-hosted", "captureStatus": "consent-required" },
+    { "name": "Streets", "class": "public-alternative", "captureStatus": "census-county-roads-captured" },
+    { "name": "Aransas County Boundary", "class": "public-alternative", "captureStatus": "census-boundary-captured" },
+    { "name": "Texas County Boundaries", "class": "public-alternative", "captureStatus": "census-national-county-source-captured" },
+    { "name": "FEMA Flood Hazard Zones", "class": "public-alternative", "captureStatus": "fema-envelope-captured" },
+    { "name": "2025 EagleView Mosaic", "class": "licensed-imagery", "captureStatus": "license-required" },
+    { "name": "2024 EagleView Mosaic", "class": "licensed-imagery", "captureStatus": "license-required" },
+    { "name": "2023 EagleView Mosaic", "class": "licensed-imagery", "captureStatus": "license-required" },
+    { "name": "2022 EagleView Mosaic", "class": "licensed-imagery", "captureStatus": "license-required" },
+    { "name": "2021 EagleView Mosaic", "class": "licensed-imagery", "captureStatus": "license-required" },
+    { "name": "2019 EagleView Mosaic", "class": "licensed-imagery", "captureStatus": "license-required" },
+    { "name": "2018 EagleView Mosaic", "class": "licensed-imagery", "captureStatus": "license-required" },
+    { "name": "2016 EagleView Mosaic", "class": "licensed-imagery", "captureStatus": "license-required" },
+    { "name": "2015 EagleView Mosaic", "class": "licensed-imagery", "captureStatus": "license-required" }
+  ]
+}

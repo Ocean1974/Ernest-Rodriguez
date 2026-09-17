@@ -1,0 +1,76 @@
+{
+  "county_id": "anderson-county-tx",
+  "county_name": "Anderson County",
+  "state": "TX",
+  "fips": "48001",
+  "cad_name": "Anderson County Appraisal District",
+  "source_discovery_status": "official-portal-and-backend-discovered",
+  "retrieved_at": "2026-06-24",
+  "ui_constraint": "Do not redesign White Rabbit pages while expanding county parcel intelligence plumbing.",
+  "official_portal": {
+    "label": "Anderson County Appraisal District public portal",
+    "url": "https://andersoncad.net/",
+    "observed_status_code": 200,
+    "observed_title": "Public Portal",
+    "portal_type": "React public portal"
+  },
+  "backend": {
+    "host": "https://prod-container.trueprodigyapi.com",
+    "office_lookup_url": "https://prod-container.trueprodigyapi.com/trueprodigy/officelookup/andersoncad.net",
+    "office_lookup_result": {
+      "url": "andersoncad.net",
+      "office": "Anderson"
+    },
+    "auth_observations": [
+      {
+        "endpoint": "/trueprodigy/publicportal/auth/token",
+        "method": "POST",
+        "payload": { "office": "Anderson" },
+        "result": "returned a short-lived public portal token, but that token was not authorized for public property search"
+      },
+      {
+        "endpoint": "/trueprodigy/cadpublic/auth/token",
+        "method": "POST",
+        "payload": { "office": "Anderson" },
+        "result": "returned a short-lived CAD public token authorized for the Prodigy Public Portal module"
+      }
+    ],
+    "token_storage_rule": "Do not persist retrieved JWT/token values in repo artifacts."
+  },
+  "discovered_routes": [
+    "/property-search",
+    "/property-search-iframe",
+    "/gama/parcelinfo",
+    "/gama/parcelswithinbounds",
+    "/gama/lotdimensions",
+    "/gama/countylines/geojson",
+    "/gama/countylines/tiles/{z}/{x}/{y}",
+    "/public/property/search",
+    "/public/property/searchcertified"
+  ],
+  "verified_counts": {
+    "parcel_geometry_features": 0,
+    "appraisal_property_rows": 0,
+    "count_verified_at": null,
+    "status": "not-verified"
+  },
+  "join_keys": {
+    "primary_parcel_account": "unverified: public portal routes discovered, but exact geometry/account/property join key is not verified",
+    "secondary_gis_id": "unverified",
+    "property_search_key": "unverified"
+  },
+  "bulk_source_status": {
+    "parcel_geometry_bulk": "not-verified",
+    "owner_appraisal_bulk": "not-verified",
+    "download_terms": "not-verified"
+  },
+  "remaining_blockers": [
+    "official parcel geometry bulk source not verified",
+    "bulk appraisal/owner source not verified",
+    "property search authorization and payload shape not fully verified",
+    "exact parcel count not verified",
+    "exact geometry-to-appraisal join key not verified",
+    "viewport chunks and search shards not built"
+  ],
+  "completion_impact": "source-discovery-started"
+}

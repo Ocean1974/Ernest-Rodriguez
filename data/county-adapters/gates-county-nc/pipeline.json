@@ -1,0 +1,107 @@
+{
+  "id": "gates-county-nc-ingestion",
+  "countyAdapter": "data/county-adapters/gates-county-nc/adapter.json",
+  "universalParcelSchema": "data/schemas/universal-parcel.schema.json",
+  "defaultMode": "plan",
+  "enabledForProduction": false,
+  "scaffoldOnly": true,
+  "steps": [
+    {
+      "id": "verify-official-sources",
+      "label": "Verify official parcel and assessor/appraiser sources",
+      "command": "echo Verify official sources for gates-county-nc.",
+      "requiredOutputs": [
+        "output/gates-county-nc/schema-report.md",
+        "output/gates-county-nc/schema-report.json"
+      ]
+    },
+    {
+      "id": "verify-join-keys",
+      "label": "Document exact parcel/account/GIS join keys",
+      "command": "echo Document exact join keys for gates-county-nc.",
+      "requiredOutputs": [
+        "output/gates-county-nc/join-key-report.md"
+      ]
+    },
+    {
+      "id": "build-parcel-geojson",
+      "label": "Build universal county parcel GeoJSON",
+      "command": "echo Build gates-county-nc universal parcel GeoJSON after source verification.",
+      "requiredOutputs": [
+        "output/gates-county-nc/gates-county-nc-parcels.geojson",
+        "output/gates-county-nc/full-parcel-access-report.md"
+      ]
+    },
+    {
+      "id": "build-parcel-service",
+      "label": "Build viewport chunks and search shards",
+      "command": "echo Build viewport-safe parcel service for gates-county-nc.",
+      "requiredOutputs": [
+        "public/data/counties/gates-county-nc/parcels/manifest.json"
+      ]
+    },
+    {
+      "id": "build-owner-matches",
+      "label": "Build owner/appraisal parcel joins",
+      "command": "echo Build owner and appraisal joins for gates-county-nc.",
+      "requiredOutputs": [
+        "output/gates-county-nc/gates-county-nc-owner-appraisal-index.json"
+      ]
+    },
+    {
+      "id": "build-permit-service",
+      "label": "Normalize permits and certificates of occupancy",
+      "command": "echo Build permits and CO pipeline for gates-county-nc.",
+      "requiredOutputs": [
+        "public/data/counties/gates-county-nc/permits/manifest.json"
+      ]
+    },
+    {
+      "id": "build-zoning-index",
+      "label": "Build zoning parcel index",
+      "command": "echo Build zoning joins for gates-county-nc.",
+      "requiredOutputs": [
+        "public/data/counties/gates-county-nc/zoning/manifest.json"
+      ]
+    },
+    {
+      "id": "build-floodplain-index",
+      "label": "Build floodplain parcel index",
+      "command": "echo Build floodplain joins for gates-county-nc.",
+      "requiredOutputs": [
+        "public/data/counties/gates-county-nc/floodplain/manifest.json"
+      ]
+    },
+    {
+      "id": "build-development-index",
+      "label": "Build development-signal parcel index",
+      "command": "echo Build development index for gates-county-nc.",
+      "requiredOutputs": [
+        "public/data/counties/gates-county-nc/developments/parcel-development-index.json"
+      ]
+    },
+    {
+      "id": "build-migration-demand",
+      "label": "Build aggregate migration and demand index",
+      "command": "echo Build aggregate demand joins for gates-county-nc.",
+      "requiredOutputs": [
+        "public/data/counties/gates-county-nc/demand/manifest.json"
+      ]
+    },
+    {
+      "id": "validate",
+      "label": "Run county QC",
+      "command": "npm.cmd run county:qc",
+      "requiredOutputs": [
+        "output/county-qc/gates-county-nc.json",
+        "output/county-qc/gates-county-nc.md"
+      ]
+    }
+  ],
+  "productionTileStep": {
+    "id": "build-pmtiles",
+    "label": "Build PMTiles/vector tiles after verified parcel GeoJSON exists",
+    "expectedOutput": "output/gates-county-nc/gates-county-nc-parcels.pmtiles"
+  },
+  "uiConstraint": "Do not redesign or activate White Rabbit pages while this county remains a pipeline scaffold."
+}
