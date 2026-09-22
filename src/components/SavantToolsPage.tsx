@@ -1,12 +1,14 @@
 import { useEffect, useMemo, useState, type ReactNode } from "react";
-import { ArrowLeft, Building2, Map, Network, Radar, TrendingUp, UsersRound, Wrench } from "lucide-react";
+import { ArrowLeft, Building2, Map as MapIcon, Network, Radar, TrendingUp, UsersRound, Wrench } from "lucide-react";
 
 type SavantRadarCandidate = {
+  rank: number;
   accountNum: string;
   address: string;
   ownerName: string;
   category: string;
   score: number;
+  evidenceScore?: number;
   reasonCodes: string[];
   ownerPortfolioCount: number;
   sameBlockCandidateCount: number;
@@ -19,10 +21,20 @@ type SavantRadarCandidate = {
     yearBuilt: string | number;
   };
   zoningLabel: string;
+  pathOfGrowth?: {
+    score: number;
+    nearbyActivityCount: number;
+    recentActivityCount: number;
+    nearestMiles: number | null;
+    direction: string;
+  };
   nextAction: string;
 };
 
 type SavantDevelopmentPathRadar = {
+  marketId: string;
+  marketName: string;
+  coverageLabel: string;
   sourceParcelFeatureCount: number;
   scoredUniqueAccountCount: number;
   opportunityCandidateCount: number;
@@ -36,6 +48,26 @@ type SavantDevelopmentPathRadar = {
   topCandidates: SavantRadarCandidate[];
 };
 
+type SavantMarketSummary = {
+  id: string;
+  name: string;
+  stateCode: string;
+  stateName: string;
+  coverageLabel: string;
+  sourceCountyId: string;
+  status: "ready" | "building" | "blocked";
+  radar: string;
+  sourceParcelFeatureCount: number;
+  candidateCount: number;
+  highestScore: number;
+};
+
+type SavantMarketIndex = {
+  defaultMarketId: string;
+  rankingContract: string;
+  markets: SavantMarketSummary[];
+};
+
 type SavantMaintenanceStatus = {
   checkedAt: string;
   status: "healthy" | "blocked" | "failed";
@@ -43,7 +75,7 @@ type SavantMaintenanceStatus = {
   gates: Array<{ id: string; status: "passed" | "blocked" }>;
 };
 
-const SAVANT_RADAR_URL = "/data/savant-tools/development-path-radar.json";
+const SAVANT_MARKET_INDEX_URL = "/data/savant-tools/market-index.json";
 const SAVANT_MAINTENANCE_STATUS_URL = "/data/savant-tools/maintenance-status.json";
 const RADAR_PAGE_SIZE = 5;
 
@@ -74,17 +106,48 @@ function RadarStat({ icon, label, value }: { icon: ReactNode; label: string; val
   );
 }
 
-export default function SavantToolsPage({ onBack, onOpenMap, onOpenCrm, logo }: { onBack: () => void; onOpenMap: (query?: string) => void; onOpenCrm: () => void; logo: ReactNode }) {
+export default function SavantToolsPage({ onBack, onOpenMap, onOpenCrm, logo }: { onBack: () => void; onOpenMap: (query?: string, sourceCountyId?: string) => void; onOpenCrm: () => void; logo: ReactNode }) {
   const [radar, setRadar] = useState<SavantDevelopmentPathRadar | null>(null);
   const [radarStatus, setRadarStatus] = useState<"loading" | "ready" | "failed">("loading");
+  const [marketIndex, setMarketIndex] = useState<SavantMarketIndex | null>(null);
+  const [selectedStateCode, setSelectedStateCode] = useState("");
+  const [selectedMarketId, setSelectedMarketId] = useState("");
   const [maintenanceStatus, setMaintenanceStatus] = useState<SavantMaintenanceStatus | null>(null);
   const [radarPage, setRadarPage] = useState(0);
 
   useEffect(() => {
     let cancelled = false;
-    fetch(SAVANT_RADAR_URL)
+    fetch(SAVANT_MARKET_INDEX_URL)
       .then((response) => {
-        if (!response.ok) throw new Error(`Unable to load Savant radar: ${response.status}`);
+        if (!response.ok) throw new Error(`Unable to load Savant market index: ${response.status}`);
+        return response.json();
+      })
+      .then((payload) => {
+        if (!cancelled) {
+          setMarketIndex(payload);
+          const defaultMarket = payload.markets?.find((market: SavantMarketSummary) => market.id === payload.defaultMarketId) || payload.markets?.[0];
+          setSelectedStateCode(defaultMarket?.stateCode || "");
+          setSelectedMarketId(defaultMarket?.id || "");
+        }
+      })
+      .catch((error) => {
+        console.warn("Real Estate Savant market index could not be loaded.", error);
+        if (!cancelled) setRadarStatus("failed");
+      });
+    return () => {
+      cancelled = true;
+    };
+  }, []);
+
+  useEffect(() => {
+    const market = marketIndex?.markets.find((item) => item.id === selectedMarketId);
+    if (!market) return;
+    let cancelled = false;
+    setRadarStatus("loading");
+    setRadar(null);
+    fetch(`/data/savant-tools/${market.radar}`)
+      .then((response) => {
+        if (!response.ok) throw new Error(`Unable to load ${market.name} Savant radar: ${response.status}`);
         return response.json();
       })
       .then((payload) => {
@@ -95,13 +158,13 @@ export default function SavantToolsPage({ onBack, onOpenMap, onOpenCrm, logo }: 
         }
       })
       .catch((error) => {
-        console.warn("Real Estate Savant Development Path Radar could not be loaded.", error);
+        console.warn(`Real Estate Savant ${market.name} Development Path Radar could not be loaded.`, error);
         if (!cancelled) setRadarStatus("failed");
       });
     return () => {
       cancelled = true;
     };
-  }, []);
+  }, [marketIndex, selectedMarketId]);
 
   useEffect(() => {
     let cancelled = false;
@@ -127,6 +190,28 @@ export default function SavantToolsPage({ onBack, onOpenMap, onOpenCrm, logo }: 
   );
   const firstCandidateNumber = allRadarCandidates.length ? radarPage * RADAR_PAGE_SIZE + 1 : 0;
   const lastCandidateNumber = Math.min((radarPage + 1) * RADAR_PAGE_SIZE, allRadarCandidates.length);
+  const selectedMarket = marketIndex?.markets.find((market) => market.id === selectedMarketId) || null;
+  const stateGroups = useMemo(() => {
+    const groups = new Map<string, { code: string; name: string; markets: SavantMarketSummary[] }>();
+    for (const market of marketIndex?.markets || []) {
+      const code = market.stateCode || "OTHER";
+      const group = groups.get(code) || { code, name: market.stateName || code, markets: [] };
+      group.markets.push(market);
+      groups.set(code, group);
+    }
+    return [...groups.values()];
+  }, [marketIndex]);
+  const selectedState = stateGroups.find((state) => state.code === selectedStateCode) || stateGroups[0] || null;
+
+  function selectState(stateCode: string) {
+    const state = stateGroups.find((item) => item.code === stateCode);
+    if (!state) return;
+    setSelectedStateCode(stateCode);
+    if (!state.markets.some((market) => market.id === selectedMarketId)) {
+      const nextMarket = state.markets.find((market) => market.status === "ready") || state.markets[0];
+      setSelectedMarketId(nextMarket?.id || "");
+    }
+  }
 
   return (
     <div className="flex h-screen flex-col overflow-hidden bg-slate-100 text-slate-950" data-page="savant-tools">
@@ -150,7 +235,7 @@ export default function SavantToolsPage({ onBack, onOpenMap, onOpenCrm, logo }: 
             <h1 className="mt-2 text-2xl font-semibold tracking-tight">Intelligence where you need it</h1>
             <p className="mx-auto mt-3 max-w-xl text-sm leading-6 text-slate-600">Savant capabilities are integrated directly into parcel intelligence, listings, and the CRM. They appear in context instead of being presented as a separate catalog of ideas.</p>
             <div className="mt-7 flex flex-wrap justify-center gap-3">
-              <button type="button" onClick={() => onOpenMap()} className="inline-flex items-center gap-2 rounded-md bg-cyan-600 px-5 py-3 text-sm font-bold text-white hover:bg-cyan-700"><Map size={17} /> Open Parcel Intelligence</button>
+              <button type="button" onClick={() => onOpenMap()} className="inline-flex items-center gap-2 rounded-md bg-cyan-600 px-5 py-3 text-sm font-bold text-white hover:bg-cyan-700"><MapIcon size={17} /> Open Parcel Intelligence</button>
               <button type="button" onClick={onOpenCrm} className="inline-flex items-center gap-2 rounded-md border border-slate-300 bg-white px-5 py-3 text-sm font-bold text-slate-700 hover:bg-slate-50"><UsersRound size={17} /> Open CRM</button>
             </div>
           </section>
@@ -161,10 +246,10 @@ export default function SavantToolsPage({ onBack, onOpenMap, onOpenCrm, logo }: 
                 <span className="inline-flex h-10 w-10 items-center justify-center rounded-lg bg-slate-950 text-white"><Radar size={19} /></span>
                 <p className="mt-4 text-[10px] font-bold uppercase tracking-[0.18em] text-cyan-700">Development Path Radar</p>
                 <h2 className="mt-1 text-xl font-semibold tracking-tight">Off-market parcels, assemblage, growth patterns, and developer control</h2>
-                <p className="mt-2 text-sm leading-6 text-slate-600">Ranks source-backed Dallas candidates where land-value pressure, older improvements, same-area ownership, zoning evidence, or developer/entity control suggest a parcel may be in the path of development.</p>
+                <p className="mt-2 text-sm leading-6 text-slate-600">Each city has its own source-backed candidate pool and its own ranking from score 100 downward. City rankings never mix.</p>
               </div>
               <div className="flex flex-col items-end gap-2">
-                <button type="button" onClick={() => onOpenMap()} className="inline-flex items-center gap-2 rounded-md bg-slate-950 px-4 py-2 text-xs font-bold text-white hover:bg-slate-800"><Map size={15} /> Open Map</button>
+                <button type="button" onClick={() => onOpenMap()} className="inline-flex items-center gap-2 rounded-md bg-slate-950 px-4 py-2 text-xs font-bold text-white hover:bg-slate-800"><MapIcon size={15} /> Open Map</button>
                 {maintenanceStatus && (
                   <span
                     className={`rounded-full border px-2.5 py-1 text-[10px] font-bold ${maintenanceStatus.publishAuthorized ? "border-emerald-200 bg-emerald-50 text-emerald-700" : "border-amber-200 bg-amber-50 text-amber-800"}`}
@@ -173,6 +258,41 @@ export default function SavantToolsPage({ onBack, onOpenMap, onOpenCrm, logo }: 
                     {maintenanceStatus.publishAuthorized ? "Data refresh verified" : "Data refresh blocked"}
                   </span>
                 )}
+              </div>
+            </div>
+
+            <div className="mt-5 grid gap-3 border-y border-slate-200 py-4" data-savant-market-groups="true">
+              <div className="flex flex-wrap items-center gap-2" data-savant-state-groups="true">
+                <span className="mr-1 w-20 text-[10px] font-bold uppercase tracking-[0.14em] text-slate-500">State</span>
+                {stateGroups.map((state) => (
+                  <button
+                    key={state.code}
+                    type="button"
+                    onClick={() => selectState(state.code)}
+                    aria-pressed={selectedState?.code === state.code}
+                    data-savant-state-code={state.code}
+                    className={`rounded-full border px-3 py-1.5 text-xs font-bold transition ${selectedState?.code === state.code ? "border-slate-950 bg-slate-950 text-white" : "border-slate-300 bg-white text-slate-700 hover:bg-slate-100"}`}
+                  >
+                    {state.name}
+                  </button>
+                ))}
+              </div>
+              <div className="flex flex-wrap items-center gap-2" data-savant-city-groups="true">
+                <span className="mr-1 w-20 text-[10px] font-bold uppercase tracking-[0.14em] text-slate-500">City market</span>
+                {(selectedState?.markets || []).map((market) => (
+                  <button
+                    key={market.id}
+                    type="button"
+                    onClick={() => setSelectedMarketId(market.id)}
+                    disabled={market.status !== "ready"}
+                    aria-pressed={selectedMarketId === market.id}
+                    data-savant-market-id={market.id}
+                    className={`rounded-full border px-3 py-1.5 text-xs font-bold transition ${selectedMarketId === market.id ? "border-cyan-700 bg-cyan-700 text-white" : "border-slate-300 bg-white text-slate-700 hover:bg-slate-100"} disabled:cursor-not-allowed disabled:opacity-40`}
+                  >
+                    {market.name} · {formatNumber(market.candidateCount)}
+                  </button>
+                ))}
+                {selectedMarket && <span className="ml-auto text-xs font-semibold text-slate-500">{selectedMarket.coverageLabel}</span>}
               </div>
             </div>
 
@@ -186,7 +306,7 @@ export default function SavantToolsPage({ onBack, onOpenMap, onOpenCrm, logo }: 
               <RadarStat icon={<Building2 size={15} />} label="Source Parcels" value={formatNumber(radar?.sourceParcelFeatureCount)} />
               <RadarStat icon={<TrendingUp size={15} />} label="Candidates" value={formatNumber(radar?.opportunityCandidateCount)} />
               <RadarStat icon={<Network size={15} />} label="Assemblage" value={formatNumber(radar?.reasonCounts.sameBlockAssemblage)} />
-              <RadarStat icon={<UsersRound size={15} />} label="Developer Control" value={formatNumber(radar?.reasonCounts.developerSurroundingControl)} />
+              <RadarStat icon={<TrendingUp size={15} />} label="Path of Growth" value={formatNumber(radar?.reasonCounts.growthPattern)} />
             </div>
 
             <div className="mt-5 grid gap-3" data-savant-radar-candidates="true">
@@ -197,7 +317,10 @@ export default function SavantToolsPage({ onBack, onOpenMap, onOpenCrm, logo }: 
                       <p className="text-sm font-semibold text-slate-950">{candidate.address || candidate.accountNum}</p>
                       <p className="mt-1 text-xs text-slate-500">{candidate.ownerName}</p>
                     </div>
-                    <span className="rounded-full bg-cyan-700 px-2.5 py-1 text-[10px] font-bold text-white">Score {formatNumber(candidate.score)}</span>
+                    <div className="flex items-center gap-2">
+                      <span className="rounded-full border border-slate-300 bg-white px-2.5 py-1 text-[10px] font-bold text-slate-600">#{formatNumber(candidate.rank)}</span>
+                      <span className="rounded-full bg-cyan-700 px-2.5 py-1 text-[10px] font-bold text-white">Market score {formatNumber(candidate.score)}</span>
+                    </div>
                   </div>
                   <div className="mt-3 flex flex-wrap gap-2 text-[10px] font-semibold text-slate-600">
                     <span className="rounded-full border border-slate-300 bg-white px-2 py-1">{candidate.category}</span>
@@ -209,8 +332,14 @@ export default function SavantToolsPage({ onBack, onOpenMap, onOpenCrm, logo }: 
                     <span>{formatNumber(candidate.sameBlockCandidateCount)} area candidates</span>
                     <span>{formatNumber(candidate.ownerPortfolioCount)} owner candidates</span>
                   </div>
+                  {candidate.pathOfGrowth && (
+                    <div className="mt-3 rounded-lg border border-cyan-200 bg-cyan-50 px-3 py-2 text-xs text-cyan-950" data-savant-path-of-growth="true">
+                      <span className="font-bold">Path of Growth {formatNumber(candidate.pathOfGrowth.score)}/100</span>
+                      <span className="ml-2">{formatNumber(candidate.pathOfGrowth.nearbyActivityCount)} nearby signals · {candidate.pathOfGrowth.direction} corridor{candidate.pathOfGrowth.nearestMiles !== null ? ` · nearest ${candidate.pathOfGrowth.nearestMiles} mi` : ""}</span>
+                    </div>
+                  )}
                   <p className="mt-3 text-xs leading-5 text-slate-600">{candidate.nextAction}</p>
-                  <button type="button" onClick={() => onOpenMap(candidate.accountNum)} className="mt-3 rounded-md border border-slate-300 bg-white px-3 py-2 text-xs font-bold text-slate-700 hover:bg-slate-100">Open this parcel</button>
+                  <button type="button" onClick={() => onOpenMap(candidate.accountNum, selectedMarket?.sourceCountyId)} className="mt-3 rounded-md border border-slate-300 bg-white px-3 py-2 text-xs font-bold text-slate-700 hover:bg-slate-100">Open this parcel</button>
                 </article>
               ))}
               {radarStatus === "loading" && <p className="rounded-xl border border-slate-200 bg-slate-50 p-4 text-sm text-slate-600">Loading Development Path Radar...</p>}

@@ -46,11 +46,19 @@ export function routeForCoordinates(manifest, coordinates) {
 
 export function parcelDatasetForNationalRoute(route) {
   if (!route) return null;
+  const parcelRoot = String(route.dataRoot || "").replace(/\/?$/, "/");
+  const serviceRoot = parcelRoot.replace(/parcels\/$/, "");
   return {
     id: route.datasetId,
     countyName: route.countyName,
     universalParcelSchema: route.universalParcelSchema,
-    dataRoots: { parcels: route.dataRoot },
+    dataRoots: {
+      parcels: parcelRoot,
+      permits: `${serviceRoot}permits/`,
+      developments: `${serviceRoot}developments/`,
+      zoning: `${serviceRoot}zoning/`,
+      floodplain: `${serviceRoot}floodplain/`,
+    },
     map: route.map,
   };
 }
@@ -87,6 +95,33 @@ export function parcelMatchesGeocodedStreet(parcel, geocoded) {
     .some((address) => address === street || address.startsWith(`${street} `));
 }
 
+export function parcelMatchesAddressQuery(parcel, query) {
+  const street = normalizeStreet(query);
+  if (!street) return false;
+  return [parcel?.address, parcel?.propertyAddress]
+    .map(normalizeStreet)
+    .some((address) => address === street || address.startsWith(`${street} `));
+}
+
+async function searchConnectedCountyAddresses(query, manifest, searchDataset, maxFeatures) {
+  const routes = (manifest?.counties || []).filter((county) => county.searchReady === true && county.accessMode !== "blocked");
+  const results = await Promise.all(routes.map(async (route) => {
+    const dataset = parcelDatasetForNationalRoute(route);
+    try {
+      const candidates = [...new Set([query, normalizeStreet(query)].filter(Boolean))];
+      for (const candidate of candidates) {
+        const parcels = await searchDataset(candidate, maxFeatures, dataset);
+        const exact = (parcels || []).filter((parcel) => parcelMatchesAddressQuery(parcel, query));
+        if (exact.length) return { route, dataset, parcels: exact, matchedQuery: candidate };
+      }
+      return null;
+    } catch {
+      return null;
+    }
+  }));
+  return results.find(Boolean) || null;
+}
+
 export async function searchNationalParcelAddress(query, {
   geocode = geocodeAddress,
   resolveGeography = resolveCountyGeography,
@@ -98,7 +133,12 @@ export async function searchNationalParcelAddress(query, {
   if (!normalized) return { status: "empty-query", parcels: [] };
   if (typeof searchDataset !== "function") throw new TypeError("searchDataset is required");
   const geocoded = await geocode(normalized);
-  if (!geocoded) return { status: "address-not-found", parcels: [] };
+  if (!geocoded) {
+    const manifest = await loadManifest();
+    const fallback = await searchConnectedCountyAddresses(normalized, manifest, searchDataset, maxFeatures);
+    if (fallback) return { status: "parcel-found", ...fallback, geocoded: null, geography: null, matchStrategy: "connected-county-address-index" };
+    return { status: "address-not-found", parcels: [] };
+  }
   const [geography, manifest] = await Promise.all([
     Promise.resolve(resolveGeography(geocoded.coordinates)).catch(() => null),
     loadManifest(),

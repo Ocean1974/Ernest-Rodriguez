@@ -43,6 +43,8 @@
     "parcelGeometryDbf": "data/extracted/jefferson-ky/Jefferson_County_KY_Parcels/Jefferson_County_KY_Parcels.dbf",
     "parcelGeometryPrj": "data/extracted/jefferson-ky/Jefferson_County_KY_Parcels/Jefferson_County_KY_Parcels.prj",
     "parcelAttributesCsv": "data/raw/jefferson-ky/Jefferson_County_KY_Parcels.csv",
+    "addressesRaw": "https://gis.lojic.org/maps/rest/services/LojicSolutions/OpenDataAddresses/MapServer/0",
+    "addressesProcessed": "public/data/counties/jefferson-ky/addresses/",
     "appraisalDistrictExtract": "data/raw/jefferson-ky/Jefferson_County_KY_PVA_Owner_Appraisal.csv",
     "pvaOwnerAppraisalCsv": "data/raw/jefferson-ky/Jefferson_County_KY_PVA_Owner_Appraisal.csv",
     "blockLabels": "optional",
@@ -56,6 +58,7 @@
   },
   "publicDataRoots": {
     "parcels": "/data/counties/jefferson-ky/parcels/",
+    "addresses": "/data/counties/jefferson-ky/addresses/",
     "permits": "/data/counties/jefferson-ky/permits/",
     "developments": "/data/counties/jefferson-ky/developments/",
     "zoning": "/data/counties/jefferson-ky/zoning/",
@@ -81,13 +84,30 @@
       "maxFeaturesPerViewport": 750
     },
     {
+      "id": "lojic-address-intelligence",
+      "label": "Address intelligence",
+      "source": "LOJIC Jefferson County KY Address Points",
+      "status": "parcel-index-ready-production-disabled",
+      "joinBehavior": "direct PARCELID to accountNum join with LRSN to gisParcelId fallback; no address geocoding inference",
+      "defaultVisible": false,
+      "manifestPath": "data/county-adapters/louisville/lojic-address-source-manifest.json",
+      "publicManifestPath": "public/data/counties/jefferson-ky/addresses/manifest.json",
+      "reportPath": "output/jefferson-ky/address-source-report.md",
+      "sourceUrls": [
+        "https://gis.lojic.org/maps/rest/services/LojicSolutions/OpenDataAddresses/MapServer/0",
+        "https://www.lojic.org/data/liability-statement"
+      ],
+      "renderStrategy": "build-time attribute fetch, exact parcel-key join, and hashed address-index shards for viewport-bounded lookup"
+    },
+    {
       "id": "permits",
       "label": "Permits and certificates of occupancy",
       "source": "Louisville Metro active construction permits, planning applications, and occupancy case sources",
-      "status": "source-identified-parcel-join-pending",
-      "joinBehavior": "active permits use LATITUDE/LONGITUDE spatial join to county parcel polygon first; normalized ADDRESS fallback after PVA situs addresses are loaded; CO remains source-needed until official bulk source is verified",
+      "status": "parcel-index-ready-production-disabled",
+      "joinBehavior": "active permits use LATITUDE/LONGITUDE point-in-polygon join to LOJIC parcels; 22,717 records joined, 25 valid-location records remain unmatched, and 90 invalid/missing-coordinate records remain quarantined; CO remains source-needed until official bulk source is verified",
       "defaultVisible": false,
       "manifestPath": "data/county-adapters/louisville/permit-co-source-manifest.json",
+      "publicManifestPath": "public/data/counties/jefferson-ky/permits/manifest.json",
       "sourceUrls": [
         "https://services1.arcgis.com/79kfd2K6fskCAkyg/arcgis/rest/services/active_construction_permits/FeatureServer/0",
         "https://services1.arcgis.com/79kfd2K6fskCAkyg/arcgis/rest/services/pm_occupancy/FeatureServer/0",
@@ -97,11 +117,22 @@
       "renderStrategy": "build-time ArcGIS fetch, address/spatial parcel join, then viewport-safe chunks"
     },
     {
+      "id": "development-signals",
+      "label": "Development signals",
+      "source": "Parcel-joined Louisville Metro active construction permits",
+      "status": "parcel-index-ready-production-disabled",
+      "joinBehavior": "permit point contained by LOJIC parcel polygon; parcel summaries preserve permit counts, types, latest issue date, active status count, project costs, and source lineage",
+      "defaultVisible": false,
+      "publicManifestPath": "public/data/counties/jefferson-ky/developments/manifest.json",
+      "reportPath": "output/jefferson-ky/jefferson-county-ky-permit-intelligence-report.md",
+      "renderStrategy": "offline point-in-polygon join and viewport-sharded parcel development summaries"
+    },
+    {
       "id": "pva-owner-appraisal",
       "label": "PVA owner/appraisal",
       "source": "Jefferson County PVA owner/appraisal export",
       "status": "join-ready-source-needed",
-      "joinBehavior": "PARCELID to county accountNum first; LRSN to county gisParcelId when present; PIN is candidate-only until verified",
+      "joinBehavior": "PARCELID to county accountNum first; LRSN to county gisParcelId when present; PIN is candidate-only until verified. Bulk extraction from the subscription search is prohibited without prior written PVA consent, so an authorized bulk export remains required.",
       "defaultVisible": false,
       "manifestPath": "data/county-adapters/louisville/pva-owner-appraisal-source-manifest.json",
       "parcelIndexPath": "output/jefferson-ky/jefferson-county-ky-pva-owner-appraisal-index.json",
@@ -109,6 +140,7 @@
       "sourceUrls": [
         "https://jeffersonpva.ky.gov/property-search/",
         "https://jeffersonpva.ky.gov/faq/why-do-i-need-to-subscribe-to-the-pva/",
+        "https://jeffersonpva.ky.gov/terms-and-conditions/subscription-terms-of-service/",
         "https://jeffersonpva.ky.gov/wp-content/uploads/2019/04/Request-for-reproduction2018-and-Menu.pdf"
       ],
       "renderStrategy": "official PVA export normalized at build time, joined offline into universal parcel records, then served through existing viewport chunks",
@@ -211,12 +243,12 @@
       },
       {
         "id": "louisville-active-construction-permits",
-        "status": "official-open-data-source-verified-parcel-join-pending",
+        "status": "official-open-data-source-verified-parcel-index-ready-production-disabled",
         "sourceUrl": "https://services1.arcgis.com/79kfd2K6fskCAkyg/arcgis/rest/services/active_construction_permits/FeatureServer/0",
         "fields": ["PERMIT_NUMBER", "PERMIT_TYPE", "PERMIT_STATUS", "CONTRACTOR", "CATEGORY_NAME", "WORK_TYPE", "ZONING", "SQFT", "PERMIT_FEE", "PROJECT_COSTS", "ADDRESS", "LATITUDE", "LONGITUDE", "ISSUE_DATE"],
-        "verifiedRecordCount": 23543,
-        "countVerifiedAt": "2026-06-10",
-        "uiUse": "Active permit activity in parcel intelligence after spatial/address join"
+        "verifiedRecordCount": 22832,
+        "countVerifiedAt": "2026-09-19",
+        "uiUse": "Active permit and development activity joined to LOJIC parcels; production display remains disabled"
       },
       {
         "id": "louisville-property-maintenance-case-occupancy",
@@ -273,6 +305,7 @@
     "appraisal": "PVA owner/appraisal export PARCELID -> county parcel PARCELID; value fields map to landValue, improvementValue, totalValue when present",
     "land": "PVA owner/appraisal export PARCELID -> county parcel PARCELID; acreage/square-foot fields map to landAreaSize, landAreaSqFt, landAreaUnit when present",
     "secondaryParcelGisId": "PVA LRSN -> county parcel LRSN -> White Rabbit gisParcelId when the PVA export includes LRSN; PIN remains fallback candidate only",
+    "address": "LOJIC address PARCELID -> county parcel accountNum; LRSN -> gisParcelId fallback; 449,474 of 450,857 address points joined",
     "blockLabels": "pilot: direct key, spatial join, or unavailable",
     "dimensions": "pilot: direct key, spatial join, or unavailable",
     "permits": "Louisville Metro active permit LATITUDE/LONGITUDE spatial join to county parcel polygon first; normalized ADDRESS fallback after PVA situs address export; CO source remains pending",
@@ -281,15 +314,19 @@
   },
   "verifiedCounts": {
     "parcelGeometryFeatures": 284553,
+    "sourceAddressPoints": 450857,
+    "addressPointsJoined": 449474,
+    "addressPointsUnmatched": 1383,
+    "parcelsWithAddress": 275307,
     "appraisalAccountRows": 0,
     "appraisalRows": 0,
     "landRows": 0,
     "appParcelChunks": 1208,
     "parcelSearchShards": 104,
-    "sourcePermitRecords": 23543,
-    "permitRowsJoined": 0,
-    "permitRowsUnmatched": 0,
-    "parcelsWithDevelopmentSignals": 0,
+    "sourcePermitRecords": 22832,
+    "permitRowsJoined": 22717,
+    "permitRowsUnmatched": 115,
+    "parcelsWithDevelopmentSignals": 16320,
     "sourceZoningRecords": 4883,
     "zoningPolygonsIndexed": 4881,
     "parcelsWithZoning": 284226,
@@ -314,9 +351,13 @@
     "output/jefferson-ky/jefferson-county-ky-parcels.geojson",
     "output/jefferson-ky/jefferson-county-ky-parcels.pmtiles or output/jefferson-ky/vector-tiles/",
     "public/data/counties/jefferson-ky/parcels/manifest.json",
+    "data/county-adapters/louisville/lojic-address-source-manifest.json",
+    "public/data/counties/jefferson-ky/addresses/manifest.json",
+    "output/jefferson-ky/address-source-report.md",
+    "output/jefferson-ky/address-source-report.json",
     "public/data/counties/jefferson-ky/permits/manifest.json",
     "data/county-adapters/louisville/permit-co-source-manifest.json",
-    "public/data/counties/jefferson-ky/developments/parcel-development-index.json",
+    "public/data/counties/jefferson-ky/developments/manifest.json",
     "data/county-adapters/louisville/lojic-zoning-source-manifest.json",
     "public/data/counties/jefferson-ky/zoning/manifest.json",
     "public/data/counties/jefferson-ky/zoning/parcel-zoning-index.json",
@@ -328,6 +369,6 @@
     "output/jefferson-ky/floodplain-source-report.md",
     "output/jefferson-ky/floodplain-source-report.json"
   ],
-  "productionGap": "Pilot adapter only. County parcel geometry, viewport chunks, parcel search shards, zoning parcel index, and floodplain parcel index are built. PVA owner/appraisal plumbing is join-ready but source-needed; active construction permit source is verified but parcel join is not built; formal CO bulk source is not confirmed; development index and PMTiles are not built yet.",
+  "productionGap": "Pilot adapter only. County parcel geometry, viewport chunks, parcel search shards, zoning, floodplain, permit, and development-signal parcel indexes are built. PVA owner/appraisal remains source-needed and rights-gated: the subscription search supports CSV export of search results, but the published terms prohibit broad copying/storage or exploitation without prior written PVA consent. Formal CO bulk source, parcel dimensions, block grid, freshness approval, and PMTiles remain incomplete.",
   "pilotNotes": "Do not activate this county in the app until source files are loaded or fetched, schema inspection is complete, exact join keys are verified, and QC warnings are resolved."
 }

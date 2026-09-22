@@ -50,14 +50,18 @@
     },
     {
       "id": "build-parcel-service",
-      "label": "Build viewport parcel chunks and search shards",
-      "command": "npm.cmd run collin:service:sample",
+      "label": "Build current-refresh viewport parcel chunks and address/search shards",
+      "command": "npm.cmd run collin:ccad:service:refresh",
       "dependsOn": [
-        "build-parcel-geojson"
+        "build-parcel-geojson",
+        "build-ccad-local-intelligence",
+        "audit-ccad-filegdb-refresh"
       ],
       "requiredOutputs": [
-        "public/data/counties/collin-county-tx/parcels/manifest.json"
-      ]
+        "public/data/counties/collin-county-tx/parcels/manifest.json",
+        "output/collin-county-tx/ccad-refresh-parcel-service-report.json"
+      ],
+      "activationGate": "The 441,278-record refresh must pass parcel-service tests and final county QC before production activation."
     },
     {
       "id": "build-owner-matches",
@@ -65,7 +69,9 @@
       "command": "echo Build collin-county-tx owner/appraisal index after official assessor/appraisal source is verified.",
       "dependsOn": [
         "verify-join-keys",
-        "build-parcel-service"
+        "build-parcel-service",
+        "build-ccad-local-intelligence",
+        "audit-ccad-filegdb-refresh"
       ],
       "requiredOutputs": [
         "output/collin-county-tx/collin-county-tx-owner-appraisal-index.json",
@@ -75,36 +81,46 @@
     {
       "id": "build-permit-service",
       "label": "Normalize and publish permits and certificates of occupancy",
-      "command": "echo Build collin-county-tx permits/CO after official source verification.",
+      "command": "npm.cmd run collin:ccad:permits",
       "dependsOn": [
-        "build-parcel-service"
+        "build-parcel-service",
+        "build-ccad-local-intelligence",
+        "audit-ccad-filegdb-refresh"
       ],
       "requiredOutputs": [
-        "public/data/counties/collin-county-tx/permits/manifest.json"
+        "public/data/counties/collin-county-tx/permits/manifest.json",
+        "public/data/counties/collin-county-tx/permits-refresh/manifest.json",
+        "output/collin-county-tx/ccad-permit-intelligence-report.json"
       ]
     },
     {
       "id": "build-zoning-index",
       "label": "Build zoning and overlay parcel index",
-      "command": "echo Build collin-county-tx zoning after official source verification.",
+      "command": "npm.cmd run collin:controls:refresh",
       "dependsOn": [
-        "build-parcel-service"
+        "build-parcel-service",
+        "build-ccad-refresh-centroids"
       ],
       "requiredOutputs": [
         "public/data/counties/collin-county-tx/zoning/manifest.json",
-        "output/collin-county-tx/zoning-source-report.md"
+        "output/collin-county-tx/zoning-source-report.md",
+        "public/data/counties/collin-county-tx/zoning-refresh/manifest.json",
+        "output/collin-county-tx/development-control-context-report.md"
       ]
     },
     {
       "id": "build-floodplain-index",
       "label": "Build floodplain parcel index",
-      "command": "echo Build collin-county-tx floodplain after FEMA/local source verification.",
+      "command": "npm.cmd run collin:floodplain:refresh",
       "dependsOn": [
-        "build-parcel-service"
+        "build-parcel-service",
+        "build-ccad-refresh-centroids"
       ],
       "requiredOutputs": [
         "public/data/counties/collin-county-tx/floodplain/manifest.json",
-        "output/collin-county-tx/floodplain-source-report.md"
+        "output/collin-county-tx/floodplain-source-report.md",
+        "public/data/counties/collin-county-tx/floodplain-refresh/manifest.json",
+        "output/collin-county-tx/floodplain-index-report.md"
       ]
     },
     {
@@ -136,11 +152,83 @@
       "command": "npm.cmd run county:qc",
       "dependsOn": [
         "build-parcel-service",
-        "build-owner-matches"
+        "build-owner-matches",
+        "build-permit-service",
+        "build-zoning-index",
+        "build-floodplain-index",
+        "score-parcel-intelligence-readiness"
       ],
       "requiredOutputs": [
         "output/county-qc/collin-county-tx.json",
         "output/county-qc/collin-county-tx.md"
+      ]
+    },
+    {
+      "id": "build-ccad-local-intelligence",
+      "label": "Normalize and shard the verified local CCAD parcel-intelligence refresh",
+      "command": "npm.cmd run collin:ccad:intelligence",
+      "dependsOn": [
+        "verify-official-sources",
+        "verify-join-keys"
+      ],
+      "requiredOutputs": [
+        "public/data/counties/collin-county-tx/intelligence/manifest.json",
+        "output/collin-county-tx/ccad-intelligence-report.md",
+        "output/collin-county-tx/ccad-intelligence-report.json"
+      ],
+      "activationGate": "Do not attach this refresh to the existing parcel service: its GlobalID set has zero overlap. Rebuild geometry and intelligence from the same CCAD refresh first."
+    },
+    {
+      "id": "audit-ccad-filegdb-refresh",
+      "label": "Reconcile the local CCAD File Geodatabase geometry with the intelligence refresh",
+      "command": "npm.cmd run collin:ccad:filegdb:audit",
+      "dependsOn": [
+        "build-ccad-local-intelligence"
+      ],
+      "requiredOutputs": [
+        "output/collin-county-tx/ccad-filegdb-report.md",
+        "output/collin-county-tx/ccad-filegdb-report.json"
+      ],
+      "activationGate": "All refresh GlobalIDs must reconcile exactly, then the viewport parcel service must be rebuilt from this File Geodatabase and pass geometry/county QC."
+    },
+    {
+      "id": "audit-ccad-kmz",
+      "label": "Audit the partial CCAD KMZ against the current parcel-intelligence refresh",
+      "command": "npm.cmd run collin:ccad:kmz:audit",
+      "dependsOn": [
+        "build-ccad-local-intelligence"
+      ],
+      "requiredOutputs": [
+        "output/collin-county-tx/ccad-kmz-audit.md",
+        "output/collin-county-tx/ccad-kmz-audit.json"
+      ],
+      "activationGate": "Treat the KMZ as a 206,204-parcel partial geometry cross-check only; it cannot replace the 441,278-feature File Geodatabase or authorize production activation."
+    },
+    {
+      "id": "build-ccad-refresh-centroids",
+      "label": "Build the current-refresh parcel centroid service for offline spatial joins",
+      "command": "npm.cmd run collin:ccad:centroids",
+      "dependsOn": [
+        "audit-ccad-filegdb-refresh"
+      ],
+      "requiredOutputs": [
+        "public/data/counties/collin-county-tx/parcels-refresh/manifest.json"
+      ],
+      "activationGate": "Centroids support offline intelligence joins only and do not replace full polygon viewport/search delivery."
+    },
+    {
+      "id": "score-parcel-intelligence-readiness",
+      "label": "Score evidence-backed parcel-intelligence groups without authorizing production",
+      "command": "npm.cmd run collin:intelligence:readiness",
+      "dependsOn": [
+        "build-permit-service",
+        "build-zoning-index",
+        "build-floodplain-index",
+        "build-migration-demand"
+      ],
+      "requiredOutputs": [
+        "output/collin-county-tx/parcel-intelligence-readiness.json",
+        "output/collin-county-tx/parcel-intelligence-readiness.md"
       ]
     }
   ],

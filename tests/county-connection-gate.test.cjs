@@ -39,7 +39,9 @@ assert(dallas.dcadLikeWindowReady === true, "Dallas DCAD-like parcel window must
 assert(dallas.parcelService.featureCount === 696601, "Dallas gate must preserve exact parcel feature count");
 assert(dallas.parcelService.searchShardCount === 1224, "Dallas gate must preserve exact search shard count");
 assert(!dallas.missingDcadLikeGroups.includes("owner-contact"), "Dallas owner contact should remain ready");
-assert(dallas.missingDcadLikeGroups.includes("migration-demand"), "Dallas should keep migration demand visible as an expansion gap");
+assert(!dallas.missingDcadLikeGroups.includes("migration-demand"), "Dallas should consume the national aggregate migration-demand context");
+assert(dallas.migrationDemandContext?.countyFips === "48113", "Dallas demand context must use county FIPS 48113");
+assert(dallas.migrationDemandContext?.parcelAttribution === false, "Dallas county demand context must never be labeled a parcel fact");
 assert(dallas.nextBuildSteps.some((step) => step.includes("reuse-rights")), "Dallas demand next steps must preserve the independent rights-review gate");
 assert(dallas.nextBuildSteps.some((step) => step.includes("do not attribute county observations to parcels")), "Dallas demand next steps must prohibit county-to-parcel overclaiming");
 
@@ -54,11 +56,12 @@ assert(jefferson.layerReadiness.zoning === "ready", "Jefferson zoning parcel ind
 assert(jefferson.layerReadiness.floodplain === "ready", "Jefferson floodplain parcel index should be ready");
 assert(jefferson.missingDcadLikeGroups.includes("owner-contact"), "Jefferson owner contact must remain source-needed");
 assert(jefferson.missingDcadLikeGroups.includes("appraisal-values"), "Jefferson appraisal values must remain source-needed");
-assert(jefferson.missingDcadLikeGroups.includes("permits-certificates"), "Jefferson permits/CO must remain join-needed");
+assert(jefferson.readyDcadLikeGroups.includes("permits-certificates"), "Jefferson active permits must be parcel-index ready while CO remains source-needed");
+assert(jefferson.readyDcadLikeGroups.includes("development-signals"), "Jefferson parcel development summaries must be ready");
 assert(jefferson.safeVisibleActivation === "pilot-map-search-only", "Jefferson should only be safe for pilot map/search activation");
 
 const harris = county("harris-county-tx");
-assert(harris.activationStage === "map-search-pilot-ready", "Harris should be map/search ready but not DCAD-window complete");
+assert(harris.activationStage === "map-search-pilot-active", "Harris map/search pilot should be active while DCAD-window intelligence remains incomplete");
 assert(harris.parcelService.manifestPresent === true, "Harris full parcel chunks must exist");
 assert(harris.parcelService.mode === "full", "Harris parcel service must be a full build");
 assert(harris.parcelService.activationStatus === "full-build-needs-qc-before-app-activation", "Harris full build must stay QC-gated");
@@ -67,12 +70,19 @@ assert(harris.parcelService.sourceVerifiedFeatureCount === 1535525, "Harris gate
 assert(harris.parcelService.searchShardCount === 1210, "Harris full service search shard count must be locked");
 assert(harris.parcelService.chunkCount === 1345, "Harris full service chunk count must be locked");
 assert(harris.sourceCounts.missingGeometry === 3, "Harris gate must preserve missing geometry count");
+assert(harris.parcelService.skipped === 3, "Harris gate must reconcile all three geometryless source records");
 assert(harris.mapSearchReady === true, "Harris full parcel viewport/search service must be ready");
-assert(harris.dcadLikeWindowReady === false, "Harris must not be marked DCAD-like until optional intelligence layers are joined");
-assert(harris.safeVisibleActivation === "pilot-map-search-only", "Harris should only be safe for pilot map/search activation");
-assert(harris.missingDcadLikeGroups.includes("zoning"), "Harris zoning must remain source-needed");
-assert(harris.missingDcadLikeGroups.includes("floodplain"), "Harris floodplain must remain source-needed");
-assert(harris.missingDcadLikeGroups.includes("permits-certificates"), "Harris permits/CO must remain source-needed");
+assert(harris.safeVisibleActivation === "active-map-search-pilot", "Harris should be visibly authorized only at the map/search pilot tier");
+assert(harris.dcadLikeWindowReady === true, "Harris must have all 14 intelligence groups after the historical permit layer is joined");
+assert(harris.layerReadiness.zoning === "ready", "Harris Houston development-control parcel index should be ready");
+assert(harris.layerReadiness.floodplain === "ready", "Harris floodplain parcel index should be ready");
+assert(harris.layerReadiness.developmentSignals === "ready", "Harris current plat development signals should be ready");
+assert(!harris.missingDcadLikeGroups.includes("zoning"), "Harris verified Houston development controls must not remain missing");
+assert(!harris.missingDcadLikeGroups.includes("floodplain"), "Harris verified floodplain layer must not remain missing");
+assert(!harris.missingDcadLikeGroups.includes("development-signals"), "Harris verified plat signals must not remain missing");
+assert(harris.readyDcadLikeGroups.includes("permits-certificates"), "Harris historical Houston permits must be parcel-index ready");
+assert(!harris.missingDcadLikeGroups.includes("permits-certificates"), "Harris permit intelligence must not remain source-needed after the verified build");
+assert(harris.sourceCounts.permitRowsJoined === 6574, "Harris gate must lock the exact unique-address permit join count");
 
 const maricopa = county("maricopa-county-az");
 assert(maricopa.activationStage === "map-search-pilot-ready", "Maricopa should be map/search ready but not DCAD-window complete");
@@ -107,7 +117,9 @@ const tarrant = county("tarrant-county-tad");
 assert(tarrant.activationStage === "map-search-pilot-ready", "Tarrant full parcel service should be map/search pilot ready");
 assert(tarrant.mapSearchReady === true, "Tarrant full viewport/search service must be ready");
 assert(tarrant.dcadLikeWindowReady === true, "Tarrant must be DCAD-like window ready after the verified zoning, floodplain, permit, and development pilot build");
-assert(tarrant.missingDcadLikeGroups.length === 1 && tarrant.missingDcadLikeGroups[0] === "migration-demand", "Tarrant must keep migration-demand as its only remaining intelligence gap");
+assert(tarrant.missingDcadLikeGroups.length === 0, "Tarrant must have all 14 intelligence groups after national aggregate demand context is connected");
+assert(tarrant.layerReadiness.migrationDemand === "ready", "Tarrant aggregate migration-demand context must be ready");
+assert(tarrant.migrationDemandContext?.parcelAttribution === false, "Tarrant demand context must remain aggregate and non-parcel");
 assert(tarrant.parcelService.featureCount === 758633, "Tarrant full service must lock the official parcel count");
 assert(tarrant.parcelService.chunkCount === 1608, "Tarrant viewport chunk count must be locked");
 assert(tarrant.parcelService.searchShardCount === 1111, "Tarrant search shard count must be locked");
@@ -118,11 +130,11 @@ const collin = county("collin-county-tx");
 assert(collin.activationStage === "map-search-pilot-ready", "Collin full parcel service should be map/search pilot ready");
 assert(collin.mapSearchReady === true, "Collin full viewport/search service must be ready");
 assert(collin.dcadLikeWindowReady === false, "Collin must remain below DCAD parity until intelligence layers are complete");
-assert(collin.parcelService.sourceVerifiedFeatureCount === 437063, "Collin gate must preserve the official source count");
-assert(collin.parcelService.featureCount === 437061, "Collin gate must lock the emitted parcel count");
-assert(collin.parcelService.chunkCount === 1604, "Collin viewport chunk count must be locked");
-assert(collin.parcelService.searchShardCount === 1095, "Collin search shard count must be locked");
-assert(collin.sourceCounts.missingGeometry === 2, "Collin geometry-normalization exclusions must remain visible");
+assert(collin.parcelService.sourceVerifiedFeatureCount === 441278, "Collin gate must preserve the official current-refresh record count");
+assert(collin.parcelService.featureCount === 441278, "Collin gate must lock the current-refresh service record count, including search-only geometry quarantines");
+assert(collin.parcelService.chunkCount === 1606, "Collin viewport chunk count must be locked");
+assert(collin.parcelService.searchShardCount === 1168, "Collin search shard count must be locked");
+assert(collin.sourceCounts.missingGeometry === 1, "Collin current-refresh null-geometry count must remain visible");
 assert(collin.safeVisibleActivation === "pilot-map-search-only", "Collin must remain pilot-only until remaining gates pass");
 
 const denton = county("denton-county-tx");

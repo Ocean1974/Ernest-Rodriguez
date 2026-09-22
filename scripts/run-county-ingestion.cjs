@@ -67,8 +67,11 @@ function validateAdapter(county, adapter, pipeline, universalSchema) {
   if (!String(pipeline.uiConstraint || "").includes("Do not redesign")) errors.push("pipeline must preserve the no-redesign UI constraint");
 
   for (const [key, value] of Object.entries(adapter.sourceFiles || {})) {
-    if (value === "optional") continue;
-    if (!relativeExists(value)) warnings.push(`sourceFiles.${key} is not present yet: ${value}`);
+    const sources = Array.isArray(value) ? value : [value];
+    for (const source of sources) {
+      if (source === "optional") continue;
+      if (!relativeExists(source)) warnings.push(`sourceFiles.${key} is not present yet: ${source}`);
+    }
   }
 
   for (const step of pipeline.steps || []) {

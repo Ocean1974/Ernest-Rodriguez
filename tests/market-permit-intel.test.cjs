@@ -36,15 +36,19 @@ assert(
 );
 
 const louisville = readJson(path.join(root, "data", "permits", "processed", "louisville-permits-normalized.json"));
-assert(louisville.count > 90000, "Louisville permit pull should include the official building permit application records");
+assert(louisville.count > 20000, "Louisville permit pull should include the official active construction permit records");
 assert(louisville.permits.some((permit) => permit.market === "Louisville" && permit.state === "KY"), "Louisville permits must be normalized with market/state");
 assert(louisville.permits.some((permit) => permit.latitude !== null && permit.longitude !== null), "Louisville permits must retain map coordinates");
+assert(louisville.permits.every((permit) => permit.latitude === null || (permit.latitude >= 37.8 && permit.latitude <= 38.5)), "Louisville permits must not retain out-of-market latitude coordinates");
+assert(louisville.permits.every((permit) => permit.longitude === null || (permit.longitude >= -86.1 && permit.longitude <= -85.2)), "Louisville permits must not retain out-of-market longitude coordinates");
 
 const manifest = readJson(path.join(root, "public", "data", "market-intel", "permits", "manifest.json"));
 assert(manifest.permitCount === manifest.searchIndexCount, "Market intel search index must cover every permit");
 assert(manifest.marketCounts.Dallas > 100000, "Market intel must include Dallas permit records");
-assert(manifest.marketCounts.Louisville > 90000, "Market intel must include Louisville permit records");
-assert(manifest.locatedMarketCounts.Louisville === manifest.marketCounts.Louisville, "Louisville permits should be location-ready from ArcGIS geometry");
+assert(manifest.marketCounts.Louisville > 20000, "Market intel must include Louisville permit records");
+const locatedLouisvilleCount = louisville.permits.filter((permit) => permit.latitude !== null && permit.longitude !== null).length;
+assert(manifest.locatedMarketCounts.Louisville === locatedLouisvilleCount, "Louisville located count must exactly reconcile after coordinate validation");
+assert(manifest.locatedMarketCounts.Louisville < manifest.marketCounts.Louisville, "Louisville source coordinate outliers must remain unlocated");
 assert(manifest.chunkCount > 2, "Market intel permits must be chunked for map/search loading");
 
 const louisvilleChunk = manifest.chunks.find((chunk) => chunk.id.startsWith("louisville-") && chunk.bounds);

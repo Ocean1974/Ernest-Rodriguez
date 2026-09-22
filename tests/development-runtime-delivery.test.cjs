@@ -39,7 +39,7 @@ assert(loader.includes("loadDevelopmentRecordsForParcels"));
 assert(loader.includes("searchDevelopmentRecords"));
 assert(loader.includes("MAX_DEVELOPMENT_QUERY_RECORDS"));
 assert(loader.includes("manifest.json"));
-assert(loader.includes("function loadManifest()"), "Development manifest must be loaded lazily after map entry or search");
+assert(loader.includes("function loadManifest(serviceRoot = DEFAULT_SERVICE_ROOT)"), "Development manifest must be loaded lazily after map entry or search and scoped to the selected county service root");
 assert(!app.includes('requestJson<{ records?: Array<{ parcelId: string; parcelPropertyName?: string; parcelAddress?: string }> }>("/data/developments/parcel-development-index.json")'));
 assert(app.includes("loadDevelopmentRecordsForParcels"));
 assert(app.includes("searchDevelopmentRecords"));

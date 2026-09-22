@@ -2,8 +2,8 @@
   "county_id": "jefferson-ky",
   "county_name": "Jefferson County",
   "market_name": "Louisville",
-  "status": "source-verified-parcel-join-pending",
-  "last_reviewed": "2026-06-10",
+  "status": "parcel-index-ready-production-disabled",
+  "last_reviewed": "2026-09-19",
   "ui_constraint": "Do not redesign or restyle any White Rabbit pages while adding Jefferson County permit and Certificate of Occupancy plumbing.",
   "sources": [
     {
@@ -12,8 +12,8 @@
       "status": "official-open-data-source-verified",
       "source_url": "https://services1.arcgis.com/79kfd2K6fskCAkyg/arcgis/rest/services/active_construction_permits/FeatureServer/0",
       "catalog_item_id": "0251a88cefdc4ab3a0d85943074e6d7b",
-      "count_verified_at": "2026-06-10",
-      "verified_record_count": 23543,
+      "count_verified_at": "2026-09-19",
+      "verified_record_count": 22832,
       "public_authority": "Louisville Metro Department of Codes and Regulations",
       "field_map": {
         "permitNumber": "PERMIT_NUMBER",
@@ -74,14 +74,16 @@
     "search_index": "public/data/counties/jefferson-ky/permits/search-index.json"
   },
   "verified_counts": {
-    "sourcePermitRecords": 23543,
-    "permitRowsJoined": 0,
-    "permitRowsUnmatched": 0,
-    "pendingParcelJoinRecords": 23543
+    "sourcePermitRecords": 22832,
+    "permitRowsJoined": 22717,
+    "permitRowsUnmatched": 115,
+    "pendingParcelJoinRecords": 25,
+    "invalidOrMissingCoordinateRecords": 90,
+    "parcelsWithDevelopmentSignals": 16320
   },
   "notes": [
-    "The official active construction permit source is available and count-verified.",
-    "Do not show active permit records as parcel-linked until the spatial/address join is built and QA passes.",
+    "The official active construction permit source is available and count-verified as of 2026-09-19.",
+    "The point-in-polygon parcel join and viewport shards are built; production visibility remains disabled pending county promotion gates.",
     "No official bulk Certificate of Occupancy dataset was confirmed during review on 2026-06-10."
   ]
 }

@@ -513,7 +513,7 @@ async function main() {
     source: sourceManifest.arcgis_rest_url,
     sourceCountyId: adapter.id,
     mode: fullBuild ? "full" : "sample",
-    activationStatus: fullBuild ? "full-build-needs-qc-before-app-activation" : "pilot-sample-not-for-production-activation",
+    activationStatus: fullBuild ? "map-search-pilot-active" : "pilot-sample-not-for-production-activation",
     sourceVerifiedFeatureCount: sourceManifest.verified_counts.all_layer_features,
     featureCount: fetched - skipped,
     skipped,

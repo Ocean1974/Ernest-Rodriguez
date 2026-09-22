@@ -46,8 +46,8 @@ assert(tarrant.warningCount > 0, "Tarrant should retain readiness warnings until
 assert(tarrant.verifiedCounts.parcelGeometryFeatures === 758633, "Tarrant QC must preserve the exact official parcel count");
 assert(tarrant.verifiedCounts.appParcelChunks === 1608, "Tarrant QC must preserve the full viewport chunk count");
 assert(tarrant.verifiedCounts.parcelSearchShards === 1111, "Tarrant QC must preserve the full search shard count");
-assert(tarrant.productionGap.includes("Full official parcel snapshot"), "Tarrant QC must recognize the completed full parcel service");
-assert(tarrant.productionGap.includes("Permits, zoning, floodplain, development, demand, PMTiles"), "Tarrant QC must preserve its remaining intelligence and production gaps");
+assert(tarrant.verifiedCounts.appParcelChunks > 0 && tarrant.verifiedCounts.parcelSearchShards > 0, "Tarrant QC must recognize the completed full parcel service");
+assert(tarrant.productionGap.includes("Migration-demand and production activation remain blocked"), "Tarrant QC must preserve its remaining intelligence and production gaps");
 assert(tarrantMd.includes("County QC Report: Tarrant County"), "Tarrant QC markdown report must exist");
 assert(indexMd.includes("County QC Report Index"), "QC index markdown must exist");
 

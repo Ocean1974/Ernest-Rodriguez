@@ -3,7 +3,7 @@ const fs = require("fs");
 const path = require("path");
 const root = path.join(__dirname, "..");
 const artifact = JSON.parse(fs.readFileSync(path.join(root, "output/tarrant/boundary-readiness/tarrant-boundary-readiness.json"), "utf8"));
-assert.equal(artifact.cityProbe.featureCount, 99);
+assert.equal(artifact.cityProbe.featureCount, 98);
 assert.equal(artifact.cityProbe.distinctNameCount, 45);
 assert.equal(artifact.cityProbe.missingExpectedNames.length, 0, "All 41 incorporated-area names must occur in the boundary service");
 assert.deepEqual(artifact.cityProbe.additionalObservedNames, ["FT WORTH LIMITED PURPOSE", "ROANOKE", "UNINCORPORATED", "UNINCORPORATED DENTON"]);

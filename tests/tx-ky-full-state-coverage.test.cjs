@@ -69,12 +69,16 @@ for (const item of report.seeded) {
   assert(pipeline.pipelineContract?.mode === "evidence-gated", `${item.countyId} must publish the evidence-gated pipeline contract`);
   assert(pipeline.pipelineContract?.failurePolicy.includes("never hide"), `${item.countyId} must preserve count discrepancies`);
   assert(pipeline.productionTileStep?.expectedOutput, `${item.countyId} must retain a production tile handoff`);
-  assert(pipeline.enabledForProduction !== true, `${item.countyId} must not be automatically enabled for production`);
+  if (item.countyId === "harris-county-tx") {
+    assert(pipeline.enabledForProduction === true && pipeline.activationScope === "map-search-pilot", "Harris must be explicitly limited to its authorized map/search pilot scope");
+  } else {
+    assert(pipeline.enabledForProduction !== true, `${item.countyId} must not be automatically enabled for production`);
+  }
 }
 
-assert(readJson("data/county-adapters/collin-county-tx/adapter.json").verifiedCounts.parcelGeometryFeatures === 437063, "Synchronization must preserve Collin's promoted exact count");
+assert(readJson("data/county-adapters/collin-county-tx/adapter.json").verifiedCounts.parcelGeometryFeatures === 441252, "Synchronization must preserve Collin's exact current-refresh polygon count");
 assert(readJson("data/county-adapters/denton-county-tx/adapter.json").verifiedCounts.parcelGeometryFeatures === 384684, "Synchronization must preserve Denton's promoted exact count");
-assert(readJson("data/county-adapters/collin-county-tx/pipeline.json").steps.find((step) => step.id === "build-parcel-service").command === "npm.cmd run collin:service:sample", "Synchronization must preserve Collin's executable sample command");
+assert(readJson("data/county-adapters/collin-county-tx/pipeline.json").steps.find((step) => step.id === "build-parcel-service").command === "npm.cmd run collin:ccad:service:refresh", "Synchronization must preserve Collin's executable current-refresh service command");
 assert(readJson("data/county-adapters/denton-county-tx/pipeline.json").steps.find((step) => step.id === "build-parcel-service").command === "npm.cmd run denton:service:sample", "Synchronization must preserve Denton's executable sample command");
 
 for (const item of report.seeded.filter((seed) => seed.status === "created-source-needed-shell").slice(0, 25)) {

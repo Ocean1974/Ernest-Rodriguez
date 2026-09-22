@@ -20,6 +20,23 @@ async function readResponse(response) {
   return body;
 }
 
+function hostedSessionFromBody(body) {
+  const session = body.session || body;
+  const user = body.user || session.user || {};
+  const accessToken = session.access_token;
+  if (!user.id || !accessToken) return null;
+  return {
+    memberId: user.id,
+    username: user.email,
+    email: user.email,
+    displayName: trim(user.user_metadata?.display_name) || trim(user.email).split("@")[0],
+    accessToken,
+    refreshToken: session.refresh_token,
+    expiresAt: Date.now() + Number(session.expires_in || 3600) * 1000,
+    provider: "supabase",
+  };
+}
+
 export async function signInHostedMember(config, email, password) {
   if (!hostedMemberServiceConfigured(config)) throw new Error("Hosted member accounts are not configured.");
   const response = await fetch(`${trim(config.url).replace(/\/$/, "")}/auth/v1/token?grant_type=password`, {
@@ -28,17 +45,24 @@ export async function signInHostedMember(config, email, password) {
     body: JSON.stringify({ email: trim(email).toLowerCase(), password: String(password || "") }),
   });
   const body = await readResponse(response);
-  const user = body.user || {};
-  return {
-    memberId: user.id,
-    username: user.email,
-    email: user.email,
-    displayName: trim(user.user_metadata?.display_name) || trim(user.email).split("@")[0],
-    accessToken: body.access_token,
-    refreshToken: body.refresh_token,
-    expiresAt: Date.now() + Number(body.expires_in || 3600) * 1000,
-    provider: "supabase",
-  };
+  const session = hostedSessionFromBody(body);
+  if (!session) throw new Error("Member service did not return an authenticated session.");
+  return session;
+}
+
+export async function signUpHostedMember(config, email, password, displayName = "") {
+  if (!hostedMemberServiceConfigured(config)) throw new Error("Hosted member accounts are not configured.");
+  const normalizedEmail = trim(email).toLowerCase();
+  const response = await fetch(`${trim(config.url).replace(/\/$/, "")}/auth/v1/signup`, {
+    method: "POST",
+    headers: headers(config, "", { "Content-Type": "application/json" }),
+    body: JSON.stringify({ email: normalizedEmail, password: String(password || ""), data: { display_name: trim(displayName) } }),
+  });
+  const body = await readResponse(response);
+  const session = hostedSessionFromBody(body);
+  if (session) return session;
+  if (body.user?.id) return { verificationRequired: true, email: body.user.email || normalizedEmail };
+  throw new Error("Member service did not create an account.");
 }
 
 export async function loadHostedMemberListings(config, session) {

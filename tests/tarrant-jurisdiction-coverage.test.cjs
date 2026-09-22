@@ -21,9 +21,14 @@ assert.equal(permits.uncoveredJurisdictionIds.length, 42);
 assert.equal(artifact.report.complete, false);
 assert.equal(artifact.report.activationAuthorized, false);
 const adapter = read("data/county-adapters/tarrant/adapter.json");
+const expectedLayerStatus = {
+  permits: "parcel-index-ready-partial-municipal-coverage",
+  "zoning-intelligence": "parcel-index-ready-partial-municipal-coverage",
+  "floodplain-intelligence": "parcel-index-ready-regulatory-candidate",
+};
 for (const id of ["permits", "zoning-intelligence", "floodplain-intelligence"]) {
   const layer = adapter.optionalLayers.find((item) => item.id === id);
   assert.equal(layer.defaultVisible, false);
-  assert.equal(layer.status, "source-discovered-rights-needed");
+  assert.equal(layer.status, expectedLayerStatus[id]);
 }
 console.log("White Rabbit Tarrant 42-scope source discovery coverage remains evidence-gated and default-off.");

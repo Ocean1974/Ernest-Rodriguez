@@ -50,12 +50,12 @@
     "parcelGeometry": "https://maps.bexar.org/arcgis/rest/services/Parcels/MapServer/0",
     "appraisalDistrictExtract": "https://help.bcad.org/hc/en-us/articles/55264219130899-What-is-a-Public-Information-Act-Request",
     "ownerAppraisal": "https://maps.bexar.org/arcgis/rest/services/Parcels/MapServer/0",
-    "permitsRaw": "source-needed",
-    "permitsProcessed": "data/permits/processed/bexar-county-tx",
-    "developmentRaw": "source-needed",
-    "zoningRaw": "source-needed",
-    "floodplainRaw": "source-needed",
-    "migrationDemandRaw": "source-needed"
+    "permitsRaw": "https://data.sanantonio.gov/dataset/05012dcb-ba1b-4ade-b5f3-7403bc7f52eb/resource/c21106f9-3ef5-4f3a-8604-f992b4db7512/download/permits_issued.csv",
+    "permitsProcessed": "public/data/counties/bexar-county-tx/permits/manifest.json",
+    "developmentRaw": "https://services.arcgis.com/g1fRTDLeMgspWrYp/arcgis/rest/services/PreliminaryPlat/FeatureServer/2; https://services.arcgis.com/g1fRTDLeMgspWrYp/arcgis/rest/services/RecordedPlat/FeatureServer/1",
+    "zoningRaw": "https://services.arcgis.com/g1fRTDLeMgspWrYp/arcgis/rest/services/COSA_Zoning/FeatureServer/12",
+    "floodplainRaw": "https://hazards.fema.gov/arcgis/rest/services/public/NFHL/MapServer/28",
+    "migrationDemandRaw": "public/data/national/migration-demand/manifest.json"
   },
   "publicDataRoots": {
     "parcels": "/data/counties/bexar-county-tx/parcels/",
@@ -94,9 +94,9 @@
     {
       "id": "parcel-dimensions",
       "label": "Parcel dimensions",
-      "source": "source-needed",
-      "status": "source-needed",
-      "joinBehavior": "source-needed: direct dimension fields, label layer, or generated measurement fallback",
+      "source": "Bexar parcel geometry measurements and direct acreage fields",
+      "status": "ready-verified-generated-and-direct-parcel-dimensions",
+      "joinBehavior": "Direct geometry area/perimeter plus Acres/LglAcres on each official parcel feature",
       "defaultVisible": false,
       "renderStrategy": "build-time official source inspection, offline mapping, viewport chunks",
       "maxFeaturesPerViewport": 750
@@ -104,9 +104,9 @@
     {
       "id": "block-grid",
       "label": "Block, subdivision, and map-grid context",
-      "source": "source-needed",
-      "status": "source-needed",
-      "joinBehavior": "source-needed: direct parcel fields or spatial join to subdivision/block/grid sources",
+      "source": "Bexar parcel viewport chunk, neighborhood, and legal-description context",
+      "status": "ready-verified-parcel-grid-neighborhood-legal-context",
+      "joinBehavior": "Parcel chunk ID provides map-grid context; Nbhd and legal description provide neighborhood/legal context when present",
       "defaultVisible": false,
       "renderStrategy": "build-time official source inspection, offline joins, viewport chunks",
       "maxFeaturesPerViewport": 750
@@ -114,9 +114,9 @@
     {
       "id": "permits",
       "label": "Permits and certificates of occupancy",
-      "source": "source-needed",
-      "status": "source-needed",
-      "joinBehavior": "source-needed: parcel/account, normalized address, or spatial point-in-parcel join",
+      "source": "City of San Antonio Permits Issued",
+      "status": "parcel-index-ready-partial-municipal-coverage",
+      "joinBehavior": "Exact normalized address, point disambiguation, then conservative nearest-centroid fallback; unmatched records preserved",
       "defaultVisible": false,
       "publicDataRoot": "/data/counties/bexar-county-tx/permits/",
       "manifestPath": "public/data/counties/bexar-county-tx/permits/manifest.json",
@@ -126,9 +126,9 @@
     {
       "id": "zoning-intelligence",
       "label": "Zoning intelligence",
-      "source": "source-needed",
-      "status": "source-needed",
-      "joinBehavior": "source-needed: parcel/account ID bridge first; spatial join for zoning polygons and case areas",
+      "source": "City of San Antonio CoSA Zoning",
+      "status": "parcel-index-ready-partial-municipal-coverage",
+      "joinBehavior": "Official zoning polygon centroid to nearest official parcel centroid within a conservative threshold; City of San Antonio footprint only",
       "defaultVisible": false,
       "publicDataRoot": "/data/counties/bexar-county-tx/zoning/",
       "manifestPath": "public/data/counties/bexar-county-tx/zoning/manifest.json",
@@ -140,9 +140,9 @@
     {
       "id": "development-signals",
       "label": "Development signals",
-      "source": "source-needed",
-      "status": "source-needed",
-      "joinBehavior": "source-needed: normalized permit, certificate, demolition, plat, and project evidence joined to parcel IDs",
+      "source": "City of San Antonio issued permits, preliminary plats, and recorded plats",
+      "status": "parcel-index-ready-partial-municipal-coverage",
+      "joinBehavior": "Evidence records aggregate only after a conservative parcel join; no construction or listing claim",
       "defaultVisible": false,
       "publicDataRoot": "/data/counties/bexar-county-tx/developments/",
       "manifestPath": "public/data/counties/bexar-county-tx/developments/parcel-development-index.json",
@@ -152,9 +152,9 @@
     {
       "id": "floodplain-intelligence",
       "label": "Floodplain intelligence",
-      "source": "source-needed",
-      "status": "source-needed",
-      "joinBehavior": "source-needed: FEMA/local floodplain spatial join keyed back to parcel/account IDs",
+      "source": "FEMA National Flood Hazard Layer - Bexar County window",
+      "status": "parcel-index-ready-official-fema-coverage",
+      "joinBehavior": "Parcel centroid inside FEMA NFHL flood-hazard polygon; planning intelligence only",
       "defaultVisible": false,
       "publicDataRoot": "/data/counties/bexar-county-tx/floodplain/",
       "manifestPath": "public/data/counties/bexar-county-tx/floodplain/manifest.json",
@@ -168,9 +168,9 @@
     {
       "id": "migration-demand",
       "label": "Migration and demand",
-      "source": "source-needed",
-      "status": "source-needed",
-      "joinBehavior": "source-needed: aggregate Census/ACS/IRS or approved demand geography joined by tract/block group/market, not individual people",
+      "source": "National 2024 ACS 5-year county/place context plus 2022-2023 IRS SOI county migration",
+      "status": "ready-aggregate-geography-context",
+      "joinBehavior": "County FIPS 48029 aggregate context only; zero parcel attribution and no individual-person data",
       "defaultVisible": false,
       "publicDataRoot": "/data/counties/bexar-county-tx/demand/",
       "manifestPath": "public/data/counties/bexar-county-tx/demand/manifest.json",
@@ -232,13 +232,13 @@
     "appraisal": "parcel attributes are co-located when AcctNumb is populated; current BCAD bulk snapshot remains required",
     "land": "co-located Acres/LglAcres, values, YrBlt, GBA/TOT_GBA, and geometry measurements",
     "secondaryParcelGisId": "OBJECTID is complete and unique across 710,772 audited snapshot features; refresh stability unverified",
-    "blockLabels": "source-needed: direct key, spatial join, or unavailable",
-    "dimensions": "source-needed: direct key, spatial join, generated measurement fallback, or unavailable",
-    "permits": "source-needed: parcel/account ID, address match, spatial join, or combination",
-    "zoning": "source-needed: parcel/account ID bridge first; spatial join for zoning polygons and case areas",
-    "floodplain": "source-needed: FEMA/local floodplain parcel centroid spatial join keyed to parcel/account IDs",
-    "developmentSignals": "source-needed: verified permit, plat, demolition, certificate, project, address, or spatial join evidence",
-    "migrationDemand": "source-needed: aggregate geography join, not individual people"
+    "blockLabels": "parcel chunk ID plus Nbhd/legal description context",
+    "dimensions": "same-feature geometry measurements plus Acres/LglAcres",
+    "permits": "unique normalized address; coordinate disambiguation; conservative spatial nearest-centroid fallback",
+    "zoning": "conservative nearest-centroid pilot join from official CoSA zoning polygons to official Bexar parcels",
+    "floodplain": "parcel centroid inside FEMA NFHL flood-hazard polygon",
+    "developmentSignals": "permit/plat evidence linked through countyParcelId after conservative source joins",
+    "migrationDemand": "county FIPS 48029 aggregate geography context; never a parcel attribution"
   },
   "verifiedCounts": {
     "parcelGeometryFeatures": 710772,
@@ -248,11 +248,16 @@
     "landRows": 710770,
     "appParcelChunks": 902,
     "parcelSearchShards": 1066,
-    "sourcePermitRecords": 0,
-    "permitRowsJoined": 0,
-    "permitRowsUnmatched": 0,
-    "parcelsWithDevelopmentSignals": 0,
-    "migrationDemandGeographies": 0
+    "sourcePermitRecords": 142072,
+    "permitRowsJoined": 124584,
+    "permitRowsUnmatched": 17488,
+    "parcelsWithDevelopmentSignals": 184847,
+    "migrationDemandGeographies": 1,
+    "migrationDemandParcelJoins": 0,
+    "parcelDimensionRows": 710770,
+    "blockGridRows": 710770,
+    "parcelsWithZoning": 673096,
+    "parcelsWithFloodplain": 710747
   },
   "requiredOutputs": [
     "output/bexar-county-tx/schema-report.md",
@@ -270,6 +275,6 @@
     "public/data/counties/bexar-county-tx/floodplain/manifest.json",
     "public/data/counties/bexar-county-tx/demand/manifest.json"
   ],
-  "productionGap": "Official parcel service, exact source count, snapshot identity, 902 viewport chunks, and 1,066 search shards are built with two unusable geometries reconciled. Current BCAD freshness, stable refresh identity, rights review, optional intelligence layers, PMTiles, and final activation remain gated.",
+  "productionGap": "Bexar has all 14 pilot intelligence groups after adding national aggregate county migration/demand context. Source freshness, rights review, sampled parcel joins, and production activation remain gated; county demand context is never a parcel fact.",
   "pilotNotes": "Do not activate this county in the app. Do not redesign any pages. Fill official sources and exact join keys before any visible behavior changes."
 }

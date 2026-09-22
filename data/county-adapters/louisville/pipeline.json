@@ -71,6 +71,17 @@
       ]
     },
     {
+      "id": "build-address-index",
+      "label": "Build Jefferson County LOJIC parcel address index",
+      "command": "node scripts/build-jefferson-ky-address-index.cjs",
+      "requiredOutputs": [
+        "data/county-adapters/louisville/lojic-address-source-manifest.json",
+        "public/data/counties/jefferson-ky/addresses/manifest.json",
+        "output/jefferson-ky/address-source-report.md",
+        "output/jefferson-ky/address-source-report.json"
+      ]
+    },
+    {
       "id": "build-zoning-index",
       "label": "Build Jefferson County LOJIC zoning parcel index",
       "command": "node scripts/build-jefferson-ky-zoning-index.cjs",

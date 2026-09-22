@@ -40,11 +40,17 @@ assert(adapter.ownerEnrichment.noOfficialEmailFieldNote.includes("Do not infer")
 assert(adapter.optionalLayers.some((layer) => layer.id === "hcad-owner-appraisal" && layer.status === "ready"), "Harris owner/appraisal layer must be joined into the QC-gated full parcel service");
 assert(adapter.optionalLayers.some((layer) => layer.id === "block-labels" && layer.status === "ready"), "Harris block/legal context must be joined into the QC-gated full parcel service");
 assert(adapter.optionalLayers.some((layer) => layer.id === "parcel-dimensions" && layer.status === "ready"), "Harris parcel dimension fields must be joined into the QC-gated full parcel service");
-assert(adapter.optionalLayers.some((layer) => layer.id === "permits" && layer.status === "source-needed"), "Harris permit layer must remain source-needed");
-assert(adapter.optionalLayers.some((layer) => layer.id === "zoning-intelligence" && layer.status === "source-needed-fragmented"), "Harris zoning must document fragmented source status");
-assert(adapter.productionGap.includes("full viewport chunks, search shards, owner/appraisal joins"), "Harris adapter must document built QC-gated parcel service progress");
+assert(adapter.optionalLayers.some((layer) => layer.id === "permits" && layer.status === "ready-historical-2024-refresh-required"), "Harris permit layer must expose its joined historical 2024 scope without claiming current or countywide coverage");
+assert(adapter.optionalLayers.some((layer) => layer.id === "zoning-intelligence" && layer.status === "ready-partial-jurisdiction-coverage"), "Harris must expose verified Houston development controls without claiming conventional zoning");
+assert(adapter.optionalLayers.some((layer) => layer.id === "floodplain-intelligence" && layer.status === "ready"), "Harris floodplain intelligence must be ready");
+assert(adapter.optionalLayers.some((layer) => layer.id === "development-signals" && layer.status === "ready-current-plat-agenda"), "Harris current plat development signals must be ready");
+assert(adapter.verifiedCounts.parcelsWithHoustonDevelopmentControls === 677447, "Harris development-control join count must be locked");
+assert(adapter.verifiedCounts.parcelsWithFloodplainClassification === 1535237, "Harris floodplain join count must be locked");
+assert(adapter.verifiedCounts.parcelsInSpecialFloodHazardArea === 165388, "Harris SFHA count must be locked");
+assert(adapter.verifiedCounts.parcelsWithDevelopmentSignals === 29, "Harris exact plat activity join count must be locked");
+assert(adapter.productionGap.includes("active Houston/Harris map-search pilot"), "Harris adapter must document its active pilot state");
 assert(adapter.productionGap.includes("permit/CO joins"), "Harris adapter must document remaining production gaps");
-assert(adapter.pilotNotes.includes("Do not activate"), "Harris adapter must prevent premature app activation");
+assert(adapter.pilotNotes.includes("no conventional citywide zoning"), "Harris adapter must preserve the no-zoning disclosure");
 
 assert(sourceManifest.county_id === adapter.id, "Harris source manifest must match adapter id");
 assert(sourceManifest.service_owner === "HarrisCountyGIS", "Harris source manifest must preserve the official ArcGIS owner");
@@ -75,6 +81,7 @@ assert(packageJson.scripts["harris:qa"] === "node scripts/build-harris-county-tx
 assert(packageJson.scripts["harris:sample"] === "node scripts/build-harris-county-tx-parcels.cjs --sample=25", "Harris sample npm script must be available");
 assert(packageJson.scripts["harris:service:sample"] === "node scripts/build-harris-county-tx-parcel-service.cjs --sample=500", "Harris parcel service sample npm script must be available");
 assert(packageJson.scripts["harris:service:full"] === "node scripts/build-harris-county-tx-parcel-service.cjs --full", "Harris parcel service full npm script must be available");
+assert(packageJson.scripts["harris:intelligence"] === "node scripts/build-harris-intelligence.cjs", "Harris intelligence build script must be available");
 assert(builderSource.includes("Harris full build is intentionally blocked"), "Harris builder must block unsafe full export until viewport chunks exist");
 assert(builderSource.includes("ownerPhone: \"\""), "Harris builder must keep ownerPhone blank without official source field");
 assert(builderSource.includes("ownerEmail: \"\""), "Harris builder must keep ownerEmail blank without official source field");
@@ -93,6 +100,9 @@ assert(exists("output/harris-county-tx/parcel-service-report.json"), "Harris par
 assert(exists("output/harris-county-tx/parcel-service-report.md"), "Harris parcel service report markdown must exist");
 assert(exists("public/data/counties/harris-county-tx/parcels/manifest.json"), "Harris parcel service manifest must exist");
 assert(exists("public/data/counties/harris-county-tx/parcels/search-index.json"), "Harris parcel service search index manifest must exist");
+assert(exists("public/data/counties/harris-county-tx/zoning/manifest.json"), "Houston development-control manifest must exist");
+assert(exists("public/data/counties/harris-county-tx/floodplain/manifest.json"), "Houston floodplain manifest must exist");
+assert(exists("public/data/counties/harris-county-tx/developments/manifest.json"), "Houston development-signal manifest must exist");
 
 const schemaReport = readJson("output/harris-county-tx/schema-report.json");
 const qaReport = readJson("output/harris-county-tx/qa-report.json");

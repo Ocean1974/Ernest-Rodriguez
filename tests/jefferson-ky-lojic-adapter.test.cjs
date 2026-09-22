@@ -62,7 +62,10 @@ assert(permitLayer, "Jefferson County adapter must declare the permits optional 
 assert(permitLayer.manifestPath === "data/county-adapters/louisville/permit-co-source-manifest.json", "Jefferson permits layer must use the official permit/CO source manifest");
 assert(permitLayer.sourceUrls.some((url) => url.includes("active_construction_permits")), "Jefferson permits layer must link active construction permits");
 assert(permitLayer.sourceUrls.some((url) => url.includes("pm_occupancy")), "Jefferson permits layer must link property maintenance occupancy");
-assert(adapter.verifiedCounts.sourcePermitRecords === 23543, "Jefferson County adapter must lock the verified active permit source count");
+assert(adapter.verifiedCounts.sourcePermitRecords === 22832, "Jefferson County adapter must lock the current verified active permit source count");
+assert(adapter.verifiedCounts.permitRowsJoined === 22717, "Jefferson County adapter must lock exact spatial permit joins");
+assert(adapter.verifiedCounts.permitRowsUnmatched === 115, "Jefferson County adapter must preserve unmatched and invalid-coordinate permit counts");
+assert(adapter.verifiedCounts.parcelsWithDevelopmentSignals === 16320, "Jefferson County adapter must lock parcels with development signals");
 const zoningLayer = adapter.optionalLayers.find((layer) => layer.id === "zoning-intelligence");
 assert(zoningLayer, "Jefferson County adapter must declare the zoning intelligence optional layer");
 assert(zoningLayer.status === "parcel-index-ready", "Jefferson zoning layer must be parcel-index-ready");
@@ -156,13 +159,13 @@ assert(pvaManifest.field_aliases.totalValue.includes("ASSESSED VALUE"), "PVA sou
 assert(pvaManifest.related_public_sources.louisville_active_construction_permits_url.includes("active_construction_permits"), "PVA source manifest must link active construction permits as related public data");
 assert(pvaManifest.official_source_notes.some((note) => note.includes("parcel join remains pending")), "PVA source notes must keep permit parcel join pending");
 
-assert(permitCoManifest.status === "source-verified-parcel-join-pending", "Permit/CO manifest must keep Jefferson permits source-verified but join-pending");
-assert(permitCoManifest.sources.some((source) => source.id === "louisville-active-construction-permits" && source.verified_record_count === 23543), "Permit/CO manifest must lock active permit count");
+assert(permitCoManifest.status === "parcel-index-ready-production-disabled", "Permit/CO manifest must mark the spatial parcel index ready but production-disabled");
+assert(permitCoManifest.sources.some((source) => source.id === "louisville-active-construction-permits" && source.verified_record_count === 22832), "Permit/CO manifest must lock current active permit count");
 assert(permitCoManifest.sources.some((source) => source.id === "jefferson-ky-certificate-of-occupancy" && source.status === "bulk-source-not-confirmed"), "Permit/CO manifest must not pretend CO bulk data is verified");
 assert(permitCoManifest.join_strategy.owner_contact_rule.includes("Contractors"), "Permit/CO manifest must keep permit parties separate from owner contacts");
-assert(publicPermitManifest.status === "source-verified-parcel-join-pending", "Public Jefferson permit manifest must expose source-verified join-pending status");
-assert(publicPermitManifest.permitCount === 23543, "Public Jefferson permit manifest must carry the official active permit count");
-assert(publicPermitManifest.joinedPermitCount === 0, "Public Jefferson permit manifest must not claim joined permit rows before QA");
+assert(publicPermitManifest.status === "parcel-index-ready-production-disabled", "Public Jefferson permit manifest must expose ready but production-disabled status");
+assert(publicPermitManifest.permitCount === 22832, "Public Jefferson permit manifest must carry the current official active permit count");
+assert(publicPermitManifest.joinedPermitCount === 22717, "Public Jefferson permit manifest must preserve exact spatial joins");
 assert(publicPermitManifest.sourceIntel.certificateOfOccupancyStatus === "bulk-source-not-confirmed", "Public Jefferson permit manifest must keep CO source unconfirmed");
 assert(zoningSourceManifest.status === "parcel-index-ready", "Jefferson zoning source manifest must be parcel-index-ready");
 assert(zoningSourceManifest.source_url.includes("OpenDataDevelopment/MapServer/15"), "Jefferson zoning source manifest must link the official LOJIC zoning layer");

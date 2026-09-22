@@ -192,15 +192,15 @@ assert(appSource.includes("minzoom: 13.3"), "Dimension labels do not have a very
 assert(appSource.includes("parcelRenderProfile.maxFeatures"), "Viewport loading is not driven by zoom-sensitive parcel profile");
 assert(appSource.includes("showDimensions && parcelRenderProfile?.showDimensions"), "Dimension labels are not gated by detail zoom");
 assert(appSource.includes("EARTH_INTRO_CAMERA"), "Live map does not define a stable manual Earth intro camera");
-assert(appSource.includes('useState("earth")'), "Live map should start in Earth mode before explicit parcel entry");
-assert(appSource.includes("useState(true)"), "Live map should enter with Earth intro active");
+assert(appSource.includes('useState(initialDatasetId ? "parcel" : "earth")'), "Live map should start in Earth mode unless an explicit dataset deep link requests parcel mode");
+assert(appSource.includes("useState(!initialDatasetId)"), "Live map should enter with Earth intro active unless an explicit dataset deep link is present");
 assert(!appSource.includes('data-intro-layer="manual-earth-view"'), "Earth intro overlay should not cover the live globe");
 assert(!appSource.includes('filter: earthIntroActive ? "blur(1px)" : "blur(0)"'), "Hidden parcel map should not blur over the live globe");
 assert(!appSource.includes("autoDallasZoomStartedRef"), "Enter Map still contains an automatic Dallas zoom guard");
 assert(!appSource.includes("enterDallasParcelMode({ auto: true })"), "Enter Map still automatically triggers Dallas parcel mode");
 assert(!appSource.includes("dallasTransitionActive"), "Live map still has autonomous Dallas transition state");
 assert(!appSource.includes("setDallasTransitionActive"), "Live map still toggles autonomous Dallas transition state");
-assert(appSource.includes('function WhiteRabbitMap({ onExit, initialSearch = "", preserveLandingEarth = false, onOpenMarketplace, onOpenCrm })'), "WhiteRabbitMap does not declare a safe Earth-first map shell with marketplace and CRM navigation");
+assert(appSource.includes('function WhiteRabbitMap({ onExit, initialSearch = "", initialDatasetId = "", preserveLandingEarth = false, onOpenMarketplace, onOpenCrm, onOpenTools })'), "WhiteRabbitMap does not declare a safe Earth-first map shell with explicit dataset deep-link support and marketplace, CRM, and tools navigation");
 assert(appSource.includes("<WhiteRabbitMap") && appSource.includes("initialSearch={landingSearch}") && appSource.includes("onExit={() => setEnteredMap(false)}"), "WhiteRabbitLanding does not open WhiteRabbitMap from the approved Enter Map handoff");
 assert(appSource.includes("onSubmit={() => setEnteredMap(true)}"), "Landing search submit must open the live map without auto-entering Dallas parcel mode");
 assert(appSource.includes("<button onClick={() => setEnteredMap(true)}"), "Enter Map must open the live map without redesigning the landing page");

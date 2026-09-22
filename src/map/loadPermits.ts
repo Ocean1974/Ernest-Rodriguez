@@ -44,6 +44,7 @@ export type PermitManifest = {
   chunks: PermitChunk[];
   searchIndex: string;
   searchIndexCount: number;
+  parcelSearchShards?: { keyLength: number; files: Record<string, string> };
 };
 
 export type PermitLoadOptions = {
@@ -57,6 +58,7 @@ const DEFAULT_PERMIT_SERVICE_BASE = activeCountyDataset.dataRoots.permits;
 const manifestPromises = new Map<string, Promise<PermitManifest>>();
 const searchIndexPromises = new Map<string, Promise<PermitRecord[]>>();
 const chunkCache = new Map<string, Promise<PermitRecord[]>>();
+const parcelShardCache = new Map<string, Promise<PermitRecord[]>>();
 
 function permitServiceBase(serviceBase = DEFAULT_PERMIT_SERVICE_BASE): string {
   const normalized = String(serviceBase || DEFAULT_PERMIT_SERVICE_BASE).trim() || DEFAULT_PERMIT_SERVICE_BASE;
@@ -161,7 +163,23 @@ export async function loadPermitsForParcel(parcelAccountNum: string, maxFeatures
   if (!account) return [];
   const base = permitServiceBase(serviceBase);
   const manifest = await loadPermitManifest(base);
-  const hits = permitsForParcel(await searchFullPermitRecords(account, maxFeatures, base), account).slice(0, maxFeatures);
+  let searchableRecords: PermitRecord[];
+  if (manifest.parcelSearchShards) {
+    const normalized = account.toLowerCase().replace(/[^a-z0-9]/g, "");
+    const file = manifest.parcelSearchShards.files[normalized.slice(0, manifest.parcelSearchShards.keyLength) || "__"];
+    if (!file) return [];
+    const cacheKey = `${base}:${file}`;
+    if (!parcelShardCache.has(cacheKey)) {
+      parcelShardCache.set(cacheKey, requestJson<{ permits?: PermitRecord[] }>(`${base}${file}`).then(async (response) => {
+        if (!response.ok) throw new Error(`Unable to load permit parcel shard: ${response.status}`);
+        return (await response.json()).permits || [];
+      }));
+    }
+    searchableRecords = await (parcelShardCache.get(cacheKey) as Promise<PermitRecord[]>);
+  } else {
+    searchableRecords = await searchFullPermitRecords(account, maxFeatures, base);
+  }
+  const hits = permitsForParcel(searchableRecords, account).slice(0, maxFeatures);
   const chunkIds = Array.from(new Set(hits.map((permit) => String(permit.chunkId || "").trim()).filter(Boolean)));
   if (!chunkIds.length) return hits;
 

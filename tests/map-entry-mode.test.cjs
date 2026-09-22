@@ -47,9 +47,9 @@ const parcelGeometryHitTest = new Function(
 
 assert(mainSource.includes('import App from "./App.tsx"'), "The running app must use src/App.tsx as the source of truth");
 assert(parcelLoaderSource.includes("if (parcels.length >= collectionTarget) break"), "Viewport parcel loading must publish DCAD parcels after filling its feature budget instead of waiting for every intersecting chunk");
-assert(mapSource.includes('useState(() => getEarthIntroCamera())'), "Enter Map must preserve the interactive globe camera");
-assert(mapSource.includes('const [mapMode, setMapMode] = useState("earth")'), "Enter Map must preserve interactive globe mode");
-assert(mapSource.includes('const [earthIntroActive, setEarthIntroActive] = useState(true)'), "Enter Map must keep the interactive globe active until the user chooses Parcel View");
+assert(mapSource.includes('useState(() => initialDatasetId ? getCameraForLocation(initialMapLocation) : getEarthIntroCamera())'), "Enter Map must preserve the interactive globe camera unless an explicit dataset deep link supplies its own map camera");
+assert(mapSource.includes('const [mapMode, setMapMode] = useState(initialDatasetId ? "parcel" : "earth")'), "Enter Map must preserve interactive globe mode unless an explicit dataset deep link requests parcel mode");
+assert(mapSource.includes('const [earthIntroActive, setEarthIntroActive] = useState(!initialDatasetId)'), "Enter Map must keep the interactive globe active until the user chooses Parcel View unless an explicit dataset deep link is present");
 
 assert(appSource.includes("export default function WhiteRabbitLanding"), "WhiteRabbitLanding must remain the first exported screen");
 assert(landingSource.includes("Commercial Intelligence"), "Landing panel copy changed or disappeared");
@@ -167,6 +167,8 @@ assert(mapSource.includes("const allMapParcels = activePilotPlaceId === NATIONAL
 assert(appSource.includes("Aerial location · parcel intelligence appears where verified coverage is available"), "Address results must explain parcel coverage without inventing data");
 assert(addressGeocoderSource.includes('DEFAULT_ADDRESS_GEOCODER_ENDPOINT = "/api/geocode"'), "Address geocoding must use the same-origin server route");
 assert(viteConfigSource.includes('target: "https://geocoding.geo.census.gov"'), "Local address lookup must proxy to the official U.S. Census geocoder");
+assert(appSource.includes('console.warn("Real Estate Savant national address typeahead failed."'), "Address-like typeahead must use national parcel routing instead of the active county only");
+assert(appSource.includes('submittedSearchQueryRef.current = searchTerm;') && appSource.includes('focusNationalParcelResult(nationalResult)'), "National address typeahead must switch to and focus the routed county parcel dataset without rerouting the same query twice");
 assert(appSource.includes("left-4 right-[4.75rem]") && appSource.includes("sm:left-1/2 sm:right-auto"), "Mobile search results must reserve room for the right-side map controls");
 assert(appSource.includes("overflow-x-hidden overflow-y-auto"), "Mobile parcel search results must not create a horizontal scrollbar");
 const enterDallasParcelModeSource = mapSource.slice(mapSource.indexOf("const enterDallasParcelMode ="), mapSource.indexOf("const jumpToParcel =", mapSource.indexOf("const enterDallasParcelMode =")));
@@ -186,17 +188,17 @@ assert(appSource.includes('"king", "king county"') && appSource.includes('"kcdoa
 assert(appSource.includes('"jefferson", "jefferson county"') && appSource.includes('"jcpva"'), "Jefferson county-name and PVA searches must route to the Jefferson pilot before parcel-owner search");
 
 assert(mapSource.includes("<TopBar") && mapSource.includes("onParcelView={enterDallasParcelMode}"), "TopBar Parcel View must enter Dallas parcel mode explicitly");
-assert(mapSource.includes('onNationwideDeals={() => onOpenMarketplace?.("cre")}'), "TopBar rabbit must open the nationwide best-deals marketplace");
+assert(mapSource.includes("onOpenTools={onOpenTools}"), "TopBar rabbit must open Savant Tools");
 assert(mapSource.includes("earthIntroActive={earthIntroActive}") && mapSource.includes('onCreListings={() => onOpenMarketplace?.("cre")}'), "Interactive globe CRE Listings link must open the CRE listing page");
 assert(mapSource.includes('onResidentialListings={() => onOpenMarketplace?.("resi")}'), "Interactive globe Resi Listings link must open the residential listing page");
 assert(mapSource.includes('onRentalListings={() => onOpenMarketplace?.("rentals")}'), "Interactive globe Rentals link must open the rental listing page");
 assert(topBarSource.includes("globeLandingMode") && topBarSource.includes('mapMode === "earth"'), "TopBar must detect interactive globe landing mode");
 assert(topBarSource.includes(">CRE Listings</button>") && topBarSource.includes(">Resi Listings</button>") && topBarSource.includes(">Rentals</button>"), "Interactive globe header must expose the three listing links");
 assert(topBarSource.includes("!globeLandingMode &&") && topBarSource.includes("LIVE MAP"), "Interactive globe must hide the live-map badge until the aerial page");
-assert(topBarSource.includes('aria-label="Show best deals nationwide"'), "Top-left map rabbit must expose the nationwide best-deals action accessibly");
-assert(topBarSource.includes('data-rabbit-action="nationwide-best-deals"'), "Top-left map rabbit must identify the nationwide best-deals action");
-assert(landingSource.includes('onClick={() => openListingPage("cre")}'), "Landing rabbit must open the nationwide best-deals marketplace");
-assert(landingSource.includes('data-rabbit-action="nationwide-best-deals"'), "Landing rabbit must identify the nationwide best-deals action");
+assert(topBarSource.includes('aria-label="Open Savant Tools"'), "Top-left map rabbit must expose the Savant Tools action accessibly");
+assert(topBarSource.includes('data-rabbit-action="open-savant-tools"'), "Top-left map rabbit must identify the Savant Tools action");
+assert(landingSource.includes("onClick={openTools}"), "Landing rabbit must open Savant Tools");
+assert(landingSource.includes('data-rabbit-action="open-savant-tools"'), "Landing rabbit must identify the Savant Tools action");
 assert(landingSource.includes("onClick={() => setEnteredMap(true)}"), "Enter Map should use the original map-entry action");
 assert(!landingSource.includes("setMapMode(\"parcel\")"), "Enter Map must not switch to parcel mode from the landing page");
 assert(!landingSource.includes("setEarthIntroActive(false)"), "Enter Map must not disable Earth mode from the landing page");

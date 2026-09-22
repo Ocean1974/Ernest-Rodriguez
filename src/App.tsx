@@ -24,7 +24,7 @@ import { buildParcelAgentContext, PARCEL_AGENTS, requestParcelAgent } from "./ag
 import CrmPage from "./components/CrmPage";
 import { createUserListing, listingsForMember, loadUserListings, memberOwnsListing, removeUserListing, saveUserListings, upsertUserListing } from "./listings/userListings.mjs";
 import { importUserListingsFromCsv } from "./listings/importListings.mjs";
-import { deleteHostedMemberListing, hostedMemberServiceConfigured, loadHostedMemberListings, saveHostedMemberListing, signInHostedMember } from "./listings/hostedMemberService.mjs";
+import { deleteHostedMemberListing, hostedMemberServiceConfigured, loadHostedMemberListings, saveHostedMemberListing, signInHostedMember, signUpHostedMember } from "./listings/hostedMemberService.mjs";
 import { calculateListingDeal, parseListingCoordinates } from "./listings/dealRating.mjs";
 import { PLATFORM_IDENTITY } from "./platform/platformIdentity";
 import { enqueueSavantEvent } from "./agents/savantEventQueue.mjs";
@@ -86,8 +86,8 @@ const HARRIS_PILOT_LOCATION = {
   id: "harris-county-tx",
   sourceCountyId: "harris-county-tx",
   name: "Houston TX",
-  type: "Harris Central Appraisal District Pilot",
-  status: "pilot adapter - blank-safe parcel window",
+  type: "Harris Central Appraisal District",
+  status: "active map/search - blank-safe parcel intelligence",
   coordinates: [-95.3698, 29.7604],
   camera: { x: 50, y: 50, zoom: 1.45, pitch: 48, bearing: 0 },
   geoBounds: {
@@ -150,7 +150,14 @@ const KING_PILOT_LOCATION = {
   mapZoom: 13.2,
   aliases: ["seattle", "seattle wa", "seattle washington", "king", "king county", "king county wa", "king county washington", "kcdoa"],
 };
-const PLACE_SEARCH_TARGETS = [NATIONAL_US_LOCATION, LOUISVILLE_PILOT_LOCATION, HARRIS_PILOT_LOCATION, TRAVIS_PILOT_LOCATION, MARICOPA_PILOT_LOCATION, KING_PILOT_LOCATION];
+const PLACE_SEARCH_TARGETS = [
+  NATIONAL_US_LOCATION,
+  LOUISVILLE_PILOT_LOCATION,
+  ...(platformFeatureGates.houstonMapSearch ? [HARRIS_PILOT_LOCATION] : []),
+  TRAVIS_PILOT_LOCATION,
+  MARICOPA_PILOT_LOCATION,
+  KING_PILOT_LOCATION,
+];
 
 const EARTH_INTRO_CAMERA = { x: 50, y: 50, zoom: 0.5, pitch: 72, bearing: -28 };
 const PARCEL_ZOOM_THRESHOLDS = {
@@ -182,7 +189,7 @@ const JEFFERSON_KY_PERMIT_SOURCE_INTEL = {
 const LOCATIONS = [
   NATIONAL_US_LOCATION,
   LOUISVILLE_PILOT_LOCATION,
-  HARRIS_PILOT_LOCATION,
+  ...(platformFeatureGates.houstonMapSearch ? [HARRIS_PILOT_LOCATION] : []),
   TRAVIS_PILOT_LOCATION,
   MARICOPA_PILOT_LOCATION,
   KING_PILOT_LOCATION,
@@ -1004,7 +1011,10 @@ function findPlaceTarget(query) {
 }
 
 function findPlaceTargetByLngLat(lng, lat) {
-  return PLACE_SEARCH_TARGETS.find((target) => target.id !== NATIONAL_ROAMING_ID && lngLatInsideBounds(lng, lat, target.geoBounds)) || null;
+  const namedTarget = PLACE_SEARCH_TARGETS.find((target) => target.id !== NATIONAL_ROAMING_ID && lngLatInsideBounds(lng, lat, target.geoBounds));
+  if (namedTarget) return namedTarget;
+  const countyDataset = availableCountyDatasets.find((dataset) => dataset.id !== activeCountyDataset.id && lngLatInsideBounds(lng, lat, dataset.map.geoBounds));
+  return countyDataset ? mapLocationForPlaceId(countyDataset.id) : null;
 }
 
 function findRovingMapContextByLngLat(lng, lat) {
@@ -1018,6 +1028,11 @@ function findRovingMapContextByLngLat(lng, lat) {
 function parcelDatasetForPlaceId(placeId) {
   if (placeId === NATIONAL_ROAMING_ID) return null;
   return availableCountyDatasets.find((county) => county.id === placeId) || activeCountyDataset;
+}
+
+function parcelDatasetForRecord(parcel, fallbackDataset = activeCountyDataset) {
+  const sourceCountyId = String(parcel?.sourceCountyId || "").trim();
+  return availableCountyDatasets.find((county) => county.id === sourceCountyId) || fallbackDataset || activeCountyDataset;
 }
 
 function mapLocationForPlaceId(placeId) {
@@ -1594,15 +1609,45 @@ function clearMemberAccessSession() {
   }
 }
 
-function MemberAccessGate({ onAccessGranted, onCancel }) {
+function MemberAccessGate({ onAccessGranted, onCancel, initialMode = "login" }) {
+  const [mode, setMode] = useState(initialMode === "signup" ? "signup" : "login");
+  const [displayName, setDisplayName] = useState("");
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const [loginError, setLoginError] = useState("");
+  const [signupStatus, setSignupStatus] = useState("");
 
   const [loginPending, setLoginPending] = useState(false);
 
-  const submitMemberLogin = async (event) => {
+  const submitMemberAccess = async (event) => {
     event.preventDefault();
+    setLoginError("");
+    setSignupStatus("");
+    if (mode === "signup") {
+      if (!hostedMemberServiceConfigured(HOSTED_MEMBER_SERVICE)) {
+        setLoginError("Account registration is not connected yet. Configure the hosted member service to enable sign up.");
+        return;
+      }
+      if (!username.includes("@") || password.length < 8) {
+        setLoginError("Enter a valid email and a password with at least 8 characters.");
+        return;
+      }
+      setLoginPending(true);
+      try {
+        const result = await signUpHostedMember(HOSTED_MEMBER_SERVICE, username, password, displayName);
+        if (result.verificationRequired) {
+          setSignupStatus(`Check ${result.email} to confirm your account, then return here to log in.`);
+          return;
+        }
+        storeMemberAccessSession(result);
+        onAccessGranted(result);
+      } catch (error) {
+        setLoginError(error instanceof Error ? error.message : "Member account could not be created.");
+      } finally {
+        setLoginPending(false);
+      }
+      return;
+    }
     if (hostedMemberServiceConfigured(HOSTED_MEMBER_SERVICE)) {
       setLoginPending(true);
       try {
@@ -1653,24 +1698,35 @@ function MemberAccessGate({ onAccessGranted, onCancel }) {
       </header>
       <main className="relative z-10 flex h-full items-center justify-center px-4">
         <form
-          onSubmit={submitMemberLogin}
+          onSubmit={submitMemberAccess}
           className="w-full max-w-sm rounded-2xl border border-white/10 bg-black/60 p-6 shadow-2xl backdrop-blur-xl"
           data-member-login-form="true"
+          data-member-access-mode={mode}
         >
           <div className="flex items-start justify-between gap-4">
-            <div><p className="text-xs uppercase tracking-[0.3em] text-white/50">Member Listings</p><h1 className="mt-2 text-2xl font-semibold">Sign in to your profile</h1></div>
+            <div><p className="text-xs uppercase tracking-[0.3em] text-white/50">Member Access</p><h1 className="mt-2 text-2xl font-semibold">{mode === "signup" ? "Create your profile" : "Sign in to your profile"}</h1></div>
             {onCancel && <button type="button" onClick={onCancel} className="rounded-lg p-2 text-white/60 hover:bg-white/10 hover:text-white" aria-label="Close member login"><X size={18} /></button>}
           </div>
-          <p className="mt-2 text-sm leading-6 text-white/65">Manage only the residential, rental, and commercial listings owned by your member account.</p>
+          <p className="mt-2 text-sm leading-6 text-white/65">{mode === "signup" ? "Create an account to save and manage your real estate listings." : "Access the residential, rental, and commercial listings owned by your member account."}</p>
+          <div className="mt-5 grid grid-cols-2 rounded-xl border border-white/10 bg-black/45 p-1" aria-label="Member access options">
+            <button type="button" onClick={() => { setMode("login"); setLoginError(""); setSignupStatus(""); }} className={`rounded-lg px-3 py-2 text-xs font-semibold transition ${mode === "login" ? "bg-white text-black" : "text-white/60 hover:text-white"}`} data-member-mode-login="true">Log in</button>
+            <button type="button" onClick={() => { setMode("signup"); setLoginError(""); setSignupStatus(""); }} className={`rounded-lg px-3 py-2 text-xs font-semibold transition ${mode === "signup" ? "bg-white text-black" : "text-white/60 hover:text-white"}`} data-member-mode-signup="true">Sign up</button>
+          </div>
           <div className="mt-5 space-y-3">
+            {mode === "signup" && (
+              <label className="block">
+                <span className="text-xs font-semibold uppercase tracking-[0.16em] text-white/50">Display name</span>
+                <input value={displayName} onChange={(event) => setDisplayName(event.target.value)} autoComplete="name" className="mt-2 w-full rounded-xl border border-white/10 bg-black/70 px-4 py-3 text-sm text-white outline-none transition placeholder:text-white/35 focus:border-cyan-100/45 focus:ring-2 focus:ring-cyan-100/15" placeholder="Your name" data-member-signup-display-name="true" />
+              </label>
+            )}
             <label className="block">
-              <span className="text-xs font-semibold uppercase tracking-[0.16em] text-white/50">Username</span>
+              <span className="text-xs font-semibold uppercase tracking-[0.16em] text-white/50">{mode === "signup" ? "Email" : "Username or email"}</span>
               <input
                 value={username}
                 onChange={(event) => setUsername(event.target.value)}
                 autoComplete="username"
                 className="mt-2 w-full rounded-xl border border-white/10 bg-black/70 px-4 py-3 text-sm text-white outline-none transition placeholder:text-white/35 focus:border-cyan-100/45 focus:ring-2 focus:ring-cyan-100/15"
-                placeholder="Member username"
+                placeholder={mode === "signup" ? "you@example.com" : "Member username or email"}
                 data-member-login-username="true"
               />
             </label>
@@ -1688,13 +1744,14 @@ function MemberAccessGate({ onAccessGranted, onCancel }) {
             </label>
           </div>
           {loginError && <p className="mt-3 rounded-xl border border-red-300/20 bg-red-300/10 px-3 py-2 text-xs text-red-100" role="alert">{loginError}</p>}
+          {signupStatus && <p className="mt-3 rounded-xl border border-emerald-300/20 bg-emerald-300/10 px-3 py-2 text-xs text-emerald-100" role="status">{signupStatus}</p>}
           <button
             type="submit"
             disabled={loginPending}
             className="mt-5 flex w-full items-center justify-center rounded-xl bg-white py-3 text-sm font-medium text-black transition hover:scale-[1.01]"
             data-member-login-submit="true"
           >
-            {loginPending ? "Signing In…" : "Open Member Profile"}
+            {loginPending ? (mode === "signup" ? "Creating Account…" : "Signing In…") : (mode === "signup" ? "Create Account" : "Log In")}
           </button>
         </form>
       </main>
@@ -1842,12 +1899,11 @@ function emptyListingDraft(listingKind) {
   };
 }
 
-function CommercialMarketplacePage({ onBack, onOpenMap, onOpenListingKind, listingKind = "cre", memberSession, onMemberLogin, onMemberLogout }) {
+function CommercialMarketplacePage({ onBack, onOpenMap, onOpenListingKind, listingKind = "cre", memberSession, onMemberLogout }) {
   const listingConfig = getListingPageConfig(listingKind);
   const supportsUserListings = ["cre", "resi", "rentals"].includes(listingKind);
   const [userListings, setUserListings] = useState(() => loadUserListings());
   const [listingEditor, setListingEditor] = useState(null);
-  const [memberLoginOpen, setMemberLoginOpen] = useState(false);
   const [memberProfileOpen, setMemberProfileOpen] = useState(false);
   const [listingImportStatus, setListingImportStatus] = useState("");
   const [isDraggingListingCsv, setIsDraggingListingCsv] = useState(false);
@@ -1890,7 +1946,7 @@ function CommercialMarketplacePage({ onBack, onOpenMap, onOpenListingKind, listi
 
   const memberListings = useMemo(() => listingsForMember(userListings, memberSession?.memberId), [memberSession?.memberId, userListings]);
   const openNewListing = () => {
-    if (!memberSession) { setMemberLoginOpen(true); return; }
+    if (!memberSession) return;
     setListingEditor({ mode: "create", draft: { ...emptyListingDraft(listingKind), contactName: memberSession.displayName, contactEmail: memberSession.email } });
   };
   const openEditListing = (property) => {
@@ -1961,7 +2017,7 @@ function CommercialMarketplacePage({ onBack, onOpenMap, onOpenListingKind, listi
     if (!isCsv) { setListingImportStatus("Please choose a CSV file."); return; }
     if (file.size > 10 * 1024 * 1024) { setListingImportStatus("The CSV is larger than 10 MB. Split it into smaller files and try again."); return; }
     try {
-      if (!memberSession) { setMemberLoginOpen(true); return; }
+      if (!memberSession) return;
       const result = importUserListingsFromCsv(await file.text(), listingKind, userListings, { now: new Date().toISOString(), ownerMemberId: memberSession.memberId, ownerDisplayName: memberSession.displayName });
       if (result.error) { setListingImportStatus(result.error); return; }
       const records = memberSession.provider === "supabase"
@@ -2030,9 +2086,7 @@ function CommercialMarketplacePage({ onBack, onOpenMap, onOpenListingKind, listi
         </div>
         <div className="flex items-center gap-2">
           <button type="button" onClick={() => onOpenMap(listingConfig.mapSearch)} className="hidden px-2 text-xs font-bold uppercase tracking-normal text-[#0b5cab] hover:underline sm:inline-flex">Map</button>
-          <button type="button" onClick={() => memberSession ? setMemberProfileOpen(true) : setMemberLoginOpen(true)} className="inline-flex h-9 items-center gap-2 rounded-md border border-slate-300 bg-white px-3 text-xs font-bold text-slate-700 transition hover:border-[#0b5cab] hover:text-[#0b5cab]" data-action="member-profile">
-            <UserRound aria-hidden="true" size={15} /> {memberSession ? memberSession.displayName : "Member Login"}
-          </button>
+          {memberSession && <button type="button" onClick={() => setMemberProfileOpen(true)} className="inline-flex h-9 items-center gap-2 rounded-md border border-slate-300 bg-white px-3 text-xs font-bold text-slate-700 transition hover:border-[#0b5cab] hover:text-[#0b5cab]" data-action="member-profile"><UserRound aria-hidden="true" size={15} /> {memberSession.displayName}</button>}
         </div>
       </header>
 
@@ -2048,12 +2102,12 @@ function CommercialMarketplacePage({ onBack, onOpenMap, onOpenListingKind, listi
               <span aria-live="polite">{resultCountLabel}</span>
               <span>{marketCount} markets</span>
               <span>{liveCount} active</span>
-              {supportsUserListings && (
+              {supportsUserListings && memberSession && (
                 <>
-                  {memberSession && <><input ref={listingImportInputRef} type="file" accept=".csv,text/csv" className="hidden" aria-label="Choose listing CSV file" onChange={(event) => importListingCsv(event.target.files?.[0])} />
-                  <button type="button" onClick={() => listingImportInputRef.current?.click()} className="inline-flex h-10 items-center gap-2 rounded-md border border-slate-300 bg-white px-4 text-xs font-bold text-slate-700 shadow-sm transition hover:border-[#0b5cab] hover:text-[#0b5cab]" data-action="import-listings"><Upload aria-hidden="true" size={16} /> Import CSV</button></>}
+                  <input ref={listingImportInputRef} type="file" accept=".csv,text/csv" className="hidden" aria-label="Choose listing CSV file" onChange={(event) => importListingCsv(event.target.files?.[0])} />
+                  <button type="button" onClick={() => listingImportInputRef.current?.click()} className="inline-flex h-10 items-center gap-2 rounded-md border border-slate-300 bg-white px-4 text-xs font-bold text-slate-700 shadow-sm transition hover:border-[#0b5cab] hover:text-[#0b5cab]" data-action="import-listings"><Upload aria-hidden="true" size={16} /> Import CSV</button>
                   <button type="button" onClick={openNewListing} className="inline-flex h-10 items-center gap-2 rounded-md bg-[#0b5cab] px-4 text-xs font-bold text-white shadow-sm transition hover:bg-[#084a89]" data-action="add-listing">
-                    {memberSession ? <Plus aria-hidden="true" size={16} /> : <UserRound aria-hidden="true" size={16} />} {memberSession ? "Add Listing" : "Sign in to List"}
+                    <Plus aria-hidden="true" size={16} /> Add Listing
                   </button>
                 </>
               )}
@@ -2221,17 +2275,6 @@ function CommercialMarketplacePage({ onBack, onOpenMap, onOpenListingKind, listi
           )}
         </section>
       </main>
-
-      {memberLoginOpen && (
-        <MemberAccessGate
-          onCancel={() => setMemberLoginOpen(false)}
-          onAccessGranted={(session) => {
-            onMemberLogin(session);
-            setMemberLoginOpen(false);
-            setMemberProfileOpen(true);
-          }}
-        />
-      )}
 
       {memberProfileOpen && memberSession && (
         <div className="fixed inset-0 z-[70] flex items-center justify-center bg-slate-950/60 p-4 backdrop-blur-sm" role="dialog" aria-modal="true" aria-labelledby="member-profile-title" data-member-profile="true">
@@ -3419,11 +3462,22 @@ function formatParcelFieldLabel(key) {
     .replace(/\b\w/g, (letter) => letter.toUpperCase());
 }
 
-function formatParcelFieldValue(value) {
+const MAX_PARCEL_FIELD_DISPLAY_LENGTH = 2000;
+
+function formatParcelFieldValue(value, key = "") {
   if (value === undefined || value === null || value === "") return "";
-  if (Array.isArray(value)) return value.map((item) => (typeof item === "object" ? JSON.stringify(item) : String(item))).join(", ");
-  if (typeof value === "object") return JSON.stringify(value);
-  return String(value);
+  if (key === "realGeometry" && typeof value === "object") {
+    const geometryType = value?.geometry?.type || value?.type || "parcel";
+    return `${geometryType} loaded for map display`;
+  }
+  const formatted = Array.isArray(value)
+    ? value.map((item) => (typeof item === "object" ? JSON.stringify(item) : String(item))).join(", ")
+    : typeof value === "object"
+      ? JSON.stringify(value)
+      : String(value);
+  return formatted.length > MAX_PARCEL_FIELD_DISPLAY_LENGTH
+    ? `${formatted.slice(0, MAX_PARCEL_FIELD_DISPLAY_LENGTH)}… [display truncated]`
+    : formatted;
 }
 
 function formatPermitDate(value) {
@@ -4094,7 +4148,7 @@ function FocusedParcelCard({
     .map(([key, value]) => ({
       key,
       label: formatParcelFieldLabel(key),
-      value: (key === "ownerName" || key === "propertyName") && isLojicPlaceholderOwner(parcel, value) ? "" : formatParcelFieldValue(value),
+      value: (key === "ownerName" || key === "propertyName") && isLojicPlaceholderOwner(parcel, value) ? "" : formatParcelFieldValue(value, key),
     }))
     .filter((field) => field.value !== "");
   const permitIntel = buildPermitIntelSummary(permitRecords);
@@ -4923,9 +4977,11 @@ function SearchStatusPanel({ searchText, searchResults, developmentResults, geoc
   );
 }
 
-function WhiteRabbitMap({ onExit, initialSearch = "", preserveLandingEarth = false, onOpenMarketplace, onOpenCrm, onOpenTools }) {
-  const [selected, setSelected] = useState(DALLAS_LOCATION);
-  const [mapCamera, setMapCamera] = useState(() => getEarthIntroCamera());
+function WhiteRabbitMap({ onExit, initialSearch = "", initialDatasetId = "", preserveLandingEarth = false, onOpenMarketplace, onOpenCrm, onOpenTools }) {
+  const initialMapLocation = mapLocationForPlaceId(initialDatasetId);
+  const initialPilotPlaceId = initialDatasetId && initialDatasetId !== activeCountyDataset.id ? initialDatasetId : "";
+  const [selected, setSelected] = useState(initialMapLocation);
+  const [mapCamera, setMapCamera] = useState(() => initialDatasetId ? getCameraForLocation(initialMapLocation) : getEarthIntroCamera());
   const [selectedParcelAccount, setSelectedParcelAccount] = useState("");
   const [selectedParcelSnapshot, setSelectedParcelSnapshot] = useState(null);
   const [selectedParcelMapFocusEnabled, setSelectedParcelMapFocusEnabled] = useState(true);
@@ -4934,18 +4990,18 @@ function WhiteRabbitMap({ onExit, initialSearch = "", preserveLandingEarth = fal
   const [showDimensions, setShowDimensions] = useState(true);
   const [showFloodplain, setShowFloodplain] = useState(false);
   const [showZoning, setShowZoning] = useState(false);
-  const [mapMode, setMapMode] = useState("earth");
+  const [mapMode, setMapMode] = useState(initialDatasetId ? "parcel" : "earth");
   const [searchText, setSearchText] = useState(initialSearch);
   const deferredSearchText = useDeferredValue(searchText);
   const [debouncedSearchText, setDebouncedSearchText] = useState(initialSearch);
-  const [activePilotPlaceId, setActivePilotPlaceId] = useState("");
+  const [activePilotPlaceId, setActivePilotPlaceId] = useState(initialPilotPlaceId);
   const [selectedDevelopmentId, setSelectedDevelopmentId] = useState("");
   const [isDragging, setIsDragging] = useState(false);
   const [dragStart, setDragStart] = useState(null);
-  const [earthIntroActive, setEarthIntroActive] = useState(true);
+  const [earthIntroActive, setEarthIntroActive] = useState(!initialDatasetId);
   const [landingEarthOverlayVisible, setLandingEarthOverlayVisible] = useState(preserveLandingEarth);
   const [landingEarthOverlayFading, setLandingEarthOverlayFading] = useState(false);
-  const [liveMapBounds, setLiveMapBounds] = useState(() => getViewportBounds(DALLAS_LOCATION.camera));
+  const [liveMapBounds, setLiveMapBounds] = useState(() => getViewportBounds(initialMapLocation.camera));
   const mapApiRef = useRef(null);
   const dragStateRef = useRef(null);
   const inertiaFrameRef = useRef(null);
@@ -5263,6 +5319,46 @@ function WhiteRabbitMap({ onExit, initialSearch = "", preserveLandingEarth = fal
       setLoadedSearchResults([]);
       setLoadedSearchQuery(searchTerm);
       setSearchLoading(false);
+      return () => {
+        cancelled = true;
+      };
+    }
+    if (looksLikeUsStreetAddress(searchTerm)) {
+      const requestId = ++searchRequestIdRef.current;
+      setLoadedSearchResults([]);
+      setLoadedSearchQuery(searchTerm);
+      clearGeocodedAddressState();
+      setSearchLoading(true);
+      searchNationalParcelAddress(searchTerm, {
+        maxFeatures: SEARCH_RESULT_LOOKUP_LIMIT,
+        searchDataset: searchFullParcelRecords,
+      })
+        .then((nationalResult) => {
+          if (cancelled || searchRequestIdRef.current !== requestId) return;
+          if (nationalResult?.status === "parcel-found") {
+            submittedSearchQueryRef.current = searchTerm;
+            if (focusNationalParcelResult(nationalResult)) return;
+          }
+          setLoadedSearchResults([]);
+          setLoadedSearchQuery(searchTerm);
+          if (nationalResult?.geocoded) {
+            setGeocodedAddress(nationalResult.geocoded);
+            setGeocodingError(
+              nationalResult.status === "county-not-connected"
+                ? `${nationalResult.geography?.countyName || "This county"} is located, but its parcel service is not connected yet.`
+                : "Address located, but no indexed parcel address matched exactly.",
+            );
+          } else {
+            setGeocodingError("No U.S. address match was found.");
+          }
+        })
+        .catch((error) => {
+          console.warn("Real Estate Savant national address typeahead failed.", error);
+          if (!cancelled && searchRequestIdRef.current === requestId) setGeocodingError("Address lookup is temporarily unavailable.");
+        })
+        .finally(() => {
+          if (!cancelled && searchRequestIdRef.current === requestId) setSearchLoading(false);
+        });
       return () => {
         cancelled = true;
       };
@@ -5688,7 +5784,8 @@ function WhiteRabbitMap({ onExit, initialSearch = "", preserveLandingEarth = fal
     const parcelIds = visibleMapParcels
       .flatMap((parcel) => [String(parcel.accountNum || parcel.accountNumber || ""), String(parcel.gisParcelId || "")])
       .filter(Boolean);
-    loadDevelopmentRecordsForParcels(parcelIds, parcelRenderProfile.maxFeatures * 2)
+    const developmentServiceRoot = parcelDatasetForRecord(visibleMapParcels[0], activeParcelDataset)?.dataRoots?.developments;
+    loadDevelopmentRecordsForParcels(parcelIds, parcelRenderProfile.maxFeatures * 2, developmentServiceRoot)
       .then((records) => {
         if (cancelled || !records.length) return;
         setDevelopmentParcelIndex((current) => {
@@ -5699,13 +5796,13 @@ function WhiteRabbitMap({ onExit, initialSearch = "", preserveLandingEarth = fal
       })
       .catch((error) => console.warn("Real Estate Savant viewport development shard load failed.", error));
     return () => { cancelled = true; };
-  }, [activeCountyParcelPlaceId, parcelRenderProfile.maxFeatures, visibleMapParcels]);
+  }, [activeParcelDataset, parcelRenderProfile.maxFeatures, visibleMapParcels]);
 
   useEffect(() => {
     let cancelled = false;
     const query = debouncedSearchText.trim();
     if (activePlaceSearchTarget || query.length < 2) return () => { cancelled = true; };
-    searchDevelopmentRecords(query, SEARCH_RESULT_LOOKUP_LIMIT)
+    searchDevelopmentRecords(query, SEARCH_RESULT_LOOKUP_LIMIT, activeParcelDataset?.dataRoots?.developments)
       .then((records) => {
         if (cancelled || !records.length) return;
         setDevelopmentParcelIndex((current) => {
@@ -5716,7 +5813,7 @@ function WhiteRabbitMap({ onExit, initialSearch = "", preserveLandingEarth = fal
       })
       .catch((error) => console.warn("Real Estate Savant development search shard load failed.", error));
     return () => { cancelled = true; };
-  }, [activePlaceSearchTarget, debouncedSearchText]);
+  }, [activeParcelDataset, activePlaceSearchTarget, debouncedSearchText]);
 
   const currentSearchQuery = debouncedSearchText.trim();
   const globalSearchResults = useMemo(
@@ -5747,6 +5844,7 @@ function WhiteRabbitMap({ onExit, initialSearch = "", preserveLandingEarth = fal
       filteredMapParcels.find((parcel) => parcelMatchesSelection(parcel, selectedParcelAccount)) ||
       (parcelMatchesSelection(selectedParcelSnapshot, selectedParcelAccount) ? selectedParcelSnapshot : null)
     : null;
+  const selectedParcelDataset = parcelDatasetForRecord(selectedParcel, activeParcelDataset);
   const selectedDevelopmentRecord = selectedParcel
     ? resolveSelectedDevelopmentRecord({
         embeddedRecords: developmentIntel.records,
@@ -5761,13 +5859,13 @@ function WhiteRabbitMap({ onExit, initialSearch = "", preserveLandingEarth = fal
     if (!record) return;
     setSelectedDevelopmentId(record.id);
     const linkedAccount = String(record.linkedAccount || "");
-    const linkedParcel = loadedDallasParcels.find((parcel) => String(parcel.accountNum || parcel.accountNumber) === linkedAccount);
+    const linkedParcel = allMapParcels.find((parcel) => String(parcel.accountNum || parcel.accountNumber) === linkedAccount);
     if (linkedParcel) {
       jumpToParcel(linkedParcel);
       return;
     }
     if (!linkedAccount) return;
-    searchFullParcelRecords(linkedAccount, 1)
+    searchFullParcelRecords(linkedAccount, 1, activeParcelDataset)
       .then((parcels) => {
         if (parcels[0]) jumpToParcel(parcels[0]);
       })
@@ -5843,7 +5941,7 @@ function WhiteRabbitMap({ onExit, initialSearch = "", preserveLandingEarth = fal
     const instantParcels = mergeParcelSearchResults(
       SEARCH_RESULT_LOOKUP_LIMIT,
       searchParcelRecords([
-        ...fallbackSearchParcels,
+        ...(activeCountyParcelPlaceId ? [] : fallbackSearchParcels),
         ...(loadedDallasParcels.length || activeCountyParcelPlaceId ? allMapParcels : []),
       ], query),
     );
@@ -5868,7 +5966,7 @@ function WhiteRabbitMap({ onExit, initialSearch = "", preserveLandingEarth = fal
             return [];
           })
         : Promise.resolve([]),
-      searchDevelopmentRecords(query, SEARCH_RESULT_LOOKUP_LIMIT).catch((error) => {
+      searchDevelopmentRecords(query, SEARCH_RESULT_LOOKUP_LIMIT, activeParcelDataset?.dataRoots?.developments).catch((error) => {
         console.warn("Real Estate Savant submitted development shard search failed.", error);
         return [];
       }),
@@ -5937,6 +6035,16 @@ function WhiteRabbitMap({ onExit, initialSearch = "", preserveLandingEarth = fal
   };
 
   useEffect(() => {
+    if (!initialDatasetId || !initialSearch.trim() || selectedParcelAccount || !loadedSearchResults.length) return;
+    const normalizeInitialParcelId = (value) => String(value || "").trim().toUpperCase().replace(/[^A-Z0-9]/g, "");
+    const normalizedInitial = normalizeInitialParcelId(initialSearch);
+    const exactParcel = loadedSearchResults.find((parcel) => [parcel.accountNum, parcel.accountNumber, parcel.sourceParcelId]
+      .map(normalizeInitialParcelId)
+      .includes(normalizedInitial));
+    if (exactParcel) jumpToParcel(exactParcel);
+  }, [activePilotPlaceId, initialDatasetId, initialSearch, loadedSearchResults, selectedParcelAccount]);
+
+  useEffect(() => {
     if (initialSearchSubmittedRef.current || !initialSearch.trim()) return;
     initialSearchSubmittedRef.current = true;
     runUnifiedSearch(initialSearch, "Real Estate Savant initial parcel search failed.");
@@ -5955,7 +6063,7 @@ function WhiteRabbitMap({ onExit, initialSearch = "", preserveLandingEarth = fal
       .flatMap((parcel) => [countyAwareParcelId(parcel), parcel.accountNum || parcel.accountNumber, parcel.gisParcelId])
       .map((value) => String(value || "").trim())
       .filter(Boolean);
-    const zoningServiceRoot = filteredMapParcels.some(isJeffersonCountyParcel) ? JEFFERSON_KY_ZONING_SERVICE_ROOT : undefined;
+    const zoningServiceRoot = parcelDatasetForRecord(filteredMapParcels[0], activeParcelDataset)?.dataRoots?.zoning;
     loadParcelZoningSummaries(parcelIds, ZONING_LAYER_LOOKUP_LIMIT, zoningServiceRoot)
       .then((records) => {
         if (!cancelled) setVisibleParcelZoningMap(records);
@@ -5967,7 +6075,7 @@ function WhiteRabbitMap({ onExit, initialSearch = "", preserveLandingEarth = fal
     return () => {
       cancelled = true;
     };
-  }, [filteredMapParcels, showZoning]);
+  }, [activeParcelDataset, filteredMapParcels, showZoning]);
 
   useEffect(() => {
     let cancelled = false;
@@ -5982,7 +6090,7 @@ function WhiteRabbitMap({ onExit, initialSearch = "", preserveLandingEarth = fal
       .flatMap((parcel) => [countyAwareParcelId(parcel), parcel.accountNum || parcel.accountNumber, parcel.gisParcelId])
       .map((value) => String(value || "").trim())
       .filter(Boolean);
-    const floodplainServiceRoot = filteredMapParcels.some(isJeffersonCountyParcel) ? JEFFERSON_KY_FLOODPLAIN_SERVICE_ROOT : undefined;
+    const floodplainServiceRoot = parcelDatasetForRecord(filteredMapParcels[0], activeParcelDataset)?.dataRoots?.floodplain;
     loadParcelFloodplainSummaries(parcelIds, FLOODPLAIN_LAYER_LOOKUP_LIMIT, floodplainServiceRoot)
       .then((records) => {
         if (!cancelled) setVisibleParcelFloodplainMap(records);
@@ -5994,7 +6102,7 @@ function WhiteRabbitMap({ onExit, initialSearch = "", preserveLandingEarth = fal
     return () => {
       cancelled = true;
     };
-  }, [filteredMapParcels, showFloodplain]);
+  }, [activeParcelDataset, filteredMapParcels, showFloodplain]);
 
   useEffect(() => {
     let cancelled = false;
@@ -6007,11 +6115,13 @@ function WhiteRabbitMap({ onExit, initialSearch = "", preserveLandingEarth = fal
         cancelled = true;
       };
     }
-    const parcelLookupId = selectedParcelAccount || parcelStableAccountId(selectedParcel || {});
+    // The selected map ID is county-aware and may end in a geometry UUID, while
+    // parcel-intelligence shards are keyed by the appraisal account number.
+    const parcelLookupId = parcelStableAccountId(selectedParcel || {}) || selectedParcelAccount;
     setSelectedParcelZoningLoading(true);
     setSelectedParcelZoningLoaded(false);
     setSelectedParcelZoningError("");
-    const zoningServiceRoot = isJeffersonCountyParcel(selectedParcel) ? JEFFERSON_KY_ZONING_SERVICE_ROOT : undefined;
+    const zoningServiceRoot = selectedParcelDataset?.dataRoots?.zoning;
     loadParcelZoningSummary(parcelLookupId, zoningServiceRoot)
       .then((zoning) => {
         if (!cancelled) {
@@ -6033,7 +6143,7 @@ function WhiteRabbitMap({ onExit, initialSearch = "", preserveLandingEarth = fal
     return () => {
       cancelled = true;
     };
-  }, [selectedParcel, selectedParcelAccount]);
+  }, [selectedParcel, selectedParcelAccount, selectedParcelDataset]);
 
   useEffect(() => {
     let cancelled = false;
@@ -6050,7 +6160,7 @@ function WhiteRabbitMap({ onExit, initialSearch = "", preserveLandingEarth = fal
     setSelectedParcelFloodplainLoading(true);
     setSelectedParcelFloodplainLoaded(false);
     setSelectedParcelFloodplainError("");
-    const floodplainServiceRoot = isJeffersonCountyParcel(selectedParcel) ? JEFFERSON_KY_FLOODPLAIN_SERVICE_ROOT : undefined;
+    const floodplainServiceRoot = selectedParcelDataset?.dataRoots?.floodplain;
     loadParcelFloodplainSummary(parcelLookupId, floodplainServiceRoot)
       .then((floodplain) => {
         if (!cancelled) {
@@ -6072,7 +6182,7 @@ function WhiteRabbitMap({ onExit, initialSearch = "", preserveLandingEarth = fal
     return () => {
       cancelled = true;
     };
-  }, [selectedParcel, selectedParcelAccount]);
+  }, [selectedParcel, selectedParcelAccount, selectedParcelDataset]);
 
   useEffect(() => {
     let cancelled = false;
@@ -6086,7 +6196,7 @@ function WhiteRabbitMap({ onExit, initialSearch = "", preserveLandingEarth = fal
     }
     setSelectedParcelPermitsLoading(true);
     setSelectedParcelPermitsError("");
-    const permitServiceRoot = isJeffersonCountyParcel(selectedParcel) ? JEFFERSON_KY_PERMIT_SERVICE_ROOT : undefined;
+    const permitServiceRoot = selectedParcelDataset?.dataRoots?.permits;
     loadPermitsForParcel(parcelStableAccountId(selectedParcel || {}) || String(selectedParcelAccount).split(":").pop(), 250, permitServiceRoot)
       .then((permits) => {
         if (!cancelled) setSelectedParcelPermits(permits);
@@ -6104,7 +6214,7 @@ function WhiteRabbitMap({ onExit, initialSearch = "", preserveLandingEarth = fal
     return () => {
       cancelled = true;
     };
-  }, [selectedParcel, selectedParcelAccount]);
+  }, [selectedParcel, selectedParcelAccount, selectedParcelDataset]);
 
   return (
     <div className="relative h-screen w-full overflow-hidden bg-black text-white">
@@ -6244,13 +6354,22 @@ export default function WhiteRabbitLanding() {
   const [crmOpen, setCrmOpen] = useState(false);
   const [toolsOpen, setToolsOpen] = useState(false);
   const [landingSearch, setLandingSearch] = useState("");
+  const [landingDatasetId, setLandingDatasetId] = useState("");
+  const [memberAccessOpen, setMemberAccessOpen] = useState(false);
+  const [memberAccessMode, setMemberAccessMode] = useState("login");
+
+  const openMemberAccess = (mode) => {
+    setMemberAccessMode(mode);
+    setMemberAccessOpen(true);
+  };
 
   const openListingPage = (listingKind) => {
     setActiveListingPage(listingKind);
   };
 
-  const openListingMap = (query) => {
+  const openListingMap = (query, sourceCountyId = "") => {
     setLandingSearch(query || "");
+    setLandingDatasetId(sourceCountyId || "");
     setActiveListingPage("");
     setEnteredMap(true);
     setCrmOpen(false);
@@ -6275,6 +6394,7 @@ export default function WhiteRabbitLanding() {
     return (
       <WhiteRabbitMap
         initialSearch={landingSearch}
+        initialDatasetId={landingDatasetId}
         onExit={() => setEnteredMap(false)}
         onOpenMarketplace={(listingKind = "cre") => {
           setEnteredMap(false);
@@ -6291,7 +6411,7 @@ export default function WhiteRabbitLanding() {
   }
 
   if (toolsOpen) {
-    return <SavantToolsPage logo={<RabbitLogo />} onBack={() => setToolsOpen(false)} onOpenMap={(query = "") => openListingMap(query)} onOpenCrm={openCrm} />;
+    return <SavantToolsPage logo={<RabbitLogo />} onBack={() => setToolsOpen(false)} onOpenMap={(query = "", sourceCountyId = "") => openListingMap(query, sourceCountyId)} onOpenCrm={openCrm} />;
   }
 
   if (activeListingPage) {
@@ -6302,7 +6422,6 @@ export default function WhiteRabbitLanding() {
         onOpenMap={openListingMap}
         onOpenListingKind={openListingPage}
         memberSession={memberSession}
-        onMemberLogin={setMemberSession}
         onMemberLogout={() => setMemberSession(null)}
       />
     );
@@ -6339,6 +6458,14 @@ export default function WhiteRabbitLanding() {
           <button onClick={() => openListingPage("cre")} className="px-3 py-2 text-xs text-white/80 transition hover:text-white">CRE Listings</button>
           <button onClick={() => openListingPage("resi")} className="px-3 py-2 text-xs text-white/80 transition hover:text-white">Resi Listings</button>
           <button onClick={() => openListingPage("rentals")} className="px-3 py-2 text-xs text-white/80 transition hover:text-white">Rentals</button>
+          {memberSession ? (
+            <button onClick={() => openListingPage("cre")} className="inline-flex items-center gap-2 rounded-lg border border-white/15 bg-white/10 px-3 py-2 text-xs font-semibold text-white transition hover:bg-white/15" data-landing-member-account="true"><UserRound aria-hidden="true" size={14} />{memberSession.displayName}</button>
+          ) : (
+            <div className="flex items-center gap-1 rounded-xl border border-white/15 bg-black/25 p-1 backdrop-blur-md" data-landing-member-access="true">
+              <button type="button" onClick={() => openMemberAccess("login")} className="rounded-lg px-3 py-2 text-xs font-semibold text-white/80 transition hover:bg-white/10 hover:text-white">Log in</button>
+              <button type="button" onClick={() => openMemberAccess("signup")} className="rounded-lg bg-white px-3 py-2 text-xs font-semibold text-black transition hover:bg-cyan-50">Sign up</button>
+            </div>
+          )}
         </div>
       </header>
       <SearchBar
@@ -6355,6 +6482,16 @@ export default function WhiteRabbitLanding() {
           <button onClick={() => setEnteredMap(true)} className="mt-4 flex w-full items-center justify-center gap-2 rounded-xl bg-white py-2 text-sm font-medium text-black transition hover:scale-[1.01]"><span>Enter Map</span><span aria-hidden="true">↗</span></button>
         </div>
       </div>
+      {memberAccessOpen && (
+        <MemberAccessGate
+          initialMode={memberAccessMode}
+          onCancel={() => setMemberAccessOpen(false)}
+          onAccessGranted={(session) => {
+            setMemberSession(session);
+            setMemberAccessOpen(false);
+          }}
+        />
+      )}
     </div>
   );
 }

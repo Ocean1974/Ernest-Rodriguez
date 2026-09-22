@@ -30,9 +30,9 @@ const permitSources = [
 const louisvillePermitSources = [
   {
     id: "louisville-building-permit-applications",
-    name: "Louisville Metro All Building Permit Applications",
-    sourceUrl: "https://services1.arcgis.com/oDRzuf2MGmdEHAbQ/ArcGIS/rest/services/Building_Permit/FeatureServer/0",
-    pageSize: 5000,
+    name: "Louisville Metro Active Construction Permits",
+    sourceUrl: "https://services1.arcgis.com/79kfd2K6fskCAkyg/arcgis/rest/services/active_construction_permits/FeatureServer/0",
+    pageSize: 1000,
     market: "Louisville",
     state: "KY",
   },
@@ -213,7 +213,8 @@ function normalizeAddress(value) {
 function normalizeDate(value) {
   const text = String(value || "").trim();
   if (!text) return "";
-  const parsed = new Date(text);
+  const numeric = /^\d{10,13}$/.test(text) ? Number(text) : null;
+  const parsed = numeric === null ? new Date(text) : new Date(text.length === 10 ? numeric * 1000 : numeric);
   if (Number.isNaN(parsed.getTime())) return text;
   return parsed.toISOString().slice(0, 10);
 }
@@ -275,36 +276,36 @@ function normalizePermitRow(row, source) {
 function normalizeLouisvillePermitFeature(feature, source, index) {
   const attributes = feature?.attributes || {};
   const geometry = feature?.geometry || {};
-  const appYear = fieldValue(attributes, ["APP_YEAR"]);
-  const appNum = fieldValue(attributes, ["APP_NUM"]);
-  const permitNumber = [appYear, appNum].filter((value) => String(value ?? "").trim()).join("-");
-  const address = fieldValue(attributes, ["LOCATION", "address", "site_address"]);
-  const latitude = numberValue(geometry.y);
-  const longitude = numberValue(geometry.x);
+  const permitNumber = fieldValue(attributes, ["PERMIT_NUMBER", "ObjectId", "OBJECTID"]);
+  const address = fieldValue(attributes, ["ADDRESS", "LOCATION", "site_address"]);
+  const latitudeCandidate = numberValue(fieldValue(attributes, ["LATITUDE"])) ?? numberValue(geometry.y);
+  const longitudeCandidate = numberValue(fieldValue(attributes, ["LONGITUDE"])) ?? numberValue(geometry.x);
+  const latitude = latitudeCandidate !== null && latitudeCandidate >= 37.8 && latitudeCandidate <= 38.5 ? latitudeCandidate : null;
+  const longitude = longitudeCandidate !== null && longitudeCandidate >= -86.1 && longitudeCandidate <= -85.2 ? longitudeCandidate : null;
   return {
     permitRecordId: `${source.id}-${index + 1}`,
     market: "Louisville",
     sourceDataset: source.id,
     sourceName: source.name,
     sourceUrl: source.sourceUrl,
-    permitNumber: String(permitNumber || fieldValue(attributes, ["OBJECTID"]) || "").trim(),
-    permitType: String(fieldValue(attributes, ["TYPE"]) || "").trim(),
-    permitSubtype: String(fieldValue(attributes, ["ADD_DESC"]) || "").trim(),
-    permitStatus: String(fieldValue(attributes, ["STATUS"]) || "").trim(),
+    permitNumber: String(permitNumber || "").trim(),
+    permitType: String(fieldValue(attributes, ["PERMIT_TYPE", "TYPE"]) || "").trim(),
+    permitSubtype: String(fieldValue(attributes, ["WORK_TYPE", "CATEGORY_NAME", "ADD_DESC"]) || "").trim(),
+    permitStatus: String(fieldValue(attributes, ["PERMIT_STATUS", "STATUS"]) || "").trim(),
     applicationDate: "",
-    issueDate: normalizeDate(fieldValue(attributes, ["STAT_DATE"])),
+    issueDate: normalizeDate(fieldValue(attributes, ["ISSUE_DATE", "STAT_DATE"])),
     finalDate: "",
     address: String(address || "").trim(),
     normalizedAddress: normalizeAddress(address),
-    city: "Louisville",
-    state: "KY",
-    zip: "",
-    description: String(fieldValue(attributes, ["ADD_DESC", "TYPE"]) || "").trim(),
-    valuation: numberValue(fieldValue(attributes, ["VALUATION"])),
-    contractor: "",
+    city: String(fieldValue(attributes, ["CITY"]) || "Louisville").trim(),
+    state: String(fieldValue(attributes, ["STATE"]) || "KY").trim(),
+    zip: String(fieldValue(attributes, ["ZIPCODE", "ZIP"]) || "").trim(),
+    description: String(fieldValue(attributes, ["CATEGORY_NAME", "WORK_TYPE", "PERMIT_TYPE", "ADD_DESC"]) || "").trim(),
+    valuation: numberValue(fieldValue(attributes, ["PROJECT_COSTS", "VALUATION"])),
+    contractor: String(fieldValue(attributes, ["CONTRACTOR"]) || "").trim(),
     latitude: latitude !== null ? latitude : null,
     longitude: longitude !== null ? longitude : null,
-    rawSourceId: String(fieldValue(attributes, ["OBJECTID"]) || "").trim(),
+    rawSourceId: String(fieldValue(attributes, ["ObjectId", "OBJECTID"]) || "").trim(),
     raw: attributes,
   };
 }

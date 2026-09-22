@@ -13,7 +13,10 @@
       "sourceUrl": "https://gis.lojic.org/maps/rest/services/LojicSolutions/OpenDataPVA/MapServer/1",
       "identityCandidates": ["PARCELID", "LRSN", "PIN"],
       "captureState": "existing-local-build",
-      "rightsStatus": "review-required-before-new-raw-capture"
+      "rightsStatus": "open-data-pddl-terms-verified",
+      "rightsReviewedAt": "2026-09-19",
+      "rightsUrl": "https://www.lojic.org/data/liability-statement",
+      "attribution": "Mapping Data Source: LOJIC"
     },
     {
       "countyId": "fayette-county-ky",

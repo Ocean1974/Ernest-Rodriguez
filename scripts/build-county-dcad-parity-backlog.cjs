@@ -65,7 +65,12 @@ function actionForMilestone(milestone, county) {
   if (milestone === "build-full-parcel-service") return "Verify official parcel geometry and owner/appraisal sources, then build viewport chunks and search shards.";
   if (milestone === "finish-source-lineage-qc") return "Generate schema, join-key, full-access, and county QA reports with exact counts.";
   if (milestone === "join-owner-appraisal-window") return "Join official owner, mailing, situs, land, building, value, legal, and land-use fields to the parcel service.";
-  if (milestone === "close-intelligence-layers") return "Join permits/CO, zoning/control, and floodplain sources by parcel key, normalized address, or spatial overlay.";
+  if (milestone === "close-intelligence-layers") {
+    const missing = county.missingDcadLikeGroups || county.missingGroups || [];
+    return missing.length
+      ? `Close the remaining intelligence gaps: ${missing.join(", ")}. Preserve exact parcel keys, unmatched records, and source coverage.`
+      : "Run final intelligence-layer certification and activation review.";
+  }
   if (milestone === "build-development-signals") return "Build parcel-indexed development, permit, ownership, and market activity signals.";
   if (milestone === "add-migration-demand") return "Join aggregate demand geography to parcels without using individual-person data.";
   return `Run activation review for ${county.countyName} after all DCAD-like groups are ready.`;

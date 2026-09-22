@@ -1,0 +1,29 @@
+{
+  "schemaVersion": "wr-source-manifest-v1",
+  "countyId": "harris-county-tx",
+  "generatedAt": "2026-09-19T21:10:27.955679Z",
+  "sources": [
+    {
+      "category": "single-family",
+      "file": "data/raw/harris-county-tx/permits/SF-Permits-2024.xlsx",
+      "url": "https://houstontx.gov/planning/Demographics/docs_pdfs/SF-Permits-2024.xlsx",
+      "sha256": "43f160555dfd7a61ceaf3cfd49f5962341ccc1a1aaff2cbeb075caa072fe106a",
+      "rows": 6137
+    },
+    {
+      "category": "multifamily",
+      "file": "data/raw/harris-county-tx/permits/MF-Permits-2024.xlsx",
+      "url": "https://houstontx.gov/planning/Demographics/docs_pdfs/MF-Permits-2024.xlsx",
+      "sha256": "7d6b8f0f1efce803599000d9669036f3021d2c7dfedb76577c4864381d9f9d8b",
+      "rows": 686
+    },
+    {
+      "category": "demolition",
+      "file": "data/raw/harris-county-tx/permits/DM-Permits-2024.xlsx",
+      "url": "https://houstontx.gov/planning/Demographics/docs_pdfs/DM-Permits-2024.xlsx",
+      "sha256": "22a2e599e7e0c726ebddd299912786cfc70cee750b7894142284373da9d3d5fd",
+      "rows": 1883
+    }
+  ],
+  "rightsNote": "Official City of Houston public planning workbooks; preserve source URLs and verify reuse terms before redistribution beyond derived parcel links."
+}

@@ -14,7 +14,7 @@
       "required": ["countyId", "disposition", "visibleCountyIds", "exactParcelFeatureCount", "exactSearchShardCount", "dcadLikeWindowReady", "freshnessDebt"],
       "properties": {
         "countyId": { "const": "dallas-county-dcad" },
-        "visibleCountyIds": { "const": ["dallas-county-dcad"] },
+        "visibleCountyIds": { "const": ["dallas-county-dcad", "harris-county-tx"] },
         "exactParcelFeatureCount": { "const": 696601 },
         "exactSearchShardCount": { "const": 1224 },
         "dcadLikeWindowReady": { "const": true }

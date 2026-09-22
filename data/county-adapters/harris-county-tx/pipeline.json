@@ -3,8 +3,8 @@
   "countyAdapter": "data/county-adapters/harris-county-tx/adapter.json",
   "universalParcelSchema": "data/schemas/universal-parcel.schema.json",
   "defaultMode": "plan",
-  "enabledForProduction": false,
-  "scaffoldOnly": true,
+  "enabledForProduction": true,
+  "scaffoldOnly": false,
   "pipelineContract": {
     "mode": "evidence-gated",
     "sourcePriority": "official assessor/appraiser, county GIS, municipal, state, or federal sources first",
@@ -87,21 +87,22 @@
     },
     {
       "id": "build-zoning-index",
-      "label": "Build Harris County zoning and overlay parcel index",
-      "command": "echo Add Harris municipal zoning, land-use, and overlay joins after official source verification.",
+      "label": "Build Houston development-control parcel index",
+      "command": "node scripts/build-harris-intelligence.cjs",
       "dependsOn": [
         "build-parcel-service"
       ],
       "requiredOutputs": [
         "public/data/counties/harris-county-tx/zoning/manifest.json",
         "output/harris-county-tx/zoning-source-report.md",
-        "output/harris-county-tx/zoning-source-report.json"
+        "output/harris-county-tx/houston-intelligence-report.md",
+        "output/harris-county-tx/houston-intelligence-report.json"
       ]
     },
     {
       "id": "build-floodplain-index",
       "label": "Build Harris County flood zone parcel index",
-      "command": "echo Add FEMA/local flood zone parcel centroid joins after official source verification.",
+      "command": "node scripts/build-harris-intelligence.cjs",
       "dependsOn": [
         "build-parcel-service"
       ],
@@ -109,19 +110,22 @@
         "public/data/counties/harris-county-tx/floodplain/manifest.json",
         "output/harris-county-tx/floodplain-source-report.md",
         "public/data/counties/harris-county-tx/floodplain/parcel-floodplain-index.json",
-        "output/harris-county-tx/floodplain-source-report.json"
+        "output/harris-county-tx/houston-intelligence-report.md",
+        "output/harris-county-tx/houston-intelligence-report.json"
       ]
     },
     {
       "id": "build-development-index",
       "label": "Build parcel development-signal index",
-      "command": "echo Build harris-county-tx development signals from verified permits and parcel joins.",
+      "command": "node scripts/build-harris-intelligence.cjs",
       "dependsOn": [
         "build-parcel-service",
         "build-permit-service"
       ],
       "requiredOutputs": [
-        "public/data/counties/harris-county-tx/developments/parcel-development-index.json"
+        "public/data/counties/harris-county-tx/developments/parcel-development-index.json",
+        "public/data/counties/harris-county-tx/developments/unmatched-plat-applications.json",
+        "output/harris-county-tx/houston-intelligence-report.json"
       ]
     },
     {
@@ -171,9 +175,24 @@
     {
       "id": "build-development-intelligence",
       "label": "Build Harris County development signals and parcel development index",
-      "command": "echo Add development intelligence after permits, floodplain, and parcel joins exist.",
+      "command": "node scripts/build-harris-intelligence.cjs",
       "requiredOutputs": [
         "public/data/counties/harris-county-tx/developments/parcel-development-index.json"
+      ]
+    },
+    {
+      "id": "build-savant-city-radar",
+      "label": "Build Houston's independent Savant off-market ranking",
+      "command": "node scripts/build-savant-city-radars.cjs",
+      "dependsOn": [
+        "build-parcel-service",
+        "build-zoning-index",
+        "build-floodplain-index",
+        "build-development-index"
+      ],
+      "requiredOutputs": [
+        "public/data/savant-tools/market-index.json",
+        "public/data/savant-tools/markets/houston-tx/development-path-radar.json"
       ]
     }
   ],
@@ -188,5 +207,6 @@
     "expectedOutput": "output/harris-county-tx/harris-county-tx-parcels.pmtiles",
     "script": "output/harris-county-tx/vector-tiles/build-harris-county-tx-pmtiles.ps1"
   },
-  "uiConstraint": "Do not redesign or restyle any White Rabbit pages while running this pilot county ingestion pipeline."
+  "uiConstraint": "Do not redesign or restyle any White Rabbit pages while running this pilot county ingestion pipeline.",
+  "activationScope": "map-search-pilot"
 }

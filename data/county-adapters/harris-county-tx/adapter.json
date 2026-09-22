@@ -14,6 +14,32 @@
   "geometryType": "polygon",
   "sourceSpatialReference": "EPSG:2278 / NAD 1983 StatePlane Texas South Central FIPS 4204 Feet",
   "status": "pilot",
+  "sourceUpdatedAt": "2026-09-06T00:00:00.000Z",
+  "freshnessPolicy": {
+    "maxAgeDays": 120
+  },
+  "activation": {
+    "releaseTier": "map-search-pilot",
+    "authorized": true,
+    "authorizedAt": "2026-09-18T00:00:00.000Z",
+    "scope": [
+      "parcel-map",
+      "parcel-search",
+      "owner-appraisal",
+      "parcel-dimensions",
+      "block-legal-context"
+    ],
+    "excludedUntilCertified": [
+      "permits-certificates",
+      "migration-demand"
+    ],
+    "countReconciliation": {
+      "sourceFeatures": 1535525,
+      "emittedFeatures": 1535522,
+      "skippedFeatures": 3,
+      "skipReason": "Source features have no geometry and cannot be rendered or assigned to a viewport chunk."
+    }
+  },
   "map": {
     "locationId": 5,
     "locationName": "Harris County TX / Houston Pilot",
@@ -49,11 +75,15 @@
     "parcelGeometry": "https://services.arcgis.com/su8ic9KbA7PYVxPS/arcgis/rest/services/Harris_County_Parcels/FeatureServer/1",
     "appraisalDistrictExtract": "https://pdata.hcad.org/download/",
     "ownerAppraisal": "source-needed",
-    "permitsRaw": "source-needed",
-    "permitsProcessed": "data/permits/processed/harris-county-tx",
-    "developmentRaw": "source-needed",
-    "zoningRaw": "source-needed",
-    "floodplainRaw": "source-needed",
+    "permitsRaw": [
+      "https://houstontx.gov/planning/Demographics/docs_pdfs/SF-Permits-2024.xlsx",
+      "https://houstontx.gov/planning/Demographics/docs_pdfs/MF-Permits-2024.xlsx",
+      "https://houstontx.gov/planning/Demographics/docs_pdfs/DM-Permits-2024.xlsx"
+    ],
+    "permitsProcessed": "public/data/counties/harris-county-tx/permits/manifest.json",
+    "developmentRaw": "https://www.houstontx.gov/planning/DevelopRegs/docs_pdfs/Plat_report/2026/Plat-Current-Agenda-Spreadsheet-09-14-2026.xlsx",
+    "zoningRaw": "https://geogimstest.houstontx.gov/arcgis/rest/services/HPC/FloodManagement/MapServer/8",
+    "floodplainRaw": "https://geogimstest.houstontx.gov/arcgis/rest/services/HPC/FloodManagement/MapServer/12",
     "migrationDemandRaw": "source-needed",
     "hcadPublicData": "https://hcad.org/hcad-online-services/pdata/",
     "hcadPropertyDownloads": "https://hcad.org/pdata/pdata-property-downloads.html",
@@ -119,21 +149,22 @@
     {
       "id": "permits",
       "label": "Permits and certificates of occupancy",
-      "source": "Houston/Harris permit source discovery",
-      "status": "source-needed",
-      "joinBehavior": "source-needed: official permit and CO bulk source must be verified, then joined by parcel/account, normalized address, or spatial point-in-parcel",
+      "source": "City of Houston Planning and Development 2024 single-family, multifamily, and demolition permit workbooks",
+      "status": "ready-historical-2024-refresh-required",
+      "joinBehavior": "unique exact normalized situs address to HCAD accountNum; ambiguous and unmatched records are quarantined; no CO coverage and no countywide claim",
       "defaultVisible": false,
       "publicDataRoot": "/data/counties/harris-county-tx/permits/",
       "manifestPath": "public/data/counties/harris-county-tx/permits/manifest.json",
       "renderStrategy": "build-time source discovery and offline parcel join before viewport-safe permit chunks",
-      "maxFeaturesPerViewport": 750
+      "maxFeaturesPerViewport": 750,
+      "reportPath": "output/harris-county-tx/harris-permit-report.md"
     },
     {
       "id": "zoning-intelligence",
-      "label": "Zoning intelligence",
-      "source": "Countywide zoning is fragmented across municipalities; City of Houston has no conventional zoning layer",
-      "status": "source-needed-fragmented",
-      "joinBehavior": "source-needed: municipal zoning, land-use controls, deed restrictions, special districts, and overlays must be verified separately before parcel joins",
+      "label": "Houston development controls",
+      "source": "Official City of Houston City Limits layer; Houston has no conventional citywide zoning",
+      "status": "ready-partial-jurisdiction-coverage",
+      "joinBehavior": "parcel centroid spatial join to full/limited-purpose City of Houston jurisdiction; reports Chapter 42 development-control context and never invents a zoning district",
       "defaultVisible": false,
       "publicDataRoot": "/data/counties/harris-county-tx/zoning/",
       "manifestPath": "public/data/counties/harris-county-tx/zoning/manifest.json",
@@ -145,9 +176,9 @@
     {
       "id": "development-signals",
       "label": "Development signals",
-      "source": "Permit, ownership, appraisal, sale/transfer, and market activity joins after source verification",
-      "status": "source-needed",
-      "joinBehavior": "source-needed: build after permit, appraisal, migration/demand, and parcel search indexes exist",
+      "source": "City of Houston Planning and Development current plat activity agenda dated 2026-09-14",
+      "status": "ready-current-plat-agenda",
+      "joinBehavior": "exact Appraisal District No (County Tax ID) to HCAD_NUM/acct_num join; unmatched applications remain in a separate QA file and plat activity is not represented as a permit or completed project",
       "defaultVisible": false,
       "publicDataRoot": "/data/counties/harris-county-tx/developments/",
       "manifestPath": "public/data/counties/harris-county-tx/developments/parcel-development-index.json",
@@ -157,9 +188,9 @@
     {
       "id": "floodplain-intelligence",
       "label": "Floodplain intelligence",
-      "source": "FEMA NFHL and Harris County flood source discovery",
-      "status": "source-needed",
-      "joinBehavior": "source-needed: parcel centroid spatial join to FEMA/local flood polygons, keyed back to HCAD_NUM/acct_num",
+      "source": "Official City of Houston Flood Hazard Area MapServer layer",
+      "status": "ready",
+      "joinBehavior": "parcel centroid spatial join to 17,968 official flood-hazard polygons, keyed back to HCAD_NUM/acct_num; preserves FEMA-style zone, subtype, SFHA, BFE, datum, depth, velocity, and citation fields",
       "defaultVisible": false,
       "publicDataRoot": "/data/counties/harris-county-tx/floodplain/",
       "manifestPath": "public/data/counties/harris-county-tx/floodplain/manifest.json",
@@ -332,10 +363,10 @@
     "secondaryParcelGisId": "GlobalID is the unique GIS feature key; OBJECTID is service-local only",
     "blockLabels": "direct fields: BLK_NUM, LOT_NUM, legal_dscr_*, map_facet",
     "dimensions": "direct area/perimeter fields: Shape__Area, Shape__Length, land_sqft, Acreage; frontage/depth source-needed",
-    "permits": "source-needed: official permit/CO source must be verified before address or spatial parcel join",
-    "zoning": "source-needed: countywide zoning is fragmented; municipal zoning/overlays must be verified separately",
-    "floodplain": "source-needed: FEMA/local floodplain parcel centroid spatial join keyed back to HCAD_NUM/acct_num",
-    "developmentSignals": "source-needed: verified permit, plat, demolition, certificate, project, address, or spatial join evidence",
+    "permits": "unique exact normalized situs address -> HCAD accountNum; 2024 City of Houston only; ambiguous matches excluded",
+    "zoning": "parcel centroid -> official City of Houston full/limited-purpose jurisdiction; development-controls context only because Houston has no conventional citywide zoning",
+    "floodplain": "parcel centroid -> official Flood Hazard Area polygon -> HCAD_NUM/acct_num; 1,535,237 parcel classifications",
+    "developmentSignals": "Appraisal District No (County Tax ID) -> HCAD_NUM/acct_num; exact joins only from the 2026-09-14 current plat agenda",
     "migrationDemand": "source-needed: aggregate geography join, not individual people"
   },
   "verifiedCounts": {
@@ -346,17 +377,28 @@
     "landRows": 1535525,
     "appParcelChunks": 1345,
     "parcelSearchShards": 1210,
-    "sourcePermitRecords": 0,
-    "permitRowsJoined": 0,
-    "permitRowsUnmatched": 0,
-    "parcelsWithDevelopmentSignals": 0,
+    "sourcePermitRecords": 8706,
+    "permitRowsJoined": 6574,
+    "permitRowsUnmatched": 1656,
+    "parcelsWithDevelopmentSignals": 29,
     "migrationDemandGeographies": 0,
+    "houstonDevelopmentControlSourceFeatures": 751,
+    "parcelsWithHoustonDevelopmentControls": 677447,
+    "floodHazardSourceFeatures": 17968,
+    "parcelsWithFloodplainClassification": 1535237,
+    "parcelsInSpecialFloodHazardArea": 165388,
+    "sourcePlatActivityRecords": 116,
+    "unmatchedPlatActivityRecords": 87,
     "hcadNumDistinctValues": 1535521,
     "hcadNumMissing": 1,
     "acctNumDistinctValues": 1523063,
     "acctNumMissing": 12461,
     "globalIdDistinctValues": 1535525,
-    "globalIdMissing": 0
+    "globalIdMissing": 0,
+    "permitRowsAmbiguous": 476,
+    "parcelsWithPermits": 5608,
+    "parcelRecordsScanned": 1535522,
+    "sourceParcelRecords": 1535522
   },
   "requiredOutputs": [
     "output/harris-county-tx/schema-report.md",
@@ -376,6 +418,6 @@
     "data/county-adapters/harris-county-tx/harris-county-parcel-source-manifest.json",
     "data/county-adapters/harris-county-tx/harris-universal-field-map.json"
   ],
-  "productionGap": "Pilot adapter only. Official Harris parcel/property FeatureServer is verified with 1,535,525 parcel features; full viewport chunks, search shards, owner/appraisal joins, direct block/legal context, and parcel area/perimeter dimensions are built and QC-gated. Remaining DCAD-parity gaps are permit/CO joins, floodplain joins, zoning/overlay joins, development signals, migration demand, activation QA, and PMTiles.",
-  "pilotNotes": "Do not activate this county in the app until exact duplicate key QA, parcel card QA, remaining intelligence joins, source-lineage reports, and activation review pass. Do not redesign any pages."
+  "productionGap": "The active Houston/Harris map-search pilot now includes official City of Houston development-control jurisdiction, official flood-hazard classifications, and current plat-agenda development signals. Remaining DCAD-parity gaps are building permit/CO joins, development-control coverage for other Harris municipalities, migration demand, and PMTiles.",
+  "pilotNotes": "Houston has no conventional citywide zoning. Keep development controls, floodplain, and plat activity default-off, preserve their source disclosures, and never treat plat activity as proof of a permit, construction, approval, or completion."
 }

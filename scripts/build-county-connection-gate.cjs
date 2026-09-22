@@ -42,6 +42,13 @@ function layerSourceNeeded(layer) {
   return !layer || /source-needed|pending|build-needed|inspection-needed|not-confirmed/i.test(String(layer.status || ""));
 }
 
+let nationalDemandCoverage;
+function nationalDemandFor(adapter, fallbackFips = "") {
+  if (nationalDemandCoverage === undefined) nationalDemandCoverage = tryReadJson("public/data/national/migration-demand/coverage-index.json") || null;
+  const fips = String(adapter?.fips || fallbackFips || "");
+  return /^\d{5}$/.test(fips) ? nationalDemandCoverage?.counties?.[fips] || null : null;
+}
+
 function countyPublicParcelRoot(adapter) {
   return adapter.publicDataRoots?.parcels || adapter.dataRoots?.parcels || "";
 }
@@ -85,13 +92,21 @@ function nextBuildStepsFor(record) {
     return [
       "Load the official Jefferson County PVA owner/appraisal export into data/raw/jefferson-ky/Jefferson_County_KY_PVA_Owner_Appraisal.csv.",
       "Run npm run jefferson:build after the PVA file is present so owner, value, land, and building fields join into the existing parcel chunks.",
-      "Join active permits/CO records to parcels after PVA situs addresses are available.",
+      "Keep the 22,717 spatially joined active permits and 16,320 parcel development summaries production-disabled until county QC and promotion pass; CO remains source-needed.",
     ];
   }
   if (countyId === "harris-county-tx") {
     return [
-      "Keep the full Harris viewport chunks and search shards QC-gated; do not activate visible app behavior yet.",
-      "Add permit, floodplain, zoning/control, development, and migration-demand joins before production activation.",
+      "Keep the active Harris map/search pilot limited to certified parcel, owner/appraisal, dimension, block/legal, Houston development-control, floodplain, current plat activity, and explicitly historical 2024 Houston permit fields.",
+      "Refresh the permit source before production promotion; the 2024 City of Houston permit workbooks are not current, not countywide, and do not include certificates of occupancy.",
+      "Retain blank-safe coverage outside Houston jurisdiction and preserve unmatched or ambiguous permit addresses as QA records rather than parcel facts.",
+    ];
+  }
+  if (countyId === "travis-county-tx") {
+    return [
+      "Promote the reconciled Austin/Travis parcel, search, dimension, block/subdivision, zoning, floodplain, permit/CO, and development-signal layers as a map/search pilot after visibility authorization.",
+      "Keep migration-demand fields disabled until an approved aggregate source and geography-to-parcel join are certified.",
+      "Preserve blank-safe coverage outside City of Austin service extents, preserve unmatched permits, and keep federal SFHA distinct from Austin's local fully-developed floodplain.",
     ];
   }
   if (countyId === "maricopa-county-az") {
@@ -111,7 +126,7 @@ function nextBuildStepsFor(record) {
   if (countyId === "tarrant-county-tad") {
     return [
       "Keep the full Tarrant viewport chunks, search shards, and owner/appraisal joins QC-gated; do not activate visible app behavior yet.",
-      "Add permit/CO, zoning, floodplain, development, migration-demand, block, and dimension intelligence before DCAD parity.",
+      "Maintain the verified permit/CO, zoning, floodplain, development, block, dimension, and national aggregate migration-demand context while preserving jurisdiction disclosures.",
       "Build PMTiles/vector tiles or document the tile production handoff before production promotion.",
     ];
   }
@@ -155,6 +170,7 @@ function buildCountyGate(queueRecord) {
   const qaReady = qaPaths.some(exists);
 
   const ownerLayer = layerByNeed(adapter, /owner|appraisal|pva|hcad/i);
+  const addressLayer = (adapter.optionalLayers || []).find((layer) => layer.id === "lojic-address-intelligence") || layerByNeed(adapter, /^address/i);
   const zoningLayer = layerByNeed(adapter, /zoning/i);
   const floodLayer = layerByNeed(adapter, /flood/i);
   const permitLayer = layerByNeed(adapter, /permit|certificate|occupancy/i);
@@ -162,10 +178,16 @@ function buildCountyGate(queueRecord) {
   const blockLayer = layerByNeed(adapter, /block|grid|legal/i);
   const developmentLayer = layerByNeed(adapter, /development/i);
   const demandLayer = layerByNeed(adapter, /migration|demand/i);
+  const nationalDemand = nationalDemandFor(adapter, queueRecord.fips);
 
   const ownerJoinedToPublicService =
     adapter.status === "active" ||
     (mapSearchReady && Boolean(parcelManifest?.joinedAppraisalCount) && !layerSourceNeeded(ownerLayer));
+  const addressReady = ownerJoinedToPublicService || (
+    layerReady(addressLayer) &&
+    !layerSourceNeeded(addressLayer) &&
+    (!addressLayer?.publicManifestPath || exists(addressLayer.publicManifestPath))
+  );
   const zoningReady = layerReady(zoningLayer) && (!zoningLayer.publicManifestPath || exists(zoningLayer.publicManifestPath));
   const floodplainReady = layerReady(floodLayer) && (!floodLayer.publicManifestPath || exists(floodLayer.publicManifestPath));
   const permitsReady =
@@ -178,12 +200,12 @@ function buildCountyGate(queueRecord) {
     (adapter.status === "active" || compactNumber(parcelManifest?.joinedParcelDimensionCount) > 0);
   const blockGridReady = layerReady(blockLayer) && !layerSourceNeeded(blockLayer);
   const developmentReady = layerReady(developmentLayer) && !layerSourceNeeded(developmentLayer);
-  const migrationDemandReady = layerReady(demandLayer) && !layerSourceNeeded(demandLayer);
+  const migrationDemandReady = (layerReady(demandLayer) && !layerSourceNeeded(demandLayer)) || /^ready/i.test(String(nationalDemand?.status || ""));
 
   const readyDcadLikeGroups = [
     mapSearchReady ? "identity" : "",
     mapSearchReady ? "geometry" : "",
-    ownerJoinedToPublicService ? "address" : "",
+    addressReady ? "address" : "",
     ownerJoinedToPublicService ? "owner-contact" : "",
     ownerJoinedToPublicService ? "appraisal-values" : "",
     ownerJoinedToPublicService ? "land-building" : "",
@@ -221,7 +243,8 @@ function buildCountyGate(queueRecord) {
     coreDcadLikeGroups.every((group) => readyDcadLikeGroups.includes(group));
 
   let activationStage = "source-needed";
-  if (adapter.status === "active" && dcadLikeWindowReady) activationStage = "production-active";
+  if (adapter.activation?.authorized === true && adapter.activation?.releaseTier === "map-search-pilot" && mapSearchReady) activationStage = "map-search-pilot-active";
+  else if (adapter.status === "active" && dcadLikeWindowReady) activationStage = "production-active";
   else if (sampleMode) activationStage = "sample-service-only";
   else if (mapSearchReady) activationStage = "map-search-pilot-ready";
   else if (verifiedParcelCount > 0) activationStage = "source-verified-build-needed";
@@ -243,6 +266,7 @@ function buildCountyGate(queueRecord) {
       activationStatus: parcelManifest?.activationStatus || "",
       sourceVerifiedFeatureCount: manifestSourceCount || verifiedParcelCount,
       featureCount: manifestFeatureCount,
+      skipped: compactNumber(parcelManifest?.skipped),
       chunkCount: compactNumber(parcelManifest?.chunkCount),
       searchIndexCount: compactNumber(parcelManifest?.searchIndexCount),
       searchShardCount,
@@ -253,6 +277,10 @@ function buildCountyGate(queueRecord) {
     sourceCounts: {
       verifiedParcelCount,
       missingGeometry: compactNumber(adapter.verifiedCounts?.missingGeometry),
+      sourcePermitRecords: compactNumber(adapter.verifiedCounts?.sourcePermitRecords),
+      permitRowsJoined: compactNumber(adapter.verifiedCounts?.permitRowsJoined),
+      permitRowsUnmatched: compactNumber(adapter.verifiedCounts?.permitRowsUnmatched),
+      permitRowsAmbiguous: compactNumber(adapter.verifiedCounts?.permitRowsAmbiguous),
       duplicatePrimaryParcelId:
         compactNumber(adapter.verifiedCounts?.duplicateApn) ||
         compactNumber(adapter.verifiedCounts?.duplicatePin) ||
@@ -269,12 +297,15 @@ function buildCountyGate(queueRecord) {
       migrationDemand: migrationDemandReady ? "ready" : "source-needed-or-build-needed",
       qa: qaReady ? "ready" : "missing",
     },
+    migrationDemandContext: nationalDemand ? { source: "national-acs-irs-aggregate-geography", countyFips: String(adapter.fips || queueRecord.fips), marketDemandIndex: nationalDemand.marketDemandIndex, migrationSignal: nationalDemand.migrationSignal, hasIrsMigration: nationalDemand.hasIrsMigration, parcelAttribution: false } : null,
     activationStage,
     mapSearchReady,
     dcadLikeWindowReady,
     readyDcadLikeGroups,
     missingDcadLikeGroups,
-    safeVisibleActivation: adapter.status === "active" ? "active-model" : mapSearchReady ? "pilot-map-search-only" : "do-not-activate",
+    safeVisibleActivation: adapter.activation?.authorized === true && adapter.activation?.releaseTier === "map-search-pilot" && mapSearchReady
+      ? "active-map-search-pilot"
+      : adapter.status === "active" ? "active-model" : mapSearchReady ? "pilot-map-search-only" : "do-not-activate",
     nextBuildSteps: nextBuildStepsFor({ ...queueRecord, countyId: adapter.id || queueRecord.countyId }),
   };
 }
@@ -300,7 +331,7 @@ function main() {
     gateRules: [
       "Do not activate a county as DCAD-like until full parcel viewport chunks and search shards exist.",
       "Do not call a parcel window DCAD-like until owner/appraisal fields are officially sourced and joined into the public parcel service.",
-      "Keep permits, zoning, floodplain, development, and migration demand as source-needed until their parcel joins are tested.",
+      "Keep permit, zoning/control, floodplain, and development layers source-needed until their parcel joins are tested; migration-demand may be ready as explicitly aggregate county context and must never be labeled a parcel fact.",
       "Sample parcel services can prove plumbing, but cannot be treated as production activation.",
     ],
     summary,

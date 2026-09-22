@@ -11,6 +11,7 @@ dist/
 .artifact-runtime/
 .browser-runtime/
 .codex-tools/
+.tools/
 .restore-*
 tmp/
 
@@ -47,3 +48,4 @@ data/permits/processed/
 # Source archives and recovery packages
 *.zip
 *.ZIP
+Jon Real Estate Savant Intel - */

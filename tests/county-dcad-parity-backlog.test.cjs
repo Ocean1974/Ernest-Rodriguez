@@ -53,27 +53,28 @@ assert(harris.mapSearchReady === true, "Harris must stay map/search ready");
 assert(harris.parcelService.featureCount === 1535522, "Harris built parcel count must stay locked");
 assert(harris.parcelService.chunkCount === 1345, "Harris chunk count must stay locked");
 assert(harris.parcelService.searchShardCount === 1210, "Harris search shard count must stay locked");
-assert(harris.nextMilestone === "close-intelligence-layers", "Harris next work should be permits/zoning/floodplain intelligence layers");
-assert(harris.missingGroups.includes("permits-certificates"), "Harris permit gap must stay visible");
+assert(harris.activationStage === "map-search-pilot-active", "Harris must remain explicitly scoped to the active map/search pilot tier");
+assert(harris.nextMilestone === "activation-review", "Harris should advance to activation review after reaching all 14 DCAD-like groups");
+assert(harris.missingGroups.length === 0 && harris.parityScore.readyGroups === 14, "Harris must preserve its verified 14-of-14 intelligence-group readiness");
 
 const jefferson = county("jefferson-ky");
 assert(jefferson.nextMilestone === "join-owner-appraisal-window", "Jefferson next work should be PVA owner/appraisal joining");
 
 const tarrant = county("tarrant-county-tad");
-assert(tarrant.nextMilestone === "add-migration-demand", "Tarrant should advance to migration-demand after reaching 13 of 14 intelligence groups");
+assert(tarrant.nextMilestone === "activation-review", "Tarrant should advance to activation review after aggregate migration-demand coverage completes all 14 groups");
 assert(tarrant.mapSearchReady === true, "Tarrant should be map/search pilot ready after the full parcel service build");
 assert(tarrant.missingMapSearchGroups.length === 0, "Tarrant must have no remaining map/search field-group gaps");
 assert(tarrant.parcelService.featureCount === 758633, "Tarrant parity report must preserve the exact full parcel count");
-assert(tarrant.parityScore.readyGroups === 13, "Tarrant parity report must preserve 13 ready intelligence groups");
-assert(tarrant.parityScore.percent === 92.9, "Tarrant parity report must preserve the verified 92.9 percent score");
-assert(tarrant.missingGroups.length === 1 && tarrant.missingGroups[0] === "migration-demand", "Tarrant must keep migration-demand as its only remaining group");
+assert(tarrant.parityScore.readyGroups === 14, "Tarrant parity report must preserve 14 ready intelligence groups");
+assert(tarrant.parityScore.percent === 100, "Tarrant parity report must preserve the verified 100 percent score");
+assert(tarrant.missingGroups.length === 0, "Tarrant must have no remaining DCAD-like intelligence group gaps");
 assert(!tarrant.missingGroups.includes("zoning") && !tarrant.missingGroups.includes("floodplain") && !tarrant.missingGroups.includes("permits-certificates") && !tarrant.missingGroups.includes("development-signals"), "Tarrant's built pilot intelligence groups must not regress into the missing list");
 
 const collin = county("collin-county-tx");
-assert(collin.nextMilestone === "close-intelligence-layers", "Collin should advance to intelligence-layer closure after its full parcel service");
+assert(collin.nextMilestone === "join-owner-appraisal-window", "Collin should keep the current-refresh owner/appraisal window gated until the rebuilt service is certified");
 assert(collin.mapSearchReady === true, "Collin should be map/search pilot ready after the full parcel service build");
 assert(collin.missingMapSearchGroups.length === 0, "Collin must have no remaining map/search field-group gaps");
-assert(collin.parcelService.featureCount === 437061, "Collin parity report must preserve the exact emitted parcel count");
+assert(collin.parcelService.featureCount === 441278, "Collin parity report must preserve the exact current-refresh service record count");
 
 const denton = county("denton-county-tx");
 assert(denton.nextMilestone === "close-intelligence-layers", "Denton should advance to intelligence-layer closure after its full parcel service");
