@@ -231,7 +231,7 @@ assert(!appSource.includes("setShowDimensions(true)"), "Explicit parcel entry sh
 assert(appSource.includes('onClick={mapMode === "parcel" ? onValueView : onParcelView}'), "TopBar Parcel View action is not wired to explicit Dallas parcel entry");
 assert(appSource.includes("onParcelView={enterDallasParcelMode}"), "WhiteRabbitMap does not pass the Dallas parcel entry function to TopBar");
 assert(appSource.includes("globeLandingMode") && appSource.includes("CRE Listings") && appSource.includes("Resi Listings") && appSource.includes("Rentals"), "Interactive globe landing header does not mirror the three listing links");
-assert(appSource.includes("{!earthIntroActive && (\n        <CompactMapControls"), "Map controls should not show on the interactive globe landing page");
+assert(/\{!earthIntroActive && \(\r?\n\s*<CompactMapControls/.test(appSource), "Map controls should not show on the interactive globe landing page");
 assert(appSource.includes("onParcelSelect={jumpToParcel}"), "Synthetic parcel scene is not wired to the current parcel selection handler");
 assert(appSource.includes('map.on("click", "wr-parcels-fill", (event) => {'), "MapLibre parcel-layer click handler is not wired");
 assert(appSource.includes('map.queryRenderedFeatures(queryPoint, { layers: ["wr-parcels-fill"] })'), "MapLibre parcel click detection does not query parcel fills");
@@ -253,7 +253,7 @@ assert(appSource.includes("const selectionOptions = { ...mapParcelSelectionOptio
 assert(!appSource.includes("queueHoverInfoWindow"), "MapLibre parcel selection must not depend on Jefferson-only hover behavior");
 assert(appSource.includes("focusSelectedParcel = true"), "MapLibre selected parcel focus must be enabled by default");
 assert(appSource.includes("if (!focusSelectedParcel)"), "MapLibre selected parcel focus must be skippable for map-selected cards");
-assert(appSource.includes("} else if (focusCamera) {\n      enterDallasParcelMode({ clearSelection: false, focusGlobe: false });"), "Dallas map-selected parcels must not reset the camera when focusCamera is false");
+assert(/\} else if \(focusCamera\) \{\r?\n\s*enterDallasParcelMode\(\{ clearSelection: false, focusGlobe: false \}\);/.test(appSource), "Dallas map-selected parcels must not reset the camera when focusCamera is false");
 assert(appSource.includes("getVisibleDallasParcels(mapCamera)"), "Fallback visible parcels are not populated from the Dallas camera");
 assert(appSource.includes("mapApiRef.current?.flyToCamera?.(parcelCamera)"), "Explicit parcel entry does not hand the camera to Dallas after user action");
 assert(!appSource.includes("if (earthIntroActive || !initialSearch.trim() || globalSearchResults.length === 0) return"), "Initial search still contains autonomous Dallas parcel entry logic");

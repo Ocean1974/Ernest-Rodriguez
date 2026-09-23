@@ -388,7 +388,7 @@ export const availableCountyDatasets: CountySelectorOption[] = [
     appraisalDistrictName: "Collin Central Appraisal District",
     appraisalDistrictAcronym: "CCAD",
     status: "pilot",
-    enabled: false,
+    enabled: true,
     dataRoots: {
       parcels: "/data/counties/collin-county-tx/parcels/",
       permits: "/data/counties/collin-county-tx/permits/",
@@ -400,7 +400,7 @@ export const availableCountyDatasets: CountySelectorOption[] = [
       locationId: 1019,
       locationName: "Collin County TX / North Dallas Pilot",
       locationType: "Collin Central Appraisal District",
-      status: "441,278-record current-refresh map/search built · final QC pending",
+      status: "441,278-record current-refresh map/search active · viewport delivery",
       coordinates: [-96.57, 33.19],
       camera: { x: 50, y: 50, zoom: 1.2, pitch: 48, bearing: 0 },
       geoBounds: { minLng: -96.95, minLat: 32.95, maxLng: -96.3, maxLat: 33.45 },

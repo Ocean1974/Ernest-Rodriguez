@@ -65,7 +65,7 @@ const NATIONAL_US_LOCATION = {
   mapZoom: 4.45,
   aliases: ["united states", "usa", "us", "national", "all us counties", "all u s counties"],
 };
-const BLANK_SAFE_PILOT_COUNTY_IDS = new Set(["jefferson-ky", "harris-county-tx", "travis-county-tx", "maricopa-county-az", "king-county-wa"]);
+const BLANK_SAFE_PILOT_COUNTY_IDS = new Set(["jefferson-ky", "harris-county-tx", "collin-county-tx", "travis-county-tx", "maricopa-county-az", "king-county-wa"]);
 const LOUISVILLE_PILOT_LOCATION = {
   id: "jefferson-ky",
   sourceCountyId: "jefferson-ky",
@@ -99,6 +99,23 @@ const HARRIS_PILOT_LOCATION = {
   },
   mapZoom: 13.2,
   aliases: ["houston", "houston tx", "houston texas", "harris", "harris county", "harris county tx", "harris county texas", "hcad"],
+};
+const COLLIN_PILOT_LOCATION = {
+  id: "collin-county-tx",
+  sourceCountyId: "collin-county-tx",
+  name: "Collin County TX",
+  type: "Collin Central Appraisal District",
+  status: "active map/search pilot · 441,278 current-refresh records",
+  coordinates: [-96.57, 33.19],
+  camera: { x: 50, y: 50, zoom: 1.2, pitch: 48, bearing: 0 },
+  geoBounds: {
+    minLng: -96.95,
+    minLat: 32.95,
+    maxLng: -96.3,
+    maxLat: 33.45,
+  },
+  mapZoom: 13.2,
+  aliases: ["collin", "collin county", "collin county tx", "collin county texas", "plano", "frisco", "mckinney", "allen", "ccad"],
 };
 const TRAVIS_PILOT_LOCATION = {
   id: "travis-county-tx",
@@ -155,6 +172,7 @@ const PLACE_SEARCH_TARGETS = [
   NATIONAL_US_LOCATION,
   LOUISVILLE_PILOT_LOCATION,
   ...(platformFeatureGates.houstonMapSearch ? [HARRIS_PILOT_LOCATION] : []),
+  ...(platformFeatureGates.collinMapSearch ? [COLLIN_PILOT_LOCATION] : []),
   TRAVIS_PILOT_LOCATION,
   MARICOPA_PILOT_LOCATION,
   KING_PILOT_LOCATION,
@@ -191,6 +209,7 @@ const LOCATIONS = [
   NATIONAL_US_LOCATION,
   LOUISVILLE_PILOT_LOCATION,
   ...(platformFeatureGates.houstonMapSearch ? [HARRIS_PILOT_LOCATION] : []),
+  ...(platformFeatureGates.collinMapSearch ? [COLLIN_PILOT_LOCATION] : []),
   TRAVIS_PILOT_LOCATION,
   MARICOPA_PILOT_LOCATION,
   KING_PILOT_LOCATION,

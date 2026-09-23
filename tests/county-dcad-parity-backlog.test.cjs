@@ -71,10 +71,13 @@ assert(tarrant.missingGroups.length === 0, "Tarrant must have no remaining DCAD-
 assert(!tarrant.missingGroups.includes("zoning") && !tarrant.missingGroups.includes("floodplain") && !tarrant.missingGroups.includes("permits-certificates") && !tarrant.missingGroups.includes("development-signals"), "Tarrant's built pilot intelligence groups must not regress into the missing list");
 
 const collin = county("collin-county-tx");
-assert(collin.nextMilestone === "join-owner-appraisal-window", "Collin should keep the current-refresh owner/appraisal window gated until the rebuilt service is certified");
-assert(collin.mapSearchReady === true, "Collin should be map/search pilot ready after the full parcel service build");
+assert(collin.nextMilestone === "activation-review", "Collin should advance to activation review after reaching all 14 DCAD-like groups");
+assert(collin.activationStage === "map-search-pilot-active", "Collin must be explicitly scoped to the active map/search pilot tier");
+assert(collin.mapSearchReady === true, "Collin should remain map/search ready after activation");
 assert(collin.missingMapSearchGroups.length === 0, "Collin must have no remaining map/search field-group gaps");
 assert(collin.parcelService.featureCount === 441278, "Collin parity report must preserve the exact current-refresh service record count");
+assert(collin.parityScore.readyGroups === 14 && collin.parityScore.percent === 100, "Collin must preserve its verified 14-of-14 intelligence-group readiness");
+assert(collin.missingGroups.length === 0, "Collin must have no remaining DCAD-like intelligence group gaps");
 
 const denton = county("denton-county-tx");
 assert(denton.nextMilestone === "close-intelligence-layers", "Denton should advance to intelligence-layer closure after its full parcel service");

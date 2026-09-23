@@ -43,6 +43,7 @@ export const platformFeatureGates = Object.freeze({
   pmtilesRuntime: false,
   priorityCountyActivation: false,
   houstonMapSearch: true,
+  collinMapSearch: true,
   durablePersistence: false,
   tenantIsolation: false,
   authenticatedPersistence: false,

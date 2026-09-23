@@ -69,8 +69,8 @@ for (const item of report.seeded) {
   assert(pipeline.pipelineContract?.mode === "evidence-gated", `${item.countyId} must publish the evidence-gated pipeline contract`);
   assert(pipeline.pipelineContract?.failurePolicy.includes("never hide"), `${item.countyId} must preserve count discrepancies`);
   assert(pipeline.productionTileStep?.expectedOutput, `${item.countyId} must retain a production tile handoff`);
-  if (item.countyId === "harris-county-tx") {
-    assert(pipeline.enabledForProduction === true && pipeline.activationScope === "map-search-pilot", "Harris must be explicitly limited to its authorized map/search pilot scope");
+  if (["harris-county-tx", "collin-county-tx"].includes(item.countyId)) {
+    assert(pipeline.enabledForProduction === true && pipeline.activationScope === "map-search-pilot", `${item.countyId} must be explicitly limited to its authorized map/search pilot scope`);
   } else {
     assert(pipeline.enabledForProduction !== true, `${item.countyId} must not be automatically enabled for production`);
   }

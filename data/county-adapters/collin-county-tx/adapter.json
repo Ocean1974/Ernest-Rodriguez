@@ -14,6 +14,42 @@
   "geometryType": "polygon",
   "sourceSpatialReference": "EPSG:2276 (NAD83 / Texas North Central ftUS)",
   "status": "pilot",
+  "sourceUpdatedAt": "2026-09-21T00:00:00Z",
+  "freshnessPolicy": {
+    "maxAgeDays": 120,
+    "sourceDateEvidence": "User-supplied CCAD preliminary appraisal export dated 2026-09-21 and matching same-refresh File Geodatabase"
+  },
+  "activation": {
+    "releaseTier": "map-search-pilot",
+    "authorized": true,
+    "authorizedAt": "2026-09-23T00:00:00.000Z",
+    "authorizedBy": "Ernest Rodriguez",
+    "scope": [
+      "parcel-map",
+      "parcel-search",
+      "owner-appraisal",
+      "parcel-dimensions",
+      "block-legal-context",
+      "permits-certificates",
+      "municipal-zoning",
+      "fema-floodplain",
+      "development-signals",
+      "aggregate-demand-context"
+    ],
+    "excludedUntilCertified": [
+      "pmtiles-runtime",
+      "immutable-cdn-delivery",
+      "full-production-release-tier"
+    ],
+    "countReconciliation": {
+      "sourceFeatures": 441278,
+      "emittedFeatures": 441278,
+      "skippedFeatures": 0,
+      "renderablePolygonFeatures": 441252,
+      "geometryQuarantinedSearchOnlyRecords": 26,
+      "skipReason": "All source records remain searchable; one missing and 25 invalid geometries are excluded only from polygon rendering."
+    }
+  },
   "map": {
     "locationId": 1019,
     "locationName": "Collin County TX / North Dallas Pilot",
@@ -52,7 +88,7 @@
     "ownerAppraisal": "https://services2.arcgis.com/uXyoacYrZTPTKD3R/arcgis/rest/services/CCAD_Parcel_Feature_Set/FeatureServer/4",
     "permitsRaw": "https://data.texas.gov/resource/82ee-gbj5.json (Collin CAD Building Permits)",
     "permitsProcessed": "public/data/counties/collin-county-tx/permits-refresh/",
-    "developmentRaw": "source-needed",
+    "developmentRaw": "public/data/counties/collin-county-tx/developments/manifest.json",
     "zoningRaw": [
       "https://maps.planogis.org/arcgiswad/rest/services/OpenData/Zoning/FeatureServer/0",
       "https://maps.mckinneytexas.org/mckinney/rest/services/OpenData/Planning_and_Zoning/MapServer/4",
@@ -67,10 +103,10 @@
       "https://services5.arcgis.com/lt8CbgYaNuFrQ7kB/arcgis/rest/services/Murphy_Zoning/FeatureServer/4"
     ],
     "floodplainRaw": "https://hazards.fema.gov/arcgis/rest/services/public/NFHL/MapServer/28",
-    "migrationDemandRaw": "source-needed",
-    "ccadLocalIntelligence": "data/raw/collin-county-tx/CCAD_Parcel_Feature_Set.csv with companion CCAD_Parcel_Feature_Set.xlsx schema evidence",
-    "ccadLocalGeometryRefresh": "data/raw/collin-county-tx/ccad-filegdb-refresh/*.gdb; Esri File Geodatabase Parcels layer",
-    "ccadKmzGeometryCrossCheck": "data/raw/collin-county-tx/CCAD_Parcel_Feature_Set.kmz; partial 206,204-parcel WGS84 polygon export"
+    "migrationDemandRaw": "public/data/counties/collin-county-tx/demand/manifest.json",
+    "ccadLocalIntelligence": "data/raw/collin-county-tx/CCAD_Parcel_Feature_Set.csv",
+    "ccadLocalGeometryRefresh": "data/raw/collin-county-tx/ccad-filegdb-refresh",
+    "ccadKmzGeometryCrossCheck": "data/raw/collin-county-tx/CCAD_Parcel_Feature_Set.kmz"
   },
   "publicDataRoots": {
     "parcels": "/data/counties/collin-county-tx/parcels/",
@@ -131,7 +167,7 @@
       "id": "permits",
       "label": "Permits and certificates of occupancy",
       "source": "Official Collin CAD Building Permits dataset 82ee-gbj5 via Texas Open Data Portal",
-      "status": "official-ccad-permits-joined-to-refresh",
+      "status": "ready-official-ccad-permits-joined-to-refresh",
       "joinBehavior": "exact permit propID to unique current CCAD propertyId, then current refresh GlobalID; unmatched and ambiguous rows preserved in counts",
       "defaultVisible": false,
       "publicDataRoot": "/data/counties/collin-county-tx/permits-refresh/",
@@ -159,14 +195,15 @@
     {
       "id": "development-signals",
       "label": "Development signals",
-      "source": "source-needed",
-      "status": "source-needed",
-      "joinBehavior": "source-needed: normalized permit, certificate, demolition, plat, and project evidence joined to parcel IDs",
+      "source": "Official Collin CAD Building Permits dataset 82ee-gbj5 normalized into parcel-level development evidence",
+      "status": "ready-official-permit-signals",
+      "joinBehavior": "Exact permit propID to unique current CCAD propertyId, then current-refresh GlobalID; 91,211 parcels carry evidence-backed development signals",
       "defaultVisible": false,
       "publicDataRoot": "/data/counties/collin-county-tx/developments/",
       "manifestPath": "public/data/counties/collin-county-tx/developments/parcel-development-index.json",
       "renderStrategy": "build-time evidence normalization, parcel/address/spatial joins, viewport-safe parcel index lookup",
-      "maxFeaturesPerViewport": 750
+      "maxFeaturesPerViewport": 750,
+      "publicManifestPath": "public/data/counties/collin-county-tx/developments/manifest.json"
     },
     {
       "id": "floodplain-intelligence",
@@ -188,14 +225,15 @@
     {
       "id": "migration-demand",
       "label": "Migration and demand",
-      "source": "source-needed",
-      "status": "source-needed",
-      "joinBehavior": "source-needed: aggregate Census/ACS/IRS or approved demand geography joined by tract/block group/market, not individual people",
+      "source": "National ACS and IRS aggregate county migration context for FIPS 48085",
+      "status": "ready-aggregate-geography-context",
+      "joinBehavior": "County-level aggregate geography context only; never represented as an individual parcel or person fact",
       "defaultVisible": false,
       "publicDataRoot": "/data/counties/collin-county-tx/demand/",
       "manifestPath": "public/data/counties/collin-county-tx/demand/manifest.json",
       "renderStrategy": "build-time aggregate demand scoring, offline geography-to-parcel join, viewport-safe parcel index lookup",
-      "maxFeaturesPerViewport": 750
+      "maxFeaturesPerViewport": 750,
+      "publicManifestPath": "public/data/counties/collin-county-tx/demand/manifest.json"
     },
     {
       "id": "ccad-local-intelligence-refresh",
@@ -265,8 +303,8 @@
     "permits": "exact official CCAD permit propID -> unique current CCAD propertyId -> current refresh GlobalID; preserve unmatched and ambiguous outcomes",
     "zoning": "CCAD accountNum/countyParcelId -> parcel liveGeometry centroid -> official municipal zoning polygon; parcel city-matched municipal source precedence",
     "floodplain": "parcel liveGeometry centroid -> FEMA NFHL Flood Hazard Zones polygon -> county parcel/account identifiers",
-    "developmentSignals": "source-needed: verified permit, plat, demolition, certificate, project, address, or spatial join evidence",
-    "migrationDemand": "source-needed: aggregate geography join, not individual people"
+    "developmentSignals": "exact official CCAD permit propID -> unique current CCAD propertyId -> current-refresh GlobalID; unmatched, ambiguous, and future-dated records remain separately counted",
+    "migrationDemand": "aggregate ACS/IRS county geography joined by Collin County FIPS 48085; context only, not an individual parcel or person fact"
   },
   "verifiedCounts": {
     "parcelGeometryFeatures": 441252,
@@ -279,8 +317,8 @@
     "sourcePermitRecords": 112627,
     "permitRowsJoined": 109638,
     "permitRowsUnmatched": 2911,
-    "parcelsWithDevelopmentSignals": 0,
-    "migrationDemandGeographies": 0,
+    "parcelsWithDevelopmentSignals": 91211,
+    "migrationDemandGeographies": 1,
     "invalidGeometry": 25,
     "parcelAddressSearchShards": 802,
     "permitRowsAmbiguous": 7,
@@ -329,6 +367,8 @@
     "public/data/counties/collin-county-tx/zoning/manifest.json",
     "public/data/counties/collin-county-tx/floodplain/manifest.json",
     "public/data/counties/collin-county-tx/demand/manifest.json",
+    "output/county-qc/collin-county-tx.md",
+    "output/county-qc/collin-county-tx.json",
     "public/data/counties/collin-county-tx/intelligence/manifest.json",
     "output/collin-county-tx/ccad-intelligence-report.md",
     "output/collin-county-tx/ccad-intelligence-report.json",
@@ -345,8 +385,8 @@
     "output/collin-county-tx/ccad-permit-intelligence-report.json",
     "output/collin-county-tx/parcel-intelligence-readiness.json"
   ],
-  "productionGap": "The live viewport/address-search service is rebuilt from all 441,278 current-refresh records. It publishes 441,252 valid polygons and retains 26 geometry-quarantined records in search. Final county QC and explicit production activation review remain; development signals and PMTiles are still incomplete.",
-  "pilotNotes": "Do not activate this county in the app. Do not redesign any pages. Fill official sources and exact join keys before any visible behavior changes.",
+  "productionGap": "The live viewport/address-search service is rebuilt from all 441,278 current-refresh records with appraisal, dimensions, permits, municipal zoning, FEMA floodplain, development signals, and aggregate demand context. Production remains blocked until a verified PMTiles/vector-tile artifact, final zero-warning QC, and signed activation evidence exist.",
+  "pilotNotes": "Keep Collin disabled until its individual release manifest authorizes activation. Do not redesign any pages or weaken exact-count, freshness, tile, or rollback gates.",
   "verifiedDiscovery": {
     "status": "official-live-feature-service-verified-and-full-map-search-service-built",
     "officialSite": "https://www.collincad.org/",

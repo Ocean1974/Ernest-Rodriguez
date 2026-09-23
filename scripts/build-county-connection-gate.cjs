@@ -182,7 +182,7 @@ function buildCountyGate(queueRecord) {
 
   const ownerJoinedToPublicService =
     adapter.status === "active" ||
-    (mapSearchReady && Boolean(parcelManifest?.joinedAppraisalCount) && !layerSourceNeeded(ownerLayer));
+    (mapSearchReady && Boolean(parcelManifest?.joinedAppraisalCount || parcelManifest?.appraisalValueRecordCount) && !layerSourceNeeded(ownerLayer));
   const addressReady = ownerJoinedToPublicService || (
     layerReady(addressLayer) &&
     !layerSourceNeeded(addressLayer) &&
@@ -197,7 +197,7 @@ function buildCountyGate(queueRecord) {
   const dimensionsReady =
     layerReady(dimensionsLayer) &&
     !layerSourceNeeded(dimensionsLayer) &&
-    (adapter.status === "active" || compactNumber(parcelManifest?.joinedParcelDimensionCount) > 0);
+    (adapter.status === "active" || compactNumber(parcelManifest?.joinedParcelDimensionCount || adapter.verifiedCounts?.parcelIndexCount) > 0);
   const blockGridReady = layerReady(blockLayer) && !layerSourceNeeded(blockLayer);
   const developmentReady = layerReady(developmentLayer) && !layerSourceNeeded(developmentLayer);
   const migrationDemandReady = (layerReady(demandLayer) && !layerSourceNeeded(demandLayer)) || /^ready/i.test(String(nationalDemand?.status || ""));

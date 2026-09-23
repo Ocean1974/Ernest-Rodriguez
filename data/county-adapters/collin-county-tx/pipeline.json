@@ -3,8 +3,8 @@
   "countyAdapter": "data/county-adapters/collin-county-tx/adapter.json",
   "universalParcelSchema": "data/schemas/universal-parcel.schema.json",
   "defaultMode": "plan",
-  "enabledForProduction": false,
-  "scaffoldOnly": true,
+  "enabledForProduction": true,
+  "scaffoldOnly": false,
   "pipelineContract": {
     "mode": "evidence-gated",
     "sourcePriority": "official assessor/appraiser, county GIS, municipal, state, or federal sources first",
@@ -242,5 +242,6 @@
     "handoff": "output/collin-county-tx/vector-tiles/README.md",
     "expectedOutput": "output/collin-county-tx/collin-county-tx-parcels.pmtiles"
   },
-  "uiConstraint": "Do not redesign or restyle any White Rabbit pages while running this pilot county ingestion pipeline."
+  "uiConstraint": "Do not redesign or restyle any White Rabbit pages while running this pilot county ingestion pipeline.",
+  "activationScope": "map-search-pilot"
 }

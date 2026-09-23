@@ -20,6 +20,11 @@ const targets = [
   "bexar-county-tx",
 ];
 
+const scopedPilotFeatureGates = {
+  "harris-county-tx": "houstonMapSearch",
+  "collin-county-tx": "collinMapSearch",
+};
+
 function readJson(relativePath) {
   return JSON.parse(fs.readFileSync(path.join(root, relativePath), "utf8").replace(/^\uFEFF/, ""));
 }
@@ -69,8 +74,9 @@ function countyDecision(countyId, promotionById, connectionById, freshnessById) 
   const technicalEligibility = failedGateIds.length === 0;
   const adapterProductionEnabled = pipeline?.enabledForProduction === true;
   const registrySelectable = new RegExp(`id: ["']${countyId.replace(/[.*+?^${}()|[\]\\]/g, "\\$&")}["'][\\s\\S]{0,350}?enabled: true`).test(registrySource);
+  const scopedPilotGate = scopedPilotFeatureGates[countyId] || "";
   const featureGateEnabled = pilotRequested
-    ? /houstonMapSearch:\s*true/.test(featureGateSource)
+    ? Boolean(scopedPilotGate && new RegExp(`${scopedPilotGate}:\\s*true`).test(featureGateSource))
     : /priorityCountyActivation:\s*true/.test(featureGateSource);
   const visibilityAuthorized = technicalEligibility && adapterProductionEnabled && registrySelectable && featureGateEnabled;
   const blockers = [
@@ -127,7 +133,7 @@ function main() {
     baseline: {
       countyId: "dallas-county-dcad",
       disposition: "retain-production-active-model",
-      visibleCountyIds: ["dallas-county-dcad", "harris-county-tx"],
+      visibleCountyIds: ["dallas-county-dcad", "harris-county-tx", "collin-county-tx"],
       exactParcelFeatureCount: 696601,
       exactSearchShardCount: 1224,
       dcadLikeWindowReady: connectionById.get("dallas-county-dcad")?.dcadLikeWindowReady === true,
@@ -182,7 +188,7 @@ function main() {
     ...counties.flatMap((county) => [`### ${county.countyName}`, "", ...county.blockers.map((blocker) => `- ${blocker}`), ""]),
     "## UI safety",
     "",
-    "Dallas remains the production baseline. Houston/Harris County is selectable at the map/search pilot tier. This tranche changed no page layout, styling, imagery, or parcel interaction.",
+    "Dallas remains the production baseline. Houston/Harris County and Collin County are selectable at the scoped map/search pilot tier. PMTiles remains disabled until independently certified. This tranche changed no page layout, styling, imagery, or parcel interaction.",
     "",
   ];
   fs.writeFileSync(outputMd, lines.join("\n"));

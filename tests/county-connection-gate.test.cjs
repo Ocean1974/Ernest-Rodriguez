@@ -127,15 +127,16 @@ assert(tarrant.safeVisibleActivation === "pilot-map-search-only", "Tarrant must 
 assert(tarrant.adapterStatus === "pilot", "Tarrant must not be promoted to an active production adapter by the intelligence pilot");
 
 const collin = county("collin-county-tx");
-assert(collin.activationStage === "map-search-pilot-ready", "Collin full parcel service should be map/search pilot ready");
+assert(collin.activationStage === "map-search-pilot-active", "Collin full parcel service should be an authorized map/search pilot");
 assert(collin.mapSearchReady === true, "Collin full viewport/search service must be ready");
-assert(collin.dcadLikeWindowReady === false, "Collin must remain below DCAD parity until intelligence layers are complete");
+assert(collin.dcadLikeWindowReady === true, "Collin must expose the complete DCAD-like intelligence window before activation");
+assert(collin.missingDcadLikeGroups.length === 0, "Collin must have all 14 DCAD-like intelligence groups connected");
 assert(collin.parcelService.sourceVerifiedFeatureCount === 441278, "Collin gate must preserve the official current-refresh record count");
 assert(collin.parcelService.featureCount === 441278, "Collin gate must lock the current-refresh service record count, including search-only geometry quarantines");
 assert(collin.parcelService.chunkCount === 1606, "Collin viewport chunk count must be locked");
 assert(collin.parcelService.searchShardCount === 1168, "Collin search shard count must be locked");
 assert(collin.sourceCounts.missingGeometry === 1, "Collin current-refresh null-geometry count must remain visible");
-assert(collin.safeVisibleActivation === "pilot-map-search-only", "Collin must remain pilot-only until remaining gates pass");
+assert(collin.safeVisibleActivation === "active-map-search-pilot", "Collin must be visible only within its authorized map/search pilot scope");
 
 const denton = county("denton-county-tx");
 assert(denton.activationStage === "map-search-pilot-ready", "Denton full parcel service should be map/search pilot ready");

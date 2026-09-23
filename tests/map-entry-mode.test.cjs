@@ -227,7 +227,7 @@ assert(appSource.includes("return clamp(4.45 + (safeCamera.zoom - 0.58) * 7.2, 3
 assert(compactMapControlsSource.includes("LocateFixed"), "Compact map controls must show the find-my-location icon");
 assert(compactMapControlsSource.includes("onFindMyLocation"), "Compact map controls must call the find-my-location handler");
 assert(compactMapControlsSource.includes('aria-live="polite"'), "Find-my-location status must be exposed accessibly without visual redesign");
-assert(mapSource.includes("{!earthIntroActive && (\n        <CompactMapControls"), "Map control stack must stay off the interactive globe landing page");
+assert(/\{!earthIntroActive && \(\r?\n\s*<CompactMapControls/.test(mapSource), "Map control stack must stay off the interactive globe landing page");
 
 assert(liveMapEngineSource.includes('"wr-aerial-imagery"'), "Page three must keep the Esri imagery source");
 assert(liveMapEngineSource.includes("server.arcgisonline.com/ArcGIS/rest/services/World_Imagery"), "Page three must use Esri World Imagery");
@@ -269,7 +269,7 @@ assert(liveMapEngineSource.includes("const selectionOptions = { ...mapParcelSele
 assert(!liveMapEngineSource.includes("queueHoverInfoWindow"), "Parcel intelligence windows must open from selection behavior, not Jefferson-only hover behavior");
 assert(liveMapEngineSource.includes("focusSelectedParcel = true"), "Selected parcel map focus must remain enabled by default");
 assert(liveMapEngineSource.includes("if (!focusSelectedParcel)"), "Map-selected parcels must be able to skip map auto-focus");
-assert(mapSource.includes("} else if (focusCamera) {\n      enterDallasParcelMode({ clearSelection: false, focusGlobe: false });"), "Dallas map-selected parcels must not reset the camera when focusCamera is false");
+assert(/\} else if \(focusCamera\) \{\r?\n\s*enterDallasParcelMode\(\{ clearSelection: false, focusGlobe: false \}\);/.test(mapSource), "Dallas map-selected parcels must not reset the camera when focusCamera is false");
 assert(liveMapEngineSource.includes("map.scrollZoom.disable();"), "Native MapLibre scroll zoom must stay disabled when custom wheel zoom owns input");
 assert(liveMapEngineSource.includes('addEventListener("wheel", handleMapCanvasWheel, { passive: false })'), "Map canvas wheel listener must prevent page scroll");
 assert(liveMapEngineSource.includes("around: cursorLngLat"), "Map canvas wheel zoom must zoom around the cursor");
@@ -279,7 +279,7 @@ assert(aerialLayerControlsSource.includes("setShowParcelLabels((v) => !v)"), "Pa
 assert(aerialLayerControlsSource.includes("setShowDimensions((v) => !v)"), "Dimension icon button must toggle dimensions");
 assert(aerialLayerControlsSource.includes("setShowGrid((v) => !v)"), "Grid icon button must toggle grid");
 assert(aerialLayerControlsSource.includes("setShowFloodplain((v) => !v)"), "Floodplain icon button must toggle the floodplain layer");
-assert(mapSource.includes("{!earthIntroActive && (\n        <AerialLayerControls"), "Aerial layer buttons must only render on the aerial map page");
+assert(/\{!earthIntroActive && \(\r?\n\s*<AerialLayerControls/.test(mapSource), "Aerial layer buttons must only render on the aerial map page");
 assert(aerialLayerControlsSource.includes('data-layer-icon-controls="aerial-map"'), "Aerial layer controls must keep their right-side icon stack hook");
 assert(aerialLayerControlsSource.includes('label="Toggle zoning layer"'), "Aerial layer controls must expose the zoning layer toggle");
 assert(appSource.includes("data-layer-state={active ? \"on\" : \"off\"}"), "Layer buttons must expose on/off state metadata");
@@ -305,10 +305,10 @@ assert(mapSource.includes("parcelStableAccountId(selectedParcel || {})") && mapS
 assert(mapSource.includes("loadParcelZoningSummary("), "Selecting a parcel must load zoning by parcel ID");
 assert(mapSource.includes("loadParcelFloodplainSummary("), "Selecting a parcel must load floodplain by parcel ID");
 assert(liveMapEngineSource.includes('id: "wr-floodplain-parcels-fill"'), "Map must include a default-off floodplain parcel layer");
-assert(mapSource.includes("{selectedParcel && (\n        <FocusedParcelCard"), "Selected parcels must render the parcel information window");
+assert(/\{selectedParcel && \(\r?\n\s*<FocusedParcelCard/.test(mapSource), "Selected parcels must render the parcel information window");
 assert(mapSource.includes('setSelectedParcelAccount("")') && focusedParcelCardSource.includes("onClose"), "Parcel information window must be closable");
 
-assert(stylesSource.includes("html,\nbody,\n#root") && stylesSource.includes("overflow: hidden;"), "App shell must prevent browser page scrolling behind the live map");
+assert(/html,\r?\nbody,\r?\n#root/.test(stylesSource) && stylesSource.includes("overflow: hidden;"), "App shell must prevent browser page scrolling behind the live map");
 assert(stylesSource.includes("overscroll-behavior: none;"), "App shell must disable viewport overscroll drift");
 
 console.log("map entry mode tests passed");

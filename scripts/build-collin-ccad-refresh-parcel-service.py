@@ -316,6 +316,7 @@ def main() -> int:
     invalid_geometry = 0
     row_order_matches = 0
     value_record_count = 0
+    dimension_record_count = 0
     certified_prior_roll_count = 0
     transformer = Transformer.from_crs("EPSG:2276", "EPSG:4326", always_xy=True)
 
@@ -377,6 +378,8 @@ def main() -> int:
                 record = parcel_record(row, center, screen, chunk_id)
                 if compact(record.get("totalValue")):
                     value_record_count += 1
+                if record.get("joins", {}).get("parcelDimension"):
+                    dimension_record_count += 1
                 if record.get("valueStatus") == "certified-prior-roll":
                     certified_prior_roll_count += 1
                 record_json = json.dumps(record, separators=(",", ":"), ensure_ascii=True)
@@ -436,10 +439,11 @@ def main() -> int:
     manifest = {
         "schemaVersion": "wr-collin-ccad-refresh-parcel-service-v1",
         "generatedAt": generated_at,
+        "sourceUpdatedAt": "2026-09-21T00:00:00Z",
         "source": "data/raw/collin-county-tx/ccad-filegdb-refresh/*.gdb + CCAD_Parcel_Feature_Set.csv",
         "sourceCountyId": COUNTY_ID,
         "mode": "full-refresh",
-        "activationStatus": "rebuilt-from-verified-refresh-needs-final-county-qc",
+        "activationStatus": "release-candidate-awaiting-tile-and-gate-certification",
         "activationAuthorized": False,
         "sourceVerifiedFeatureCount": source_count,
         "featureCount": source_count,
@@ -450,6 +454,8 @@ def main() -> int:
         "invalidGeometry": invalid_geometry,
         "rowOrderGlobalIdMatches": row_order_matches,
         "appraisalValueRecordCount": value_record_count,
+        "joinedAppraisalCount": source_count,
+        "joinedParcelDimensionCount": dimension_record_count,
         "certifiedPriorRollRecordCount": certified_prior_roll_count,
         "appraisalValuePolicy": "Use currVal* when populated; otherwise use certified prevVal* from the CCAD in-progress delivery.",
         "chunkCount": len(chunks),
@@ -488,6 +494,8 @@ def main() -> int:
         "invalidGeometry": invalid_geometry,
         "rowOrderGlobalIdMatches": row_order_matches,
         "appraisalValueRecordCount": value_record_count,
+        "joinedAppraisalCount": source_count,
+        "joinedParcelDimensionCount": dimension_record_count,
         "certifiedPriorRollRecordCount": certified_prior_roll_count,
         "chunkCount": len(chunks),
         "searchShardFileCount": len(search_pool.headers),
