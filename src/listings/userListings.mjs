@@ -62,6 +62,7 @@ export function createUserListing(draft, listingKind, options = {}) {
     market: clean(draft.market) || clean(draft.city) || county,
     county,
     status: clean(draft.status) || (listingKind === "rentals" ? "For Rent" : "For Sale"),
+    publicationStatus: ["draft", "published", "archived"].includes(clean(draft.publicationStatus)) ? clean(draft.publicationStatus) : "published",
     assetType: clean(draft.assetType) || (listingKind === "cre" ? "Commercial" : listingKind === "rentals" ? "Rental" : "Residential"),
     propertyName,
     address,

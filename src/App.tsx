@@ -24,7 +24,7 @@ import { buildParcelAgentContext, PARCEL_AGENTS, requestParcelAgent } from "./ag
 import CrmPage from "./components/CrmPage";
 import { createUserListing, listingsForMember, loadUserListings, memberOwnsListing, removeUserListing, saveUserListings, upsertUserListing } from "./listings/userListings.mjs";
 import { importUserListingsFromCsv } from "./listings/importListings.mjs";
-import { deleteHostedMemberListing, hostedMemberServiceConfigured, loadHostedListingViews, loadHostedMemberListings, loadHostedMemberProfile, loadHostedPublicListings, recordHostedListingView, requestHostedPasswordReset, saveHostedMemberListing, saveHostedMemberProfile, signInHostedMember, signUpHostedMember } from "./listings/hostedMemberService.mjs";
+import { deleteHostedMemberListing, hostedMemberServiceConfigured, loadHostedListingViews, loadHostedMemberListings, loadHostedMemberProfile, loadHostedPublicListings, recordHostedListingView, requestHostedPasswordReset, saveHostedMemberListing, saveHostedMemberProfile, signInHostedMember, signUpHostedMember, uploadHostedListingMedia } from "./listings/hostedMemberService.mjs";
 import { calculateListingDeal, parseListingCoordinates } from "./listings/dealRating.mjs";
 import { listingVisitorId, loadListingViews, recordLocalListingView, summarizeListingViews } from "./listings/listingAnalytics.mjs";
 import { PLATFORM_IDENTITY } from "./platform/platformIdentity";
@@ -1917,6 +1917,7 @@ function emptyListingDraft(listingKind) {
     monthlyRent: "",
     marketMonthlyRent: "",
     monthlyExpenses: "",
+    publicationStatus: "published",
   };
 }
 
@@ -2013,7 +2014,7 @@ function CommercialMarketplacePage({ onBack, onOpenMap, onOpenListingKind, listi
   };
   const openNewListing = () => {
     if (!memberSession) return;
-    setListingEditor({ mode: "create", draft: { ...emptyListingDraft(listingKind), contactName: memberSession.displayName, contactEmail: memberSession.email } });
+    setListingEditor({ mode: "create", draft: { ...emptyListingDraft(listingKind), id: memberSession.provider === "supabase" ? crypto.randomUUID() : "", contactName: memberSession.displayName, contactEmail: memberSession.email } });
   };
   const updateMemberProfile = async (event) => {
     event.preventDefault();
@@ -2052,7 +2053,7 @@ function CommercialMarketplacePage({ onBack, onOpenMap, onOpenListingKind, listi
       }
     }
     const listing = createUserListing(geocodedDraft, listingKind, {
-      id: listingEditor.mode === "edit" ? current.id : memberSession?.provider === "supabase" ? crypto.randomUUID() : undefined,
+      id: current.id || undefined,
       now: new Date().toISOString(),
       ownerMemberId: memberSession?.memberId,
       ownerDisplayName: memberSession?.displayName,
@@ -2082,10 +2083,22 @@ function CommercialMarketplacePage({ onBack, onOpenMap, onOpenListingKind, listi
     }
     setUserListings((items) => removeUserListing(items, property.id));
   };
-  const loadListingPhoto = (file) => {
+  const loadListingPhoto = async (file) => {
     if (!file) return;
-    if (!file.type.startsWith("image/") || file.size > 2 * 1024 * 1024) {
-      window.alert("Choose an image file smaller than 2 MB.");
+    if (!file.type.startsWith("image/") || file.size > 10 * 1024 * 1024) {
+      window.alert("Choose a JPG, PNG, or WebP image smaller than 10 MB.");
+      return;
+    }
+    if (memberSession?.provider === "supabase") {
+      try {
+        setListingImportStatus("Uploading listing photo…");
+        const media = await uploadHostedListingMedia(HOSTED_MEMBER_SERVICE, memberSession, listingEditor?.draft?.id, file);
+        updateListingDraft("image", media.publicUrl);
+        updateListingDraft("imageStoragePath", media.path);
+        setListingImportStatus("Listing photo uploaded.");
+      } catch (error) {
+        setListingImportStatus(error instanceof Error ? error.message : "Listing photo could not be uploaded.");
+      }
       return;
     }
     const reader = new FileReader();
@@ -2282,7 +2295,7 @@ function CommercialMarketplacePage({ onBack, onOpenMap, onOpenListingKind, listi
                     {listingDealBadgeForProperty(property, nearbyDevelopments)}
                   </span>
                   {memberOwnsListing(property, memberSession?.memberId) && (
-                    <span className="absolute right-3 top-3 rounded-md bg-white/95 px-2.5 py-1.5 text-xs font-bold text-[#0b5cab] shadow-sm">Owner submitted</span>
+                    <span className="absolute right-3 top-3 rounded-md bg-white/95 px-2.5 py-1.5 text-xs font-bold text-[#0b5cab] shadow-sm">{property.publicationStatus && property.publicationStatus !== "published" ? property.publicationStatus[0].toUpperCase() + property.publicationStatus.slice(1) : "Owner submitted"}</span>
                   )}
                 </div>
                 <div className="p-4">
@@ -2409,7 +2422,7 @@ function CommercialMarketplacePage({ onBack, onOpenMap, onOpenListingKind, listi
               </form>
               <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4" data-listing-analytics-summary="true">
                 {[
-                  [memberListings.length, "Active listings", Building2],
+                  [memberListings.filter((listing) => (listing.publicationStatus || "published") === "published").length, "Published listings", Building2],
                   [memberListingAnalytics.totalViews, "Total views", Eye],
                   [memberListingAnalytics.uniqueVisitors, "Unique visitors", Users],
                   [memberListingAnalytics.viewedListings, "Listings viewed", Activity],
@@ -2428,7 +2441,7 @@ function CommercialMarketplacePage({ onBack, onOpenMap, onOpenListingKind, listi
                   const stats = memberListingAnalytics.byListing[listing.id] || { totalViews: 0, uniqueVisitors: 0, lastViewedAt: "", recentViewers: [] };
                   return <article key={listing.id} className="rounded-lg border border-slate-200 p-4" data-member-listing-analytics={listing.id}>
                     <div className="flex flex-wrap items-start justify-between gap-3">
-                      <div className="min-w-0"><p className="truncate text-sm font-bold">{listing.propertyName}</p><p className="truncate text-xs text-slate-500">{listing.listingKind.toUpperCase()} · {listing.address}</p></div>
+                      <div className="min-w-0"><p className="truncate text-sm font-bold">{listing.propertyName}</p><p className="truncate text-xs text-slate-500">{listing.listingKind.toUpperCase()} · {(listing.publicationStatus || "published").toUpperCase()} · {listing.address}</p></div>
                       <div className="flex items-center gap-4 text-xs font-bold text-slate-700"><span className="inline-flex items-center gap-1"><Eye size={13} className="text-[#0b5cab]" />{stats.totalViews} views</span><span className="inline-flex items-center gap-1"><Users size={13} className="text-[#0b5cab]" />{stats.uniqueVisitors} unique</span><button type="button" onClick={() => { if (listing.listingKind !== listingKind) { setMemberProfileOpen(false); onOpenListingKind(listing.listingKind); return; } setMemberProfileOpen(false); openEditListing(listing); }} className="rounded-md border border-slate-300 px-3 py-1.5 text-xs font-bold text-slate-700"><Pencil size={13} className="mr-1 inline" />{listing.listingKind === listingKind ? "Edit" : "Open"}</button></div>
                     </div>
                     <div className="mt-3 border-t border-slate-100 pt-3">
@@ -2514,6 +2527,14 @@ function CommercialMarketplacePage({ onBack, onOpenMap, onOpenListingKind, listi
                   {(listingKind === "cre" ? ["For Sale", "For Lease", "Watch"] : listingKind === "rentals" ? ["For Rent", "Coming Soon", "Leased", "Watch"] : ["For Sale", "Coming Soon", "Watch"]).map((status) => <option key={status}>{status}</option>)}
                 </select>
               </label>
+              <label className="block">
+                <span className="text-xs font-bold text-slate-600">Publication</span>
+                <select value={listingEditor.draft.publicationStatus || "published"} onChange={(event) => updateListingDraft("publicationStatus", event.target.value)} className="mt-1.5 h-10 w-full rounded-md border border-slate-300 px-3 text-sm outline-none focus:border-[#0b5cab]" data-listing-publication-status="true">
+                  <option value="draft">Draft — only you can see it</option>
+                  <option value="published">Published — visible in marketplace</option>
+                  <option value="archived">Archived — removed from marketplace</option>
+                </select>
+              </label>
               <label className="block sm:col-span-2 lg:col-span-3">
                 <span className="text-xs font-bold text-slate-600">Description</span>
                 <textarea value={listingEditor.draft.highlight} onChange={(event) => updateListingDraft("highlight", event.target.value)} rows={3} placeholder="Describe the property and opportunity." className="mt-1.5 w-full rounded-md border border-slate-300 px-3 py-2 text-sm outline-none focus:border-[#0b5cab] focus:ring-2 focus:ring-blue-100" />
@@ -2530,7 +2551,7 @@ function CommercialMarketplacePage({ onBack, onOpenMap, onOpenListingKind, listi
             </div>
             <div className="sticky bottom-0 flex justify-end gap-3 border-t border-slate-200 bg-white px-5 py-4">
               <button type="button" onClick={() => setListingEditor(null)} className="rounded-md border border-slate-300 px-4 py-2 text-sm font-bold text-slate-700 hover:bg-slate-50">Cancel</button>
-              <button type="submit" className="rounded-md bg-[#0b5cab] px-5 py-2 text-sm font-bold text-white hover:bg-[#084a89]">{listingEditor.mode === "edit" ? "Save Changes" : "Publish Listing"}</button>
+              <button type="submit" className="rounded-md bg-[#0b5cab] px-5 py-2 text-sm font-bold text-white hover:bg-[#084a89]">{listingEditor.mode === "edit" ? "Save Changes" : listingEditor.draft.publicationStatus === "published" ? "Publish Listing" : "Save Listing"}</button>
             </div>
           </form>
         </div>

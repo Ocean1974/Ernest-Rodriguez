@@ -104,6 +104,7 @@ function listingFromRow(row) {
     ...(row.payload || {}),
     id: row.id,
     listingKind: row.listing_kind,
+    publicationStatus: row.publication_status,
     propertyName: row.property_name,
     address: row.address,
     county: row.county,
@@ -136,7 +137,7 @@ export async function saveHostedMemberListing(config, session, listing) {
     id: listing.id,
     owner_id: session.memberId,
     listing_kind: listing.listingKind,
-    publication_status: listing.status === "Watch" ? "draft" : "published",
+    publication_status: ["draft", "published", "archived"].includes(listing.publicationStatus) ? listing.publicationStatus : "published",
     property_name: listing.propertyName,
     address: listing.address,
     county: listing.county,
@@ -160,6 +161,31 @@ export async function deleteHostedMemberListing(config, session, listingId) {
     headers: headers(config, session.accessToken),
   });
   await readResponse(response);
+}
+
+function safeMediaName(fileName = "listing-media") {
+  const source = trim(fileName).toLowerCase().replace(/[^a-z0-9._-]+/g, "-").replace(/^-+|-+$/g, "");
+  return source || "listing-media";
+}
+
+export async function uploadHostedListingMedia(config, session, listingId, file) {
+  if (!hostedMemberServiceConfigured(config) || !session?.accessToken) throw new Error("Hosted member media is not configured.");
+  if (!listingId || !file) throw new Error("A listing and file are required.");
+  const allowedTypes = new Set(["image/jpeg", "image/png", "image/webp", "application/pdf"]);
+  if (!allowedTypes.has(file.type)) throw new Error("Choose a JPG, PNG, WebP, or PDF file.");
+  if (Number(file.size) > 10 * 1024 * 1024) throw new Error("Listing media must be 10 MB or smaller.");
+  const path = `${encodeURIComponent(session.memberId)}/${encodeURIComponent(listingId)}/${Date.now()}-${safeMediaName(file.name)}`;
+  const response = await fetch(`${trim(config.url).replace(/\/$/, "")}/storage/v1/object/listing-media/${path}`, {
+    method: "POST",
+    headers: headers(config, session.accessToken, { "Content-Type": file.type, "x-upsert": "false" }),
+    body: file,
+  });
+  await readResponse(response);
+  return {
+    path: decodeURIComponent(path),
+    publicUrl: `${trim(config.url).replace(/\/$/, "")}/storage/v1/object/public/listing-media/${path}`,
+    mediaType: file.type,
+  };
 }
 
 export async function recordHostedListingView(config, session, listingId, viewerSessionId) {

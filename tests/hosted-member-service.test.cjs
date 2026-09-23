@@ -23,6 +23,7 @@ const { pathToFileURL } = require("node:url");
     {},
     "view-1",
     [{ id: "view-1", listing_id: "listing-1", listing_owner_id: "member-1", viewer_id: "member-2", viewer_session_id: "visitor-member-2", viewer_display_name: "Jon", viewed_at: "2026-09-22T00:00:00.000Z" }],
+    {},
   ];
   const originalFetch = global.fetch;
   global.fetch = async (url, options = {}) => {
@@ -52,6 +53,8 @@ const { pathToFileURL } = require("node:url");
     await service.recordHostedListingView(config, signupSession, "listing-1", "visitor-member-2");
     const views = await service.loadHostedListingViews(config, session);
     assert.equal(views[0].viewerDisplayName, "Jon");
+    const uploaded = await service.uploadHostedListingMedia(config, session, "listing-1", { name: "Front Photo.JPG", type: "image/jpeg", size: 1024 });
+    assert.match(uploaded.publicUrl, /storage\/v1\/object\/public\/listing-media/);
     assert.match(requests[0].url, /auth\/v1\/token/);
     assert.match(requests[1].url, /auth\/v1\/signup/);
     assert.deepEqual(JSON.parse(requests[1].options.body).data, { display_name: "Jon" });
@@ -64,6 +67,8 @@ const { pathToFileURL } = require("node:url");
     assert.match(requests[8].url, /auth\/v1\/recover/);
     assert.match(requests[9].url, /rpc\/record_listing_view/);
     assert.match(requests[10].url, /listing_views/);
+    assert.match(requests[11].url, /storage\/v1\/object\/listing-media/);
+    assert.equal(requests[11].options.method, "POST");
   } finally {
     global.fetch = originalFetch;
   }
@@ -72,6 +77,10 @@ const { pathToFileURL } = require("node:url");
   assert.match(migration, /enable row level security/i);
   assert.match(migration, /auth\.uid\(\) = owner_id/);
   assert.match(migration, /listing_kind in \('resi', 'rentals', 'cre'\)/);
+  const mediaMigration = fs.readFileSync(path.join(root, "supabase/migrations/202609220002_listing_media.sql"), "utf8");
+  assert.match(mediaMigration, /listing-media/);
+  assert.match(mediaMigration, /storage\.foldername\(name\)/);
+  assert.match(mediaMigration, /owner_id = auth\.uid\(\)::text/);
   const app = fs.readFileSync(path.join(root, "src/App.tsx"), "utf8");
   const landingStart = app.indexOf("export default function WhiteRabbitLanding");
   const landing = app.slice(landingStart);
