@@ -1,5 +1,5 @@
 import { lazy, Suspense, useDeferredValue, useEffect, useMemo, useRef, useState } from "react";
-import { ArrowLeft, Bot, Building2, ChevronDown, ChevronUp, Grid3X3, ImagePlus, Landmark, LocateFixed, LogOut, MapPin, Maximize2, Minimize2, Pencil, Plus, Ruler, Send, Tags, Trash2, Upload, UserRound, Waves, X } from "lucide-react";
+import { Activity, ArrowLeft, Bot, Building2, ChevronDown, ChevronUp, Eye, Grid3X3, ImagePlus, Landmark, LocateFixed, LogOut, MapPin, Maximize2, Minimize2, Pencil, Plus, Ruler, Send, Tags, Trash2, Upload, UserRound, Users, Waves, X } from "lucide-react";
 import dcadOwnerData from "./data/dcadOwnerParcels.json";
 import developmentIntel from "./data/developmentIntel.json";
 import parcelDimensionLabels from "./data/parcelDimensionLabels.json";
@@ -24,8 +24,9 @@ import { buildParcelAgentContext, PARCEL_AGENTS, requestParcelAgent } from "./ag
 import CrmPage from "./components/CrmPage";
 import { createUserListing, listingsForMember, loadUserListings, memberOwnsListing, removeUserListing, saveUserListings, upsertUserListing } from "./listings/userListings.mjs";
 import { importUserListingsFromCsv } from "./listings/importListings.mjs";
-import { deleteHostedMemberListing, hostedMemberServiceConfigured, loadHostedMemberListings, saveHostedMemberListing, signInHostedMember, signUpHostedMember } from "./listings/hostedMemberService.mjs";
+import { deleteHostedMemberListing, hostedMemberServiceConfigured, loadHostedListingViews, loadHostedMemberListings, loadHostedMemberProfile, loadHostedPublicListings, recordHostedListingView, requestHostedPasswordReset, saveHostedMemberListing, saveHostedMemberProfile, signInHostedMember, signUpHostedMember } from "./listings/hostedMemberService.mjs";
 import { calculateListingDeal, parseListingCoordinates } from "./listings/dealRating.mjs";
+import { listingVisitorId, loadListingViews, recordLocalListingView, summarizeListingViews } from "./listings/listingAnalytics.mjs";
 import { PLATFORM_IDENTITY } from "./platform/platformIdentity";
 import { enqueueSavantEvent } from "./agents/savantEventQueue.mjs";
 import SavantToolsPage from "./components/SavantToolsPage";
@@ -1552,8 +1553,6 @@ function SearchBar({ value = "", onChange, onSubmit, onClear, placeholder = "Sea
 }
 
 const MEMBER_ACCESS_SESSION_KEY = "white-rabbit-member-access-v1";
-const DEFAULT_MEMBER_USERNAME = "member";
-const DEFAULT_MEMBER_PASSWORD = "white-rabbit-2026";
 const HOSTED_MEMBER_SERVICE = {
   url: String(import.meta.env.VITE_SUPABASE_URL || ""),
   anonKey: String(import.meta.env.VITE_SUPABASE_ANON_KEY || ""),
@@ -1565,14 +1564,15 @@ function normalizeMemberUsername(value) {
 
 function getMemberAccessCredentials() {
   return {
-    username: normalizeMemberUsername(import.meta.env.VITE_WHITE_RABBIT_MEMBER_USERNAME || DEFAULT_MEMBER_USERNAME),
-    password: String(import.meta.env.VITE_WHITE_RABBIT_MEMBER_PASSWORD || DEFAULT_MEMBER_PASSWORD),
+    enabled: String(import.meta.env.VITE_ENABLE_DEMO_MEMBER_ACCESS || "").toLowerCase() === "true",
+    username: normalizeMemberUsername(import.meta.env.VITE_WHITE_RABBIT_MEMBER_USERNAME || ""),
+    password: String(import.meta.env.VITE_WHITE_RABBIT_MEMBER_PASSWORD || ""),
   };
 }
 
 function memberCredentialsAreValid(username, password) {
   const credentials = getMemberAccessCredentials();
-  return normalizeMemberUsername(username) === credentials.username && String(password) === credentials.password;
+  return credentials.enabled && credentials.username && credentials.password.length >= 12 && normalizeMemberUsername(username) === credentials.username && String(password) === credentials.password;
 }
 
 function readMemberAccessSession() {
@@ -1581,10 +1581,14 @@ function readMemberAccessSession() {
     const stored = window.localStorage.getItem(MEMBER_ACCESS_SESSION_KEY);
     if (!stored) return null;
     if (stored === "active") {
-      const username = getMemberAccessCredentials().username;
-      return { memberId: username, username, displayName: username, email: username.includes("@") ? username : "" };
+      window.localStorage.removeItem(MEMBER_ACCESS_SESSION_KEY);
+      return null;
     }
     const session = JSON.parse(stored);
+    if (session?.expiresAt && Number(session.expiresAt) <= Date.now()) {
+      window.localStorage.removeItem(MEMBER_ACCESS_SESSION_KEY);
+      return null;
+    }
     return session?.memberId && session?.username ? session : null;
   } catch {
     return null;
@@ -1675,7 +1679,23 @@ function MemberAccessGate({ onAccessGranted, onCancel, initialMode = "login" }) 
       onAccessGranted(session);
       return;
     }
-    setLoginError("Member login not recognized. Check the username and password.");
+    setLoginError(getMemberAccessCredentials().enabled ? "Member login not recognized. Check the username and password." : "Member accounts are not connected in this environment yet.");
+  };
+
+  const requestPasswordReset = async () => {
+    setLoginError("");
+    setSignupStatus("");
+    if (!hostedMemberServiceConfigured(HOSTED_MEMBER_SERVICE)) { setLoginError("Password recovery is not connected in this environment yet."); return; }
+    if (!username.includes("@")) { setLoginError("Enter your account email first."); return; }
+    setLoginPending(true);
+    try {
+      await requestHostedPasswordReset(HOSTED_MEMBER_SERVICE, username, typeof window === "undefined" ? "" : window.location.origin);
+      setSignupStatus(`Password recovery instructions were sent to ${normalizeMemberUsername(username)}.`);
+    } catch (error) {
+      setLoginError(error instanceof Error ? error.message : "Password recovery could not be started.");
+    } finally {
+      setLoginPending(false);
+    }
   };
 
   return (
@@ -1753,6 +1773,7 @@ function MemberAccessGate({ onAccessGranted, onCancel, initialMode = "login" }) 
           >
             {loginPending ? (mode === "signup" ? "Creating Account…" : "Signing In…") : (mode === "signup" ? "Create Account" : "Log In")}
           </button>
+          {mode === "login" && <button type="button" onClick={requestPasswordReset} disabled={loginPending} className="mt-3 w-full text-center text-xs font-semibold text-white/60 transition hover:text-white" data-member-password-reset="true">Forgot your password?</button>}
         </form>
       </main>
     </div>
@@ -1899,12 +1920,17 @@ function emptyListingDraft(listingKind) {
   };
 }
 
-function CommercialMarketplacePage({ onBack, onOpenMap, onOpenListingKind, listingKind = "cre", memberSession, onMemberLogout }) {
+function CommercialMarketplacePage({ onBack, onOpenMap, onOpenListingKind, listingKind = "cre", memberSession, onMemberLogout, onMemberUpdate }) {
   const listingConfig = getListingPageConfig(listingKind);
   const supportsUserListings = ["cre", "resi", "rentals"].includes(listingKind);
   const [userListings, setUserListings] = useState(() => loadUserListings());
   const [listingEditor, setListingEditor] = useState(null);
   const [memberProfileOpen, setMemberProfileOpen] = useState(false);
+  const [selectedListing, setSelectedListing] = useState(null);
+  const [listingViews, setListingViews] = useState(() => loadListingViews());
+  const [analyticsStatus, setAnalyticsStatus] = useState("");
+  const [memberProfileDraft, setMemberProfileDraft] = useState({ displayName: "", company: "", phone: "" });
+  const [profileStatus, setProfileStatus] = useState("");
   const [listingImportStatus, setListingImportStatus] = useState("");
   const [isDraggingListingCsv, setIsDraggingListingCsv] = useState(false);
   const listingImportInputRef = useRef(null);
@@ -1925,17 +1951,45 @@ function CommercialMarketplacePage({ onBack, onOpenMap, onOpenListingKind, listi
   }, [listingKind]);
 
   useEffect(() => {
-    if (memberSession?.provider !== "supabase") saveUserListings(userListings);
-  }, [memberSession?.provider, userListings]);
+    if (!hostedMemberServiceConfigured(HOSTED_MEMBER_SERVICE)) saveUserListings(userListings);
+  }, [userListings]);
 
   useEffect(() => {
-    if (memberSession?.provider !== "supabase") return;
+    if (!hostedMemberServiceConfigured(HOSTED_MEMBER_SERVICE)) return;
     let cancelled = false;
-    loadHostedMemberListings(HOSTED_MEMBER_SERVICE, memberSession)
-      .then((records) => { if (!cancelled) setUserListings(records); })
-      .catch(() => { if (!cancelled) setListingImportStatus("Your hosted listings could not be loaded. Please sign in again."); });
+    Promise.all([
+      loadHostedPublicListings(HOSTED_MEMBER_SERVICE, memberSession),
+      memberSession?.provider === "supabase" ? loadHostedMemberListings(HOSTED_MEMBER_SERVICE, memberSession) : Promise.resolve([]),
+    ])
+      .then(([published, owned]) => {
+        if (cancelled) return;
+        setUserListings(Array.from(new Map([...published, ...owned].map((listing) => [listing.id, listing])).values()));
+      })
+      .catch(() => { if (!cancelled) setListingImportStatus("Hosted listings could not be loaded right now."); });
     return () => { cancelled = true; };
   }, [memberSession]);
+
+  useEffect(() => {
+    if (!memberProfileOpen || memberSession?.provider !== "supabase") return;
+    let cancelled = false;
+    setAnalyticsStatus("Loading listing activity…");
+    loadHostedListingViews(HOSTED_MEMBER_SERVICE, memberSession)
+      .then((records) => { if (!cancelled) { setListingViews(records); setAnalyticsStatus(""); } })
+      .catch(() => { if (!cancelled) setAnalyticsStatus("Listing activity could not be loaded right now."); });
+    return () => { cancelled = true; };
+  }, [memberProfileOpen, memberSession]);
+
+  useEffect(() => {
+    if (!memberProfileOpen || !memberSession) return;
+    setMemberProfileDraft({ displayName: memberSession.displayName || "", company: memberSession.company || "", phone: memberSession.phone || "" });
+    setProfileStatus("");
+    if (memberSession.provider !== "supabase") return;
+    let cancelled = false;
+    loadHostedMemberProfile(HOSTED_MEMBER_SERVICE, memberSession)
+      .then((profile) => { if (!cancelled && profile) setMemberProfileDraft(profile); })
+      .catch(() => { if (!cancelled) setProfileStatus("Profile details could not be loaded right now."); });
+    return () => { cancelled = true; };
+  }, [memberProfileOpen, memberSession]);
 
   useEffect(() => {
     let cancelled = false;
@@ -1945,9 +1999,36 @@ function CommercialMarketplacePage({ onBack, onOpenMap, onOpenListingKind, listi
   }, [listingProperties]);
 
   const memberListings = useMemo(() => listingsForMember(userListings, memberSession?.memberId), [memberSession?.memberId, userListings]);
+  const memberListingAnalytics = useMemo(() => summarizeListingViews(listingViews, memberListings), [listingViews, memberListings]);
+  const openListingDetails = async (property) => {
+    setSelectedListing(property);
+    if (property.submissionType !== "user-submitted" || !property.ownerMemberId || memberOwnsListing(property, memberSession?.memberId)) return;
+    const visitorSessionId = listingVisitorId();
+    if (hostedMemberServiceConfigured(HOSTED_MEMBER_SERVICE)) {
+      try { await recordHostedListingView(HOSTED_MEMBER_SERVICE, memberSession, property.id, visitorSessionId); } catch { /* Viewing must remain available when analytics is offline. */ }
+      return;
+    }
+    const result = recordLocalListingView(property, memberSession, globalThis.localStorage, { viewerSessionId: visitorSessionId });
+    setListingViews(result.events);
+  };
   const openNewListing = () => {
     if (!memberSession) return;
     setListingEditor({ mode: "create", draft: { ...emptyListingDraft(listingKind), contactName: memberSession.displayName, contactEmail: memberSession.email } });
+  };
+  const updateMemberProfile = async (event) => {
+    event.preventDefault();
+    setProfileStatus("Saving profile…");
+    try {
+      const profile = memberSession?.provider === "supabase"
+        ? await saveHostedMemberProfile(HOSTED_MEMBER_SERVICE, memberSession, memberProfileDraft)
+        : memberProfileDraft;
+      const updatedSession = { ...memberSession, displayName: profile.displayName || memberSession.displayName, company: profile.company || "", phone: profile.phone || "" };
+      storeMemberAccessSession(updatedSession);
+      onMemberUpdate?.(updatedSession);
+      setProfileStatus("Profile saved.");
+    } catch (error) {
+      setProfileStatus(error instanceof Error ? error.message : "Profile could not be saved.");
+    }
   };
   const openEditListing = (property) => {
     if (!memberOwnsListing(property, memberSession?.memberId)) return;
@@ -2184,6 +2265,7 @@ function CommercialMarketplacePage({ onBack, onOpenMap, onOpenListingKind, listi
             {filteredProperties.map((property) => {
               const nearbyDevelopments = nearbyDevelopmentByListing[property.id] || [];
               const dealRating = calculateListingDeal(property, { nearbyDevelopments });
+              const propertyAnalytics = memberListingAnalytics.byListing[property.id];
               return (
               <article key={property.id} className="overflow-hidden rounded-md border border-slate-200 bg-white shadow-sm">
                 <div className="relative aspect-[16/10] bg-slate-200">
@@ -2250,7 +2332,16 @@ function CommercialMarketplacePage({ onBack, onOpenMap, onOpenListingKind, listi
                       <span key={tag} className="rounded-md bg-slate-100 px-2.5 py-1.5 text-xs font-semibold text-slate-600">{tag}</span>
                     ))}
                   </div>
-                  {property.submissionType === "user-submitted" && (
+                  <button type="button" onClick={() => openListingDetails(property)} className="mt-4 inline-flex w-full items-center justify-center gap-2 rounded-md bg-[#0b5cab] px-3 py-2.5 text-xs font-bold text-white transition hover:bg-[#084a89]" data-action="view-listing">
+                    <Eye aria-hidden="true" size={15} /> View listing
+                  </button>
+                  {memberOwnsListing(property, memberSession?.memberId) && propertyAnalytics && (
+                    <div className="mt-3 flex items-center gap-4 rounded-md border border-blue-100 bg-blue-50 px-3 py-2 text-xs font-semibold text-[#084a89]">
+                      <span className="inline-flex items-center gap-1"><Eye size={13} /> {propertyAnalytics.totalViews} views</span>
+                      <span className="inline-flex items-center gap-1"><Users size={13} /> {propertyAnalytics.uniqueVisitors} visitors</span>
+                    </div>
+                  )}
+                  {memberOwnsListing(property, memberSession?.memberId) && (
                     <div className="mt-4 flex items-center justify-between gap-3 border-t border-slate-100 pt-4">
                       <p className="min-w-0 truncate text-xs text-slate-500">{property.contactEmail || property.contactPhone || "Contact details not provided"}</p>
                       <div className="flex shrink-0 gap-2">
@@ -2276,23 +2367,77 @@ function CommercialMarketplacePage({ onBack, onOpenMap, onOpenListingKind, listi
         </section>
       </main>
 
+      {selectedListing && (
+        <div className="fixed inset-0 z-[65] flex items-center justify-center bg-slate-950/65 p-4 backdrop-blur-sm" role="dialog" aria-modal="true" aria-labelledby="listing-detail-title" data-listing-detail="true">
+          <article className="max-h-[92vh] w-full max-w-4xl overflow-y-auto rounded-xl bg-white shadow-2xl">
+            <div className="relative aspect-[16/7] min-h-56 bg-slate-200">
+              <img src={listingImageForProperty(selectedListing, listingConfig.heroImage, selectedListing.listingKind || listingKind)} alt={selectedListing.propertyName} className="absolute inset-0 h-full w-full object-cover" />
+              <button type="button" onClick={() => setSelectedListing(null)} className="absolute right-4 top-4 rounded-full bg-white/95 p-2 text-slate-700 shadow" aria-label="Close listing details"><X size={18} /></button>
+            </div>
+            <div className="p-6">
+              <div className="flex flex-wrap items-start justify-between gap-4">
+                <div><p className="text-xs font-bold uppercase text-[#0b5cab]">{selectedListing.market} · {selectedListing.assetType}</p><h2 id="listing-detail-title" className="mt-1 text-2xl font-bold text-slate-950">{selectedListing.propertyName}</h2><p className="mt-2 text-sm text-slate-600">{selectedListing.address}{selectedListing.county ? ` · ${selectedListing.county}` : ""}</p></div>
+                <p className="text-xl font-bold text-slate-950">{selectedListing.priceLabel}</p>
+              </div>
+              <p className="mt-5 text-sm leading-7 text-slate-600">{selectedListing.highlight}</p>
+              <div className="mt-5 grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
+                {[["Size", selectedListing.sizeLabel], ["Use", selectedListing.capRate], ["Parcel ID", selectedListing.parcelId], ["Zoning", selectedListing.zoning]].map(([label, value]) => <div key={label} className="rounded-lg border border-slate-200 p-3"><p className="text-[11px] font-bold uppercase text-slate-400">{label}</p><p className="mt-1 text-sm font-semibold text-slate-900">{value || "Not provided"}</p></div>)}
+              </div>
+              <div className="mt-6 flex flex-wrap items-center justify-between gap-3 border-t border-slate-200 pt-5">
+                <div><p className="text-xs font-bold uppercase text-slate-400">Listing contact</p><p className="mt-1 text-sm font-semibold text-slate-900">{selectedListing.contactName || selectedListing.ownerDisplayName || "Listing representative"}</p><p className="text-sm text-slate-600">{selectedListing.contactEmail || selectedListing.contactPhone || "Contact information available from the listing representative"}</p></div>
+                <button type="button" onClick={() => onOpenMap(selectedListing.address)} className="inline-flex items-center gap-2 rounded-md border border-[#0b5cab] px-4 py-2 text-sm font-bold text-[#0b5cab] hover:bg-blue-50"><MapPin size={15} /> View parcel on map</button>
+              </div>
+            </div>
+          </article>
+        </div>
+      )}
+
       {memberProfileOpen && memberSession && (
         <div className="fixed inset-0 z-[70] flex items-center justify-center bg-slate-950/60 p-4 backdrop-blur-sm" role="dialog" aria-modal="true" aria-labelledby="member-profile-title" data-member-profile="true">
-          <section className="max-h-[90vh] w-full max-w-2xl overflow-y-auto rounded-xl bg-white shadow-2xl">
+          <section className="max-h-[92vh] w-full max-w-5xl overflow-y-auto rounded-xl bg-white shadow-2xl" data-member-dashboard="true">
             <header className="flex items-start justify-between border-b border-slate-200 px-5 py-4">
-              <div><p className="text-xs font-bold uppercase tracking-wide text-[#0b5cab]">Member Profile</p><h2 id="member-profile-title" className="mt-1 text-xl font-bold">{memberSession.displayName}</h2><p className="mt-1 text-xs text-slate-500">{memberSession.email || memberSession.username}</p></div>
+              <div><p className="text-xs font-bold uppercase tracking-wide text-[#0b5cab]">Member Performance Center</p><h2 id="member-profile-title" className="mt-1 text-xl font-bold">{memberSession.displayName}</h2><p className="mt-1 text-xs text-slate-500">{memberSession.email || memberSession.username}</p></div>
               <button type="button" onClick={() => setMemberProfileOpen(false)} className="rounded-md p-2 text-slate-500 hover:bg-slate-100" aria-label="Close member profile"><X size={18} /></button>
             </header>
             <div className="p-5">
-              <div className="grid grid-cols-3 gap-3">
+              <form onSubmit={updateMemberProfile} className="mb-5 grid gap-3 rounded-lg border border-slate-200 bg-slate-50 p-4 md:grid-cols-[1fr_1fr_1fr_auto]" data-member-profile-form="true">
+                <label className="text-xs font-bold text-slate-500">Display name<input required value={memberProfileDraft.displayName} onChange={(event) => setMemberProfileDraft((profile) => ({ ...profile, displayName: event.target.value }))} className="mt-1.5 h-10 w-full rounded-md border border-slate-300 bg-white px-3 text-sm font-normal text-slate-900 outline-none focus:border-[#0b5cab]" /></label>
+                <label className="text-xs font-bold text-slate-500">Company<input value={memberProfileDraft.company} onChange={(event) => setMemberProfileDraft((profile) => ({ ...profile, company: event.target.value }))} className="mt-1.5 h-10 w-full rounded-md border border-slate-300 bg-white px-3 text-sm font-normal text-slate-900 outline-none focus:border-[#0b5cab]" /></label>
+                <label className="text-xs font-bold text-slate-500">Phone<input type="tel" value={memberProfileDraft.phone} onChange={(event) => setMemberProfileDraft((profile) => ({ ...profile, phone: event.target.value }))} className="mt-1.5 h-10 w-full rounded-md border border-slate-300 bg-white px-3 text-sm font-normal text-slate-900 outline-none focus:border-[#0b5cab]" /></label>
+                <button type="submit" className="h-10 self-end rounded-md bg-[#0b5cab] px-4 text-xs font-bold text-white hover:bg-[#084a89]">Save profile</button>
+                {profileStatus && <p className="text-xs font-semibold text-slate-500 md:col-span-4" role="status">{profileStatus}</p>}
+              </form>
+              <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4" data-listing-analytics-summary="true">
+                {[
+                  [memberListings.length, "Active listings", Building2],
+                  [memberListingAnalytics.totalViews, "Total views", Eye],
+                  [memberListingAnalytics.uniqueVisitors, "Unique visitors", Users],
+                  [memberListingAnalytics.viewedListings, "Listings viewed", Activity],
+                ].map(([value, label, Icon]) => <div key={label} className="rounded-lg border border-slate-200 bg-slate-50 p-4"><Icon size={17} className="text-[#0b5cab]" /><span className="mt-3 block text-2xl font-bold text-slate-950">{value}</span><span className="text-xs font-semibold text-slate-500">{label}</span></div>)}
+              </div>
+              {analyticsStatus && <p className="mt-3 rounded-md bg-blue-50 px-3 py-2 text-xs font-semibold text-[#084a89]" role="status">{analyticsStatus}</p>}
+              <div className="mt-5 grid grid-cols-3 gap-3">
                 {[["resi", "Residential"], ["rentals", "Rentals"], ["cre", "CRE"]].map(([kind, label]) => {
                   const count = memberListings.filter((listing) => listing.listingKind === kind).length;
                   return <button key={kind} type="button" onClick={() => { setMemberProfileOpen(false); onOpenListingKind(kind); }} className={`rounded-lg border p-3 text-left transition hover:border-[#0b5cab] ${kind === listingKind ? "border-blue-300 bg-blue-50" : "border-slate-200"}`}><span className="block text-2xl font-bold text-slate-950">{count}</span><span className="text-xs font-semibold text-slate-500">{label}</span></button>;
                 })}
               </div>
-              <div className="mt-5 flex items-center justify-between"><h3 className="text-sm font-bold">Your listings</h3><button type="button" onClick={() => { setMemberProfileOpen(false); openNewListing(); }} className="inline-flex items-center gap-1.5 rounded-md bg-[#0b5cab] px-3 py-2 text-xs font-bold text-white"><Plus size={14} /> Add listing</button></div>
-              <div className="mt-3 space-y-2">
-                {memberListings.length ? memberListings.map((listing) => <div key={listing.id} className="flex items-center justify-between gap-3 rounded-lg border border-slate-200 p-3"><div className="min-w-0"><p className="truncate text-sm font-bold">{listing.propertyName}</p><p className="truncate text-xs text-slate-500">{listing.listingKind.toUpperCase()} · {listing.address}</p></div><button type="button" onClick={() => { if (listing.listingKind !== listingKind) { setMemberProfileOpen(false); onOpenListingKind(listing.listingKind); return; } setMemberProfileOpen(false); openEditListing(listing); }} className="shrink-0 rounded-md border border-slate-300 px-3 py-1.5 text-xs font-bold text-slate-700"><Pencil size={13} className="mr-1 inline" />{listing.listingKind === listingKind ? "Edit" : "Open"}</button></div>) : <p className="rounded-lg border border-dashed border-slate-300 p-5 text-center text-sm text-slate-500">You have not published any listings yet.</p>}
+              <div className="mt-6 flex items-center justify-between"><div><h3 className="text-sm font-bold">Your listings</h3><p className="mt-1 text-xs text-slate-500">Performance updates when a visitor opens a listing.</p></div><button type="button" onClick={() => { setMemberProfileOpen(false); openNewListing(); }} className="inline-flex items-center gap-1.5 rounded-md bg-[#0b5cab] px-3 py-2 text-xs font-bold text-white"><Plus size={14} /> Add listing</button></div>
+              <div className="mt-3 space-y-3">
+                {memberListings.length ? memberListings.map((listing) => {
+                  const stats = memberListingAnalytics.byListing[listing.id] || { totalViews: 0, uniqueVisitors: 0, lastViewedAt: "", recentViewers: [] };
+                  return <article key={listing.id} className="rounded-lg border border-slate-200 p-4" data-member-listing-analytics={listing.id}>
+                    <div className="flex flex-wrap items-start justify-between gap-3">
+                      <div className="min-w-0"><p className="truncate text-sm font-bold">{listing.propertyName}</p><p className="truncate text-xs text-slate-500">{listing.listingKind.toUpperCase()} · {listing.address}</p></div>
+                      <div className="flex items-center gap-4 text-xs font-bold text-slate-700"><span className="inline-flex items-center gap-1"><Eye size={13} className="text-[#0b5cab]" />{stats.totalViews} views</span><span className="inline-flex items-center gap-1"><Users size={13} className="text-[#0b5cab]" />{stats.uniqueVisitors} unique</span><button type="button" onClick={() => { if (listing.listingKind !== listingKind) { setMemberProfileOpen(false); onOpenListingKind(listing.listingKind); return; } setMemberProfileOpen(false); openEditListing(listing); }} className="rounded-md border border-slate-300 px-3 py-1.5 text-xs font-bold text-slate-700"><Pencil size={13} className="mr-1 inline" />{listing.listingKind === listingKind ? "Edit" : "Open"}</button></div>
+                    </div>
+                    <div className="mt-3 border-t border-slate-100 pt-3">
+                      <p className="text-[11px] font-bold uppercase tracking-wide text-slate-400">Who viewed it</p>
+                      {stats.recentViewers.length ? <div className="mt-2 flex flex-wrap gap-2">{stats.recentViewers.map((viewer) => <span key={viewer.key} className="rounded-full bg-slate-100 px-2.5 py-1 text-xs font-semibold text-slate-600">{viewer.label} · {viewer.count} {viewer.count === 1 ? "view" : "views"}</span>)}</div> : <p className="mt-2 text-xs text-slate-500">No recorded visitors yet.</p>}
+                      {stats.lastViewedAt && <p className="mt-2 text-[11px] text-slate-400">Last viewed {new Date(stats.lastViewedAt).toLocaleString()}</p>}
+                    </div>
+                  </article>;
+                }) : <p className="rounded-lg border border-dashed border-slate-300 p-5 text-center text-sm text-slate-500">You have not published any listings yet.</p>}
               </div>
             </div>
             <footer className="flex justify-end border-t border-slate-200 px-5 py-4"><button type="button" onClick={() => { clearMemberAccessSession(); onMemberLogout(); setMemberProfileOpen(false); }} className="inline-flex items-center gap-2 rounded-md border border-red-200 px-3 py-2 text-xs font-bold text-red-700 hover:bg-red-50"><LogOut size={14} /> Sign out</button></footer>
@@ -6423,6 +6568,7 @@ export default function WhiteRabbitLanding() {
         onOpenListingKind={openListingPage}
         memberSession={memberSession}
         onMemberLogout={() => setMemberSession(null)}
+        onMemberUpdate={setMemberSession}
       />
     );
   }

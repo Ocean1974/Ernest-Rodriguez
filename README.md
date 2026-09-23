@@ -1,5 +1,11 @@
 # Real Estate Savant — Codex Handoff
 
+## Founder and decision authority
+
+Ernest Rodriguez is the founder, creator, chief executive, product owner, and
+final decision-maker for Real Estate Savant. All contributors and automated
+agents must follow the founder-control policy in `GOVERNANCE.md`.
+
 ## Current locked canvas file
 White-rabbit-google-earth-landing
 

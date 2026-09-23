@@ -17,6 +17,12 @@ const { pathToFileURL } = require("node:url");
     [{ id: "listing-1", owner_id: "member-1", listing_kind: "cre", property_name: "Rabbit Center", address: "100 Main", county: "Dallas County", city: "Dallas", state: "TX", payload: { status: "For Sale" }, created_at: "2026-09-16T00:00:00.000Z", updated_at: "2026-09-16T00:00:00.000Z" }],
     {},
     {},
+    [{ id: "listing-2", owner_id: "member-2", listing_kind: "resi", property_name: "Rabbit House", address: "200 Main", county: "Collin County", city: "Plano", state: "TX", payload: { status: "For Sale" }, created_at: "2026-09-16T00:00:00.000Z", updated_at: "2026-09-16T00:00:00.000Z" }],
+    [{ id: "member-1", display_name: "Ernest", phone: "555-0100", company: "Bracket RE", created_at: "2026-09-16T00:00:00.000Z", updated_at: "2026-09-16T00:00:00.000Z" }],
+    [{ id: "member-1", display_name: "Ernest R.", phone: "555-0100", company: "Bracket RE", created_at: "2026-09-16T00:00:00.000Z", updated_at: "2026-09-22T00:00:00.000Z" }],
+    {},
+    "view-1",
+    [{ id: "view-1", listing_id: "listing-1", listing_owner_id: "member-1", viewer_id: "member-2", viewer_session_id: "visitor-member-2", viewer_display_name: "Jon", viewed_at: "2026-09-22T00:00:00.000Z" }],
   ];
   const originalFetch = global.fetch;
   global.fetch = async (url, options = {}) => {
@@ -36,12 +42,28 @@ const { pathToFileURL } = require("node:url");
     assert.equal(records[0].listingKind, "cre");
     await service.saveHostedMemberListing(config, session, records[0]);
     await service.deleteHostedMemberListing(config, session, "listing-1");
+    const publicRecords = await service.loadHostedPublicListings(config, session);
+    assert.equal(publicRecords[0].ownerMemberId, "member-2");
+    const profile = await service.loadHostedMemberProfile(config, session);
+    assert.equal(profile.company, "Bracket RE");
+    const savedProfile = await service.saveHostedMemberProfile(config, session, { displayName: "Ernest R.", company: "Bracket RE", phone: "555-0100" });
+    assert.equal(savedProfile.displayName, "Ernest R.");
+    await service.requestHostedPasswordReset(config, "Ernest@Example.com", "https://savant.example/reset");
+    await service.recordHostedListingView(config, signupSession, "listing-1", "visitor-member-2");
+    const views = await service.loadHostedListingViews(config, session);
+    assert.equal(views[0].viewerDisplayName, "Jon");
     assert.match(requests[0].url, /auth\/v1\/token/);
     assert.match(requests[1].url, /auth\/v1\/signup/);
     assert.deepEqual(JSON.parse(requests[1].options.body).data, { display_name: "Jon" });
     assert.match(requests[2].url, /owner_id=eq\.member-1/);
     assert.equal(requests[3].options.method, "POST");
     assert.equal(requests[4].options.method, "DELETE");
+    assert.match(requests[5].url, /publication_status=eq\.published/);
+    assert.match(requests[6].url, /member_profiles/);
+    assert.equal(requests[7].options.method, "PATCH");
+    assert.match(requests[8].url, /auth\/v1\/recover/);
+    assert.match(requests[9].url, /rpc\/record_listing_view/);
+    assert.match(requests[10].url, /listing_views/);
   } finally {
     global.fetch = originalFetch;
   }
@@ -57,5 +79,8 @@ const { pathToFileURL } = require("node:url");
   assert.match(landing, /openMemberAccess\("login"\)/);
   assert.match(landing, /openMemberAccess\("signup"\)/);
   assert.match(app, /data-member-mode-signup="true"/);
+  assert.match(app, /data-member-password-reset="true"/);
+  assert.match(app, /data-member-profile-form="true"/);
+  assert.doesNotMatch(app, /white-rabbit-2026/);
   console.log("Hosted member authentication, listing persistence, and owner RLS contract tests passed.");
 })().catch((error) => { console.error(error); process.exitCode = 1; });

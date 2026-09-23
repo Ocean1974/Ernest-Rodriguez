@@ -1,5 +1,15 @@
 # Real Estate Savant — AGENTS.md
 
+## Founder authority
+
+Ernest Rodriguez is the founder, creator, chief executive, product owner, and
+final decision-maker for Real Estate Savant. Jon is a minority partner and
+collaborator whose authority is limited to responsibilities delegated by
+Ernest. Agents must read and follow `GOVERNANCE.md`. If instructions conflict
+or authority is unclear, pause and obtain Ernest's decision. No agent may
+override Ernest or independently bind, license, release, share, or transfer
+the project or its assets.
+
 ## Source of truth
 The approved frontend baseline is the current ChatGPT canvas file:
 

@@ -65,11 +65,42 @@ export async function signUpHostedMember(config, email, password, displayName = 
   throw new Error("Member service did not create an account.");
 }
 
-export async function loadHostedMemberListings(config, session) {
-  if (!hostedMemberServiceConfigured(config) || !session?.accessToken) return [];
-  const url = `${trim(config.url).replace(/\/$/, "")}/rest/v1/member_listings?owner_id=eq.${encodeURIComponent(session.memberId)}&select=*&order=updated_at.desc`;
+export async function requestHostedPasswordReset(config, email, redirectTo = "") {
+  if (!hostedMemberServiceConfigured(config)) throw new Error("Hosted member accounts are not configured.");
+  const body = { email: trim(email).toLowerCase() };
+  if (trim(redirectTo)) body.redirect_to = trim(redirectTo);
+  const response = await fetch(`${trim(config.url).replace(/\/$/, "")}/auth/v1/recover`, {
+    method: "POST",
+    headers: headers(config, "", { "Content-Type": "application/json" }),
+    body: JSON.stringify(body),
+  });
+  await readResponse(response);
+  return true;
+}
+
+export async function loadHostedMemberProfile(config, session) {
+  if (!hostedMemberServiceConfigured(config) || !session?.accessToken) return null;
+  const url = `${trim(config.url).replace(/\/$/, "")}/rest/v1/member_profiles?id=eq.${encodeURIComponent(session.memberId)}&select=id,display_name,phone,company,created_at,updated_at&limit=1`;
   const rows = await readResponse(await fetch(url, { headers: headers(config, session.accessToken) }));
-  return rows.map((row) => ({
+  const row = rows[0];
+  return row ? { id: row.id, displayName: row.display_name || "", phone: row.phone || "", company: row.company || "", createdAt: row.created_at, updatedAt: row.updated_at } : null;
+}
+
+export async function saveHostedMemberProfile(config, session, profile = {}) {
+  if (!hostedMemberServiceConfigured(config) || !session?.accessToken) throw new Error("Hosted member accounts are not configured.");
+  const url = `${trim(config.url).replace(/\/$/, "")}/rest/v1/member_profiles?id=eq.${encodeURIComponent(session.memberId)}`;
+  const rows = await readResponse(await fetch(url, {
+    method: "PATCH",
+    headers: headers(config, session.accessToken, { "Content-Type": "application/json", Prefer: "return=representation" }),
+    body: JSON.stringify({ display_name: trim(profile.displayName), phone: trim(profile.phone), company: trim(profile.company), updated_at: new Date().toISOString() }),
+  }));
+  const row = rows[0];
+  if (!row) throw new Error("Member profile was not updated.");
+  return { id: row.id, displayName: row.display_name || "", phone: row.phone || "", company: row.company || "", createdAt: row.created_at, updatedAt: row.updated_at };
+}
+
+function listingFromRow(row) {
+  return {
     ...(row.payload || {}),
     id: row.id,
     listingKind: row.listing_kind,
@@ -82,7 +113,21 @@ export async function loadHostedMemberListings(config, session) {
     submissionType: "user-submitted",
     createdAt: row.created_at,
     updatedAt: row.updated_at,
-  }));
+  };
+}
+
+export async function loadHostedMemberListings(config, session) {
+  if (!hostedMemberServiceConfigured(config) || !session?.accessToken) return [];
+  const url = `${trim(config.url).replace(/\/$/, "")}/rest/v1/member_listings?owner_id=eq.${encodeURIComponent(session.memberId)}&select=*&order=updated_at.desc`;
+  const rows = await readResponse(await fetch(url, { headers: headers(config, session.accessToken) }));
+  return rows.map(listingFromRow);
+}
+
+export async function loadHostedPublicListings(config, session = null) {
+  if (!hostedMemberServiceConfigured(config)) return [];
+  const url = `${trim(config.url).replace(/\/$/, "")}/rest/v1/member_listings?publication_status=eq.published&select=*&order=updated_at.desc`;
+  const rows = await readResponse(await fetch(url, { headers: headers(config, session?.accessToken) }));
+  return rows.map(listingFromRow);
 }
 
 export async function saveHostedMemberListing(config, session, listing) {
@@ -115,4 +160,29 @@ export async function deleteHostedMemberListing(config, session, listingId) {
     headers: headers(config, session.accessToken),
   });
   await readResponse(response);
+}
+
+export async function recordHostedListingView(config, session, listingId, viewerSessionId) {
+  if (!hostedMemberServiceConfigured(config) || !listingId || !viewerSessionId) return null;
+  const response = await fetch(`${trim(config.url).replace(/\/$/, "")}/rest/v1/rpc/record_listing_view`, {
+    method: "POST",
+    headers: headers(config, session?.accessToken, { "Content-Type": "application/json" }),
+    body: JSON.stringify({ p_listing_id: listingId, p_viewer_session_id: viewerSessionId }),
+  });
+  return readResponse(response);
+}
+
+export async function loadHostedListingViews(config, session) {
+  if (!hostedMemberServiceConfigured(config) || !session?.accessToken) return [];
+  const url = `${trim(config.url).replace(/\/$/, "")}/rest/v1/listing_views?listing_owner_id=eq.${encodeURIComponent(session.memberId)}&select=*&order=viewed_at.desc&limit=5000`;
+  const rows = await readResponse(await fetch(url, { headers: headers(config, session.accessToken) }));
+  return rows.map((row) => ({
+    id: row.id,
+    listingId: row.listing_id,
+    listingOwnerId: row.listing_owner_id,
+    viewerMemberId: row.viewer_id || "",
+    viewerSessionId: row.viewer_session_id,
+    viewerDisplayName: row.viewer_display_name || "Anonymous visitor",
+    viewedAt: row.viewed_at,
+  }));
 }

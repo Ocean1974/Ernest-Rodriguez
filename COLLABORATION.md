@@ -1,5 +1,12 @@
 # Real Estate Savant collaboration setup
 
+## Decision authority
+
+Ernest Rodriguez is the founder, creator, chief executive, product owner, and
+final decision-maker. Jon participates as a minority partner and collaborator
+within authority delegated by Ernest. See `GOVERNANCE.md` before changing,
+sharing, licensing, or releasing the project.
+
 This repository contains the application source, data-pipeline code, tests, and
 configuration needed to develop Real Estate Savant. Large source datasets and
 generated artifacts are deliberately kept outside Git.
@@ -85,6 +92,7 @@ git push -u origin HEAD
 
 Open a pull request so the other teammate can review and merge the change.
 Do not commit generated datasets, secret keys, recovery archives, or local logs.
+Material changes require Ernest's explicit approval before merge or release.
 
 ## Baseline verification status
 
