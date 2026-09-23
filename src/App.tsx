@@ -1928,6 +1928,7 @@ function CommercialMarketplacePage({ onBack, onOpenMap, onOpenListingKind, listi
   const [listingEditor, setListingEditor] = useState(null);
   const [memberProfileOpen, setMemberProfileOpen] = useState(false);
   const [selectedListing, setSelectedListing] = useState(null);
+  const [listingShareStatus, setListingShareStatus] = useState("");
   const [listingViews, setListingViews] = useState(() => loadListingViews());
   const [analyticsStatus, setAnalyticsStatus] = useState("");
   const [memberProfileDraft, setMemberProfileDraft] = useState({ displayName: "", company: "", phone: "" });
@@ -2003,6 +2004,13 @@ function CommercialMarketplacePage({ onBack, onOpenMap, onOpenListingKind, listi
   const memberListingAnalytics = useMemo(() => summarizeListingViews(listingViews, memberListings), [listingViews, memberListings]);
   const openListingDetails = async (property) => {
     setSelectedListing(property);
+    setListingShareStatus("");
+    if (typeof window !== "undefined") {
+      const url = new URL(window.location.href);
+      url.searchParams.set("listing", property.id);
+      url.searchParams.set("type", property.listingKind || listingKind);
+      window.history.replaceState({}, "", url);
+    }
     if (property.submissionType !== "user-submitted" || !property.ownerMemberId || memberOwnsListing(property, memberSession?.memberId)) return;
     const visitorSessionId = listingVisitorId();
     if (hostedMemberServiceConfigured(HOSTED_MEMBER_SERVICE)) {
@@ -2012,6 +2020,32 @@ function CommercialMarketplacePage({ onBack, onOpenMap, onOpenListingKind, listi
     const result = recordLocalListingView(property, memberSession, globalThis.localStorage, { viewerSessionId: visitorSessionId });
     setListingViews(result.events);
   };
+  const closeListingDetails = () => {
+    setSelectedListing(null);
+    setListingShareStatus("");
+    if (typeof window !== "undefined") {
+      const url = new URL(window.location.href);
+      url.searchParams.delete("listing");
+      url.searchParams.delete("type");
+      window.history.replaceState({}, "", url);
+    }
+  };
+  const copyListingLink = async () => {
+    try {
+      await navigator.clipboard.writeText(window.location.href);
+      setListingShareStatus("Listing link copied.");
+    } catch {
+      setListingShareStatus("Copy the address from your browser to share this listing.");
+    }
+  };
+
+  useEffect(() => {
+    if (typeof window === "undefined" || selectedListing) return;
+    const listingId = new URLSearchParams(window.location.search).get("listing");
+    if (!listingId) return;
+    const property = listingProperties.find((item) => item.id === listingId);
+    if (property) openListingDetails(property);
+  }, [listingProperties, selectedListing]);
   const openNewListing = () => {
     if (!memberSession) return;
     setListingEditor({ mode: "create", draft: { ...emptyListingDraft(listingKind), id: memberSession.provider === "supabase" ? crypto.randomUUID() : "", contactName: memberSession.displayName, contactEmail: memberSession.email } });
@@ -2385,7 +2419,7 @@ function CommercialMarketplacePage({ onBack, onOpenMap, onOpenListingKind, listi
           <article className="max-h-[92vh] w-full max-w-4xl overflow-y-auto rounded-xl bg-white shadow-2xl">
             <div className="relative aspect-[16/7] min-h-56 bg-slate-200">
               <img src={listingImageForProperty(selectedListing, listingConfig.heroImage, selectedListing.listingKind || listingKind)} alt={selectedListing.propertyName} className="absolute inset-0 h-full w-full object-cover" />
-              <button type="button" onClick={() => setSelectedListing(null)} className="absolute right-4 top-4 rounded-full bg-white/95 p-2 text-slate-700 shadow" aria-label="Close listing details"><X size={18} /></button>
+              <button type="button" onClick={closeListingDetails} className="absolute right-4 top-4 rounded-full bg-white/95 p-2 text-slate-700 shadow" aria-label="Close listing details"><X size={18} /></button>
             </div>
             <div className="p-6">
               <div className="flex flex-wrap items-start justify-between gap-4">
@@ -2398,8 +2432,9 @@ function CommercialMarketplacePage({ onBack, onOpenMap, onOpenListingKind, listi
               </div>
               <div className="mt-6 flex flex-wrap items-center justify-between gap-3 border-t border-slate-200 pt-5">
                 <div><p className="text-xs font-bold uppercase text-slate-400">Listing contact</p><p className="mt-1 text-sm font-semibold text-slate-900">{selectedListing.contactName || selectedListing.ownerDisplayName || "Listing representative"}</p><p className="text-sm text-slate-600">{selectedListing.contactEmail || selectedListing.contactPhone || "Contact information available from the listing representative"}</p></div>
-                <button type="button" onClick={() => onOpenMap(selectedListing.address)} className="inline-flex items-center gap-2 rounded-md border border-[#0b5cab] px-4 py-2 text-sm font-bold text-[#0b5cab] hover:bg-blue-50"><MapPin size={15} /> View parcel on map</button>
+                <div className="flex flex-wrap items-center gap-2"><button type="button" onClick={copyListingLink} className="inline-flex items-center gap-2 rounded-md border border-slate-300 px-4 py-2 text-sm font-bold text-slate-700 hover:bg-slate-50" data-action="copy-listing-link">Copy listing link</button><button type="button" onClick={() => onOpenMap(selectedListing.address)} className="inline-flex items-center gap-2 rounded-md border border-[#0b5cab] px-4 py-2 text-sm font-bold text-[#0b5cab] hover:bg-blue-50"><MapPin size={15} /> View parcel on map</button></div>
               </div>
+              {listingShareStatus && <p className="mt-3 text-right text-xs font-semibold text-slate-500" role="status">{listingShareStatus}</p>}
             </div>
           </article>
         </div>
@@ -6515,7 +6550,12 @@ function WhiteRabbitMap({ onExit, initialSearch = "", initialDatasetId = "", pre
 
 export default function WhiteRabbitLanding() {
   const [enteredMap, setEnteredMap] = useState(false);
-  const [activeListingPage, setActiveListingPage] = useState("");
+  const [activeListingPage, setActiveListingPage] = useState(() => {
+    if (typeof window === "undefined") return "";
+    const params = new URLSearchParams(window.location.search);
+    const type = params.get("type");
+    return params.get("listing") && ["cre", "resi", "rentals"].includes(type) ? type : "";
+  });
   const [memberSession, setMemberSession] = useState(() => readMemberAccessSession());
   const [crmOpen, setCrmOpen] = useState(false);
   const [toolsOpen, setToolsOpen] = useState(false);

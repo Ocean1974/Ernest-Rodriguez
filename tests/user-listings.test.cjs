@@ -70,6 +70,8 @@ const { pathToFileURL } = require("url");
   assert(marketplace.includes('data-listing-analytics-summary="true"'));
   assert(marketplace.includes('data-action="view-listing"'));
   assert(marketplace.includes('data-listing-detail="true"'));
+  assert(marketplace.includes('data-action="copy-listing-link"'));
+  assert(marketplace.includes('url.searchParams.set("listing", property.id)'));
   assert(marketplace.includes("Who viewed it"));
   assert(marketplace.includes('data-listing-publication-status="true"'));
   assert(marketplace.includes("uploadHostedListingMedia"));
