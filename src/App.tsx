@@ -2567,6 +2567,10 @@ function CommercialMarketplacePage({ onBack, onOpenMap, onOpenListingKind, listi
                 <select value={listingEditor.draft.publicationStatus || "published"} onChange={(event) => updateListingDraft("publicationStatus", event.target.value)} className="mt-1.5 h-10 w-full rounded-md border border-slate-300 px-3 text-sm outline-none focus:border-[#0b5cab]" data-listing-publication-status="true">
                   <option value="draft">Draft — only you can see it</option>
                   <option value="published">Published — visible in marketplace</option>
+                  <option value="pending">Pending — visible, under contract</option>
+                  <option value="sold">Sold — visible as closed</option>
+                  <option value="leased">Leased — visible as closed</option>
+                  <option value="expired">Expired — removed from marketplace</option>
                   <option value="archived">Archived — removed from marketplace</option>
                 </select>
               </label>

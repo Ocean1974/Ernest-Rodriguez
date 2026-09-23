@@ -2,6 +2,7 @@ import { calculateListingDeal } from "./dealRating.mjs";
 
 export const USER_LISTINGS_STORAGE_KEY = "real-estate-savant:user-listings:v1";
 export const USER_LISTING_KINDS = new Set(["cre", "resi", "rentals"]);
+export const LISTING_PUBLICATION_STATUSES = new Set(["draft", "published", "pending", "sold", "leased", "expired", "archived"]);
 
 function clean(value) {
   return String(value ?? "").trim();
@@ -62,7 +63,7 @@ export function createUserListing(draft, listingKind, options = {}) {
     market: clean(draft.market) || clean(draft.city) || county,
     county,
     status: clean(draft.status) || (listingKind === "rentals" ? "For Rent" : "For Sale"),
-    publicationStatus: ["draft", "published", "archived"].includes(clean(draft.publicationStatus)) ? clean(draft.publicationStatus) : "published",
+    publicationStatus: LISTING_PUBLICATION_STATUSES.has(clean(draft.publicationStatus)) ? clean(draft.publicationStatus) : "published",
     assetType: clean(draft.assetType) || (listingKind === "cre" ? "Commercial" : listingKind === "rentals" ? "Rental" : "Residential"),
     propertyName,
     address,

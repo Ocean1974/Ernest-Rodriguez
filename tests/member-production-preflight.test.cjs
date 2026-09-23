@@ -16,6 +16,7 @@ const ready = verifyMemberProductionConfig({
 }, root);
 assert.equal(ready.status, "ready");
 assert.equal(ready.activationAuthorized, true);
+assert.equal(ready.checks.find((check) => check.id === "listing-workflow-migration")?.passed, true);
 
 const unsafe = verifyMemberProductionConfig({
   VITE_SUPABASE_URL: "https://rabbit.supabase.co",

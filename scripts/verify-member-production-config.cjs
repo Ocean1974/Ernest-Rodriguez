@@ -14,6 +14,7 @@ function verifyMemberProductionConfig(env = process.env, root = path.join(__dirn
   add("member-schema-migration", fs.existsSync(path.join(root, "supabase/migrations/202609160001_member_listing_portal.sql")), "Member profile/listing migration must exist.");
   add("analytics-migration", fs.existsSync(path.join(root, "supabase/migrations/202609220001_listing_analytics.sql")), "Listing analytics migration must exist.");
   add("media-migration", fs.existsSync(path.join(root, "supabase/migrations/202609220002_listing_media.sql")), "Listing media migration must exist.");
+  add("listing-workflow-migration", fs.existsSync(path.join(root, "supabase/migrations/202609230001_listing_workflows.sql")), "Listing workflow, engagement, and quarantine migration must exist.");
   const exposedSecrets = ["DATABASE_URL", "EMAIL_PROVIDER_KEY", "SMS_PROVIDER_KEY", "AI_PROVIDER_KEY", "ENCRYPTION_KEY_REFERENCE"].filter((name) => String(env[`VITE_${name}`] || "").trim());
   add("no-public-server-secrets", exposedSecrets.length === 0, exposedSecrets.length ? `Remove public secret variables: ${exposedSecrets.map((name) => `VITE_${name}`).join(", ")}` : "No server-only secret is exposed through a VITE_ variable.");
   const blockers = checks.filter((check) => !check.passed);

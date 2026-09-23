@@ -19,11 +19,22 @@ Apply migrations in filename order:
 1. `202609160001_member_listing_portal.sql`
 2. `202609220001_listing_analytics.sql`
 3. `202609220002_listing_media.sql`
+4. `202609230001_listing_workflows.sql`
 
-Verify that row-level security is enabled for profiles, listings, and views.
+Verify that row-level security is enabled for profiles, listings, views,
+favorites, inquiries, conversion events, and listing assets.
 Confirm that a member cannot select, update, or delete another member's private
 records. Confirm that storage writes are restricted to the authenticated user's
 folder.
+
+The `listing-asset-quarantine` bucket is deliberately private. Connect an
+external malware-scanning worker that reads pending asset records, scans the
+object, moves clean objects into the private `listing-assets` delivery bucket,
+records the provider and
+scan reference, and marks rejected files without exposing them. Do not publish
+or sign a short-lived download URL while `scan_status` is anything other than
+`clean`. Run a scheduled cleanup for rejected, failed, soft-deleted, and orphaned
+quarantine objects according to the approved retention policy.
 
 ## Staging environment
 
@@ -49,8 +60,13 @@ Run `npm run member:preflight`, `npm run test:user-listings`, `npm test`, and
 6. Verify owner self-views are excluded.
 7. Open the listing repeatedly as the viewer and once anonymously.
 8. Verify total views, unique visitors, viewer name, and anonymous grouping.
-9. Archive the listing; verify it disappears from the public marketplace.
-10. Confirm the viewer cannot edit the listing or read its owner-only analytics.
+9. Favorite the listing and submit an inquiry; verify only the correct viewer
+   and listing owner can see their respective records.
+10. Exercise pending, sold/leased, expired, and archived states; verify only the
+    public lifecycle states remain visible in the marketplace.
+11. Upload an asset and verify it remains unavailable while its malware scan is
+    pending or rejected.
+12. Confirm the viewer cannot edit the listing or read its owner-only analytics.
 
 Production promotion requires the same test, backup/restore evidence, security
 review, load evidence, rollback rehearsal, and Ernest Rodriguez's approval.

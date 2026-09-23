@@ -2,6 +2,8 @@ function trim(value) {
   return String(value || "").trim();
 }
 
+const LISTING_PUBLICATION_STATUSES = new Set(["draft", "published", "pending", "sold", "leased", "expired", "archived"]);
+
 export function hostedMemberServiceConfigured(config = {}) {
   return Boolean(trim(config.url) && trim(config.anonKey));
 }
@@ -126,7 +128,7 @@ export async function loadHostedMemberListings(config, session) {
 
 export async function loadHostedPublicListings(config, session = null) {
   if (!hostedMemberServiceConfigured(config)) return [];
-  const url = `${trim(config.url).replace(/\/$/, "")}/rest/v1/member_listings?publication_status=eq.published&select=*&order=updated_at.desc`;
+  const url = `${trim(config.url).replace(/\/$/, "")}/rest/v1/member_listings?publication_status=in.(published,pending,sold,leased)&select=*&order=updated_at.desc`;
   const rows = await readResponse(await fetch(url, { headers: headers(config, session?.accessToken) }));
   return rows.map(listingFromRow);
 }
@@ -137,7 +139,7 @@ export async function saveHostedMemberListing(config, session, listing) {
     id: listing.id,
     owner_id: session.memberId,
     listing_kind: listing.listingKind,
-    publication_status: ["draft", "published", "archived"].includes(listing.publicationStatus) ? listing.publicationStatus : "published",
+    publication_status: LISTING_PUBLICATION_STATUSES.has(listing.publicationStatus) ? listing.publicationStatus : "published",
     property_name: listing.propertyName,
     address: listing.address,
     county: listing.county,
@@ -186,6 +188,102 @@ export async function uploadHostedListingMedia(config, session, listingId, file)
     publicUrl: `${trim(config.url).replace(/\/$/, "")}/storage/v1/object/public/listing-media/${path}`,
     mediaType: file.type,
   };
+}
+
+export async function uploadHostedListingAsset(config, session, listingId, file, assetKind = "other") {
+  if (!hostedMemberServiceConfigured(config) || !session?.accessToken) throw new Error("Hosted listing assets are not configured.");
+  if (!listingId || !file) throw new Error("A listing and file are required.");
+  const allowedKinds = new Set(["photo", "brochure", "survey", "offering_memorandum", "other"]);
+  const allowedTypes = new Set(["image/jpeg", "image/png", "image/webp", "application/pdf"]);
+  if (!allowedKinds.has(assetKind)) throw new Error("Choose a supported listing asset type.");
+  if (!allowedTypes.has(file.type)) throw new Error("Choose a JPG, PNG, WebP, or PDF file.");
+  if (!Number(file.size) || Number(file.size) > 25 * 1024 * 1024) throw new Error("Listing assets must be between 1 byte and 25 MB.");
+  const storagePath = `${session.memberId}/${listingId}/${Date.now()}-${safeMediaName(file.name)}`;
+  const storageUrl = `${trim(config.url).replace(/\/$/, "")}/storage/v1/object/listing-asset-quarantine/${storagePath.split("/").map(encodeURIComponent).join("/")}`;
+  await readResponse(await fetch(storageUrl, {
+    method: "POST",
+    headers: headers(config, session.accessToken, { "Content-Type": file.type, "x-upsert": "false" }),
+    body: file,
+  }));
+  const rows = await readResponse(await fetch(`${trim(config.url).replace(/\/$/, "")}/rest/v1/listing_assets`, {
+    method: "POST",
+    headers: headers(config, session.accessToken, { "Content-Type": "application/json", Prefer: "return=representation" }),
+    body: JSON.stringify({
+      listing_id: listingId,
+      owner_id: session.memberId,
+      storage_path: storagePath,
+      asset_kind: assetKind,
+      file_name: trim(file.name),
+      mime_type: file.type,
+      byte_size: Number(file.size),
+      scan_status: "pending",
+    }),
+  }));
+  return { ...rows[0], scanStatus: "pending" };
+}
+
+export async function loadHostedListingAssets(config, session, listingId) {
+  if (!hostedMemberServiceConfigured(config) || !listingId) return [];
+  const url = `${trim(config.url).replace(/\/$/, "")}/rest/v1/listing_assets?listing_id=eq.${encodeURIComponent(listingId)}&deleted_at=is.null&select=*&order=created_at.asc`;
+  return readResponse(await fetch(url, { headers: headers(config, session?.accessToken) }));
+}
+
+export async function loadHostedFavorites(config, session) {
+  if (!hostedMemberServiceConfigured(config) || !session?.accessToken) return [];
+  const url = `${trim(config.url).replace(/\/$/, "")}/rest/v1/listing_favorites?member_id=eq.${encodeURIComponent(session.memberId)}&select=listing_id,created_at&order=created_at.desc`;
+  return readResponse(await fetch(url, { headers: headers(config, session.accessToken) }));
+}
+
+export async function saveHostedFavorite(config, session, listingId) {
+  if (!hostedMemberServiceConfigured(config) || !session?.accessToken) throw new Error("Sign in to save listings.");
+  await readResponse(await fetch(`${trim(config.url).replace(/\/$/, "")}/rest/v1/listing_favorites?on_conflict=member_id,listing_id`, {
+    method: "POST",
+    headers: headers(config, session.accessToken, { "Content-Type": "application/json", Prefer: "resolution=ignore-duplicates,return=minimal" }),
+    body: JSON.stringify({ member_id: session.memberId, listing_id: listingId }),
+  }));
+  return true;
+}
+
+export async function removeHostedFavorite(config, session, listingId) {
+  if (!hostedMemberServiceConfigured(config) || !session?.accessToken) return false;
+  const url = `${trim(config.url).replace(/\/$/, "")}/rest/v1/listing_favorites?member_id=eq.${encodeURIComponent(session.memberId)}&listing_id=eq.${encodeURIComponent(listingId)}`;
+  await readResponse(await fetch(url, { method: "DELETE", headers: headers(config, session.accessToken) }));
+  return true;
+}
+
+export async function createHostedListingInquiry(config, session, listingId, listingOwnerId, message) {
+  if (!hostedMemberServiceConfigured(config) || !session?.accessToken) throw new Error("Sign in to contact a listing owner.");
+  const cleanMessage = trim(message);
+  if (cleanMessage.length < 10 || cleanMessage.length > 4000) throw new Error("Inquiry messages must be between 10 and 4,000 characters.");
+  const rows = await readResponse(await fetch(`${trim(config.url).replace(/\/$/, "")}/rest/v1/listing_inquiries`, {
+    method: "POST",
+    headers: headers(config, session.accessToken, { "Content-Type": "application/json", Prefer: "return=representation" }),
+    body: JSON.stringify({ listing_id: listingId, listing_owner_id: listingOwnerId, inquirer_id: session.memberId, message: cleanMessage }),
+  }));
+  return rows[0] || null;
+}
+
+export async function loadHostedListingInquiries(config, session) {
+  if (!hostedMemberServiceConfigured(config) || !session?.accessToken) return [];
+  const url = `${trim(config.url).replace(/\/$/, "")}/rest/v1/listing_inquiries?listing_owner_id=eq.${encodeURIComponent(session.memberId)}&select=*&order=created_at.desc`;
+  return readResponse(await fetch(url, { headers: headers(config, session.accessToken) }));
+}
+
+export async function recordHostedListingConversion(config, session, listingId, visitorSessionId, eventType, attribution = {}) {
+  if (!hostedMemberServiceConfigured(config) || !listingId || !visitorSessionId) return null;
+  const response = await fetch(`${trim(config.url).replace(/\/$/, "")}/rest/v1/rpc/record_listing_conversion`, {
+    method: "POST",
+    headers: headers(config, session?.accessToken, { "Content-Type": "application/json" }),
+    body: JSON.stringify({
+      p_listing_id: listingId,
+      p_visitor_session_id: visitorSessionId,
+      p_event_type: eventType,
+      p_source: trim(attribution.source) || "direct",
+      p_campaign: trim(attribution.campaign),
+      p_referrer_host: trim(attribution.referrerHost),
+    }),
+  });
+  return readResponse(response);
 }
 
 export async function recordHostedListingView(config, session, listingId, viewerSessionId) {

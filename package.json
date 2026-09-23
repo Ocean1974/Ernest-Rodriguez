@@ -18,7 +18,7 @@
     "aransas:gis:build": "node scripts/build-aransas-public-gis-capture.cjs",
     "test:aransas-gis-capture": "node tests/aransas-county-tx-gis-capture.test.cjs",
     "test:crm-page": "node tests/crm-page.test.cjs && node tests/crm-lead-import.test.cjs && node tests/member-exchange.test.cjs && node tests/savant-orchestrator.test.cjs && node tests/savant-event-queue.test.cjs",
-    "test:user-listings": "node tests/user-listings.test.cjs && node tests/listing-csv-import.test.cjs && node tests/listing-deal-rating.test.cjs && node tests/hosted-member-service.test.cjs && node tests/listing-analytics.test.cjs",
+    "test:user-listings": "node tests/user-listings.test.cjs && node tests/listing-csv-import.test.cjs && node tests/listing-deal-rating.test.cjs && node tests/hosted-member-service.test.cjs && node tests/listing-engagement-service.test.cjs && node tests/listing-analytics.test.cjs",
     "member:preflight": "node scripts/verify-member-production-config.cjs",
     "test:member-preflight": "node tests/member-production-preflight.test.cjs",
     "test:savant-tools": "node tests/savant-tools.test.cjs",
